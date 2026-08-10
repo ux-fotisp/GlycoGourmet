@@ -13,19 +13,22 @@ const getIngredientById = _getIngredientById;
  * cooling after cooking (retrogradation) creates resistant starch → lower GI.
  */
 export const PREP_STATES = [
-  { value: 'raw',     label: 'Raw',     giMultiplier: 1.0,  icon: 'eco' },
-  { value: 'boiled',  label: 'Boiled',  giMultiplier: 1.0,  icon: 'water_drop' },
-  { value: 'steamed', label: 'Steamed', giMultiplier: 0.95, icon: 'air' },
-  { value: 'sauteed', label: 'Sautéed', giMultiplier: 1.05, icon: 'skillet' },
-  { value: 'roasted', label: 'Roasted', giMultiplier: 1.15, icon: 'local_fire_department' },
-  { value: 'cooled',  label: 'Cooled',  giMultiplier: 0.85, icon: 'ac_unit' },
+  { value: 'raw',              label: 'Raw',              giMultiplier: 1.00, icon: 'eco' },
+  { value: 'steamed',          label: 'Steamed',          giMultiplier: 1.02, icon: 'air' },
+  { value: 'sauteed',          label: 'Sautéed',          giMultiplier: 1.05, icon: 'skillet' },
+  { value: 'roasted',          label: 'Roasted',          giMultiplier: 1.15, icon: 'local_fire_department' },
+  { value: 'boiled',           label: 'Boiled',           giMultiplier: 1.20, icon: 'water_drop' },
+  { value: 'mashed_processed', label: 'Mashed/Processed', giMultiplier: 1.25, icon: 'blender' },
+  { value: 'cooled',           label: 'Cooled',           giMultiplier: 0.85, icon: 'ac_unit' },
 ];
 
 export const DEFAULT_PREP_STATE = 'raw';
 
 /** Get the GI multiplier for a given prep state string */
 export function getPrepStateMultiplier(prepState) {
-  const found = PREP_STATES.find(p => p.value === prepState);
+  if (!prepState) return 1.0;
+  const key = String(prepState).toLowerCase().trim();
+  const found = PREP_STATES.find(p => p.value.toLowerCase() === key);
   return found ? found.giMultiplier : 1.0;
 }
 
