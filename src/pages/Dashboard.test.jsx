@@ -1,6 +1,6 @@
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Dashboard } from './Dashboard';
 import { useAuth } from '../context/AuthContext';
@@ -31,6 +31,7 @@ vi.mock('../utils/recipeStore', () => ({
       tags: ['Low GI', 'High Protein'],
       ingredients: [{ ingredientId: 'atlantic-salmon', amount: 6, unit: 'oz' }],
       status: 'published',
+      cookingTime: 25,
       isUserAuthored: false,
     },
     {
@@ -41,6 +42,7 @@ vi.mock('../utils/recipeStore', () => ({
       tags: ['High Fiber'],
       ingredients: [{ ingredientId: 'chia-seeds', amount: 2, unit: 'tbsp' }],
       status: 'published',
+      cookingTime: 10,
       isUserAuthored: false,
     },
   ])),
@@ -48,7 +50,7 @@ vi.mock('../utils/recipeStore', () => ({
   getRecipeById: vi.fn(() => Promise.resolve(null)),
 }));
 
-// Mock nutritionCalculator (RecipeCard uses it)
+// Mock nutritionCalculator (RecipeCard + HealthHeader use it)
 vi.mock('../utils/nutritionCalculator', () => ({
   calculateRecipeNutrition: vi.fn(() => ({
     kcal: 200,
@@ -56,10 +58,26 @@ vi.mock('../utils/nutritionCalculator', () => ({
     fat: 8,
     carbs: 12,
     glycemicIndex: 45,
-    glycemicLoad: 5.4,
+    glycemicLoad: 5,
     netCarbs: 10,
     fiber: 2,
   })),
+  getGlycemicLoadCategory: vi.fn((gl) => {
+    if (gl <= 10) return { category: 'Low GL', label: 'Low GL', colorClass: 'text-primary-fixed-dim', bgClass: 'bg-primary-container/15' };
+    if (gl <= 19) return { category: 'Medium GL', label: 'Medium GL', colorClass: 'text-tertiary', bgClass: 'bg-tertiary-container/15' };
+    return { category: 'High GL', label: 'High GL', colorClass: 'text-error', bgClass: 'bg-error-container/15' };
+  }),
+}));
+
+// Mock useFavorites for RecipeCard
+vi.mock('../hooks/useFavorites', () => ({
+  useFavorites: () => ({
+    favorites: [],
+    isFavorite: vi.fn(() => false),
+    toggleFavorite: vi.fn(),
+    addFavorite: vi.fn(),
+    removeFavorite: vi.fn(),
+  }),
 }));
 
 describe('Dashboard page', () => {
@@ -68,12 +86,17 @@ describe('Dashboard page', () => {
     useAuth.mockReturnValue({
       user: {
         name: 'Chef Julian',
+        email: 'demo@glyco.com',
         preferences: [],
         visualDensity: 'comfortable',
         favorites: [],
       },
+      addFavorite: vi.fn(),
+      removeFavorite: vi.fn(),
     });
   });
+
+  afterEach(() => cleanup());
 
   const renderDashboard = () =>
     render(
@@ -103,10 +126,12 @@ describe('Dashboard page', () => {
   });
 
   // --- Recipe grid ---
-  it('renders recipe cards from the store', () => {
+  it('renders recipe cards from the store', async () => {
     renderDashboard();
-    expect(screen.getAllByText('Crispy Salmon & Asparagus').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Berry Chia Power Pot').length).toBeGreaterThan(0);
+    const salmonCards = await screen.findAllByText('Crispy Salmon & Asparagus');
+    expect(salmonCards.length).toBeGreaterThan(0);
+    const chiaCards = await screen.findAllByText('Berry Chia Power Pot');
+    expect(chiaCards.length).toBeGreaterThan(0);
   });
 
   // --- Recommendation section ---
