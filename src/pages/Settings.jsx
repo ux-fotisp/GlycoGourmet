@@ -154,14 +154,37 @@ export const Settings = () => {
 
   return (
     <main className="flex-grow w-full max-w-container-max mx-auto px-edge-margin md:px-lg py-sm md:py-lg flex flex-col gap-md md:gap-lg mb-24 md:mb-0">
-      {/* Header */}
-      <header>
-        <h2 className="font-display text-2xl font-bold text-primary">
-          Metabolic & Profile Control Center
-        </h2>
-        <p className="text-xs text-on-surface-variant font-medium mt-0.5">
-          Configure glycemic targets, measurement formats, dietary restrictions, and clinical exports.
-        </p>
+      {/* Header with Role Badge & Verification Status */}
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="font-display text-2xl font-bold text-primary">
+              Metabolic & Profile Control Center
+            </h2>
+            <span
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-700 text-xs font-bold"
+              title="Account Approved by Administrator"
+            >
+              <span className="material-symbols-outlined text-[16px]">verified</span>
+              <span className="capitalize">{user?.roleType || 'Admin'}</span>
+            </span>
+          </div>
+          <p className="text-xs text-on-surface-variant font-medium mt-0.5">
+            Configure glycemic targets, measurement formats, dietary restrictions, and clinical exports.
+          </p>
+        </div>
+
+        {/* Admin Control Panel Shortcut Link */}
+        {user?.roleType === 'admin' && (
+          <a
+            href="/admin"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-on-primary font-bold text-xs rounded-xl hover:bg-primary/90 transition-all cursor-pointer shadow-xs"
+            title="Open Strapi Admin Panel for User Audits"
+          >
+            <span className="material-symbols-outlined text-base">admin_panel_settings</span>
+            <span>Admin User Audit</span>
+          </a>
+        )}
       </header>
 
       {/* Tab Controls */}

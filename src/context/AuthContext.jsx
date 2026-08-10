@@ -3,12 +3,15 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext(null);
 
 // Default localization + accessibility preferences
+// Default localization + accessibility preferences
 const DEFAULT_SETTINGS = {
   unitSystem: 'imperial',      // 'imperial' | 'metric'
   glucoseUnit: 'mgdl',         // 'mgdl' | 'mmoll'
   visualDensity: 'comfortable', // 'comfortable' | 'compact'
   favorites: [],
   onboarded: false,
+  isApproved: true,
+  roleType: 'admin',
 };
 
 // Pre-seed demo user in localStorage if not exists
@@ -25,6 +28,8 @@ const preseedDemoUser = () => {
       unitSystem: 'imperial',
       glucoseUnit: 'mgdl',
       visualDensity: 'comfortable',
+      isApproved: true,
+      roleType: 'admin',
     };
     localStorage.setItem('glyco_users', JSON.stringify(users));
   }
@@ -32,6 +37,7 @@ const preseedDemoUser = () => {
 
 // Build a clean session object from a stored user record
 const buildSession = (u) => ({
+  id: u.id || 1,
   name: u.name,
   email: u.email,
   preferences: u.preferences || [],
@@ -40,6 +46,8 @@ const buildSession = (u) => ({
   unitSystem: u.unitSystem || DEFAULT_SETTINGS.unitSystem,
   glucoseUnit: u.glucoseUnit || DEFAULT_SETTINGS.glucoseUnit,
   visualDensity: u.visualDensity || DEFAULT_SETTINGS.visualDensity,
+  isApproved: u.isApproved !== undefined ? u.isApproved : true,
+  roleType: u.roleType || 'admin',
 });
 
 export const AuthProvider = ({ children }) => {
@@ -54,7 +62,12 @@ export const AuthProvider = ({ children }) => {
       try {
         const userData = JSON.parse(activeSession);
         // Backfill any missing fields for sessions created before this update
-        const hydrated = { ...DEFAULT_SETTINGS, ...userData };
+        const hydrated = {
+          ...DEFAULT_SETTINGS,
+          ...userData,
+          isApproved: userData.isApproved !== undefined ? userData.isApproved : true,
+          roleType: userData.roleType || 'admin',
+        };
         setUser(hydrated);
         setIsAuthenticated(true);
       } catch (e) {
@@ -63,6 +76,52 @@ export const AuthProvider = ({ children }) => {
     }
     setIsLoading(false);
   }, []);
+
+  // Poll/refresh current user status from Strapi /api/users/me or localStorage
+  const refreshUserStatus = async () => {
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem('glyco_jwt');
+      if (token) {
+        const res = await fetch('/api/users/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const freshData = await res.json();
+          const updated = {
+            ...user,
+            isApproved: freshData.isApproved !== undefined ? freshData.isApproved : true,
+            roleType: freshData.roleType || user?.roleType || 'user',
+          };
+          setUser(updated);
+          localStorage.setItem('glyco_session', JSON.stringify(updated));
+          setIsLoading(false);
+          return updated;
+        }
+      }
+
+      // Local fallback refresh
+      if (user && user.email) {
+        const users = JSON.parse(localStorage.getItem('glyco_users') || '{}');
+        const dbUser = users[user.email.toLowerCase()];
+        if (dbUser) {
+          const updated = {
+            ...user,
+            isApproved: dbUser.isApproved !== undefined ? dbUser.isApproved : true,
+            roleType: dbUser.roleType || user.roleType || 'user',
+          };
+          setUser(updated);
+          localStorage.setItem('glyco_session', JSON.stringify(updated));
+          setIsLoading(false);
+          return updated;
+        }
+      }
+    } catch (err) {
+      console.warn('Unable to refresh user status:', err);
+    }
+    setIsLoading(false);
+    return user;
+  };
 
   // --- Swappable Adapters Placeholder ---
   // Replace below with Firebase / JWT calls to connect a real backend.
@@ -189,6 +248,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
+        refreshUserStatus,
         setPreferences,
         setSettings,
         addFavorite,

@@ -11,13 +11,14 @@ import AdminEditor from '../pages/AdminEditor';
 import Settings from '../pages/Settings';
 import MyRecipes from '../pages/MyRecipes';
 import MealPlans from '../pages/MealPlans';
+import PendingApproval from '../pages/PendingApproval';
 
 /**
  * AppRoutes — React Router v7 Navigation Hierarchy & Route Map
  *
  * Configures:
  * - Public routes: /login, /register
- * - Protected routes: /onboarding, /recipe/:id
+ * - Protected routes: /onboarding, /pending-approval, /recipe/:id
  * - AppLayout routes: / (Dashboard), /recipes (All Recipes Discovery Catalog), /my-recipes, /meal-plans, /settings, /admin
  */
 export const AppRoutes = () => {
@@ -30,6 +31,7 @@ export const AppRoutes = () => {
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
         <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/pending-approval" element={<PendingApproval />} />
 
         {/* Main Application Layout Wrapper */}
         <Route element={<AppLayout />}>

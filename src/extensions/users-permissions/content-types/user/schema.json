@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "up_users",
+  "info": {
+    "name": "user",
+    "description": "Extended Strapi User content-type with RBAC & Admin Approval Workflow",
+    "singularName": "user",
+    "pluralName": "users",
+    "displayName": "User"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "username": {
+      "type": "string",
+      "minLength": 3,
+      "unique": true,
+      "configurable": false,
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "minLength": 6,
+      "configurable": false,
+      "required": true
+    },
+    "provider": {
+      "type": "string",
+      "configurable": false
+    },
+    "isApproved": {
+      "type": "boolean",
+      "default": false,
+      "configurable": true,
+      "description": "Admin approval flag controlling active application access"
+    },
+    "roleType": {
+      "type": "enumeration",
+      "enum": ["user", "dietitian", "admin"],
+      "default": "user",
+      "configurable": true,
+      "description": "Clinical role assignment for RBAC permissions"
+    },
+    "auditNotes": {
+      "type": "text",
+      "configurable": true,
+      "description": "Internal notes for administrator during account review"
+    }
+  }
+}
