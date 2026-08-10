@@ -1,4 +1,3 @@
-import React, { useState, useMemo, useId } from 'react';
 import {
   VALID_CATEGORIES,
   VALID_UNITS,
@@ -6,6 +5,8 @@ import {
   generateCustomId,
   validateCustomIngredient,
 } from '../../utils/ingredientStore';
+import UsdaIngredientSearch from './UsdaIngredientSearch';
+import { getAcademicGI } from '../../utils/giLookup';
 
 // State for pending warning save
 let pendingSaveRef = null;
@@ -203,6 +204,21 @@ export const CustomIngredientModal = ({ onSave, onClose }) => {
     pendingSaveRef = null;
   };
 
+  const handleSelectUSDAFood = (food) => {
+    setForm(prev => ({
+      ...prev,
+      name: prev.name.trim() ? prev.name : food.name,
+      nutrition: {
+        kcal: food.kcal,
+        protein: food.protein,
+        fat: food.fat,
+        carbs: food.carbs,
+        fiber: food.fiber,
+        glycemicIndex: food.glycemicIndex ?? '',
+      },
+    }));
+  };
+
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
@@ -236,6 +252,12 @@ export const CustomIngredientModal = ({ onSave, onClose }) => {
         {/* ── Scrollable body ── */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
           <div className="px-6 pt-5 pb-4 space-y-5">
+
+            {/* Live USDA Search & Import Tool */}
+            <UsdaIngredientSearch
+              initialQuery={form.name}
+              onSelectFood={handleSelectUSDAFood}
+            />
 
             {/* Similarity warning banner */}
             {similarWarning && (

@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "vitest run --environment jsdom"
+    "test": "vitest run --environment jsdom",
+    "validate-db": "node scripts/validateNutritionDatabase.js"
   },
   "dependencies": {
     "react": "^19.2.7",
