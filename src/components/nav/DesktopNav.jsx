@@ -69,14 +69,6 @@ export const DesktopNav = () => {
 
       {/* Main Navigation Links */}
       <nav className="flex-1 px-sm space-y-1">
-        {/* Dashboard */}
-        <NavPill
-          to="/"
-          icon="dashboard"
-          label="Dashboard"
-          isActive={activePath === '/'}
-        />
-
         {/* Unified "Recipes" Parent Menu Node */}
         <div
           ref={dropdownRef}
@@ -114,10 +106,10 @@ export const DesktopNav = () => {
           {isRecipesOpen && (
             <div className="pl-6 pt-1 space-y-1 animate-fade-in">
               <Link
-                to="/recipes"
+                to="/recipes/all"
                 onClick={() => setIsRecipesOpen(false)}
                 className={`flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-r-full text-xs font-bold transition-all ${
-                  activePath === '/recipes' || activePath === '/'
+                  activePath === '/recipes/all' || activePath === '/recipes' || activePath === '/'
                     ? 'bg-primary text-on-primary'
                     : 'text-on-surface-variant hover:bg-surface-variant/40 hover:text-on-surface'
                 }`}
@@ -126,10 +118,10 @@ export const DesktopNav = () => {
                 <span>All Recipes</span>
               </Link>
               <Link
-                to="/my-recipes"
+                to="/recipes/mine"
                 onClick={() => setIsRecipesOpen(false)}
                 className={`flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-r-full text-xs font-bold transition-all ${
-                  activePath === '/my-recipes'
+                  activePath === '/recipes/mine' || activePath === '/my-recipes'
                     ? 'bg-primary text-on-primary'
                     : 'text-on-surface-variant hover:bg-surface-variant/40 hover:text-on-surface'
                 }`}

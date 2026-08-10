@@ -35,9 +35,14 @@ describe('AppRoutes navigation hierarchy', () => {
     expect(screen.getAllByText(/GlycoGourmet Admin/i).length).toBeGreaterThan(0);
   });
 
-  it('renders Dashboard layout on "/recipes" catalog alias path', () => {
-    renderWithProviders('/recipes');
+  it('renders All Recipes catalog on "/recipes/all" path', () => {
+    renderWithProviders('/recipes/all');
     expect(screen.getAllByText(/GlycoGourmet Admin/i).length).toBeGreaterThan(0);
+  });
+
+  it('renders MyRecipes workspace on "/recipes/mine"', () => {
+    renderWithProviders('/recipes/mine');
+    expect(screen.getAllByText(/My Recipes/i).length).toBeGreaterThan(0);
   });
 
   it('renders MyRecipes workspace on "/my-recipes"', () => {

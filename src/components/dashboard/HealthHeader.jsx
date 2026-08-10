@@ -27,9 +27,11 @@ const UNIT_LABELS = {
 
 export const HealthHeader = () => {
   const { user } = useAuth();
-  const { glucoseUnit, unitSystem } = usePreferences();
+  const { glucoseUnit, unitSystem, dailyGlTarget } = usePreferences();
   const { allRecipes } = useRecipes();
   const [mealPlanGL, setMealPlanGL] = React.useState(0);
+
+  const targetGL = dailyGlTarget || 45;
 
   // Listen for optimistic meal plan updates
   React.useEffect(() => {
@@ -67,7 +69,7 @@ export const HealthHeader = () => {
     return favoriteGL + mealPlanGL;
   }, [user?.favorites, allRecipes, mealPlanGL]);
 
-  const ratio = DAILY_GL_TARGET > 0 ? dailyGL / DAILY_GL_TARGET : 0;
+  const ratio = targetGL > 0 ? dailyGL / targetGL : 0;
   const percent = Math.min(Math.round(ratio * 100), 120);
   const clampedPercent = Math.min(percent, 100);
 
@@ -94,28 +96,26 @@ export const HealthHeader = () => {
   };
 
   return (
-    <header className="bg-white rounded-xl p-4 md:p-5 border border-outline-variant/30 shadow-[0_4px_20px_rgba(45,49,48,0.05)]">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="bg-surface-container-lowest rounded-xl p-md border border-outline-variant/30 shadow-[0_4px_20px_rgba(45,49,48,0.04)] mb-lg">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
 
-        {/* Left: Greeting + Preference Pills */}
-        <div className="flex flex-col gap-2">
-          <div>
-            <h2 className="font-display text-xl md:text-2xl font-bold text-on-surface leading-tight">
-              {greeting()}, {user?.name || 'Chef'}
-            </h2>
-            <p className="text-xs text-on-surface-variant font-medium mt-0.5">
-              Discover meals calculated to keep your glucose stable.
-            </p>
-          </div>
+        {/* Left: User greeting + preference pills */}
+        <div className="space-y-1">
+          <h2 className="font-display text-headline-sm text-on-surface font-bold">
+            {greeting()}, {user?.name || 'Chef'} 👋
+          </h2>
+          <p className="text-on-surface-variant font-body-md text-xs">
+            Here is your daily metabolic glycemic overview.
+          </p>
 
-          {/* Clickable preference pills → /settings */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Clickable preference pills linking to /settings */}
+          <div className="flex items-center gap-2 pt-2">
             <Link
               to="/settings"
               className="inline-flex items-center gap-1.5 bg-surface-container-low hover:bg-surface-container border border-outline-variant/30 px-3 py-1.5 rounded-full text-xs font-bold text-on-surface-variant transition-colors"
-              title="Change glucose unit in Settings"
+              title="Change glucose format in Settings"
             >
-              <span className="material-symbols-outlined text-[14px] text-primary">glucose</span>
+              <span className="material-symbols-outlined text-[14px] text-primary">bloodtype</span>
               {GLUCOSE_LABELS[glucoseUnit] || 'mg/dL'}
             </Link>
             <Link
@@ -151,7 +151,7 @@ export const HealthHeader = () => {
               {dailyGL}
             </span>
             <span className="text-sm text-on-surface-variant font-medium">
-              / {DAILY_GL_TARGET} GL
+              / {targetGL} GL
             </span>
           </div>
 
@@ -169,7 +169,7 @@ export const HealthHeader = () => {
         </div>
 
       </div>
-    </header>
+    </div>
   );
 };
 

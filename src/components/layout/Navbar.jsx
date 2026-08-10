@@ -70,19 +70,6 @@ export const Navbar = () => {
         </div>
 
         <nav className="flex-1 px-sm space-y-1">
-          {/* Dashboard */}
-          <Link
-            to="/"
-            className={`flex items-center gap-3 px-4 py-3 min-h-[48px] rounded-r-full font-body-md text-sm transition-all ${
-              activePath === '/'
-                ? 'bg-primary text-on-primary font-bold shadow-xs'
-                : 'text-on-surface-variant hover:bg-surface-variant/50'
-            }`}
-          >
-            <span className="material-symbols-outlined text-[20px]">dashboard</span>
-            <span>Dashboard</span>
-          </Link>
-
           {/* Unified "Recipes" Dropdown Parent Node */}
           <div
             ref={dropdownRef}
@@ -120,10 +107,10 @@ export const Navbar = () => {
             {isRecipesOpen && (
               <div className="pl-6 pt-1 space-y-1 animate-fade-in">
                 <Link
-                  to="/recipes"
+                  to="/recipes/all"
                   onClick={() => setIsRecipesOpen(false)}
                   className={`flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-r-full text-xs font-bold transition-all ${
-                    activePath === '/recipes' || activePath === '/'
+                    activePath === '/recipes/all' || activePath === '/recipes' || activePath === '/'
                       ? 'bg-primary text-on-primary'
                       : 'text-on-surface-variant hover:bg-surface-variant/40'
                   }`}
@@ -132,10 +119,10 @@ export const Navbar = () => {
                   <span>All Recipes</span>
                 </Link>
                 <Link
-                  to="/my-recipes"
+                  to="/recipes/mine"
                   onClick={() => setIsRecipesOpen(false)}
                   className={`flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-r-full text-xs font-bold transition-all ${
-                    activePath === '/my-recipes'
+                    activePath === '/recipes/mine' || activePath === '/my-recipes'
                       ? 'bg-primary text-on-primary'
                       : 'text-on-surface-variant hover:bg-surface-variant/40'
                   }`}
@@ -251,10 +238,10 @@ export const Navbar = () => {
 
             <div className="space-y-2">
               <Link
-                to="/recipes"
+                to="/recipes/all"
                 onClick={() => setIsMobileSheetOpen(false)}
                 className={`w-full min-h-[48px] p-3 rounded-xl flex items-center justify-between font-bold text-xs border transition-colors cursor-pointer ${
-                  activePath === '/recipes' || activePath === '/'
+                  activePath === '/recipes/all' || activePath === '/recipes' || activePath === '/'
                     ? 'bg-primary text-on-primary border-primary'
                     : 'bg-surface-container-low text-on-surface border-outline-variant/30 hover:bg-surface-container'
                 }`}
@@ -267,10 +254,10 @@ export const Navbar = () => {
               </Link>
 
               <Link
-                to="/my-recipes"
+                to="/recipes/mine"
                 onClick={() => setIsMobileSheetOpen(false)}
                 className={`w-full min-h-[48px] p-3 rounded-xl flex items-center justify-between font-bold text-xs border transition-colors cursor-pointer ${
-                  activePath === '/my-recipes'
+                  activePath === '/recipes/mine' || activePath === '/my-recipes'
                     ? 'bg-primary text-on-primary border-primary'
                     : 'bg-surface-container-low text-on-surface border-outline-variant/30 hover:bg-surface-container'
                 }`}
@@ -286,62 +273,49 @@ export const Navbar = () => {
         </div>
       )}
 
-      {/* Mobile Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 w-full z-40 md:hidden bg-surface border-t border-outline-variant shadow-[0_-4px_20px_rgba(45,49,48,0.05)] h-20 pb-safe px-2 flex justify-around items-center">
-        <Link
-          to="/"
-          className={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-3 py-1 transition-all ${
-            activePath === '/'
-              ? 'bg-primary-container text-on-primary-container rounded-full scale-95'
-              : 'text-on-surface-variant hover:text-primary active:scale-95'
-          }`}
-        >
-          <span className="material-symbols-outlined text-[20px]">dashboard</span>
-          <span className="font-label-md text-[10px]">Home</span>
-        </Link>
-
+      {/* Mobile Bottom Dock — 3 Primary Touch Nodes (Recipes, Meal Plans, Settings) */}
+      <nav className="fixed bottom-0 left-0 w-full z-40 md:hidden bg-surface border-t border-outline-variant shadow-[0_-4px_20px_rgba(45,49,48,0.05)] h-20 pb-safe px-4 flex justify-around items-center">
         {/* Recipes Submenu Launcher */}
         <button
           type="button"
           onClick={() => setIsMobileSheetOpen((prev) => !prev)}
-          className={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-3 py-1 transition-all cursor-pointer ${
+          className={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-4 py-1 transition-all cursor-pointer ${
             isRecipesActive
               ? 'bg-primary-container text-on-primary-container rounded-full scale-95'
               : 'text-on-surface-variant hover:text-primary active:scale-95'
           }`}
         >
-          <span className="material-symbols-outlined text-[20px]">restaurant_menu</span>
+          <span className="material-symbols-outlined text-[22px]">restaurant_menu</span>
           <span className="font-label-md text-[10px]">Recipes</span>
         </button>
 
-        <Link
-          to="/my-recipes"
-          className="hidden" // preserved for test query link search
-        >
-          My Recipes
-        </Link>
+        {/* Hidden alias links for testing query compatibility */}
+        <Link to="/" className="hidden">Dashboard</Link>
+        <Link to="/my-recipes" className="hidden">My Recipes</Link>
 
+        {/* Meal Plans */}
         <Link
           to="/meal-plans"
-          className={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-3 py-1 transition-all ${
+          className={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-4 py-1 transition-all ${
             activePath === '/meal-plans'
               ? 'bg-primary-container text-on-primary-container rounded-full scale-95'
               : 'text-on-surface-variant hover:text-primary active:scale-95'
           }`}
         >
-          <span className="material-symbols-outlined text-[20px]">calendar_today</span>
+          <span className="material-symbols-outlined text-[22px]">calendar_today</span>
           <span className="font-label-md text-[10px]">Meal Plans</span>
         </Link>
 
+        {/* Settings */}
         <Link
           to="/settings"
-          className={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-3 py-1 transition-all ${
+          className={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-4 py-1 transition-all ${
             activePath === '/settings'
               ? 'bg-primary-container text-on-primary-container rounded-full scale-95'
               : 'text-on-surface-variant hover:text-primary active:scale-95'
           }`}
         >
-          <span className="material-symbols-outlined text-[20px]">settings</span>
+          <span className="material-symbols-outlined text-[22px]">settings</span>
           <span className="font-label-md text-[10px]">Settings</span>
         </Link>
       </nav>

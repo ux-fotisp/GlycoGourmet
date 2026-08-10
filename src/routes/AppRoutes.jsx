@@ -35,6 +35,8 @@ export const AppRoutes = () => {
         <Route element={<AppLayout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/recipes" element={<Dashboard />} />
+          <Route path="/recipes/all" element={<Dashboard />} />
+          <Route path="/recipes/mine" element={<MyRecipes />} />
           <Route path="/my-recipes" element={<MyRecipes />} />
           <Route path="/meal-plans" element={<MealPlans />} />
           <Route path="/settings" element={<Settings />} />

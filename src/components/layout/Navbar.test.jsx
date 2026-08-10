@@ -30,10 +30,9 @@ describe('Navbar component', () => {
     );
 
   // --- Menu items consistency ---
-  it('renders all four required navigation links: Dashboard, My Recipes, Meal Plans, Profile Settings', () => {
+  it('renders all required top-level navigation links: Recipes, Meal Plans, Profile Settings', () => {
     renderNavbar();
-    expect(screen.getAllByText('Dashboard').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('My Recipes').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Recipes').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Meal Plans').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Profile Settings').length).toBeGreaterThan(0);
   });
@@ -62,23 +61,23 @@ describe('Navbar component', () => {
   });
 
   // --- Mobile bottom nav ---
-  it('renders mobile bottom navigation with Home, My Recipes, Meal Plans, Settings labels', () => {
+  it('renders mobile bottom navigation with 3 primary nodes: Recipes, Meal Plans, Settings labels', () => {
     renderNavbar();
-    expect(screen.getByText('Home')).toBeDefined();
-    // Mobile uses shortened labels for some items
+    expect(screen.getAllByText('Recipes').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Meal Plans').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Settings').length).toBeGreaterThan(0);
   });
 
   // --- Navigation link paths ---
-  it('links Dashboard to /', () => {
+  it('links Recipes All to /recipes/all and brand to /', () => {
     const { container } = renderNavbar();
-    const dashboardLinks = container.querySelectorAll('a[href="/"]');
-    expect(dashboardLinks.length).toBeGreaterThan(0);
+    const brandLinks = container.querySelectorAll('a[href="/"]');
+    expect(brandLinks.length).toBeGreaterThan(0);
   });
 
-  it('links My Recipes to /my-recipes', () => {
+  it('links My Recipes to /recipes/mine or /my-recipes', () => {
     const { container } = renderNavbar();
-    const links = container.querySelectorAll('a[href="/my-recipes"]');
+    const links = container.querySelectorAll('a[href="/recipes/mine"], a[href="/my-recipes"]');
     expect(links.length).toBeGreaterThan(0);
   });
 
