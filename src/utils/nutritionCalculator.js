@@ -37,7 +37,7 @@ export function getPrepStateLabel(prepState) {
 
 /**
  * Safe numeric parser — returns 0 on any non-finite input.
- * Prevents NaN propagation from incomplete Snappi draft payloads.
+ * Prevents NaN propagation from incomplete Strapi draft payloads.
  * @param {*} val
  * @returns {number}
  */
@@ -58,9 +58,6 @@ function safeNullableNum(val) {
   const n = parseFloat(val);
   return isFinite(n) ? n : null;
 }
-
-// ↑ getIngredients, getIngredientById, saveCustomIngredient are now re-exported
-//   from ingredientStore.js (see top of file). Kept here for reference only.
 
 /**
  * Utility function returning Glycemic Load categorization and styling tokens.
@@ -100,13 +97,15 @@ export function getGlycemicLoadCategory(gl) {
 /**
  * Calculates aggregate nutrition for a recipe's ingredient array.
  *
- * Handles Snappi's relational ingredient format:
- *   { ingredientId: string, amount: number, unit: string, prepState?: string }
+ * Handles Strapi relational ingredient formats:
+ *   - { ingredientId: string, amount: number, unit: string, prepState?: string }
+ *   - { ingredient: { id: string }, amount: number, unit: string }
+ *   - { id: string, amount: number, unit: string }
  *
  * Null-safety: uses optional chaining (?.) and `safeNum()` fallbacks so
  * incomplete draft payloads never trigger NaN errors or UI crashes.
  *
- * @param {Array<{ingredientId: string, amount: number, unit: string, prepState?: string}>} recipeIngredients
+ * @param {Array<object>} recipeIngredients
  * @returns {object}
  */
 export function calculateRecipeNutrition(recipeIngredients = []) {
@@ -120,19 +119,22 @@ export function calculateRecipeNutrition(recipeIngredients = []) {
   let totalCarbWeight = 0;
   let weightedGISum = 0;
 
-  // Defensive check for array — Snappi may return null or undefined for empty drafts
+  // Defensive check for array — Strapi may return null or undefined for empty drafts
   const ingredientsArray = Array.isArray(recipeIngredients) ? recipeIngredients : [];
 
   ingredientsArray.forEach(item => {
-    // Null-safe guard: skip entries without a valid ingredientId
-    if (!item?.ingredientId) return;
-    if (typeof item.ingredientId !== 'string') return;
+    if (!item) return;
 
-    const ing = getIngredientById(item.ingredientId);
+    // Resolve ingredient ID across relational structures (flat ID, component ingredientId, or Strapi relation)
+    const rawId = item.ingredientId || item.ingredient?.id || item.ingredient?.documentId || item.id;
+    if (!rawId) return;
+
+    const ingId = String(rawId);
+    const ing = getIngredientById(ingId);
     if (!ing) return;
 
     // Calculate ratio relative to defaultAmount with null-safe parsing
-    const defaultAmount = safeNum(ing?.defaultAmount) || 1;
+    const defaultAmount = safeNum(ing?.defaultAmount) || 100;
     const amount = safeNum(item?.amount);
     const ratio = defaultAmount > 0 ? (amount / defaultAmount) : 0;
 

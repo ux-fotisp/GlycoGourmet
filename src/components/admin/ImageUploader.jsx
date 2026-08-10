@@ -1,14 +1,13 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { uploadToSnappiMedia, validateMediaFile } from '../../services/mediaService';
+import { uploadToStrapiMedia, validateMediaFile } from '../../services/mediaService';
 
 /**
- * ImageUploader — Drag-and-Drop + Click-to-Upload Component
+ * ImageUploader — Drag-and-Drop + Click-to-Upload Component for Strapi Media Library
  *
- * Replaces the plain text URL input in EditorFormFields.jsx.
- * Uploads images to the Snappi Media Library and returns the hosted URL.
+ * Uploads images to Strapi's `/api/upload` endpoint and binds the hosted URL.
  *
  * Props:
- *   currentUrl {string}     — current image URL (for preview/fallback)
+ *   currentUrl {string}     — current image URL
  *   onUpload   {Function}   — called with the new URL after successful upload
  *   onUrlChange {Function}  — called with manual URL input changes (fallback mode)
  */
@@ -22,7 +21,6 @@ export const ImageUploader = ({ currentUrl = '', onUpload, onUrlChange }) => {
   const handleFile = useCallback(async (file) => {
     if (!file) return;
 
-    // Client-side validation
     const validationError = validateMediaFile(file);
     if (validationError) {
       setError(validationError);
@@ -33,10 +31,10 @@ export const ImageUploader = ({ currentUrl = '', onUpload, onUrlChange }) => {
     setIsUploading(true);
 
     try {
-      const assetUrl = await uploadToSnappiMedia(file);
+      const assetUrl = await uploadToStrapiMedia(file);
       onUpload(assetUrl);
     } catch (err) {
-      setError(err.message || 'Upload failed. Please try again.');
+      setError(err.message || 'Upload to Strapi Media Library failed.');
     } finally {
       setIsUploading(false);
     }
@@ -75,7 +73,7 @@ export const ImageUploader = ({ currentUrl = '', onUpload, onUrlChange }) => {
   return (
     <div className="space-y-2">
       <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-        Recipe Image
+        Recipe Image (Strapi Media Library)
       </label>
 
       {/* Drop Zone */}
@@ -86,7 +84,7 @@ export const ImageUploader = ({ currentUrl = '', onUpload, onUrlChange }) => {
         onClick={triggerFileSelect}
         role="button"
         tabIndex={0}
-        aria-label="Upload recipe image — drag and drop or click to browse"
+        aria-label="Upload recipe image to Strapi Media — drag and drop or click to browse"
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') triggerFileSelect(); }}
         className={`
           relative w-full min-h-[120px] rounded-xl border-2 border-dashed
@@ -113,7 +111,7 @@ export const ImageUploader = ({ currentUrl = '', onUpload, onUrlChange }) => {
           {isUploading ? (
             <>
               <span className="material-symbols-outlined text-primary text-[28px] animate-spin">progress_activity</span>
-              <span className="text-xs font-bold text-primary">Uploading to Snappi…</span>
+              <span className="text-xs font-bold text-primary">Uploading to Strapi Media Library…</span>
             </>
           ) : (
             <>

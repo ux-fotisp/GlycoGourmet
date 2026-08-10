@@ -1,30 +1,23 @@
 /**
- * ingredientStore.js — Snappi CMS Ingredient Data Layer
+ * ingredientStore.js — Strapi CMS Ingredient Data Layer
  *
  * Architecture:
  * - TIER 1 — System seed DB (src/data/ingredients.json)
- *   • Bundled at build time. Used as local fallback when Snappi is unreachable.
- *   • Read-only reference. Never mutated at runtime.
+ *   • Bundled at build time as fallback when Strapi is unreachable.
  *
- * - TIER 2 — Snappi CMS Collection (/collections/ingredients)
- *   • The single source of truth for all ingredients (system + custom).
- *   • Custom (user-authored) ingredients are POSTed here directly.
- *   • All IDs for user-authored entries carry the "custom-" prefix.
- *
- * On read, the store tries Snappi first. If the API is unreachable, it
- * falls back to the local JSON file + localStorage custom entries,
- * maintaining backward compatibility.
+ * - TIER 2 — Strapi CMS Collection (/api/ingredients)
+ *   • Single source of truth for all ingredients (system + custom).
+ *   • Custom (user-authored) ingredients are POSTed directly to `/api/ingredients` with JWT.
+ *   • Normalizes Strapi responses via `unravelStrapiData`.
  */
 
 import ingredientsDb from '../data/ingredients.json';
-import { snappiGet, snappiPost, invalidateCache } from '../services/snappiClient';
+import { strapiGet, strapiPost, invalidateCache } from '../services/strapiClient';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
-const COLLECTION = '/collections/ingredients';
+const COLLECTION = '/api/ingredients';
 const CUSTOM_ID_PREFIX = 'custom-';
-
-/** Local cache key for custom ingredients (fallback only) */
 const STORAGE_KEY = 'glyco_custom_ingredients';
 
 export const VALID_CATEGORIES = [
@@ -36,43 +29,23 @@ export const VALID_UNITS = [
   'g', 'oz', 'cup', 'tbsp', 'tsp', 'piece', 'bunch', 'clove',
 ];
 
-/** Maximum custom ingredients before a soft-limit warning */
 const SOFT_LIMIT = 200;
 
 // ─── Module-Level Caches ───────────────────────────────────────────────────
 
-/** @type {Array<object>|null} — in-memory registry cache */
 let _registryCache = null;
-
-/** Set of all system IDs for O(1) lookup */
 const _systemIdSet = new Set(ingredientsDb.map((i) => i.id));
 
 // ─── ID & Classification Helpers ───────────────────────────────────────────
 
-/**
- * Returns true if the given ID belongs to the system seed database.
- * @param {string} id
- * @returns {boolean}
- */
 export function isSystemIngredient(id) {
   return _systemIdSet.has(id);
 }
 
-/**
- * Returns true if the given ID follows the required custom-ingredient format.
- * @param {string} id
- * @returns {boolean}
- */
 export function isCustomIngredient(id) {
-  return typeof id === 'string' && id.startsWith(CUSTOM_ID_PREFIX);
+  return typeof id === 'string' && (id.startsWith(CUSTOM_ID_PREFIX) || !isNaN(Number(id)));
 }
 
-/**
- * Deterministically generates a safe custom ingredient ID from a name.
- * Format: "custom-{slug}-{timestamp}"
- * @param {string} name
- * @returns {string}
- */
 export function generateCustomId(name) {
   const slug = (name || 'ingredient')
     .toLowerCase()
@@ -84,38 +57,31 @@ export function generateCustomId(name) {
 
 // ─── Read Operations ───────────────────────────────────────────────────────
 
-/**
- * Returns the frozen Tier 1 system ingredient array.
- * The freeze prevents accidental runtime mutation anywhere in the app.
- * @returns {ReadonlyArray<object>}
- */
 export function getSystemIngredients() {
   return Object.freeze([...ingredientsDb]);
 }
 
 /**
- * Returns the unified, merged ingredient registry from Snappi CMS.
- * Falls back to local data (seed JSON + localStorage) when Snappi is unavailable.
+ * Returns the merged ingredient registry from Strapi CMS `/api/ingredients`.
+ * Falls back to local data (seed JSON + localStorage) when Strapi is unavailable.
  *
  * @returns {Promise<Array<object>>}
  */
 export async function getIngredientsRegistryAsync() {
   try {
-    const response = await snappiGet(COLLECTION);
+    const response = await strapiGet(COLLECTION, { pagination: { limit: 500 } });
     const list = Array.isArray(response) ? response : (response?.data ?? []);
 
     _registryCache = list.map(normalizeIngredient);
     return _registryCache;
   } catch (err) {
-    console.warn('[ingredientStore] Snappi fetch failed, using local fallback:', err.message);
+    console.warn('[ingredientStore] Strapi fetch failed, using local fallback:', err.message);
     return _getLocalFallbackRegistry();
   }
 }
 
 /**
- * Synchronous getter — returns the last cached registry.
- * Falls back to local seed JSON + localStorage entries if no cache exists.
- * This is required for compatibility with the synchronous nutritionCalculator.
+ * Synchronous getter — returns the last cached registry or local fallback.
  * @returns {Array<object>}
  */
 export function getIngredientsRegistry() {
@@ -123,38 +89,23 @@ export function getIngredientsRegistry() {
   return _getLocalFallbackRegistry();
 }
 
-/**
- * Local fallback registry: seed JSON + localStorage custom entries.
- * @returns {Array<object>}
- */
 function _getLocalFallbackRegistry() {
   const custom = _readLocalCustomIngredients();
   const safeCustom = custom.filter((c) => !isSystemIngredient(c.id));
   return [...ingredientsDb, ...safeCustom];
 }
 
-/**
- * Looks up an ingredient by ID.
- * Uses the in-memory registry cache for O(n) scan.
- * @param {string} id
- * @returns {object|null}
- */
 export function getIngredientById(id) {
-  if (!id || typeof id !== 'string') return null;
+  if (!id && id !== 0) return null;
+  const strId = String(id);
 
-  // Check current registry cache first
   const registry = getIngredientsRegistry();
-  const found = registry.find((i) => i.id === id);
+  const found = registry.find((i) => String(i.id) === strId || i.name?.toLowerCase() === strId.toLowerCase());
   if (found) return found;
 
-  // Check local seed DB as final fallback
-  return ingredientsDb.find((i) => i.id === id) || null;
+  return ingredientsDb.find((i) => String(i.id) === strId) || null;
 }
 
-/**
- * Safely reads custom ingredients from localStorage (fallback only).
- * @returns {Array<object>}
- */
 function _readLocalCustomIngredients() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -166,51 +117,56 @@ function _readLocalCustomIngredients() {
   }
 }
 
-/**
- * Reads custom ingredients (backward compatibility shim).
- * @returns {Array<object>}
- */
 export function getCustomIngredients() {
   return _readLocalCustomIngredients();
 }
 
 // ─── Normalization ─────────────────────────────────────────────────────────
 
-/**
- * Normalizes a Snappi ingredient response into the canonical frontend shape.
- * @param {object} raw
- * @returns {object}
- */
 function normalizeIngredient(raw) {
+  const carbs = parseFloat(raw?.carbs ?? raw?.nutrition?.carbs) || 0;
+  const fiber = parseFloat(raw?.fiber ?? raw?.nutrition?.fiber) || 0;
+  const netCarbs = raw?.netCarbs !== undefined && raw?.netCarbs !== null
+    ? parseFloat(raw.netCarbs)
+    : Math.max(0, Math.round((carbs - fiber) * 10) / 10);
+
+  const gi = _parseNullableNumber(raw?.glycemicIndex ?? raw?.nutrition?.glycemicIndex);
+  const gl = raw?.glycemicLoad !== undefined && raw?.glycemicLoad !== null
+    ? _parseNullableNumber(raw.glycemicLoad)
+    : (gi !== null ? Math.round((gi * netCarbs) / 100 * 10) / 10 : null);
+
   return {
-    id: raw?.id ?? '',
+    id: String(raw?.id ?? raw?.documentId ?? ''),
     name: raw?.name ?? '',
     category: raw?.category ?? '',
     defaultUnit: raw?.defaultUnit ?? 'g',
     defaultAmount: parseFloat(raw?.defaultAmount) || 100,
-    isUserAuthored: raw?.isUserAuthored ?? false,
+    isUserAuthored: raw?.isUserAuthored ?? true,
     createdAt: raw?.createdAt ?? null,
     updatedAt: raw?.updatedAt ?? null,
     defaultPrepState: raw?.defaultPrepState ?? 'raw',
     substitutions: Array.isArray(raw?.substitutions) ? raw.substitutions : [],
+    kcal: parseFloat(raw?.kcal ?? raw?.nutrition?.kcal) || 0,
+    protein: parseFloat(raw?.protein ?? raw?.nutrition?.protein) || 0,
+    fat: parseFloat(raw?.fat ?? raw?.nutrition?.fat) || 0,
+    carbs,
+    fiber,
+    netCarbs,
+    glycemicIndex: gi,
+    glycemicLoad: gl,
     nutrition: {
       kcal: parseFloat(raw?.kcal ?? raw?.nutrition?.kcal) || 0,
       protein: parseFloat(raw?.protein ?? raw?.nutrition?.protein) || 0,
       fat: parseFloat(raw?.fat ?? raw?.nutrition?.fat) || 0,
-      carbs: parseFloat(raw?.carbs ?? raw?.nutrition?.carbs) || 0,
-      fiber: parseFloat(raw?.fiber ?? raw?.nutrition?.fiber) || 0,
-      netCarbs: parseFloat(raw?.netCarbs ?? raw?.nutrition?.netCarbs) || 0,
-      glycemicIndex: _parseNullableNumber(raw?.glycemicIndex ?? raw?.nutrition?.glycemicIndex),
-      glycemicLoad: _parseNullableNumber(raw?.glycemicLoad ?? raw?.nutrition?.glycemicLoad),
+      carbs,
+      fiber,
+      netCarbs,
+      glycemicIndex: gi,
+      glycemicLoad: gl,
     },
   };
 }
 
-/**
- * Parse a value to a number, returning null if NaN.
- * @param {*} val
- * @returns {number|null}
- */
 function _parseNullableNumber(val) {
   if (val === null || val === undefined || val === '') return null;
   const n = parseFloat(val);
@@ -219,39 +175,28 @@ function _parseNullableNumber(val) {
 
 // ─── Validation ─────────────────────────────────────────────────────────────
 
-/**
- * Validates a raw custom ingredient input object.
- * Returns { valid: true } or { valid: false, errors: string[] }.
- * @param {object} input
- * @returns {{ valid: boolean, errors?: string[] }}
- */
 export function validateCustomIngredient(input) {
   const errors = [];
 
-  // — Name
   if (!input.name || typeof input.name !== 'string' || input.name.trim().length === 0) {
     errors.push('Name is required.');
   } else if (input.name.trim().length > 80) {
     errors.push('Name must be 80 characters or fewer.');
   }
 
-  // — Category
   if (!input.category || !VALID_CATEGORIES.includes(input.category)) {
     errors.push(`Category must be one of: ${VALID_CATEGORIES.join(', ')}.`);
   }
 
-  // — Default unit
   if (!input.defaultUnit || !VALID_UNITS.includes(input.defaultUnit)) {
     errors.push(`Default unit must be one of: ${VALID_UNITS.join(', ')}.`);
   }
 
-  // — Default amount
   const amount = parseFloat(input.defaultAmount);
   if (isNaN(amount) || amount <= 0) {
     errors.push('Default amount must be a positive number.');
   }
 
-  // — Nutrition: required numeric fields
   const requiredNutrition = ['kcal', 'protein', 'fat', 'carbs', 'fiber'];
   for (const field of requiredNutrition) {
     const val = parseFloat(input.nutrition?.[field]);
@@ -260,7 +205,6 @@ export function validateCustomIngredient(input) {
     }
   }
 
-  // — GI range (only if provided and not null)
   if (input.nutrition?.glycemicIndex !== null && input.nutrition?.glycemicIndex !== undefined) {
     const gi = parseFloat(input.nutrition.glycemicIndex);
     if (isNaN(gi) || gi < 0 || gi > 100) {
@@ -271,45 +215,31 @@ export function validateCustomIngredient(input) {
   return errors.length === 0 ? { valid: true } : { valid: false, errors };
 }
 
-// ─── Write Operations (Snappi + localStorage fallback) ──────────────────────
+// ─── Write Operations (Strapi /api/ingredients) ──────────────────────
 
 /**
- * Saves a new custom ingredient to the Snappi CMS.
+ * Direct ingestion of custom ingredients into Strapi `/api/ingredients`.
+ * On HTTP 200/201:
+ * 1. Invalidates local ingredient caches.
+ * 2. Refreshes registry cache.
+ * 3. Returns newly created Strapi ingredient ID.
  *
- * On success, invalidates local caches (SWR + in-memory) so the ingredient
- * list updates immediately.
- *
- * Falls back to localStorage persistence if Snappi is unreachable.
- *
- * @param {object} rawInput — form state from CustomIngredientModal
- * @returns {Promise<{
- *   ok: boolean,
- *   ingredient: object|null,
- *   errors: string[]|null,
- *   warning: 'similar_to_system'|null
- * }>}
+ * @param {object} rawInput
+ * @returns {Promise<{ ok: boolean, ingredient: object|null, errors: string[]|null, warning: string|null }>}
  */
 export async function saveCustomIngredient(rawInput) {
-  // 1. Validate
   const validation = validateCustomIngredient(rawInput);
   if (!validation.valid) {
     return { ok: false, ingredient: null, errors: validation.errors, warning: null };
   }
 
-  // 2. Derive auto-calculated fields (user cannot set these manually)
   const carbs = parseFloat(rawInput.nutrition.carbs) || 0;
   const fiber = parseFloat(rawInput.nutrition.fiber) || 0;
   const giRaw = rawInput.nutrition.glycemicIndex;
-  const gi = (giRaw !== null && giRaw !== undefined && giRaw !== '')
-    ? parseFloat(giRaw)
-    : null;
-
+  const gi = (giRaw !== null && giRaw !== undefined && giRaw !== '') ? parseFloat(giRaw) : null;
   const netCarbs = Math.max(0, Math.round((carbs - fiber) * 10) / 10);
-  const glycemicLoad = gi !== null
-    ? Math.round((gi * netCarbs) / 100 * 10) / 10
-    : null;
+  const glycemicLoad = gi !== null ? Math.round((gi * netCarbs) / 100 * 10) / 10 : null;
 
-  // 3. Block any attempt to target or overwrite a system ID
   if (rawInput.id && isSystemIngredient(rawInput.id)) {
     return {
       ok: false,
@@ -319,36 +249,19 @@ export async function saveCustomIngredient(rawInput) {
     };
   }
 
-  // 4. Build the canonical ingredient ID
-  let id = rawInput.id;
-  if (!id || !isCustomIngredient(id)) {
-    id = generateCustomId(rawInput.name);
-  }
-
-  // 5. Detect if the name is suspiciously similar to an existing system ingredient
   const normalizedInputName = rawInput.name.trim().toLowerCase();
   let warning = null;
-  const systemMatch = ingredientsDb.find(
-    (sys) => sys.name.toLowerCase() === normalizedInputName
-  );
+  const systemMatch = ingredientsDb.find(sys => sys.name.toLowerCase() === normalizedInputName);
   if (systemMatch) {
     warning = 'similar_to_system';
   }
 
-  // 6. Build the canonical custom ingredient object
-  const now = new Date().toISOString();
-
-  const ingredient = {
-    id,
+  const payload = {
     name: rawInput.name.trim().replace(/\s+/g, ' '),
     category: rawInput.category,
     defaultUnit: rawInput.defaultUnit,
     defaultAmount: parseFloat(rawInput.defaultAmount),
     isUserAuthored: true,
-    createdAt: rawInput.createdAt || now,
-    updatedAt: now,
-    defaultPrepState: rawInput.defaultPrepState || 'raw',
-    substitutions: [],
     kcal: parseFloat(rawInput.nutrition.kcal) || 0,
     protein: parseFloat(rawInput.nutrition.protein) || 0,
     fat: parseFloat(rawInput.nutrition.fat) || 0,
@@ -357,37 +270,35 @@ export async function saveCustomIngredient(rawInput) {
     netCarbs,
     glycemicIndex: gi,
     glycemicLoad,
-    // Keep nested nutrition for backward compatibility
-    nutrition: {
-      kcal: parseFloat(rawInput.nutrition.kcal) || 0,
-      protein: parseFloat(rawInput.nutrition.protein) || 0,
-      fat: parseFloat(rawInput.nutrition.fat) || 0,
-      carbs,
-      fiber,
-      netCarbs,
-      glycemicIndex: gi,
-      glycemicLoad,
-    },
   };
 
-  // 7. Persist to Snappi CMS
   try {
-    await snappiPost(COLLECTION, ingredient);
-    // Invalidate caches so getIngredientsRegistry fetches fresh data
-    invalidateIngredientCache();
-  } catch (err) {
-    console.warn('[ingredientStore] Snappi POST failed, saving to localStorage:', err.message);
-    // Fallback: persist to localStorage
-    _saveToLocalStorage(ingredient);
-  }
+    const response = await strapiPost(COLLECTION, payload);
+    const normalized = normalizeIngredient(response);
 
-  return { ok: true, ingredient, errors: null, warning };
+    // Invalidate local ingredient caches and update registry cache immediately
+    invalidateIngredientCache();
+    if (_registryCache) {
+      _registryCache.push(normalized);
+    }
+
+    return { ok: true, ingredient: normalized, errors: null, warning };
+  } catch (err) {
+    console.warn('[ingredientStore] Strapi POST /api/ingredients failed, saving to localStorage:', err.message);
+
+    const localId = rawInput.id || generateCustomId(rawInput.name);
+    const localIngredient = {
+      ...payload,
+      id: localId,
+      nutrition: { ...payload },
+    };
+    _saveToLocalStorage(localIngredient);
+    invalidateIngredientCache();
+
+    return { ok: true, ingredient: localIngredient, errors: null, warning };
+  }
 }
 
-/**
- * Local-only fallback write (mirrors legacy behavior).
- * @param {object} ingredient
- */
 function _saveToLocalStorage(ingredient) {
   try {
     const existing = _readLocalCustomIngredients();
@@ -395,9 +306,6 @@ function _saveToLocalStorage(ingredient) {
     if (idx > -1) {
       existing[idx] = ingredient;
     } else {
-      if (existing.length >= SOFT_LIMIT) {
-        console.warn('[ingredientStore] Soft limit of custom ingredients reached.');
-      }
       existing.push(ingredient);
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
@@ -406,65 +314,21 @@ function _saveToLocalStorage(ingredient) {
   }
 }
 
-/**
- * Deletes a custom ingredient by ID.
- * BLOCKS deletion of system ingredients.
- *
- * @param {string} id
- * @returns {{ ok: boolean, error?: string }}
- */
 export function deleteCustomIngredient(id) {
   if (!isCustomIngredient(id)) {
-    return { ok: false, error: 'Only custom ingredients (custom- prefix) can be deleted.' };
+    return { ok: false, error: 'Only custom ingredients can be deleted.' };
   }
-  if (isSystemIngredient(id)) {
-    return { ok: false, error: 'System ingredients cannot be deleted.' };
-  }
-
-  // Remove from localStorage fallback
   const existing = _readLocalCustomIngredients();
-  const filtered = existing.filter((c) => c.id !== id);
+  const filtered = existing.filter((c) => String(c.id) !== String(id));
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
   } catch (err) {
-    console.error('[ingredientStore] Failed to delete from localStorage:', err);
+    console.error('[ingredientStore] Deletion error:', err);
   }
-
   invalidateIngredientCache();
   return { ok: true };
 }
 
-/**
- * Partially updates an existing custom ingredient.
- * Merges the patch into the stored object, then re-runs full validation.
- *
- * @param {string} id — must start with "custom-"
- * @param {object} patch — partial fields to update
- * @returns {Promise<{ ok: boolean, ingredient: object|null, errors?: string[] }>}
- */
-export async function updateCustomIngredient(id, patch) {
-  if (!isCustomIngredient(id)) {
-    return { ok: false, ingredient: null, errors: ['Only custom ingredients can be updated.'] };
-  }
-
-  const current = getIngredientById(id);
-  if (!current) {
-    return { ok: false, ingredient: null, errors: [`No custom ingredient found with id: ${id}`] };
-  }
-
-  const merged = {
-    ...current,
-    ...patch,
-    id, // ID is immutable after creation
-    nutrition: { ...current.nutrition, ...(patch.nutrition || {}) },
-  };
-
-  return saveCustomIngredient(merged);
-}
-
-/**
- * Invalidates all ingredient caches (SWR + in-memory).
- */
 export function invalidateIngredientCache() {
   _registryCache = null;
   invalidateCache('ingredients');

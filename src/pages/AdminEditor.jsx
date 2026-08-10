@@ -5,7 +5,6 @@ import EditorPreviewCard from '../components/admin/EditorPreviewCard';
 import { useAuth } from '../context/AuthContext';
 import { saveRecipe, getRecipeById } from '../utils/recipeStore';
 
-// Simple slug-style ID generator from recipe title + timestamp
 const generateRecipeId = (title) => {
   const slug = (title || 'recipe')
     .toLowerCase()
@@ -19,7 +18,6 @@ export const AdminEditor = () => {
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
 
-  // Pre-seed with mock edit values for "Braised Salmon with Lemon Asparagus"
   const [formData, setFormData] = useState({
     title: 'Braised Salmon with Lemon Asparagus',
     description:
@@ -47,10 +45,10 @@ export const AdminEditor = () => {
     ],
   });
 
-  // Track whether this is an update to an existing Snappi record
   const [isExistingRecipe, setIsExistingRecipe] = useState(false);
+  const [notification, setNotification] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Load existing recipe if editing
   useEffect(() => {
     if (!editId) return;
     let cancelled = false;
@@ -58,6 +56,7 @@ export const AdminEditor = () => {
       const existing = await getRecipeById(editId);
       if (cancelled || !existing) return;
       setFormData({
+        id: existing.id,
         title: existing.title || '',
         description: existing.description || '',
         imageUrl: existing.imageUrl || '',
@@ -73,36 +72,39 @@ export const AdminEditor = () => {
     return () => { cancelled = true; };
   }, [editId]);
 
-  const [notification, setNotification] = useState(null); // { msg, type }
-  const [isSaving, setIsSaving] = useState(false);
-
   const showNotification = (msg, type = 'success') => {
     setNotification({ msg, type });
     setTimeout(() => setNotification(null), 4000);
   };
 
   /**
-   * Publishes the recipe to Snappi with status: 'published'.
+   * Publishes the recipe to Strapi `/api/recipes` with `publishedAt: ISO String`.
    */
   const handlePublish = async () => {
     if (isSaving) return;
     setIsSaving(true);
 
     try {
-      const finalId = editId || generateRecipeId(formData.title);
+      const finalId = editId || formData.id || generateRecipeId(formData.title);
+      const nowIso = new Date().toISOString();
       const newRecipe = {
         ...formData,
         id: finalId,
         authorId: user?.email || '',
         isUserAuthored: true,
         status: 'published',
+        publishedAt: nowIso,
       };
 
-      await saveRecipe(newRecipe, { isUpdate: isExistingRecipe || !!editId });
+      await saveRecipe(newRecipe, {
+        isUpdate: isExistingRecipe || !!editId,
+        publishedAt: nowIso,
+      });
+
       addFavorite(finalId);
-      showNotification('🎉 Recipe published to Snappi & added to your Favorites!', 'success');
+      showNotification('🎉 Recipe published to Strapi CMS & added to Favorites!', 'success');
     } catch (err) {
-      console.error('[AdminEditor] Publish failed:', err);
+      console.error('[AdminEditor] Strapi publish failed:', err);
       showNotification(`❌ Publish failed: ${err.message}`, 'error');
     } finally {
       setIsSaving(false);
@@ -110,26 +112,31 @@ export const AdminEditor = () => {
   };
 
   /**
-   * Saves the recipe as a draft to Snappi with status: 'draft'.
+   * Saves the recipe as a draft to Strapi `/api/recipes` with `publishedAt: null`.
    */
   const handleSaveDraft = async () => {
     if (isSaving) return;
     setIsSaving(true);
 
     try {
-      const finalId = editId || generateRecipeId(formData.title);
+      const finalId = editId || formData.id || generateRecipeId(formData.title);
       const newRecipe = {
         ...formData,
         id: finalId,
         authorId: user?.email || '',
         isUserAuthored: true,
         status: 'draft',
+        publishedAt: null,
       };
 
-      await saveRecipe(newRecipe, { isUpdate: isExistingRecipe || !!editId });
-      showNotification('💾 Draft saved to Snappi successfully.', 'draft');
+      await saveRecipe(newRecipe, {
+        isUpdate: isExistingRecipe || !!editId,
+        publishedAt: null,
+      });
+
+      showNotification('💾 Draft saved to Strapi CMS successfully.', 'draft');
     } catch (err) {
-      console.error('[AdminEditor] Draft save failed:', err);
+      console.error('[AdminEditor] Strapi draft save failed:', err);
       showNotification(`❌ Save failed: ${err.message}`, 'error');
     } finally {
       setIsSaving(false);
@@ -138,14 +145,13 @@ export const AdminEditor = () => {
 
   const notifBg =
     notification?.type === 'draft'
-      ? 'bg-surface-container-high text-on-surface border-outline-variant/40'
+      ? 'bg-tertiary-container text-on-tertiary-container border-tertiary/30'
       : notification?.type === 'error'
         ? 'bg-error-container text-on-error-container border-error/30'
         : 'bg-primary text-on-primary border-primary-fixed-dim/20';
 
   return (
     <main className="flex-1 overflow-hidden flex flex-col h-screen relative" aria-label="Recipe Editor">
-
       {/* Floating notification */}
       {notification && (
         <div
@@ -166,7 +172,7 @@ export const AdminEditor = () => {
               {editId ? 'Edit Recipe' : 'Create New Recipe'}
             </h2>
             <p className="text-xs text-on-surface-variant font-medium mt-0.5">
-              Draft a blood-sugar friendly masterpiece with real-time feedback.
+              Draft a blood-sugar friendly masterpiece with real-time feedback connected to Strapi CMS.
             </p>
           </header>
 

@@ -1,15 +1,12 @@
 /**
- * mediaService.js — Snappi Media Library SDK / Asset Upload API
+ * mediaService.js — Strapi Media Library Upload Service
  *
- * Provides a single upload function that sends a file as multipart/form-data
- * to the Snappi `/media/upload` endpoint and returns the hosted asset URL.
- *
- * Usage in components:
- *   const url = await uploadToSnappiMedia(file);
- *   setFormData(prev => ({ ...prev, imageUrl: url }));
+ * Provides media validation and `uploadToStrapiMedia(file)`:
+ * Sends multipart/form-data to Strapi's `/api/upload` endpoint.
+ * Prepends VITE_STRAPI_API_URL if relative path `/uploads/...` is returned.
  */
 
-import { snappiUpload } from './snappiClient';
+import { strapiUpload, STRAPI_URL } from './strapiClient';
 
 /** Maximum file size in bytes (5 MB) */
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -18,10 +15,9 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
 
 /**
- * Validates a file before upload.
- * Returns null if valid, or an error message string.
+ * Validates a media file before uploading.
  * @param {File} file
- * @returns {string|null}
+ * @returns {string|null} — error string or null if valid
  */
 export function validateMediaFile(file) {
   if (!file) return 'No file selected.';
@@ -36,29 +32,43 @@ export function validateMediaFile(file) {
 }
 
 /**
- * Uploads an image file to the Snappi Media Library.
+ * Uploads an image file to the Strapi Media Library (`/api/upload`).
  *
- * @param {File} file — browser File object from drag-and-drop or file input
- * @returns {Promise<string>} — hosted media URL
- * @throws {Error} on validation failure or upload error
+ * @param {File} file — browser File object
+ * @returns {Promise<string>} — hosted full image URL
  */
-export async function uploadToSnappiMedia(file) {
+export async function uploadToStrapiMedia(file) {
   const validationError = validateMediaFile(file);
   if (validationError) {
     throw new Error(validationError);
   }
 
   const formData = new FormData();
-  formData.append('file', file);
-  formData.append('alt', file.name.replace(/\.[^.]+$/, ''));
+  formData.append('files', file);
 
-  const response = await snappiUpload('/media/upload', formData);
+  const response = await strapiUpload('/api/upload', formData);
 
-  // Snappi returns the asset URL in response.url or response.data.url
-  const assetUrl = response?.url || response?.data?.url;
-  if (!assetUrl) {
-    throw new Error('Upload succeeded but no asset URL was returned.');
+  // Strapi returns an array of media objects: [{ id, url, formats, ... }]
+  const mediaItem = Array.isArray(response) ? response[0] : response;
+  let assetPath = mediaItem?.url || mediaItem?.data?.url || mediaItem?.formats?.medium?.url;
+
+  if (!assetPath) {
+    throw new Error('Upload succeeded but no image URL was returned from Strapi.');
   }
 
-  return assetUrl;
+  // Prepend VITE_STRAPI_API_URL if the returned path is relative (starts with '/uploads/')
+  if (assetPath.startsWith('/')) {
+    assetPath = `${STRAPI_URL.replace(/\/$/, '')}${assetPath}`;
+  }
+
+  return assetPath;
 }
+
+/** Legacy alias for backward compatibility */
+export const uploadToSnappiMedia = uploadToStrapiMedia;
+
+export default {
+  validateMediaFile,
+  uploadToStrapiMedia,
+  uploadToSnappiMedia,
+};

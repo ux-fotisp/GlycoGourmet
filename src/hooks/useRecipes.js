@@ -5,14 +5,17 @@ import { useAuth } from '../context/AuthContext';
 /**
  * Custom hook to manage recipe lists, search queries, active tags, and user-created entries.
  *
- * Connected to Snappi CMS via recipeStore:
- * - Global Dashboard Feed: fetches published recipes
- * - "My Recipes" Workspace: fetches recipes by authorId
+ * Connected to Strapi CMS via recipeStore:
+ * - Dashboard Feed: Fetches `/api/recipes?populate=*&publicationState=live`
+ * - "My Recipes" Workspace:
+ *   * Authored Drafts (`publishedAt: null`)
+ *   * Authored Published (`publicationState=live`)
  * - Invalidates SWR caches after save operations
  */
 export function useRecipes() {
   const { user } = useAuth();
   const [allRecipes, setAllRecipes] = useState([]);
+  const [previewRecipes, setPreviewRecipes] = useState([]); // Drafts + Published for active user
   const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [activeTags, setActiveTags] = useState([]);
@@ -20,12 +23,18 @@ export function useRecipes() {
   const refreshRecipes = useCallback(async () => {
     setIsLoading(true);
     try {
-      const recipes = await getAllRecipes();
-      setAllRecipes(recipes ?? []);
+      // 1. Fetch live published recipes for public feed
+      const live = await getAllRecipes({ publicationState: 'live' });
+      setAllRecipes(live ?? []);
+
+      // 2. Fetch preview recipes (including drafts) for user workspace
+      const preview = await getAllRecipes({ publicationState: 'preview' });
+      setPreviewRecipes(preview ?? []);
     } catch (err) {
-      console.error('[useRecipes] Failed to refresh recipes:', err);
+      console.error('[useRecipes] Failed to refresh Strapi recipes:', err);
       setAllRecipes([]);
-    } finally {
+      setPreviewRecipes([]);
+    } fontally: {
       setIsLoading(false);
     }
   }, []);
@@ -35,34 +44,28 @@ export function useRecipes() {
   }, [refreshRecipes]);
 
   /**
-   * Saves a recipe to Snappi CMS, then refreshes the local list.
-   * Supports both new creations and updates.
+   * Saves a recipe to Strapi CMS, then refreshes local lists.
    */
   const saveRecipe = useCallback(async (recipe, options = {}) => {
     try {
       await saveRecipeToStore(recipe, options);
-      // Invalidate caches and refresh
       invalidateRecipeCache();
       await refreshRecipes();
     } catch (err) {
-      console.error('[useRecipes] Failed to save recipe:', err);
-      throw err; // Re-throw so callers can show error notifications
+      console.error('[useRecipes] Failed to save recipe to Strapi:', err);
+      throw err;
     }
   }, [refreshRecipes]);
 
-  // Performance-optimized filtration — runs only when deps change
-  // Global Dashboard Feed: only published recipes
+  // Dashboard Feed: only published live recipes matching search & tags
   const filteredRecipes = useMemo(() => {
     return allRecipes.filter(recipe => {
-      // Exclude draft recipes from public feed
-      if (recipe?.status !== 'published') return false;
+      if (recipe?.status !== 'published' && recipe?.publishedAt === null) return false;
 
-      // Recipe must match ALL active tags
       const matchesTags = activeTags.every(
         tag => Array.isArray(recipe?.tags) && recipe.tags.includes(tag)
       );
 
-      // Search: match title or description
       const searchLower = searchText.toLowerCase().trim();
       const matchesSearch =
         !searchLower ||
@@ -73,19 +76,22 @@ export function useRecipes() {
     });
   }, [allRecipes, activeTags, searchText]);
 
-  // Authored recipes view — recipes created by the current user
-  // For Snappi: filters by authorId (email); fallback: isUserAuthored flag
+  // Authored recipes view — includes both Drafts and Published entries created by current user
   const authoredRecipes = useMemo(() => {
     const currentUserEmail = user?.email?.toLowerCase();
-    return allRecipes.filter(recipe => {
-      // Snappi authorId match
+    const currentUserId = user?.id;
+
+    // Combine preview list (which contains drafts) and filter by user
+    return previewRecipes.filter(recipe => {
       if (currentUserEmail && recipe?.authorId?.toLowerCase() === currentUserEmail) {
         return true;
       }
-      // Fallback: legacy isUserAuthored flag
+      if (currentUserId && String(recipe?.authorId) === String(currentUserId)) {
+        return true;
+      }
       return recipe?.isUserAuthored === true;
     });
-  }, [allRecipes, user?.email]);
+  }, [previewRecipes, user?.email, user?.id]);
 
   const toggleTag = useCallback((tag) => {
     setActiveTags(prev =>
@@ -102,6 +108,7 @@ export function useRecipes() {
 
   return {
     allRecipes,
+    previewRecipes,
     isLoading,
     recipes: filteredRecipes,
     authoredRecipes,
