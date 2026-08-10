@@ -6,7 +6,6 @@ import {
   validateCustomIngredient,
 } from '../../utils/ingredientStore';
 import UsdaIngredientSearch from './UsdaIngredientSearch';
-import { getAcademicGI } from '../../utils/giLookup';
 
 // State for pending warning save
 let pendingSaveRef = null;

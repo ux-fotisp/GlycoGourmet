@@ -33,8 +33,7 @@ export function useRecipes() {
     } catch (err) {
       console.error('[useRecipes] Failed to refresh Strapi recipes:', err);
       setAllRecipes([]);
-      setPreviewRecipes([]);
-    } fontally: {
+    } finally {
       setIsLoading(false);
     }
   }, []);

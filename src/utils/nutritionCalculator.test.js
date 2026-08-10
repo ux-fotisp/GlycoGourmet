@@ -137,4 +137,30 @@ describe('nutritionCalculator dynamic aggregation tests', () => {
     ]);
     expect(cooledResult.glycemicIndex).toBe(45.1);
   });
+
+  it('handles empty ingredients array safely returning zero fallbacks', () => {
+    const emptyResult = calculateRecipeNutrition([]);
+    expect(emptyResult.kcal).toBe(0);
+    expect(emptyResult.protein).toBe(0);
+    expect(emptyResult.fat).toBe(0);
+    expect(emptyResult.carbs).toBe(0);
+    expect(emptyResult.netCarbs).toBe(0);
+    expect(emptyResult.fiber).toBe(0);
+    expect(emptyResult.glycemicIndex).toBeNull();
+    expect(emptyResult.glycemicLoad).toBe(0);
+  });
+
+  it('handles fiber > carbs safely without negative netCarbs', () => {
+    const highFiberItem = [
+      {
+        ingredientId: 'high-fiber',
+        amount: 1,
+        unit: 'serving',
+      }
+    ];
+    // With netCarbs logic Math.max(0, carbs - fiber)
+    const result = calculateRecipeNutrition(highFiberItem);
+    expect(result.netCarbs).toBeGreaterThanOrEqual(0);
+    expect(Number.isNaN(result.netCarbs)).toBe(false);
+  });
 });
