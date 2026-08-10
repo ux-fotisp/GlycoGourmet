@@ -1,6 +1,5 @@
-import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Login } from './Login';
 import { useAuth } from '../context/AuthContext';
@@ -23,9 +22,14 @@ describe('Login page', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    cleanup();
     useAuth.mockReturnValue({
       login: mockLogin,
     });
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   const renderLogin = () =>

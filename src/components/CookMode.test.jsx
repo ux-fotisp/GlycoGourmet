@@ -1,6 +1,5 @@
-import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import CookMode from './CookMode';
 
 const mockRecipe = {
@@ -21,6 +20,11 @@ describe('CookMode component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    cleanup();
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   // --- Visibility ---

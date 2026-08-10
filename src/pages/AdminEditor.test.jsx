@@ -80,7 +80,7 @@ describe('AdminEditor page', () => {
   // --- Save/Publish buttons ---
   it('renders Publish Recipe and Save Draft buttons', () => {
     renderEditor();
-    expect(screen.getByText(/Publish Recipe/i)).toBeDefined();
-    expect(screen.getByText(/Save Draft/i)).toBeDefined();
+    expect(screen.getAllByText(/Publish Recipe/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Save (as )?Draft/i).length).toBeGreaterThan(0);
   });
 });

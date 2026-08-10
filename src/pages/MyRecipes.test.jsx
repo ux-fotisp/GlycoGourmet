@@ -63,6 +63,8 @@ describe('MyRecipes page', () => {
     });
     useFavorites.mockReturnValue({
       favorites: ['crispy-salmon'],
+      isFavorite: (id) => id === 'crispy-salmon',
+      toggleFavorite: vi.fn(),
     });
   });
 

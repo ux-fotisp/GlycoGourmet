@@ -1,6 +1,5 @@
-import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useAuth } from '../../context/AuthContext';
@@ -11,10 +10,16 @@ vi.mock('../../context/AuthContext', () => ({
 
 describe('Navbar component', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
+    cleanup();
     useAuth.mockReturnValue({
       user: { name: 'Chef Julian', onboarded: true },
       logout: vi.fn(),
     });
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   const renderNavbar = () =>
