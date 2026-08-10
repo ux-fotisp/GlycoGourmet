@@ -1,0 +1,25 @@
+{
+  "id": "skillet-shakshuka",
+  "title": "Skillet Shakshuka",
+  "isUserAuthored": false,
+  "status": "published",
+  "description": "Slow-absorbed carbs with fiber-rich peppers, tomatoes, and poached eggs. Hearty, spicy, and perfectly low-glycemic.",
+  "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBiA1iKI7dmZGOSKxAq4Va2cbTmZ6U4-BOPbcvAcl-nWijeHt5LMZ6f4iiQlb2CjVD7-71YaOSxn-_hLteiUSIDhSEvfz3n2CwEp5bGgTYeT5wkQ41zgdcTFtXHPfye-VUFg3d8jYtt3uSwN2oY645PdZCYN09CZIToTizAHFs7h7piKBQXNpepap5n0sb1bUFTVE8uIQ7LRJzxBOhHsDxXUARf45ooqnLyYFSaXv9kwswF6d8S81W3",
+  "cookingTime": 25,
+  "difficulty": "Medium",
+  "category": "Breakfast",
+  "tags": ["Low GI", "Low Sugar", "High Protein", "Keto-Friendly"],
+  "servings": 2,
+  "ingredients": [
+    { "ingredientId": "eggs", "amount": 4, "unit": "piece", "prepState": "boiled" },
+    { "ingredientId": "bell-pepper", "amount": 1, "unit": "piece", "prepState": "raw" },
+    { "ingredientId": "cherry-tomato", "amount": 1.5, "unit": "cup", "prepState": "sauteed" },
+    { "ingredientId": "olive-oil", "amount": 1, "unit": "tbsp", "prepState": "raw" },
+    { "ingredientId": "garlic", "amount": 2, "unit": "clove", "prepState": "sauteed" }
+  ],
+  "steps": [
+    { "title": "Sauté Veggies", "description": "Heat olive oil in a skillet. Sauté chopped bell peppers and garlic until soft. Add cherry tomatoes and simmer until they break down into a thick sauce.", "timer": 10 },
+    { "title": "Create Wells", "description": "Use a spoon to create small wells in the sauce. Crack an egg directly into each well.", "timer": 3 },
+    { "title": "Poach Eggs", "description": "Cover the skillet and simmer over low heat until egg whites are set but yolks remain runny. The fats and protein in eggs delay gastric emptying.", "timer": 6 }
+  ]
+}

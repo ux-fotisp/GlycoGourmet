@@ -1,0 +1,62 @@
+[
+  {
+    "id": "crispy-salmon-asparagus",
+    "title": "Crispy Salmon & Asparagus",
+    "description": "Slow-seared atlantic salmon with grilled fiber-rich greens. Designed to prevent glucose spikes while satisfying gourmet cravings.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCC3o6_xMnKi_jomsnHTraFX7el-CDj6Up0-YO_B-Coun_VX1vq2BkXG46rmudWt6kJsTe7UX_tFKfZjdow2QYvWLlU9ZtepeBM7dknd_LA_2eMzUmsGmXhxQipdxqYHlCDlMPMJtNqchzy80PDS8aTZL5kdvEohLofJjrS-6YR2ib0daohnQME3orw3n_DiX-m9JlF3zIasxP5Uc84qAkeW8EDhJUwTG4JQzxE68xtjLZwNqKU1IiZ",
+    "cookingTime": 25,
+    "tags": ["Low GI", "Low Sugar", "High Protein", "Keto-Friendly"],
+    "status": "published",
+    "isUserAuthored": false
+  },
+  {
+    "id": "berry-chia-power-pot",
+    "title": "Berry Chia Power Pot",
+    "description": "Omega-3 rich pudding with wild blueberries and toasted nuts. A breakfast or snack that supports blood sugar balance and keeps you full.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuDQm1VBLSn9IUGicA-gjUEv9oGoag75s7a300MD5lnkOyP4JAwu5RlBGn-yslExEf0mAQRgBhN1vam7p-T3Rjg_rPKFvlX798Ys40e4q9KlP8vVSq3Xnh7T7FIroPnwieLMPhpE2ntgZStbWBoqr_XLU2vIdwvfSuAgDU5U1JZVWWmQLgpnpc9DK9LPZLqo197CbzW6C877NJY_i9pVSqGN3F4WSkxLuD1lO5XIcC7FJwgBrOjKNyXn",
+    "cookingTime": 10,
+    "tags": ["Low GI", "Low Sugar", "High Fiber", "Keto-Friendly"],
+    "status": "published",
+    "isUserAuthored": false
+  },
+  {
+    "id": "sprouted-grain-turkey-wrap",
+    "title": "Sprouted Grain Turkey Wrap",
+    "description": "Slow-digesting sprouted wheat with avocado cream and lean turkey. High protein and packed with fiber for sustained energy.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuB2gOJCpjJKi2wHlnfT5NdCCABwJ1lAGo5zouwfi29S3MxqXIORMi15Ii_z-Z4lPfqvpvgyJ16fUDkpOEzX3_KObeOZ50lQr6_tuxG6iouzpZfMc8tpWGeplsx9XySvu-D1FrpKWT7W6120e1f0KMPLrL5bOU8acC9bI44PCokfLOqZNNSsKJlgUC1NpMvqVkBg3kcpoGK0mVbIgSEXwtQTclIkhPxVwtmbhS1DA4en59pksXc3ZUSU",
+    "cookingTime": 15,
+    "tags": ["Low GI", "High Fiber", "High Protein"],
+    "status": "published",
+    "isUserAuthored": false
+  },
+  {
+    "id": "golden-roasted-steaks",
+    "title": "Golden Roasted Steaks",
+    "description": "Anti-inflammatory turmeric roasted cauliflower steaks served with fresh garden herbs and healthy olive oil.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAfWBkyYSIbdBPFx8kyT0mnH8-NV6GitEdhRPtfy7nEAMkCGXkHMoU4_FthHwI4oUmqaQ274LHqsvflY9df80B1jTYvb73XTYoQaxGnDfuRvW0fa0birtaubdCsmSLDB6FiM28q4QKYUIFxWLTOufXpugw75jy2Ta5xabwO8m6P0K6QXFEYDLyjyxzD-pMpxzynz0o6t-iKJ0F-gwUifk7vtdSgw8HmUM746bxwgS9A6S8nrLaS5MRh",
+    "cookingTime": 30,
+    "tags": ["Low GI", "Low Sugar", "High Fiber", "Keto-Friendly"],
+    "status": "published",
+    "isUserAuthored": false
+  },
+  {
+    "id": "skillet-shakshuka",
+    "title": "Skillet Shakshuka",
+    "description": "Slow-absorbed carbs with fiber-rich peppers, tomatoes, and poached eggs. Hearty, spicy, and perfectly low-glycemic.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBiA1iKI7dmZGOSKxAq4Va2cbTmZ6U4-BOPbcvAcl-nWijeHt5LMZ6f4iiQlb2CjVD7-71YaOSxn-_hLteiUSIDhSEvfz3n2CwEp5bGgTYeT5wkQ41zgdcTFtXHPfye-VUFg3d8jYtt3uSwN2oY645PdZCYN09CZIToTizAHFs7h7piKBQXNpepap5n0sb1bUFTVE8uIQ7LRJzxBOhHsDxXUARf45ooqnLyYFSaXv9kwswF6d8S81W3",
+    "cookingTime": 25,
+    "tags": ["Low GI", "Low Sugar", "High Protein", "Keto-Friendly"],
+    "status": "published",
+    "isUserAuthored": false
+  },
+  {
+    "id": "flank-steak-walnut-salad",
+    "title": "Flank Steak & Walnut Salad",
+    "description": "Bitter greens, healthy fats from toasted walnuts, and tender flank steak. A restaurant-quality meal with near-zero blood sugar impact.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCEmKXM0pnaL4jBHHqXyD_unp46KeafiRByNeCze8u30g69NLN62utCOCgxZ7R8yPFe_CROsbAFMIoZ7pM9dVwUQaRc3ULbIyqr6tjqibQlKE0I68lJPvFSm6Kshof4_MukFpXHU7VSZ5R_sNF9hQeHR0mzfMe0FmiAM7OAbiDn6rYDgpVT4SjBxXzTjcMK3pyjknMEeb1poyU0ebV7SVfxawnI-2MWSnCVaZj7vzJQtBxchRRW7bEF",
+    "cookingTime": 20,
+    "tags": ["Low GI", "Low Sugar", "High Protein", "Keto-Friendly"],
+    "status": "published",
+    "isUserAuthored": false
+  }
+]

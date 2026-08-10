@@ -1,0 +1,24 @@
+{
+  "id": "berry-chia-power-pot",
+  "title": "Berry Chia Power Pot",
+  "isUserAuthored": false,
+  "status": "published",
+  "description": "Omega-3 rich pudding with wild blueberries and toasted nuts. A breakfast or snack that supports blood sugar balance and keeps you full.",
+  "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuDQm1VBLSn9IUGicA-gjUEv9oGoag75s7a300MD5lnkOyP4JAwu5RlBGn-yslExEf0mAQRgBhN1vam7p-T3Rjg_rPKFvlX798Ys40e4q9KlP8vVSq3Xnh7T7FIroPnwieLMPhpE2ntgZStbWBoqr_XLU2vIdwvfSuAgDU5U1JZVWWmQLgpnpc9DK9LPZLqo197CbzW6C877NJY_i9pVSqGN3F4WSkxLuD1lO5XIcC7FJwgBrOjKNyXn",
+  "cookingTime": 10,
+  "difficulty": "Easy",
+  "category": "Breakfast",
+  "tags": ["Low GI", "Low Sugar", "High Fiber", "Keto-Friendly"],
+  "servings": 1,
+  "ingredients": [
+    { "ingredientId": "chia-seeds", "amount": 2, "unit": "tbsp", "prepState": "raw" },
+    { "ingredientId": "greek-yogurt", "amount": 0.5, "unit": "cup", "prepState": "cooled" },
+    { "ingredientId": "blueberries", "amount": 0.25, "unit": "cup", "prepState": "raw" },
+    { "ingredientId": "almonds", "amount": 0.25, "unit": "cup", "prepState": "roasted" }
+  ],
+  "steps": [
+    { "title": "Combine Chia & Yogurt", "description": "Mix the chia seeds and unsweetened Greek yogurt in a bowl or small glass jar. Stir well to prevent clumping.", "timer": 2 },
+    { "title": "Chill & Set", "description": "Cover and refrigerate for at least 15 minutes (or overnight) to allow chia seeds to expand, releasing high-fiber mucilage that slows carb digestion.", "timer": 15 },
+    { "title": "Toppings", "description": "Stir the mixture gently. Top with wild blueberries and sliced almonds for a perfect healthy fat crunch.", "timer": 1 }
+  ]
+}

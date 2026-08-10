@@ -1,0 +1,24 @@
+{
+  "id": "golden-roasted-steaks",
+  "title": "Golden Roasted Steaks",
+  "isUserAuthored": false,
+  "status": "published",
+  "description": "Anti-inflammatory turmeric roasted cauliflower steaks served with fresh garden herbs and healthy olive oil.",
+  "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAfWBkyYSIbdBPFx8kyT0mnH8-NV6GitEdhRPtfy7nEAMkCGXkHMoU4_FthHwI4oUmqaQ274LHqsvflY9df80B1jTYvb73XTYoQaxGnDfuRvW0fa0birtaubdCsmSLDB6FiM28q4QKYUIFxWLTOufXpugw75jy2Ta5xabwO8m6P0K6QXFEYDLyjyxzD-pMpxzynz0o6t-iKJ0F-gwUifk7vtdSgw8HmUM746bxwgS9A6S8nrLaS5MRh",
+  "cookingTime": 30,
+  "difficulty": "Easy",
+  "category": "Salad",
+  "tags": ["Low GI", "Low Sugar", "High Fiber", "Keto-Friendly"],
+  "servings": 1,
+  "ingredients": [
+    { "ingredientId": "cauliflower-rice", "amount": 2, "unit": "cup", "prepState": "roasted" },
+    { "ingredientId": "olive-oil", "amount": 1.5, "unit": "tbsp", "prepState": "raw" },
+    { "ingredientId": "garlic", "amount": 2, "unit": "clove", "prepState": "sauteed" },
+    { "ingredientId": "spinach", "amount": 1, "unit": "cup", "prepState": "raw" }
+  ],
+  "steps": [
+    { "title": "Slice & Brush", "description": "Brush thick slices of cauliflower (or cauliflower florets) with olive oil and seasoned garlic.", "timer": 5 },
+    { "title": "Roast", "description": "Roast at 400°F (200°C) until golden brown and caramelized around the edges. Cauliflower has a low GI and glycemic load.", "timer": 20 },
+    { "title": "Plate with Greens", "description": "Serve warm over a bed of baby spinach, adding a squeeze of fresh lemon if desired.", "timer": 2 }
+  ]
+}

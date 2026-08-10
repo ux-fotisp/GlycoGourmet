@@ -1,0 +1,25 @@
+{
+  "id": "sprouted-grain-turkey-wrap",
+  "title": "Sprouted Grain Turkey Wrap",
+  "isUserAuthored": false,
+  "status": "published",
+  "description": "Slow-digesting sprouted wheat with avocado cream and lean turkey. High protein and packed with fiber for sustained energy.",
+  "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuB2gOJCpjJKi2wHlnfT5NdCCABwJ1lAGo5zouwfi29S3MxqXIORMi15Ii_z-Z4lPfqvpvgyJ16fUDkpOEzX3_KObeOZ50lQr6_tuxG6iouzpZfMc8tpWGeplsx9XySvu-D1FrpKWT7W6120e1f0KMPLrL5bOU8acC9bI44PCokfLOqZNNSsKJlgUC1NpMvqVkBg3kcpoGK0mVbIgSEXwtQTclIkhPxVwtmbhS1DA4en59pksXc3ZUSU",
+  "cookingTime": 15,
+  "difficulty": "Easy",
+  "category": "Main Course",
+  "tags": ["Low GI", "High Fiber", "High Protein"],
+  "servings": 1,
+  "ingredients": [
+    { "ingredientId": "sprouted-wheat-wrap", "amount": 1, "unit": "piece", "prepState": "raw" },
+    { "ingredientId": "turkey-breast", "amount": 4, "unit": "oz", "prepState": "raw" },
+    { "ingredientId": "avocado", "amount": 0.5, "unit": "piece", "prepState": "raw" },
+    { "ingredientId": "spinach", "amount": 0.5, "unit": "cup", "prepState": "raw" },
+    { "ingredientId": "bell-pepper", "amount": 0.5, "unit": "piece", "prepState": "raw" }
+  ],
+  "steps": [
+    { "title": "Prep Wrap & Avocado", "description": "Place the sprouted grain wrap on a clean board. Mash the half avocado directly on the wrap to form a nutrient-dense, healthy-fat barrier.", "timer": 3 },
+    { "title": "Layer Fillings", "description": "Layer fresh turkey breast slices over the avocado spread. Add baby spinach and thinly sliced bell peppers.", "timer": 3 },
+    { "title": "Roll & Slice", "description": "Roll the wrap tightly, tucking in the sides. Slice diagonally and enjoy immediately for steady blood sugar release.", "timer": 2 }
+  ]
+}

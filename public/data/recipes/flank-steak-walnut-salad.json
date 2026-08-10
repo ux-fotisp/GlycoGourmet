@@ -1,0 +1,25 @@
+{
+  "id": "flank-steak-walnut-salad",
+  "title": "Flank Steak & Walnut Salad",
+  "isUserAuthored": false,
+  "status": "published",
+  "description": "Bitter greens, healthy fats from toasted walnuts, and tender flank steak. A restaurant-quality meal with near-zero blood sugar impact.",
+  "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCEmKXM0pnaL4jBHHqXyD_unp46KeafiRByNeCze8u30g69NLN62utCOCgxZ7R8yPFe_CROsbAFMIoZ7pM9dVwUQaRc3ULbIyqr6tjqibQlKE0I68lJPvFSm6Kshof4_MukFpXHU7VSZ5R_sNF9hQeHR0mzfMe0FmiAM7OAbiDn6rYDgpVT4SjBxXzTjcMK3pyjknMEeb1poyU0ebV7SVfxawnI-2MWSnCVaZj7vzJQtBxchRRW7bEF",
+  "cookingTime": 20,
+  "difficulty": "Medium",
+  "category": "Salad",
+  "tags": ["Low GI", "Low Sugar", "High Protein", "Keto-Friendly"],
+  "servings": 1,
+  "ingredients": [
+    { "ingredientId": "flank-steak", "amount": 4, "unit": "oz", "prepState": "sauteed" },
+    { "ingredientId": "walnuts", "amount": 0.25, "unit": "cup", "prepState": "roasted" },
+    { "ingredientId": "spinach", "amount": 2, "unit": "cup", "prepState": "raw" },
+    { "ingredientId": "olive-oil", "amount": 1, "unit": "tbsp", "prepState": "raw" },
+    { "ingredientId": "lemon", "amount": 1, "unit": "tbsp", "prepState": "raw" }
+  ],
+  "steps": [
+    { "title": "Sear Steak", "description": "Sear the flank steak in a hot skillet for 3-4 minutes per side. Let it rest, then slice thinly against the grain.", "timer": 8 },
+    { "title": "Dress Greens", "description": "Toss fresh baby spinach with olive oil and fresh lemon juice. Lemon acidity helps blunt the glycemic curve of the entire meal.", "timer": 3 },
+    { "title": "Assemble", "description": "Top dressed greens with sliced steak and toasted walnuts for healthy fats and high contrast texture.", "timer": 2 }
+  ]
+}

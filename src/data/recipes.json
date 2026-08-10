@@ -1,0 +1,396 @@
+[
+  {
+    "id": "crispy-salmon-asparagus",
+    "title": "Crispy Salmon & Asparagus",
+    "isUserAuthored": false,
+    "status": "published",
+    "description": "Slow-seared atlantic salmon with grilled fiber-rich greens. Designed to prevent glucose spikes while satisfying gourmet cravings.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCC3o6_xMnKi_jomsnHTraFX7el-CDj6Up0-YO_B-Coun_VX1vq2BkXG46rmudWt6kJsTe7UX_tFKfZjdow2QYvWLlU9ZtepeBM7dknd_LA_2eMzUmsGmXhxQipdxqYHlCDlMPMJtNqchzy80PDS8aTZL5kdvEohLofJjrS-6YR2ib0daohnQME3orw3n_DiX-m9JlF3zIasxP5Uc84qAkeW8EDhJUwTG4JQzxE68xtjLZwNqKU1IiZ",
+    "cookingTime": 25,
+    "difficulty": "Medium",
+    "category": "Main Course",
+    "tags": [
+      "Low GI",
+      "Low Sugar",
+      "High Protein",
+      "Keto-Friendly"
+    ],
+    "servings": 1,
+    "ingredients": [
+      {
+        "ingredientId": "atlantic-salmon",
+        "amount": 6,
+        "unit": "oz",
+        "prepState": "sauteed"
+      },
+      {
+        "ingredientId": "asparagus",
+        "amount": 1,
+        "unit": "bunch",
+        "prepState": "roasted"
+      },
+      {
+        "ingredientId": "olive-oil",
+        "amount": 1,
+        "unit": "tbsp",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "garlic",
+        "amount": 1,
+        "unit": "clove",
+        "prepState": "sauteed"
+      },
+      {
+        "ingredientId": "lemon",
+        "amount": 1,
+        "unit": "tbsp",
+        "prepState": "raw"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Prepare the Salmon",
+        "description": "Pat the 6oz Salmon Fillet dry with a paper towel. Season generously with kosher salt and cracked black pepper on all sides.",
+        "timer": 2
+      },
+      {
+        "title": "Sear the Skin",
+        "description": "Heat olive oil in a heavy skillet over medium-high heat. Place salmon skin-side down. Press firmly for 30 seconds to prevent curling.",
+        "timer": 5
+      },
+      {
+        "title": "The Flip",
+        "description": "Carefully flip the fillet using a fish spatula. Add 1 clove garlic to the pan for basting.",
+        "timer": 3
+      },
+      {
+        "title": "Rest & Serve",
+        "description": "Remove from pan and let it rest for 2 minutes. Drizzle with lemon juice and serve warm alongside grilled asparagus.",
+        "timer": 2
+      }
+    ]
+  },
+  {
+    "id": "berry-chia-power-pot",
+    "title": "Berry Chia Power Pot",
+    "isUserAuthored": false,
+    "status": "published",
+    "description": "Omega-3 rich pudding with wild blueberries and toasted nuts. A breakfast or snack that supports blood sugar balance and keeps you full.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuDQm1VBLSn9IUGicA-gjUEv9oGoag75s7a300MD5lnkOyP4JAwu5RlBGn-yslExEf0mAQRgBhN1vam7p-T3Rjg_rPKFvlX798Ys40e4q9KlP8vVSq3Xnh7T7FIroPnwieLMPhpE2ntgZStbWBoqr_XLU2vIdwvfSuAgDU5U1JZVWWmQLgpnpc9DK9LPZLqo197CbzW6C877NJY_i9pVSqGN3F4WSkxLuD1lO5XIcC7FJwgBrOjKNyXn",
+    "cookingTime": 10,
+    "difficulty": "Easy",
+    "category": "Breakfast",
+    "tags": [
+      "Low GI",
+      "Low Sugar",
+      "High Fiber",
+      "Keto-Friendly"
+    ],
+    "servings": 1,
+    "ingredients": [
+      {
+        "ingredientId": "chia-seeds",
+        "amount": 2,
+        "unit": "tbsp",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "greek-yogurt",
+        "amount": 0.5,
+        "unit": "cup",
+        "prepState": "cooled"
+      },
+      {
+        "ingredientId": "blueberries",
+        "amount": 0.25,
+        "unit": "cup",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "almonds",
+        "amount": 0.25,
+        "unit": "cup",
+        "prepState": "roasted"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Combine Chia & Yogurt",
+        "description": "Mix the chia seeds and unsweetened Greek yogurt in a bowl or small glass jar. Stir well to prevent clumping.",
+        "timer": 2
+      },
+      {
+        "title": "Chill & Set",
+        "description": "Cover and refrigerate for at least 15 minutes (or overnight) to allow chia seeds to expand, releasing high-fiber mucilage that slows carb digestion.",
+        "timer": 15
+      },
+      {
+        "title": "Toppings",
+        "description": "Stir the mixture gently. Top with wild blueberries and sliced almonds for a perfect healthy fat crunch.",
+        "timer": 1
+      }
+    ]
+  },
+  {
+    "id": "sprouted-grain-turkey-wrap",
+    "title": "Sprouted Grain Turkey Wrap",
+    "isUserAuthored": false,
+    "status": "published",
+    "description": "Slow-digesting sprouted wheat with avocado cream and lean turkey. High protein and packed with fiber for sustained energy.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuB2gOJCpjJKi2wHlnfT5NdCCABwJ1lAGo5zouwfi29S3MxqXIORMi15Ii_z-Z4lPfqvpvgyJ16fUDkpOEzX3_KObeOZ50lQr6_tuxG6iouzpZfMc8tpWGeplsx9XySvu-D1FrpKWT7W6120e1f0KMPLrL5bOU8acC9bI44PCokfLOqZNNSsKJlgUC1NpMvqVkBg3kcpoGK0mVbIgSEXwtQTclIkhPxVwtmbhS1DA4en59pksXc3ZUSU",
+    "cookingTime": 15,
+    "difficulty": "Easy",
+    "category": "Main Course",
+    "tags": [
+      "Low GI",
+      "High Fiber",
+      "High Protein"
+    ],
+    "servings": 1,
+    "ingredients": [
+      {
+        "ingredientId": "sprouted-wheat-wrap",
+        "amount": 1,
+        "unit": "piece",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "turkey-breast",
+        "amount": 4,
+        "unit": "oz",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "avocado",
+        "amount": 0.5,
+        "unit": "piece",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "spinach",
+        "amount": 0.5,
+        "unit": "cup",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "bell-pepper",
+        "amount": 0.5,
+        "unit": "piece",
+        "prepState": "raw"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Prep Wrap & Avocado",
+        "description": "Place the sprouted grain wrap on a clean board. Mash the half avocado directly on the wrap to form a nutrient-dense, healthy-fat barrier.",
+        "timer": 3
+      },
+      {
+        "title": "Layer Fillings",
+        "description": "Layer fresh turkey breast slices over the avocado spread. Add baby spinach and thinly sliced bell peppers.",
+        "timer": 3
+      },
+      {
+        "title": "Roll & Slice",
+        "description": "Roll the wrap tightly, tucking in the sides. Slice diagonally and enjoy immediately for steady blood sugar release.",
+        "timer": 2
+      }
+    ]
+  },
+  {
+    "id": "golden-roasted-steaks",
+    "title": "Golden Roasted Steaks",
+    "isUserAuthored": false,
+    "status": "published",
+    "description": "Anti-inflammatory turmeric roasted cauliflower steaks served with fresh garden herbs and healthy olive oil.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAfWBkyYSIbdBPFx8kyT0mnH8-NV6GitEdhRPtfy7nEAMkCGXkHMoU4_FthHwI4oUmqaQ274LHqsvflY9df80B1jTYvb73XTYoQaxGnDfuRvW0fa0birtaubdCsmSLDB6FiM28q4QKYUIFxWLTOufXpugw75jy2Ta5xabwO8m6P0K6QXFEYDLyjyxzD-pMpxzynz0o6t-iKJ0F-gwUifk7vtdSgw8HmUM746bxwgS9A6S8nrLaS5MRh",
+    "cookingTime": 30,
+    "difficulty": "Easy",
+    "category": "Salad",
+    "tags": [
+      "Low GI",
+      "Low Sugar",
+      "High Fiber",
+      "Keto-Friendly"
+    ],
+    "servings": 1,
+    "ingredients": [
+      {
+        "ingredientId": "cauliflower-rice",
+        "amount": 2,
+        "unit": "cup",
+        "prepState": "roasted"
+      },
+      {
+        "ingredientId": "olive-oil",
+        "amount": 1.5,
+        "unit": "tbsp",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "garlic",
+        "amount": 2,
+        "unit": "clove",
+        "prepState": "sauteed"
+      },
+      {
+        "ingredientId": "spinach",
+        "amount": 1,
+        "unit": "cup",
+        "prepState": "raw"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Slice & Brush",
+        "description": "Brush thick slices of cauliflower (or cauliflower florets) with olive oil and seasoned garlic.",
+        "timer": 5
+      },
+      {
+        "title": "Roast",
+        "description": "Roast at 400°F (200°C) until golden brown and caramelized around the edges. Cauliflower has a low GI and glycemic load.",
+        "timer": 20
+      },
+      {
+        "title": "Plate with Greens",
+        "description": "Serve warm over a bed of baby spinach, adding a squeeze of fresh lemon if desired.",
+        "timer": 2
+      }
+    ]
+  },
+  {
+    "id": "skillet-shakshuka",
+    "title": "Skillet Shakshuka",
+    "isUserAuthored": false,
+    "status": "published",
+    "description": "Slow-absorbed carbs with fiber-rich peppers, tomatoes, and poached eggs. Hearty, spicy, and perfectly low-glycemic.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBiA1iKI7dmZGOSKxAq4Va2cbTmZ6U4-BOPbcvAcl-nWijeHt5LMZ6f4iiQlb2CjVD7-71YaOSxn-_hLteiUSIDhSEvfz3n2CwEp5bGgTYeT5wkQ41zgdcTFtXHPfye-VUFg3d8jYtt3uSwN2oY645PdZCYN09CZIToTizAHFs7h7piKBQXNpepap5n0sb1bUFTVE8uIQ7LRJzxBOhHsDxXUARf45ooqnLyYFSaXv9kwswF6d8S81W3",
+    "cookingTime": 25,
+    "difficulty": "Medium",
+    "category": "Breakfast",
+    "tags": [
+      "Low GI",
+      "Low Sugar",
+      "High Protein",
+      "Keto-Friendly"
+    ],
+    "servings": 2,
+    "ingredients": [
+      {
+        "ingredientId": "eggs",
+        "amount": 4,
+        "unit": "piece",
+        "prepState": "boiled"
+      },
+      {
+        "ingredientId": "bell-pepper",
+        "amount": 1,
+        "unit": "piece",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "cherry-tomato",
+        "amount": 1.5,
+        "unit": "cup",
+        "prepState": "sauteed"
+      },
+      {
+        "ingredientId": "olive-oil",
+        "amount": 1,
+        "unit": "tbsp",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "garlic",
+        "amount": 2,
+        "unit": "clove",
+        "prepState": "sauteed"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Sauté Veggies",
+        "description": "Heat olive oil in a skillet. Sauté chopped bell peppers and garlic until soft. Add cherry tomatoes and simmer until they break down into a thick sauce.",
+        "timer": 10
+      },
+      {
+        "title": "Create Wells",
+        "description": "Use a spoon to create small wells in the sauce. Crack an egg directly into each well.",
+        "timer": 3
+      },
+      {
+        "title": "Poach Eggs",
+        "description": "Cover the skillet and simmer over low heat until egg whites are set but yolks remain runny. The fats and protein in eggs delay gastric emptying.",
+        "timer": 6
+      }
+    ]
+  },
+  {
+    "id": "flank-steak-walnut-salad",
+    "title": "Flank Steak & Walnut Salad",
+    "isUserAuthored": false,
+    "status": "published",
+    "description": "Bitter greens, healthy fats from toasted walnuts, and tender flank steak. A restaurant-quality meal with near-zero blood sugar impact.",
+    "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCEmKXM0pnaL4jBHHqXyD_unp46KeafiRByNeCze8u30g69NLN62utCOCgxZ7R8yPFe_CROsbAFMIoZ7pM9dVwUQaRc3ULbIyqr6tjqibQlKE0I68lJPvFSm6Kshof4_MukFpXHU7VSZ5R_sNF9hQeHR0mzfMe0FmiAM7OAbiDn6rYDgpVT4SjBxXzTjcMK3pyjknMEeb1poyU0ebV7SVfxawnI-2MWSnCVaZj7vzJQtBxchRRW7bEF",
+    "cookingTime": 20,
+    "difficulty": "Medium",
+    "category": "Salad",
+    "tags": [
+      "Low GI",
+      "Low Sugar",
+      "High Protein",
+      "Keto-Friendly"
+    ],
+    "servings": 1,
+    "ingredients": [
+      {
+        "ingredientId": "flank-steak",
+        "amount": 4,
+        "unit": "oz",
+        "prepState": "sauteed"
+      },
+      {
+        "ingredientId": "walnuts",
+        "amount": 0.25,
+        "unit": "cup",
+        "prepState": "roasted"
+      },
+      {
+        "ingredientId": "spinach",
+        "amount": 2,
+        "unit": "cup",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "olive-oil",
+        "amount": 1,
+        "unit": "tbsp",
+        "prepState": "raw"
+      },
+      {
+        "ingredientId": "lemon",
+        "amount": 1,
+        "unit": "tbsp",
+        "prepState": "raw"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Sear Steak",
+        "description": "Sear the flank steak in a hot skillet for 3-4 minutes per side. Let it rest, then slice thinly against the grain.",
+        "timer": 8
+      },
+      {
+        "title": "Dress Greens",
+        "description": "Toss fresh baby spinach with olive oil and fresh lemon juice. Lemon acidity helps blunt the glycemic curve of the entire meal.",
+        "timer": 3
+      },
+      {
+        "title": "Assemble",
+        "description": "Top dressed greens with sliced steak and toasted walnuts for healthy fats and high contrast texture.",
+        "timer": 2
+      }
+    ]
+  }
+]
