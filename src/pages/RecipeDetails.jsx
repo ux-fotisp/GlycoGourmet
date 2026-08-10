@@ -9,6 +9,7 @@ import InstructionSteps from '../components/recipe/InstructionSteps';
 import CookModeModal from '../components/recipe/CookModeModal';
 import RecipeObjectBridge from '../components/recipe/RecipeObjectBridge';
 import SubstitutionModal from '../components/recipe/SubstitutionModal';
+import AddToMealPlanModal from '../components/recipe/AddToMealPlanModal';
 import { useFavorites } from '../hooks/useFavorites';
 
 /**
@@ -213,37 +214,12 @@ export const RecipeDetails = () => {
         </button>
       </nav>
 
-      {/* Mobile Meal Plan Picker Drawer/Modal */}
-      {showMobilePlanPicker && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white w-full max-w-sm rounded-2xl p-5 space-y-4 border border-outline-variant/40 shadow-2xl">
-            <div className="flex justify-between items-center">
-              <h4 className="font-bold text-sm text-on-surface uppercase tracking-wider flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-lg">calendar_month</span>
-                Add to Meal Plan
-              </h4>
-              <button
-                onClick={() => setShowMobilePlanPicker(false)}
-                className="p-1 hover:bg-surface-container-low rounded-full transition-colors"
-              >
-                <span className="material-symbols-outlined text-on-surface-variant">close</span>
-              </button>
-            </div>
-            <div className="space-y-2 max-h-60 overflow-y-auto">
-              {['Breakfast', 'Lunch', 'Dinner'].map(slot => (
-                <button
-                  key={slot}
-                  onClick={() => setShowMobilePlanPicker(false)}
-                  className="w-full bg-surface-container-low hover:bg-primary-container/15 hover:text-primary text-on-surface font-bold text-xs p-3 rounded-xl flex items-center justify-between transition-colors border border-outline-variant/20 cursor-pointer min-h-[48px]"
-                >
-                  <span>Today's {slot}</span>
-                  <span className="material-symbols-outlined text-primary text-sm">add_circle</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Flow 3 Predictive Meal Plan Modal */}
+      <AddToMealPlanModal
+        recipe={recipe}
+        isOpen={showMobilePlanPicker}
+        onClose={() => setShowMobilePlanPicker(false)}
+      />
 
       {/* Substitution Modal Popover */}
       {selectedSub && (

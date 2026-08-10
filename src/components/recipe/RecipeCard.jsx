@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { calculateRecipeNutrition, getGlycemicLoadCategory } from '../../utils/nutritionCalculator';
 import { useFavorites } from '../../hooks/useFavorites';
 import { formatMediaUrl } from '../../utils/mediaUtils';
+import AddToMealPlanModal from './AddToMealPlanModal';
 
 /**
  * RecipeCard — OOUX Recipe Object Card
@@ -155,32 +156,12 @@ export const RecipeCard = ({ recipe }) => {
                 </span>
               </button>
 
-              {/* Mini dropdown */}
-              {showPlanMenu && (
-                <div
-                  className="absolute right-0 bottom-full mb-1 bg-white rounded-lg shadow-xl border border-outline-variant/40 py-1.5 w-36 z-50 animate-fade-in"
-                  onMouseLeave={() => setShowPlanMenu(false)}
-                >
-                  <p className="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant px-3 pb-1">
-                    Add to slot
-                  </p>
-                  {MEAL_SLOTS.map(slot => (
-                    <button
-                      key={slot}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowPlanMenu(false);
-                        // In production: dispatch to meal plan store
-                      }}
-                      className="w-full text-left px-3 py-1.5 text-xs font-medium text-on-surface hover:bg-primary-container/10 hover:text-primary transition-colors cursor-pointer flex items-center gap-2"
-                    >
-                      <span className="material-symbols-outlined text-[14px]">add_circle</span>
-                      {slot}
-                    </button>
-                  ))}
-                </div>
-              )}
+              {/* Flow 3 Predictive Meal Plan Modal */}
+              <AddToMealPlanModal
+                recipe={recipe}
+                isOpen={showPlanMenu}
+                onClose={() => setShowPlanMenu(false)}
+              />
             </div>
           </div>
         </div>

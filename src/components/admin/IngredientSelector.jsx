@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { getIngredientsRegistry, getIngredientsRegistryAsync, isCustomIngredient, invalidateIngredientCache } from '../../utils/ingredientStore';
 import { PREP_STATES, DEFAULT_PREP_STATE } from '../../utils/nutritionCalculator';
-import CustomIngredientModal from './CustomIngredientModal';
+import CustomIngredientDrawer from './CustomIngredientDrawer';
 
 const CATEGORY_MAP = {
   protein: { label: 'Protein / Meat', icon: 'set_meal' },
@@ -31,9 +31,10 @@ export const IngredientSelector = ({ ingredients = [], onChange, onAdd, onRemove
   const [pickerCategory, setPickerCategory] = useState('all');
   const [pickerGiSegment, setPickerGiSegment] = useState('all');
 
-  // Custom ingredient modal state
+  // Custom ingredient drawer state
   const [showCustomModal, setShowCustomModal] = useState(false);
   const [pendingPickerIndex, setPendingPickerIndex] = useState(null);
+  const [pulsingRowIndex, setPulsingRowIndex] = useState(null);
 
   // refreshKey triggers re-read of registry when a custom ingredient is saved
   const [refreshKey, setRefreshKey] = useState(0);
@@ -110,19 +111,18 @@ export const IngredientSelector = ({ ingredients = [], onChange, onAdd, onRemove
     setShowCustomModal(true); // Open the modal
   };
 
-  /** Called by modal on successful save — auto-selects the new ingredient */
+  /** Called by drawer on successful save — auto-selects the new ingredient and pulses the row */
   const handleCustomSaved = (newIngredientId) => {
     setShowCustomModal(false);
-    // Invalidate Snappi SWR cache + in-memory cache
     invalidateIngredientCache();
-    setRefreshKey(k => k + 1); // Force registry re-read from Snappi
-    if (pendingPickerIndex !== null) {
-      // Slight defer so async registry re-read settles before selection
-      setTimeout(() => {
-        handleSelectIngredient(newIngredientId, pendingPickerIndex);
-        setPendingPickerIndex(null);
-      }, 150);
-    }
+    setRefreshKey(k => k + 1);
+    const targetIdx = pendingPickerIndex ?? pickerIndex ?? 0;
+    setTimeout(() => {
+      handleSelectIngredient(newIngredientId, targetIdx);
+      setPulsingRowIndex(targetIdx);
+      setPendingPickerIndex(null);
+      setTimeout(() => setPulsingRowIndex(null), 2500);
+    }, 150);
   };
 
   const handleRowChange = (index, field, value) => {
@@ -149,13 +149,12 @@ export const IngredientSelector = ({ ingredients = [], onChange, onAdd, onRemove
 
   return (
     <>
-      {/* Custom Ingredient Modal — mounted outside the picker overlay */}
-      {showCustomModal && (
-        <CustomIngredientModal
-          onSave={handleCustomSaved}
-          onClose={() => { setShowCustomModal(false); setPendingPickerIndex(null); }}
-        />
-      )}
+      {/* Custom Ingredient Slide-Over Drawer */}
+      <CustomIngredientDrawer
+        isOpen={showCustomModal}
+        onSave={handleCustomSaved}
+        onClose={() => { setShowCustomModal(false); setPendingPickerIndex(null); }}
+      />
       <div className="bg-white p-5 md:p-6 rounded-xl border border-outline-variant/40 shadow-[0px_4px_20px_rgba(45,49,48,0.05)] space-y-4">
         <div className="border-b border-outline-variant/20 pb-3 flex justify-between items-center">
           <div>
@@ -175,7 +174,14 @@ export const IngredientSelector = ({ ingredients = [], onChange, onAdd, onRemove
             const catInfo = selectedIng ? CATEGORY_MAP[selectedIng.category] : null;
 
             return (
-              <div key={idx} className="bg-surface-container-low/50 p-3.5 rounded-xl border border-outline-variant/30 relative flex flex-col gap-3">
+              <div
+                key={idx}
+                className={`bg-surface-container-low/50 p-3.5 rounded-xl border relative flex flex-col gap-3 transition-all ${
+                  pulsingRowIndex === idx
+                    ? 'ring-2 ring-primary border-primary duration-300 shadow-md'
+                    : 'border-outline-variant/30'
+                }`}
+              >
                 {/* Top Row: Item Number & Remove */}
                 <div className="flex items-center justify-between border-b border-outline-variant/15 pb-2">
                   <span className="text-[10px] font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">

@@ -32,6 +32,11 @@ vi.mock('../../utils/ingredientStore', () => ({
   getIngredientsRegistryAsync: () => Promise.resolve(mockIngredientsList),
   isCustomIngredient: (id) => typeof id === 'string' && id.startsWith('custom-'),
   invalidateIngredientCache: vi.fn(),
+  VALID_CATEGORIES: ['protein', 'grain', 'vegetable', 'fruit', 'dairy', 'cheese', 'legume', 'fat', 'seasoning'],
+  VALID_UNITS: ['g', 'oz', 'cup', 'tbsp', 'tsp', 'piece', 'bunch', 'clove'],
+  generateCustomId: (name) => `custom-${name}`,
+  validateCustomIngredient: () => ({ isValid: true, errors: {} }),
+  saveCustomIngredient: vi.fn().mockResolvedValue({ id: 'custom-test' }),
 }));
 
 // PREP_STATES are still sourced from nutritionCalculator
@@ -43,8 +48,8 @@ vi.mock('../../utils/nutritionCalculator', () => ({
   DEFAULT_PREP_STATE: 'raw',
 }));
 
-// Mock CustomIngredientModal so it doesn't need its own deps
-vi.mock('./CustomIngredientModal', () => ({
+// Mock CustomIngredientDrawer
+vi.mock('./CustomIngredientDrawer', () => ({
   default: ({ onClose }) => (
     <div data-testid="custom-ingredient-modal">
       <button onClick={onClose}>Close Modal</button>

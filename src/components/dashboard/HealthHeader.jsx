@@ -29,23 +29,46 @@ export const HealthHeader = () => {
   const { user } = useAuth();
   const { glucoseUnit, unitSystem } = usePreferences();
   const { allRecipes } = useRecipes();
+  const [mealPlanGL, setMealPlanGL] = React.useState(0);
 
-  // Simulate today's accumulated GL from the user's favorited recipes
-  // In production this would pull from a meal-log or daily tracker
+  // Listen for optimistic meal plan updates
+  React.useEffect(() => {
+    const syncMealPlan = () => {
+      try {
+        const raw = localStorage.getItem('glyco_meal_plan');
+        if (!raw) {
+          setMealPlanGL(0);
+          return;
+        }
+        const plan = JSON.parse(raw);
+        const todayItems = plan.today || [];
+        const sum = todayItems.reduce((acc, item) => acc + (Number(item.glycemicLoad) || 0), 0);
+        setMealPlanGL(sum);
+      } catch {
+        setMealPlanGL(0);
+      }
+    };
+
+    syncMealPlan();
+    window.addEventListener('glyco_meal_plan_updated', syncMealPlan);
+    return () => window.removeEventListener('glyco_meal_plan_updated', syncMealPlan);
+  }, []);
+
+  // Calculate today's accumulated GL from favorited recipes + scheduled meals
   const dailyGL = useMemo(() => {
     const favIds = user?.favorites ?? [];
-    if (favIds.length === 0 || allRecipes.length === 0) return 0;
-
-    return favIds.reduce((sum, id) => {
+    const favoriteGL = favIds.reduce((sum, id) => {
       const recipe = allRecipes.find(r => r.id === id);
       if (!recipe) return sum;
       const nutrition = calculateRecipeNutrition(recipe.ingredients ?? []);
       return sum + (nutrition.glycemicLoad ?? 0);
     }, 0);
-  }, [user?.favorites, allRecipes]);
+
+    return favoriteGL + mealPlanGL;
+  }, [user?.favorites, allRecipes, mealPlanGL]);
 
   const ratio = DAILY_GL_TARGET > 0 ? dailyGL / DAILY_GL_TARGET : 0;
-  const percent = Math.min(Math.round(ratio * 100), 120); // allow slight overflow visual
+  const percent = Math.min(Math.round(ratio * 100), 120);
   const clampedPercent = Math.min(percent, 100);
 
   // Color thresholds per spec
