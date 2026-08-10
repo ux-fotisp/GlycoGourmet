@@ -1,0 +1,72 @@
+[
+  {
+    "id": "miso-glazed-black-cod",
+    "title": "Miso-Glazed Black Cod with Romanesco & Shirataki",
+    "description": "Succulent Wild Alaskan Black Cod broiled with savory red miso glaze, served alongside crisp-tender Romanesco broccoli florets and low-carb konjac shirataki noodles.",
+    "prepTime": 10,
+    "cookTime": 15,
+    "servings": 2,
+    "imageUrl": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1200&q=80",
+    "dietaryTags": ["Low GI", "Low GL", "Keto-Friendly", "High Protein", "Under 30 Min"],
+    "ingredients": [
+      { "ingredientId": "black-cod", "amount": 300, "unit": "g", "prepState": "roasted" },
+      { "ingredientId": "shirataki-noodles", "amount": 200, "unit": "g", "prepState": "boiled" },
+      { "ingredientId": "romanesco-broccoli", "amount": 150, "unit": "g", "prepState": "steamed" },
+      { "ingredientId": "red-miso-paste", "amount": 15, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "sesame-oil", "amount": 10, "unit": "g", "prepState": "raw" }
+    ],
+    "steps": [
+      "Rinse konjac shirataki noodles thoroughly under cold water for 2 minutes, then boil in salted water for 3 minutes and drain.",
+      "Steam Romanesco broccoli florets over boiling water for 4 minutes until crisp-tender.",
+      "Whisk red miso paste and sesame oil together in a bowl until smooth.",
+      "Coat black cod fillets evenly with the miso glaze and broil on high for 8-10 minutes until caramelized and tender.",
+      "Plate the cod over warm shirataki noodles and Romanesco florets. Serve immediately."
+    ]
+  },
+  {
+    "id": "lupin-crusted-lemon-chicken",
+    "title": "Lupin-Crusted Lemon Herb Chicken Tenderloins",
+    "description": "Pan-sautéed chicken breast tenderloins encrusted with high-protein lupin flour and organic hemp hearts, finished with fresh lemon juice.",
+    "prepTime": 15,
+    "cookTime": 12,
+    "servings": 3,
+    "imageUrl": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=1200&q=80",
+    "dietaryTags": ["Low GI", "Low GL", "High Protein", "Gluten-Free"],
+    "ingredients": [
+      { "ingredientId": "chicken-breast", "amount": 450, "unit": "g", "prepState": "sauteed" },
+      { "ingredientId": "lupin-flour", "amount": 50, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "hemp-hearts", "amount": 30, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "lemon-juice", "amount": 20, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "extra-virgin-olive-oil", "amount": 25, "unit": "g", "prepState": "raw" }
+    ],
+    "steps": [
+      "In a shallow dish, combine lupin flour, organic hemp hearts, sea salt, black pepper, and fresh lemon zest.",
+      "Dredge chicken tenderloins in the lupin-hemp mixture until evenly coated on all sides.",
+      "Heat extra virgin olive oil in a non-stick skillet over medium-high heat.",
+      "Sauté chicken cutlets for 5-6 minutes per side until golden brown and cooked to internal temperature of 165°F.",
+      "Drizzle with fresh lemon juice before serving."
+    ]
+  },
+  {
+    "id": "overnight-vanilla-chia-pudding",
+    "title": "Overnight Vanilla Chia Pudding with Hemp & Toasted Almonds",
+    "description": "Creamy low-glycemic chia pudding infused with vanilla, topped with crunchy toasted hemp hearts and sliced almonds.",
+    "prepTime": 5,
+    "cookTime": 0,
+    "servings": 2,
+    "imageUrl": "https://images.unsplash.com/photo-1541658016709-82535e94bc69?auto=format&fit=crop&w=1200&q=80",
+    "dietaryTags": ["Low GI", "Low GL", "High Fiber", "Keto-Friendly", "Under 30 Min"],
+    "ingredients": [
+      { "ingredientId": "chia-seeds-black", "amount": 40, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "almond-milk-unsweetened", "amount": 250, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "hemp-hearts", "amount": 20, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "sliced-almonds", "amount": 15, "unit": "g", "prepState": "raw" }
+    ],
+    "steps": [
+      "In a mason jar or bowl, whisk black chia seeds, organic hemp hearts, and unsweetened almond milk until well combined.",
+      "Cover and chill in the refrigerator for at least 4 hours (or overnight) to allow chia seeds to expand into a rich pudding consistency.",
+      "Toast sliced almonds lightly in a dry skillet over low heat for 2 minutes.",
+      "Garnish chia pudding with toasted almonds before enjoying."
+    ]
+  }
+]

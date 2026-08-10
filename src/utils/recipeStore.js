@@ -60,6 +60,78 @@ const DEFAULT_SEED_RECIPES = [
     ],
   },
   {
+    "id": "miso-glazed-black-cod",
+    "title": "Miso-Glazed Black Cod with Romanesco & Shirataki",
+    "description": "Succulent Wild Alaskan Black Cod broiled with savory red miso glaze, served alongside crisp-tender Romanesco broccoli florets and low-carb konjac shirataki noodles.",
+    "prepTime": 10,
+    "cookTime": 15,
+    "cookingTime": 25,
+    "servings": 2,
+    "imageUrl": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1200&q=80",
+    "tags": ["Low GI", "Low GL", "Keto-Friendly", "High Protein", "Under 30 Min"],
+    "publishedAt": "2026-01-01T00:00:00.000Z",
+    "status": "published",
+    "ingredients": [
+      { "ingredientId": "black-cod", "amount": 300, "unit": "g", "prepState": "roasted" },
+      { "ingredientId": "shirataki-noodles", "amount": 200, "unit": "g", "prepState": "boiled" },
+      { "ingredientId": "romanesco-broccoli", "amount": 150, "unit": "g", "prepState": "steamed" },
+      { "ingredientId": "red-miso-paste", "amount": 15, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "sesame-oil", "amount": 10, "unit": "g", "prepState": "raw" }
+    ],
+    "steps": [
+      { "title": "Prep Shirataki", "description": "Rinse konjac shirataki noodles thoroughly under cold water for 2 minutes, then boil in salted water for 3 minutes and drain.", "timer": 5 },
+      { "title": "Steam Romanesco", "description": "Steam Romanesco broccoli florets over boiling water for 4 minutes until crisp-tender.", "timer": 4 },
+      { "title": "Glaze & Broil", "description": "Whisk red miso paste and sesame oil together, coat black cod fillets, and broil on high for 8-10 minutes.", "timer": 10 }
+    ]
+  },
+  {
+    "id": "lupin-crusted-lemon-chicken",
+    "title": "Lupin-Crusted Lemon Herb Chicken Tenderloins",
+    "description": "Pan-sautéed chicken breast tenderloins encrusted with high-protein lupin flour and organic hemp hearts, finished with fresh lemon juice.",
+    "prepTime": 15,
+    "cookTime": 12,
+    "cookingTime": 27,
+    "servings": 3,
+    "imageUrl": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=1200&q=80",
+    "tags": ["Low GI", "Low GL", "High Protein", "Gluten-Free"],
+    "publishedAt": "2026-01-01T00:00:00.000Z",
+    "status": "published",
+    "ingredients": [
+      { "ingredientId": "chicken-breast", "amount": 450, "unit": "g", "prepState": "sauteed" },
+      { "ingredientId": "lupin-flour", "amount": 50, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "hemp-hearts", "amount": 30, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "lemon-juice", "amount": 20, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "extra-virgin-olive-oil", "amount": 25, "unit": "g", "prepState": "raw" }
+    ],
+    "steps": [
+      { "title": "Dredge Chicken", "description": "Combine lupin flour, organic hemp hearts, sea salt, black pepper, and lemon zest. Dredge chicken cutlets until coated.", "timer": 5 },
+      { "title": "Sauté", "description": "Heat extra virgin olive oil in a skillet and sauté chicken for 5-6 minutes per side until golden brown.", "timer": 12 }
+    ]
+  },
+  {
+    "id": "overnight-vanilla-chia-pudding",
+    "title": "Overnight Vanilla Chia Pudding with Hemp & Toasted Almonds",
+    "description": "Creamy low-glycemic chia pudding infused with vanilla, topped with crunchy toasted hemp hearts and sliced almonds.",
+    "prepTime": 5,
+    "cookTime": 0,
+    "cookingTime": 5,
+    "servings": 2,
+    "imageUrl": "https://images.unsplash.com/photo-1541658016709-82535e94bc69?auto=format&fit=crop&w=1200&q=80",
+    "tags": ["Low GI", "Low GL", "High Fiber", "Keto-Friendly", "Under 30 Min"],
+    "publishedAt": "2026-01-01T00:00:00.000Z",
+    "status": "published",
+    "ingredients": [
+      { "ingredientId": "chia-seeds-black", "amount": 40, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "almond-milk-unsweetened", "amount": 250, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "hemp-hearts", "amount": 20, "unit": "g", "prepState": "raw" },
+      { "ingredientId": "sliced-almonds", "amount": 15, "unit": "g", "prepState": "raw" }
+    ],
+    "steps": [
+      { "title": "Whisk & Chill", "description": "Whisk chia seeds, hemp hearts, and almond milk in a jar. Cover and refrigerate for 4+ hours.", "timer": 5 },
+      { "title": "Garnish & Serve", "description": "Top with toasted sliced almonds before serving.", "timer": 1 }
+    ]
+  },
+  {
     id: 'keto-berry-smoothie',
     title: 'Low-GI Keto Berry Almond Smoothie',
     description: 'Refreshing low-glycemic smoothie blended with wild strawberries, Greek yogurt, almond milk, and chia seeds.',
