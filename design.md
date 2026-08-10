@@ -1,6 +1,7 @@
 # GlycoGourmet — Design DNA Reference (Sage & Grain)
 
-This design system is sourced from the Google Stitch project **GlycoGourmet Accessibility Design System** (`projects/5737888838361499776`).
+> **Designed & Architected by [Fotis Pastrakis](https://fotisp.gr)**  
+> *Sourced from the Google Stitch project GlycoGourmet Accessibility Design System (`projects/5737888838361499776`).*
 
 ---
 
