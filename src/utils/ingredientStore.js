@@ -22,8 +22,25 @@ export const VALID_UNITS = [
   'g', 'oz', 'cup', 'tbsp', 'tsp', 'piece', 'bunch', 'clove',
 ];
 
+const DEFAULT_SEED_INGREDIENTS = [
+  { id: 'atlantic-salmon', name: 'Atlantic Salmon', category: 'protein', defaultAmount: 100, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 206, protein: 22, fat: 13, carbs: 0, fiber: 0, netCarbs: 0, glycemicIndex: 0, glycemicLoad: 0, isUserAuthored: false },
+  { id: 'herb-asparagus', name: 'Asparagus', category: 'vegetable', defaultAmount: 100, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 20, protein: 2.2, fat: 0.1, carbs: 3.9, fiber: 2.1, netCarbs: 1.8, glycemicIndex: 15, glycemicLoad: 0.3, isUserAuthored: false },
+  { id: 'almond-flour', name: 'Almond Flour', category: 'grain', defaultAmount: 100, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 590, protein: 21, fat: 50, carbs: 20, fiber: 10, netCarbs: 10, glycemicIndex: 15, glycemicLoad: 1.5, isUserAuthored: false },
+  { id: 'quinoa-cooked', name: 'Quinoa (Cooked)', category: 'grain', defaultAmount: 100, defaultUnit: 'g', defaultPrepState: 'boiled', kcal: 120, protein: 4.4, fat: 1.9, carbs: 21.3, fiber: 2.8, netCarbs: 18.5, glycemicIndex: 53, glycemicLoad: 9.8, isUserAuthored: false },
+  { id: 'white-rice-cooked', name: 'White Rice (Cooked)', category: 'grain', defaultAmount: 100, defaultUnit: 'g', defaultPrepState: 'boiled', kcal: 130, protein: 2.7, fat: 0.3, carbs: 28, fiber: 0.4, netCarbs: 27.6, glycemicIndex: 73, glycemicLoad: 20.1, isUserAuthored: false },
+  { id: 'avocado', name: 'Avocado', category: 'fat', defaultAmount: 100, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 160, protein: 2, fat: 15, carbs: 8.5, fiber: 6.7, netCarbs: 1.8, glycemicIndex: 15, glycemicLoad: 0.3, isUserAuthored: false },
+  { id: 'greek-yogurt', name: 'Greek Yogurt', category: 'dairy', defaultAmount: 100, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 59, protein: 10, fat: 0.4, carbs: 3.6, fiber: 0, netCarbs: 3.6, glycemicIndex: 11, glycemicLoad: 0.4, isUserAuthored: false },
+  { id: 'strawberries', name: 'Strawberries', category: 'fruit', defaultAmount: 100, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 32, protein: 0.7, fat: 0.3, carbs: 7.7, fiber: 2, netCarbs: 5.7, glycemicIndex: 25, glycemicLoad: 1.4, isUserAuthored: false },
+  { id: 'olive-oil', name: 'Extra Virgin Olive Oil', category: 'fat', defaultAmount: 14, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 119, protein: 0, fat: 13.5, carbs: 0, fiber: 0, netCarbs: 0, glycemicIndex: 0, glycemicLoad: 0, isUserAuthored: false },
+  { id: 'chicken-breast', name: 'Chicken Breast', category: 'protein', defaultAmount: 100, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 165, protein: 31, fat: 3.6, carbs: 0, fiber: 0, netCarbs: 0, glycemicIndex: 0, glycemicLoad: 0, isUserAuthored: false },
+  { id: 'broccoli', name: 'Broccoli', category: 'vegetable', defaultAmount: 100, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 34, protein: 2.8, fat: 0.4, carbs: 6.6, fiber: 2.6, netCarbs: 4, glycemicIndex: 15, glycemicLoad: 0.6, isUserAuthored: false },
+  { id: 'spinach', name: 'Fresh Spinach', category: 'vegetable', defaultAmount: 100, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 23, protein: 2.9, fat: 0.4, carbs: 3.6, fiber: 2.2, netCarbs: 1.4, glycemicIndex: 15, glycemicLoad: 0.2, isUserAuthored: false },
+  { id: 'chia-seeds', name: 'Chia Seeds', category: 'grain', defaultAmount: 28, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 138, protein: 4.7, fat: 8.7, carbs: 12, fiber: 9.8, netCarbs: 2.2, glycemicIndex: 15, glycemicLoad: 0.3, isUserAuthored: false },
+  { id: 'almond-milk', name: 'Unsweetened Almond Milk', category: 'dairy', defaultAmount: 240, defaultUnit: 'g', defaultPrepState: 'raw', kcal: 30, protein: 1, fat: 2.5, carbs: 1, fiber: 0.5, netCarbs: 0.5, glycemicIndex: 15, glycemicLoad: 0.1, isUserAuthored: false },
+];
+
 // Module-level in-memory cache populated from Strapi
-let _registryCache = null;
+let _registryCache = DEFAULT_SEED_INGREDIENTS.map(normalizeIngredient);
 
 export function isSystemIngredient(id) {
   const ing = getIngredientById(id);
@@ -57,20 +74,25 @@ export async function getIngredientsRegistryAsync() {
     const response = await strapiGet(COLLECTION, { 'pagination[limit]': '500' });
     const list = Array.isArray(response) ? response : (response?.data ?? []);
 
-    _registryCache = list.map(normalizeIngredient);
+    if (list.length > 0) {
+      _registryCache = list.map(normalizeIngredient);
+    }
     return _registryCache;
   } catch (err) {
     console.error('[ingredientStore] Strapi /api/ingredients fetch failed:', err.message);
-    return _registryCache || [];
+    return _registryCache;
   }
 }
 
 /**
- * Synchronous getter — returns cached registry or empty array.
+ * Synchronous getter — returns cached registry or seed default.
  * @returns {Array<object>}
  */
 export function getIngredientsRegistry() {
-  return _registryCache || [];
+  if (!_registryCache || _registryCache.length === 0) {
+    _registryCache = DEFAULT_SEED_INGREDIENTS.map(normalizeIngredient);
+  }
+  return _registryCache;
 }
 
 /**
