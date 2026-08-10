@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { calculateRecipeNutrition, getGlycemicLoadCategory } from '../../utils/nutritionCalculator';
 import { useFavorites } from '../../hooks/useFavorites';
+import { formatMediaUrl } from '../../utils/mediaUtils';
 
 /**
  * RecipeCard — OOUX Recipe Object Card
@@ -49,8 +50,9 @@ export const RecipeCard = ({ recipe }) => {
         <div className="aspect-[4/3] w-full bg-surface-container overflow-hidden relative">
           <img
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-            src={recipe.imageUrl || 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=300'}
-            alt={recipe.title}
+            src={formatMediaUrl(recipe?.imageUrl)}
+            alt={recipe?.title || 'Recipe'}
+            onError={(e) => { e.target.src = '/assets/recipe-placeholder.svg'; }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
 

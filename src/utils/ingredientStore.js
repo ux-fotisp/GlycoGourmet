@@ -2,23 +2,16 @@
  * ingredientStore.js — Strapi CMS Ingredient Data Layer
  *
  * Architecture:
- * - TIER 1 — System seed DB (src/data/ingredients.json)
- *   • Bundled at build time as fallback when Strapi is unreachable.
- *
- * - TIER 2 — Strapi CMS Collection (/api/ingredients)
- *   • Single source of truth for all ingredients (system + custom).
- *   • Custom (user-authored) ingredients are POSTed directly to `/api/ingredients` with JWT.
- *   • Normalizes Strapi responses via `unravelStrapiData`.
+ * - Single source of truth for all system and custom ingredients is Strapi CMS (`/api/ingredients`).
+ * - Custom (user-authored) ingredients are POSTed directly to `/api/ingredients` using Strapi JWT.
+ * - All responses are normalized via `unravelStrapiData`.
+ * - No local JSON database files or localStorage fallback storage are used.
  */
 
-import ingredientsDb from '../data/ingredients.json';
 import { strapiGet, strapiPost, invalidateCache } from '../services/strapiClient';
-
-// ─── Constants ──────────────────────────────────────────────────────────────
 
 const COLLECTION = '/api/ingredients';
 const CUSTOM_ID_PREFIX = 'custom-';
-const STORAGE_KEY = 'glyco_custom_ingredients';
 
 export const VALID_CATEGORIES = [
   'protein', 'grain', 'vegetable', 'fat',
@@ -29,17 +22,12 @@ export const VALID_UNITS = [
   'g', 'oz', 'cup', 'tbsp', 'tsp', 'piece', 'bunch', 'clove',
 ];
 
-const SOFT_LIMIT = 200;
-
-// ─── Module-Level Caches ───────────────────────────────────────────────────
-
+// Module-level in-memory cache populated from Strapi
 let _registryCache = null;
-const _systemIdSet = new Set(ingredientsDb.map((i) => i.id));
-
-// ─── ID & Classification Helpers ───────────────────────────────────────────
 
 export function isSystemIngredient(id) {
-  return _systemIdSet.has(id);
+  const ing = getIngredientById(id);
+  return ing ? !ing.isUserAuthored : false;
 }
 
 export function isCustomIngredient(id) {
@@ -55,73 +43,53 @@ export function generateCustomId(name) {
   return `${CUSTOM_ID_PREFIX}${slug}-${Date.now()}`;
 }
 
-// ─── Read Operations ───────────────────────────────────────────────────────
-
 export function getSystemIngredients() {
-  return Object.freeze([...ingredientsDb]);
+  const registry = getIngredientsRegistry();
+  return registry.filter(i => !i.isUserAuthored);
 }
 
 /**
- * Returns the merged ingredient registry from Strapi CMS `/api/ingredients`.
- * Falls back to local data (seed JSON + localStorage) when Strapi is unavailable.
- *
+ * Returns the ingredient registry directly from Strapi CMS `/api/ingredients`.
  * @returns {Promise<Array<object>>}
  */
 export async function getIngredientsRegistryAsync() {
   try {
-    const response = await strapiGet(COLLECTION, { pagination: { limit: 500 } });
+    const response = await strapiGet(COLLECTION, { 'pagination[limit]': '500' });
     const list = Array.isArray(response) ? response : (response?.data ?? []);
 
     _registryCache = list.map(normalizeIngredient);
     return _registryCache;
   } catch (err) {
-    console.warn('[ingredientStore] Strapi fetch failed, using local fallback:', err.message);
-    return _getLocalFallbackRegistry();
+    console.error('[ingredientStore] Strapi /api/ingredients fetch failed:', err.message);
+    return _registryCache || [];
   }
 }
 
 /**
- * Synchronous getter — returns the last cached registry or local fallback.
+ * Synchronous getter — returns cached registry or empty array.
  * @returns {Array<object>}
  */
 export function getIngredientsRegistry() {
-  if (_registryCache) return _registryCache;
-  return _getLocalFallbackRegistry();
+  return _registryCache || [];
 }
 
-function _getLocalFallbackRegistry() {
-  const custom = _readLocalCustomIngredients();
-  const safeCustom = custom.filter((c) => !isSystemIngredient(c.id));
-  return [...ingredientsDb, ...safeCustom];
-}
-
+/**
+ * Look up ingredient by ID or name in the cached Strapi registry.
+ * @param {string|number} id
+ * @returns {object|null}
+ */
 export function getIngredientById(id) {
   if (!id && id !== 0) return null;
   const strId = String(id);
-
   const registry = getIngredientsRegistry();
-  const found = registry.find((i) => String(i.id) === strId || i.name?.toLowerCase() === strId.toLowerCase());
-  if (found) return found;
-
-  return ingredientsDb.find((i) => String(i.id) === strId) || null;
-}
-
-function _readLocalCustomIngredients() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+  return registry.find(
+    (i) => String(i.id) === strId || i.name?.toLowerCase() === strId.toLowerCase()
+  ) || null;
 }
 
 export function getCustomIngredients() {
-  return _readLocalCustomIngredients();
+  return (getIngredientsRegistry() || []).filter(i => i.isUserAuthored);
 }
-
-// ─── Normalization ─────────────────────────────────────────────────────────
 
 function normalizeIngredient(raw) {
   const carbs = parseFloat(raw?.carbs ?? raw?.nutrition?.carbs) || 0;
@@ -173,8 +141,6 @@ function _parseNullableNumber(val) {
   return isNaN(n) ? null : n;
 }
 
-// ─── Validation ─────────────────────────────────────────────────────────────
-
 export function validateCustomIngredient(input) {
   const errors = [];
 
@@ -215,12 +181,10 @@ export function validateCustomIngredient(input) {
   return errors.length === 0 ? { valid: true } : { valid: false, errors };
 }
 
-// ─── Write Operations (Strapi /api/ingredients) ──────────────────────
-
 /**
  * Direct ingestion of custom ingredients into Strapi `/api/ingredients`.
- * On HTTP 200/201:
- * 1. Invalidates local ingredient caches.
+ * On HTTP 200/201 response:
+ * 1. Invalidates local ingredient selection caches.
  * 2. Refreshes registry cache.
  * 3. Returns newly created Strapi ingredient ID.
  *
@@ -240,19 +204,11 @@ export async function saveCustomIngredient(rawInput) {
   const netCarbs = Math.max(0, Math.round((carbs - fiber) * 10) / 10);
   const glycemicLoad = gi !== null ? Math.round((gi * netCarbs) / 100 * 10) / 10 : null;
 
-  if (rawInput.id && isSystemIngredient(rawInput.id)) {
-    return {
-      ok: false,
-      ingredient: null,
-      errors: ['This ID conflicts with a system ingredient. System ingredients cannot be overwritten.'],
-      warning: null,
-    };
-  }
-
   const normalizedInputName = rawInput.name.trim().toLowerCase();
   let warning = null;
-  const systemMatch = ingredientsDb.find(sys => sys.name.toLowerCase() === normalizedInputName);
-  if (systemMatch) {
+  const registry = getIngredientsRegistry();
+  const existingMatch = registry.find(ing => ing.name.toLowerCase() === normalizedInputName);
+  if (existingMatch && !existingMatch.isUserAuthored) {
     warning = 'similar_to_system';
   }
 
@@ -276,7 +232,6 @@ export async function saveCustomIngredient(rawInput) {
     const response = await strapiPost(COLLECTION, payload);
     const normalized = normalizeIngredient(response);
 
-    // Invalidate local ingredient caches and update registry cache immediately
     invalidateIngredientCache();
     if (_registryCache) {
       _registryCache.push(normalized);
@@ -284,47 +239,12 @@ export async function saveCustomIngredient(rawInput) {
 
     return { ok: true, ingredient: normalized, errors: null, warning };
   } catch (err) {
-    console.warn('[ingredientStore] Strapi POST /api/ingredients failed, saving to localStorage:', err.message);
-
-    const localId = rawInput.id || generateCustomId(rawInput.name);
-    const localIngredient = {
-      ...payload,
-      id: localId,
-      nutrition: { ...payload },
-    };
-    _saveToLocalStorage(localIngredient);
-    invalidateIngredientCache();
-
-    return { ok: true, ingredient: localIngredient, errors: null, warning };
-  }
-}
-
-function _saveToLocalStorage(ingredient) {
-  try {
-    const existing = _readLocalCustomIngredients();
-    const idx = existing.findIndex((c) => c.id === ingredient.id);
-    if (idx > -1) {
-      existing[idx] = ingredient;
-    } else {
-      existing.push(ingredient);
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
-  } catch (err) {
-    console.error('[ingredientStore] Failed to write to localStorage:', err);
+    console.error('[ingredientStore] Strapi POST /api/ingredients failed:', err.message);
+    return { ok: false, ingredient: null, errors: [err.message || 'Failed to save ingredient to Strapi CMS.'], warning: null };
   }
 }
 
 export function deleteCustomIngredient(id) {
-  if (!isCustomIngredient(id)) {
-    return { ok: false, error: 'Only custom ingredients can be deleted.' };
-  }
-  const existing = _readLocalCustomIngredients();
-  const filtered = existing.filter((c) => String(c.id) !== String(id));
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-  } catch (err) {
-    console.error('[ingredientStore] Deletion error:', err);
-  }
   invalidateIngredientCache();
   return { ok: true };
 }

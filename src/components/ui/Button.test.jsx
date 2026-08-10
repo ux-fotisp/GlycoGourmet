@@ -1,9 +1,13 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import Button from './Button';
 
 describe('Button component', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   // --- Variant Rendering ---
   it('renders primary variant with correct base classes', () => {
     render(<Button>Click Me</Button>);
@@ -49,7 +53,6 @@ describe('Button component', () => {
   it('enforces 48px minimum hit target on default md size', () => {
     render(<Button>Target</Button>);
     const btn = screen.getByRole('button', { name: 'Target' });
-    // md size uses h-12 which is 48px (3rem)
     expect(btn.className).toContain('h-12');
   });
 
@@ -70,11 +73,13 @@ describe('Button component', () => {
   // --- Type Attribute ---
   it('defaults to type="button"', () => {
     render(<Button>Btn</Button>);
-    expect(screen.getByRole('button').getAttribute('type')).toBe('button');
+    const btn = screen.getByRole('button', { name: 'Btn' });
+    expect(btn.getAttribute('type')).toBe('button');
   });
 
   it('accepts type="submit"', () => {
     render(<Button type="submit">Submit</Button>);
-    expect(screen.getByRole('button').getAttribute('type')).toBe('submit');
+    const btn = screen.getByRole('button', { name: 'Submit' });
+    expect(btn.getAttribute('type')).toBe('submit');
   });
 });

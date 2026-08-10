@@ -4,6 +4,7 @@ import { useRecipes } from '../hooks/useRecipes';
 import { useFavorites } from '../hooks/useFavorites';
 import RecipeCard from '../components/recipe/RecipeCard';
 import Button from '../components/ui/Button';
+import { formatMediaUrl } from '../utils/mediaUtils';
 
 export const MyRecipes = () => {
   const navigate = useNavigate();
@@ -101,8 +102,9 @@ export const MyRecipes = () => {
                     <div className="aspect-[4/3] w-full bg-surface-container overflow-hidden rounded-lg relative">
                       <img
                         className="w-full h-full object-cover"
-                        src={recipe.imageUrl || 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=300'}
-                        alt={recipe.title}
+                        src={formatMediaUrl(recipe.imageUrl)}
+                        alt={recipe.title || 'Authored Recipe'}
+                        onError={(e) => { e.target.src = '/assets/recipe-placeholder.svg'; }}
                       />
                       <div className="absolute top-2 right-2 flex gap-1">
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${badgeClass}`}>

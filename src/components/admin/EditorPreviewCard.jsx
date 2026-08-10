@@ -5,6 +5,8 @@ import { convertAmountAndUnit } from '../../utils/unitConverter';
 import NutritionSnapshot from '../recipe/NutritionSnapshot';
 import ProgressBar from '../ui/ProgressBar';
 
+import { formatMediaUrl, PLACEHOLDER_IMAGE } from '../../utils/mediaUtils';
+
 export const EditorPreviewCard = ({ formData }) => {
   const { unitSystem } = usePreferences();
 
@@ -12,8 +14,6 @@ export const EditorPreviewCard = ({ formData }) => {
     return calculateRecipeNutrition(formData?.ingredients);
   }, [formData?.ingredients]);
 
-  // Default fallback image
-  const fallbackImg = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCC3o6_xMnKi_jomsnHTraFX7el-CDj6Up0-YO_B-Coun_VX1vq2BkXG46rmudWt6kJsTe7UX_tFKfZjdow2QYvWLlU9ZtepeBM7dknd_LA_2eMzUmsGmXhxQipdxqYHlCDlMPMJtNqchzy80PDS8aTZL5kdvEohLofJjrS-6YR2ib0daohnQME3orw3n_DiX-m9JlF3zIasxP5Uc84qAkeW8EDhJUwTG4JQzxE68xtjLZwNqKU1IiZ';
   const gi = nutrition.glycemicIndex;
   const gl = nutrition.glycemicLoad ?? 0;
   const glInfo = getGlycemicLoadCategory(gl);
@@ -48,9 +48,9 @@ export const EditorPreviewCard = ({ formData }) => {
       <div className="relative h-56 overflow-hidden bg-surface-container">
         <img
           className="w-full h-full object-cover transition-opacity duration-300"
-          src={formData.imageUrl || fallbackImg}
+          src={formatMediaUrl(formData.imageUrl)}
           alt={formData.title || 'Recipe Preview'}
-          onError={(e) => { e.target.src = fallbackImg; }}
+          onError={(e) => { e.target.src = PLACEHOLDER_IMAGE; }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
         <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-[11px] font-bold">

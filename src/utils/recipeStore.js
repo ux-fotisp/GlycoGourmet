@@ -8,18 +8,17 @@
  *   * Published: `publishedAt: new Date().toISOString()`
  * - GET requests use SWR-cached `strapiGet` wrapper.
  * - Writes (create/update) send POST/PUT to `/api/recipes` with auto cache invalidation.
- * - Falls back to `/public/data/recipes_index.json` if Strapi is unreachable.
+ * - No static database file imports or local fallback JSON fetches exist.
  */
 
 import { strapiGet, strapiPost, strapiPut, invalidateCache } from '../services/strapiClient';
-import ingredientsDb from '../data/ingredients.json';
 
 const COLLECTION = '/api/recipes';
 
 let _indexCache = null;
 
 /**
- * Fetches recipes from Strapi CMS `/api/recipes`.
+ * Fetches recipes directly from Strapi CMS `/api/recipes`.
  *
  * @param {object} [options]
  * @param {'live'|'preview'} [options.publicationState='live']
@@ -45,28 +44,8 @@ export async function getAllRecipes(options = {}) {
     _indexCache = recipes.map(normalizeRecipe);
     return _indexCache;
   } catch (err) {
-    console.warn('[recipeStore] Strapi fetch failed, falling back to local seed data:', err.message);
-    return _fallbackToLocal();
-  }
-}
-
-async function _fallbackToLocal() {
-  if (_indexCache) return _indexCache;
-  try {
-    const res = await fetch('/data/recipes_index.json');
-    if (!res.ok) throw new Error(`Index fetch failed: ${res.status}`);
-    const systemIndex = await res.json();
-    _indexCache = systemIndex.map((r) => ({
-      ...r,
-      publishedAt: r.publishedAt ?? (r.status === 'published' ? new Date().toISOString() : null),
-      status: r.status ?? (r.publishedAt ? 'published' : 'draft'),
-      isUserAuthored: r.isUserAuthored ?? false,
-    }));
-    return _indexCache;
-  } catch (fallbackErr) {
-    console.error('[recipeStore] Local fallback failed:', fallbackErr);
-    _indexCache = [];
-    return [];
+    console.error('[recipeStore] Strapi /api/recipes fetch failed:', err.message);
+    return _indexCache || [];
   }
 }
 
@@ -85,15 +64,8 @@ export async function getRecipeById(id) {
 
     return normalizeRecipe(recipe);
   } catch (err) {
-    console.warn(`[recipeStore] Strapi fetch for recipe ${id} failed:`, err.message);
-    try {
-      const res = await fetch(`/data/recipes/${id}.json`);
-      if (!res.ok) return null;
-      const raw = await res.json();
-      return normalizeRecipe(raw);
-    } catch {
-      return null;
-    }
+    console.error(`[recipeStore] Strapi GET /api/recipes/${id} failed:`, err.message);
+    return null;
   }
 }
 
@@ -111,7 +83,6 @@ export async function saveRecipe(recipe, { isUpdate = false, publishedAt = null 
     throw new Error('[recipeStore] Cannot save a recipe without a title.');
   }
 
-  // Determine publishedAt: explicitly passed, or recipe.publishedAt, or null if draft
   const finalPublishedAt = publishedAt !== undefined
     ? publishedAt
     : (recipe.status === 'published' ? (recipe.publishedAt || new Date().toISOString()) : null);

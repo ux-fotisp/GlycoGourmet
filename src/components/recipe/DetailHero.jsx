@@ -2,16 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { getGlycemicLoadCategory } from '../../utils/nutritionCalculator';
 
+import { formatMediaUrl } from '../../utils/mediaUtils';
+
 /**
  * DetailHero — Interactive Hero Header with image, status badges, and serving scaler.
- *
- * Props:
- * - recipe: Recipe object
- * - nutrition: Current scaled nutrition object
- * - servingMultiplier: Current serving multiplier (1, 2, 4)
- * - onServingChange: Callback to update serving multiplier
- * - isFavorite: Boolean
- * - onToggleFavorite: Callback
  */
 export const DetailHero = ({
   recipe,
@@ -49,8 +43,9 @@ export const DetailHero = ({
       <div className="relative w-full overflow-hidden rounded-2xl shadow-md">
         <img
           className="h-64 md:h-80 w-full object-cover"
-          src={recipe?.imageUrl || 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=600'}
-          alt={recipe?.title}
+          src={formatMediaUrl(recipe?.imageUrl)}
+          alt={recipe?.title || 'Recipe Details'}
+          onError={(e) => { e.target.src = '/assets/recipe-placeholder.svg'; }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
