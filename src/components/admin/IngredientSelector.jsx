@@ -225,10 +225,10 @@ export const IngredientSelector = ({ ingredients = [], onChange, onAdd, onRemove
                   {selectedIng ? (
                     <div className="flex items-center gap-2 text-[10px] font-medium text-on-surface-variant flex-wrap">
                       <span className="bg-surface-container-high/60 px-2 py-0.5 rounded font-bold">
-                        {selectedIng.nutrition.kcal} kcal
+                        {Math.round((selectedIng.nutrition.kcal * ((item.amount || 0) / (selectedIng.defaultAmount || 100))) * 10) / 10} kcal
                       </span>
-                      <span className="bg-surface-container-high/60 px-2 py-0.5 rounded font-bold">
-                        {selectedIng.nutrition.netCarbs}g Net Carbs
+                      <span className="bg-primary/10 text-primary px-2 py-0.5 rounded font-bold border border-primary/20">
+                        {Math.max(0, Math.round((((selectedIng.nutrition.carbs || 0) - (selectedIng.nutrition.fiber || 0)) * ((item.amount || 0) / (selectedIng.defaultAmount || 100))) * 10) / 10)}g Net Carbs
                       </span>
                       {selectedIng.nutrition.glycemicIndex !== null && (
                         <span className={`px-2 py-0.5 rounded font-bold border ${getGiBadgeClass(selectedIng.nutrition.glycemicIndex)}`}>
@@ -299,6 +299,10 @@ export const IngredientSelector = ({ ingredients = [], onChange, onAdd, onRemove
                         </option>
                       ))}
                     </select>
+                    <p className="text-[10px] text-on-surface-variant/80 italic flex items-center gap-1 mt-1 font-normal">
+                      <span className="material-symbols-outlined text-[13px] text-primary shrink-0">info</span>
+                      Roasting/Boiling increases starch digestibility, slightly adjusting effective GI
+                    </p>
                   </div>
                 </div>
               </div>

@@ -350,15 +350,21 @@ export const CustomIngredientDrawer = ({ isOpen, onSave, onClose }) => {
             </div>
 
             {/* Net Carbs & Derived GL Indicators */}
-            <div className="p-3.5 rounded-xl bg-surface-container-high/40 border border-outline-variant/30 flex items-center justify-between text-xs">
-              <div>
-                <span className="font-bold text-on-surface">Calculated Net Carbs: </span>
-                <span className="text-primary font-extrabold">{calculatedNetCarbs}g</span>
+            <div className="p-3.5 rounded-xl bg-surface-container-high/40 border border-outline-variant/30 space-y-1 text-xs">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="font-bold text-on-surface">Calculated Net Carbs: </span>
+                  <span className="text-primary font-extrabold">{calculatedNetCarbs}g</span>
+                </div>
+                <div>
+                  <span className="font-bold text-on-surface">Derived 100g GL: </span>
+                  <span className="text-tertiary font-extrabold">{calculatedGL}</span>
+                </div>
               </div>
-              <div>
-                <span className="font-bold text-on-surface">Derived 100g GL: </span>
-                <span className="text-tertiary font-extrabold">{calculatedGL}</span>
-              </div>
+              <p className="text-[10px] text-on-surface-variant/80 italic flex items-center gap-1 font-normal pt-1">
+                <span className="material-symbols-outlined text-[13px] text-primary shrink-0">info</span>
+                Roasting/Boiling increases starch digestibility, slightly adjusting effective GI
+              </p>
             </div>
           </section>
 

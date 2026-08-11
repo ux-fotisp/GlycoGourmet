@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { usePermissions } from '../../hooks/usePermissions';
 
 /**
  * Navbar — Global Responsive Navigation Component
@@ -8,6 +9,7 @@ import { useAuth } from '../../context/AuthContext';
  */
 export const Navbar = () => {
   const { user, logout } = useAuth();
+  const { isPendingAudit } = usePermissions();
   const location = useLocation();
   const navigate = useNavigate();
   const activePath = location.pathname;
@@ -172,9 +174,20 @@ export const Navbar = () => {
                 <span className="text-xs font-bold text-on-surface truncate leading-tight">
                   {user?.name || 'Chef User'}
                 </span>
-                <span className="text-[9px] font-extrabold text-on-surface-variant/75 tracking-wider uppercase mt-0.5">
-                  ADMINISTRATOR
-                </span>
+                {isPendingAudit ? (
+                  <Link
+                    to="/pending-approval"
+                    className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/30 hover:bg-amber-500/20 transition-colors mt-0.5 w-fit"
+                    title="Account Under Audit - Click to view status"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    Account Under Audit
+                  </Link>
+                ) : (
+                  <span className="text-[9px] font-extrabold text-on-surface-variant/75 tracking-wider uppercase mt-0.5">
+                    {(user?.roleType || 'admin') === 'admin' ? 'ADMINISTRATOR' : (user?.roleType || 'user').toUpperCase()}
+                  </span>
+                )}
               </div>
             </div>
 

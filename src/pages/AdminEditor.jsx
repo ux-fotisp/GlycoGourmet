@@ -4,6 +4,7 @@ import EditorFormFields from '../components/admin/EditorFormFields';
 import EditorPreviewCard from '../components/admin/EditorPreviewCard';
 import Button from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
+import { usePermissions } from '../hooks/usePermissions';
 import { saveRecipe, getRecipeById } from '../utils/recipeStore';
 
 const DRAFT_SESSION_KEY = 'glyco_editor_draft_session';
@@ -30,6 +31,7 @@ const generateRecipeId = (title) => {
 
 export const AdminEditor = () => {
   const { user, addFavorite } = useAuth();
+  const { canPublishPublic, canCreateDrafts } = usePermissions();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
@@ -356,8 +358,8 @@ export const AdminEditor = () => {
               type="button"
               variant="ghost"
               onClick={handleSaveDraft}
-              disabled={isSaving}
-              className="h-12 px-5 font-bold text-xs md:text-sm text-on-surface-variant hover:text-primary cursor-pointer border border-outline-variant/40"
+              disabled={isSaving || !canCreateDrafts}
+              className="h-12 px-5 font-bold text-xs md:text-sm text-on-surface-variant hover:text-primary cursor-pointer border border-outline-variant/40 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <span className="material-symbols-outlined text-[18px] mr-1">save</span>
               Save as Draft
@@ -367,7 +369,7 @@ export const AdminEditor = () => {
               <Button
                 type="button"
                 onClick={handlePublish}
-                disabled={isSaving || !isPublishValid}
+                disabled={isSaving || !isPublishValid || !canPublishPublic}
                 className="h-12 px-6 font-bold text-xs md:text-sm shadow-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {isSaving ? (
@@ -383,17 +385,25 @@ export const AdminEditor = () => {
                 )}
               </Button>
 
-              {/* Hover Tooltip when Publish button is disabled */}
-              {!isPublishValid && (
+              {/* Hover Tooltip when Publish button is disabled or user lacks permission */}
+              {(!isPublishValid || !canPublishPublic) && (
                 <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-inverse-surface text-inverse-on-surface rounded-xl shadow-xl text-xs font-sans opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                  <p className="font-bold text-tertiary border-b border-white/10 pb-1 mb-1">
-                    Complete Required Fields to Publish:
-                  </p>
-                  <ul className="space-y-0.5 text-[11px] list-disc list-inside">
-                    {!isTitleValid && <li>Enter a recipe title</li>}
-                    {!isServingsValid && <li>Specify yield / servings (&gt; 0)</li>}
-                    {!isIngredientsValid && <li>Add at least 1 ingredient</li>}
-                  </ul>
+                  {!canPublishPublic ? (
+                    <p className="font-medium text-tertiary">
+                      Only verified Dietitians can publish directly to the public library.
+                    </p>
+                  ) : (
+                    <>
+                      <p className="font-bold text-tertiary border-b border-white/10 pb-1 mb-1">
+                        Complete Required Fields to Publish:
+                      </p>
+                      <ul className="space-y-0.5 text-[11px] list-disc list-inside">
+                        {!isTitleValid && <li>Enter a recipe title</li>}
+                        {!isServingsValid && <li>Specify yield / servings (&gt; 0)</li>}
+                        {!isIngredientsValid && <li>Add at least 1 ingredient</li>}
+                      </ul>
+                    </>
+                  )}
                 </div>
               )}
             </div>

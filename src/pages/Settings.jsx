@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { usePreferences } from '../context/UserPreferences';
+import { usePermissions } from '../hooks/usePermissions';
 
 export const Settings = () => {
   const { user, logout } = useAuth();
+  const { role } = usePermissions();
   const {
     unitSystem,
     glucoseUnit,
@@ -163,10 +165,10 @@ export const Settings = () => {
             </h2>
             <span
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-700 text-xs font-bold"
-              title="Account Approved by Administrator"
+              title={`Clinical Role: ${role ? role.charAt(0).toUpperCase() + role.slice(1) : 'User'}`}
             >
               <span className="material-symbols-outlined text-[16px]">verified</span>
-              <span className="capitalize">{user?.roleType || 'Admin'}</span>
+              <span>Clinical Role: <span className="capitalize">{role || 'user'}</span></span>
             </span>
           </div>
           <p className="text-xs text-on-surface-variant font-medium mt-0.5">
@@ -175,14 +177,14 @@ export const Settings = () => {
         </div>
 
         {/* Admin Control Panel Shortcut Link */}
-        {user?.roleType === 'admin' && (
+        {(user?.roleType || '').toLowerCase() === 'admin' && (
           <a
             href="/admin"
             className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-on-primary font-bold text-xs rounded-xl hover:bg-primary/90 transition-all cursor-pointer shadow-xs"
             title="Open Strapi Admin Panel for User Audits"
           >
             <span className="material-symbols-outlined text-base">admin_panel_settings</span>
-            <span>Admin User Audit</span>
+            <span>Admin Panel</span>
           </a>
         )}
       </header>

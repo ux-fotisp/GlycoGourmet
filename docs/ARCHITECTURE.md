@@ -1,183 +1,202 @@
-# 🏛️ GlycoGourmet — Technical Architecture & Snappi CMS Integration Guide
+# 🏛️ GlycoGourmet — Technical Architecture & UX Specification
 
-> **Architected by [Fotis Pastrakis](https://fotisp.gr)**  
-> *Comprehensive technical documentation for the GlycoGourmet headless nutrition application, Snappi CMS REST API integration, Glycemic Load calculation engine, and Netlify deployment pipeline.*
+> **Architected & Authored by [Fotis Pastrakis](https://fotisp.gr)**  
+> *Deep-dive technical specification detailing the OOUX domain architecture, metabolic calculation algorithms, Strapi RBAC security matrix, HCI research principles, and system routing layer.*
 
 ---
 
-## 1. System Architecture Overview
+## Section 1: Object-Oriented UX (OOUX) Domain Architecture
 
-GlycoGourmet is structured as a decoupled, headless web application:
+GlycoGourmet is structured around Sophia Prater's **Object-Oriented UX (OOUX) / ORCA framework** (Objects, Relationships, CTA Actions, Attributes). The domain model centers around four core domain objects: `Recipe`, `Ingredient`, `Meal Plan`, and `User Profile`.
 
 ```mermaid
-flowchart TD
-    User([User Browser]) -->|React 19 + React Router v7| UI[GlycoGourmet Frontend]
-    
-    subgraph Frontend Architecture
-        UI --> CalcEngine[Glycemic Load & Macro Engine]
-        UI --> DesignTokens[Sage & Grain Token System]
-        UI --> Stores[Two-Tier Data Layer]
-    end
-    
-    subgraph Data Tiering & Caching
-        Stores -->|1st Priority: SWR Cache| SessionCache[(sessionStorage 10m TTL)]
-        Stores -->|2nd Priority: REST API| SnappiAPI[Snappi CMS Backend]
-        Stores -->|Fallback Priority| LocalJSON[(Local System JSON Seed)]
-    end
-    
-    subgraph Snappi CMS Endpoints
-        SnappiAPI --> RecEndpoint[/api/v1/collections/recipes\]
-        SnappiAPI --> IngEndpoint[/api/v1/collections/ingredients\]
-        SnappiAPI --> MediaEndpoint[/api/v1/media/upload\]
-    end
-```
-
----
-
-## 2. Snappi CMS Integration & Schemas
-
-### 2.1 Client Layer (`src/services/snappiClient.js`)
-- **Native Fetch Wrapper**: Centralized API abstraction handles authorization, header construction, JSON serialization, and error handling.
-- **Stale-While-Revalidate (SWR) Caching**:
-  - `snappiGet()` reads cached responses from `sessionStorage` with a **10-minute TTL** (`CACHE_TTL_MS = 600,000`).
-  - Returns cached content immediately for fast rendering, then revalidates in the background.
-  - Automatic cache invalidation (`invalidateCache()`) triggers after `POST`, `PUT`, or `DELETE` operations.
-
-### 2.2 Endpoint Reference
-
-| Method | Endpoint | Authorization | Description |
-|---|---|---|---|
-| `GET` | `/collections/recipes` | `Bearer <READ_TOKEN>` | Fetch recipe collection |
-| `GET` | `/collections/recipes/:id` | `Bearer <READ_TOKEN>` | Fetch single recipe detail |
-| `POST` | `/collections/recipes` | `Bearer <USER_JWT>` | Create new recipe draft |
-| `PUT` | `/collections/recipes/:id` | `Bearer <USER_JWT>` | Update existing recipe |
-| `DELETE` | `/collections/recipes/:id` | `Bearer <USER_JWT>` | Delete recipe |
-| `GET` | `/collections/ingredients` | `Bearer <READ_TOKEN>` | Fetch ingredient registry |
-| `POST` | `/collections/ingredients` | `Bearer <USER_JWT>` | Register custom ingredient |
-| `POST` | `/media/upload` | `Bearer <USER_JWT>` | Multipart image upload (`FormData`) |
-
-### 2.3 Data Schemas
-
-#### **Recipe Schema (`Recipe`)**
-```json
-{
-  "id": "crispy-salmon-asparagus",
-  "title": "Crispy Skin Salmon with Roasted Asparagus",
-  "category": "Main Course",
-  "description": "Pan-seared salmon fillet paired with garlic-roasted asparagus.",
-  "cookingTime": 25,
-  "servings": 2,
-  "imageUrl": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2",
-  "tags": ["Low GI", "Keto", "High Protein"],
-  "ingredients": [
-    {
-      "ingredientId": "atlantic-salmon",
-      "amount": 6,
-      "unit": "oz",
-      "prepState": "raw"
-    },
-    {
-      "ingredientId": "asparagus",
-      "amount": 1,
-      "unit": "bunch",
-      "prepState": "roasted"
+classDiagram
+    class UserProfile {
+        +String id
+        +String email
+        +String roleType
+        +Boolean isApproved
+        +Number dailyGlTarget
+        +createRecipe()
+        +manageMealPlan()
     }
-  ],
-  "steps": [
-    {
-      "title": "Prep Veggies",
-      "description": "Snap off woody ends of asparagus and toss with olive oil.",
-      "timer": 5
+
+    class Recipe {
+        +String id
+        +String title
+        +String category
+        +Number cookingTime
+        +Number servings
+        +Array tags
+        +Array steps
+        +calculateNutrition()
+        +scalePortions()
     }
-  ]
-}
+
+    class Ingredient {
+        +String id
+        +String name
+        +String category
+        +Number defaultAmount
+        +String defaultUnit
+        +Object nutrition
+        +Array substitutions
+    }
+
+    class MealPlan {
+        +String id
+        +String weekStartDate
+        +Array dailySchedules
+        +Number aggregateGL
+        +calculateDailyTotals()
+    }
+
+    UserProfile "1" -- "*" Recipe : authors / saves
+    UserProfile "1" -- "*" MealPlan : schedules
+    Recipe "1" -- "*" Ingredient : contains line items
+    MealPlan "*" -- "*" Recipe : references
 ```
 
-#### **Ingredient Schema (`Ingredient`)**
-```json
-{
-  "id": "atlantic-salmon",
-  "name": "Atlantic Salmon",
-  "category": "protein",
-  "defaultUnit": "oz",
-  "defaultAmount": 6,
-  "nutrition": {
-    "kcal": 180,
-    "protein": 34,
-    "fat": 5,
-    "carbs": 0,
-    "fiber": 0,
-    "netCarbs": 0,
-    "glycemicIndex": null,
-    "glycemicLoad": 0
-  },
-  "substitutions": []
-}
-```
+### 1.1 Object Matrix & Lifecycle Breakdown
 
----
-
-## 3. Glycemic Load (GL) Calculation Engine
-
-### 3.1 Mathematical Model (`src/utils/nutritionCalculator.js`)
-
-#### **Glycemic Index (GI) Weighting**:
-$$\text{Weighted GI} = \frac{\sum \left( \text{GI}_i \times \text{PrepMultiplier}_i \times \text{Carbs}_i \right)}{\sum \text{Carbs}_i}$$
-
-#### **Glycemic Load (GL) Formula**:
-$$\text{GL} = \text{Math.round}\left(\frac{\text{Weighted GI} \times \text{Net Carbs}}{100}\right)$$
-
-### 3.2 Preparation-State GI Multipliers
-
-The digestive accessibility of starches varies based on cooking and cooling states:
-
-| Prep State | Multiplier | Biological Impact |
-|---|---|---|
-| `raw` | `1.00` | Baseline glycemic response |
-| `steamed` | `1.05` | Mild gelatinization of starches |
-| `roasted` | `1.15` | High heat increases rapid starch breakdown |
-| `cooled` | `0.85` | Retrogradation forms resistant starch (lowers GI) |
-
-### 3.3 Glycemic Load Classification Spectrum
-
-| Category | Numerical Range | Visual Accent | UI Class |
+| Object | Core Metadata & Attributes | Nested Relationships | Lifecycle States |
 |---|---|---|---|
-| **Low GL** | $\text{GL} \le 10$ | Sage Green Accent | `text-primary-fixed-dim` / `bg-primary-container/15` |
-| **Medium GL** | $11 \le \text{GL} \le 19$ | Warm Copper Accent | `text-tertiary` / `bg-tertiary-container/15` |
-| **High GL** | $\text{GL} \ge 20$ | High Warning Accent | `text-error` / `bg-error-container/15` |
+| **Recipe** | `title`, `description`, `category`, `cookingTime`, `servings`, `imageUrl`, `tags`, `steps` | Has-many `Ingredient` line items (with quantity, unit, `prepState`) | `Draft` $\rightarrow$ `Pending Audit` $\rightarrow$ `Published Public` $\rightarrow$ `Archived` |
+| **Ingredient** | `name`, `category`, `defaultAmount`, `defaultUnit`, `nutrition` (`kcal`, `carbs`, `fiber`, `netCarbs`, `gi`) | Has-many `substitutions` (alternative ingredient references with swap rationale) | `System Core` $\mid$ `User-Authored Custom` |
+| **Meal Plan** | `weekStartDate`, `dailySchedules` (Mon-Sun arrays of Breakfast, Lunch, Dinner, Snack slots) | References multiple `Recipe` objects; calculates daily GL sums | `Active Week` $\rightarrow$ `Completed` $\rightarrow$ `Template` |
+| **User Profile**| `email`, `roleType` (`user`, `dietitian`, `admin`), `isApproved`, `dailyGlTarget`, `unitSystem` | Has-many `Recipe` drafts; owns `MealPlan` schedule; stores `Favorites` | `Pending Audit` $\rightarrow$ `Approved Active` $\rightarrow$ `Suspended` |
 
 ---
 
-## 4. Security & Authentication Architecture
+## Section 2: Metabolic Engine & Math Algorithms
 
-- **JWT Session Storage**: User session tokens are stored in `localStorage.getItem('glyco_session')`.
-- **Dynamic Header Injection**:
-  - `snappiClient` automatically attaches `Authorization: Bearer <USER_JWT>` for write methods (`POST`, `PUT`, `DELETE`).
-  - Read queries default to public bearer token (`VITE_SNAPPI_READ_TOKEN`).
-- **Defensive Input Handling**: All numeric fields utilize `safeNum()` and `safeNullableNum()` wrappers to guarantee incomplete CMS draft payloads never break UI rendering.
+GlycoGourmet provides 100% calculation accuracy for postprandial glucose estimation through deterministic mathematical formulas.
+
+### 2.1 Mathematical Formulas
+
+#### 1. Net Carbohydrate Formula:
+$$\text{Net Carbs} = \max(0, \text{Total Carbs} - \text{Dietary Fiber})$$
+
+#### 2. Thermal Preparation Multiplier ($M_{\text{prep}}$):
+Digestive starch accessibility changes based on heat and cooling. The effective Glycemic Index for ingredient $i$ is calculated as:
+$$GI_{\text{effective}, i} = GI_{\text{base}, i} \times M_{\text{prep}, i}$$
+
+Where $M_{\text{prep}}$ is defined by preparation state:
+- `raw`: $1.00$
+- `steamed`: $1.02$
+- `sauteed`: $1.05$
+- `roasted`: $1.15$ (high heat increases rapid starch gelatinization)
+- `boiled`: $1.20$
+- `mashed_processed`: $1.25$
+- `cooled`: $0.85$ (retrogradation forms resistant starch)
+
+#### 3. Composite Recipe Glycemic Index:
+Weighted average GI based on carbohydrate weight contribution:
+$$\text{Weighted GI} = \frac{\sum_{i=1}^{n} \left( GI_{\text{effective}, i} \times \text{Carbs}_i \right)}{\sum_{i=1}^{n} \text{Carbs}_i}$$
+
+#### 4. Portion-Scaled Glycemic Load ($GL$):
+$$\text{Base GL} = \text{Math.round}\left(\frac{\text{Weighted GI} \times \text{Net Carbs}}{100}\right)$$
+$$\text{Scaled GL} = \text{Math.round}\left(\text{Base GL} \times S_{\text{multiplier}}\right)$$
+
+### 2.2 Preattentive Color Severity System
+
+To minimize cognitive load, GlycoGourmet translates GL numbers into preattentive visual encoding:
+
+| GL Value Range | Category Label | Visual Token | Tailored Utility Class | Clinical Meaning |
+|---|---|---|---|---|
+| **$\text{GL} \le 10$** | **Gentle Impact** | Sage Green | `bg-primary` / `text-primary` | Minimal postprandial glucose fluctuation |
+| **$11 \le \text{GL} \le 19$** | **Moderate Impact** | Amber / Copper | `bg-tertiary` / `text-tertiary` | Moderate, gradual glucose elevation |
+| **$\text{GL} \ge 20$** | **High Spike Risk** | Soft Rose | `bg-error` / `text-error` | Rapid glucose spike risk; caution advised |
 
 ---
 
-## 5. Design System ("Sage & Grain")
+## Section 3: Strapi CMS Backend & RBAC Security Matrix
 
-Sourced from the Google Stitch accessibility specification:
-- **Primary Color**: `#325346` (Sage Green)
-- **Tertiary Color**: `#803615` (Muted Copper)
-- **Error Color**: `#ba1a1a` (Spike Warning Red)
-- **Background**: `#f7faf8` (Warm Oat White)
-- **Typography**: Plus Jakarta Sans scale with 8px grid system alignment.
-- **Accessibility**: Strict WCAG 2.1 AA 4.5:1 contrast compliance across badges, pills, and dark mode overlays.
+GlycoGourmet enforces a strict Role-Based Access Control (RBAC) matrix driven by the user's `isApproved` flag and `roleType`.
+
+### 3.1 Permission Matrix Table
+
+| Role Type | `isApproved` | `canCreateDrafts` | `canPublishPublic` | `canManageUsers` | `isPendingAudit` | Navigation Access |
+|---|---|---|---|---|---|---|
+| **Pending Audit** | `false` | `false` | `false` | `false` | `true` | Redirected to `/pending-approval` |
+| **Authenticated User** | `true` | `true` | `false` | `false` | `false` | Access to `/recipes/mine`, `/meal-plans` |
+| **Dietitian** | `true` | `true` | `true` | `false` | `false` | Can publish directly to public library |
+| **Admin** | `true` | `true` | `true` | `true` | `false` | Full access + `/admin` user management |
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User Browser
+    participant App as React App (AppRoutes)
+    participant Guard as ProtectedRoute
+    participant Hook as usePermissions()
+    participant Strapi as Strapi CMS API
+
+    User->>App: Navigate to /admin-editor
+    App->>Guard: Evaluate Route Guard
+    Guard->>Hook: Fetch session user state
+    Hook-->>Guard: Return { isApproved, roleType, canCreateDrafts }
+    
+    alt isApproved === false
+        Guard-->>User: Redirect to /pending-approval
+    else isApproved === true && canCreateDrafts === true
+        Guard-->>App: Render AdminEditor Page
+    end
+```
+
+### 3.2 Google OAuth2 & Admin Audit Workflow
+1. **Registration**: User registers via Google OAuth2 or email signup.
+2. **Holding State**: New accounts default to `isApproved: false`.
+3. **Audit Redirect**: Unapproved users attempting to access protected routes are intercepted by `ProtectedRoute` and redirected to `/pending-approval`.
+4. **Admin Approval**: Administrators access `/admin` to inspect user credentials, verify clinical licenses (for Dietitians), and toggle `isApproved: true`.
 
 ---
 
-## 6. Deployment & Continuous Integration
+## Section 4: Human-Computer Interaction (HCI) Research Basis
 
-- **Hosting Platform**: Netlify (Continuous Deployment linked to `ux-fotisp/GlycoGourmet`).
-- **SPA Routing**: Configured via `public/_redirects` (`/* /index.html 200`) and root `netlify.toml`.
-- **Automated Verification**: Vitest unit test suite (32 tests covering calculation, state management, and component rendering) and Vite 8 production compiler (`npm run build`).
+GlycoGourmet's user interface is grounded in published HCI research on cognitive ergonomics, decision fatigue, and preattentive visual processing.
+
+### 4.1 Core HCI Principles & Design Implementations
+
+1. **Cognitive Fatigue Reduction (Zero Mental Math)**:
+   - *Rationale*: Individuals managing chronic conditions experience high daily decision fatigue.
+   - *Implementation*: Discrete 48px portion touch pills (`[ 0.5x ]`, `[ 1x ]`, `[ 1.5x ]`, `[ 2x ]`) allow single-tap portion scaling. All macro adjustments occur programmatically without manual multiplication.
+
+2. **Recognition Over Recall**:
+   - *Rationale*: Recalling numerical glycemic indices taxes working memory.
+   - *Implementation*: Visual bento grids, category icons (`set_meal`, `grain`, `eco`), and pre-filtered dietary tags present visual recognition anchors.
+
+3. **Preattentive Visual Encoding**:
+   - *Rationale*: Visual processing of color and fill width occurs in under 200ms before conscious attentional focus.
+   - *Implementation*: Preattentive chromatic GL progress meter (`h-3 rounded-full bg-surface-container-high overflow-hidden`) displays color-coded spike risk instantly.
+
+4. **Non-Blocking Context Preservation**:
+   - *Rationale*: Navigating away from an active form disrupts task momentum and increases input errors.
+   - *Implementation*: Custom ingredients are registered via a non-blocking slide-over drawer (`CustomIngredientDrawer.jsx`), keeping the recipe authoring canvas state intact.
 
 ---
 
-## 👨‍💻 Creator & Diabetes Context
+## Section 5: Navigation & Information Architecture
 
-**GlycoGourmet** was designed and engineered by **[Fotis Pastrakis](https://fotisp.gr)** as a personalized digital health solution for diabetes management and postprandial glucose stability.
+The application's route hierarchy enforces security gating while maintaining clean navigation flow:
+
+```
+AppRoutes
+ ├── /                        (Dashboard & Public Recipe Explorer)
+ ├── /recipes/:id             (Detail Hero, Stepper, Bento Grid, Cook Mode)
+ ├── /pending-approval        (Holding screen for unapproved accounts)
+ ├── /login                   (Authentication & OAuth entry)
+ ├── /onboarding               (Diabetic profile & unit preference setup)
+ └── ProtectedRoute Gated Routes
+      ├── /recipes/mine       [requiredPermission: canCreateDrafts]
+      ├── /admin-editor       [requiredPermission: canCreateDrafts]
+      ├── /meal-plans         [requiredPermission: canCreateDrafts]
+      ├── /settings           [Requires authenticated session]
+      └── /admin              [requiredPermission: canManageUsers]
+```
+
+---
+
+## 👨‍💻 Author & Technical Attribution
+
+Designed, architected, and engineered by **[Fotis Pastrakis](https://fotisp.gr)**.

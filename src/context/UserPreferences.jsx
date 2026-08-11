@@ -144,7 +144,25 @@ export const UserPreferencesProvider = ({ children }) => {
 export const usePreferences = () => {
   const context = useContext(UserPreferencesContext);
   if (!context) {
-    throw new Error('usePreferences must be used within a UserPreferencesProvider');
+    return {
+      unitSystem: 'imperial',
+      glucoseUnit: 'mgdl',
+      visualDensity: 'comfortable',
+      dailyGlTarget: 45,
+      maxNetCarbsPerMeal: 30,
+      targetDailyCalories: 2000,
+      diabeticProfiles: ['Type 2'],
+      dietaryRestrictions: ['Gluten-Free'],
+      setUnitSystem: () => {},
+      setGlucoseUnit: () => {},
+      setVisualDensity: () => {},
+      setDailyGlTarget: () => {},
+      setMaxNetCarbsPerMeal: () => {},
+      setTargetDailyCalories: () => {},
+      setDiabeticProfiles: () => {},
+      setDietaryRestrictions: () => {},
+      setSettings: () => {}
+    };
   }
   return context;
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import ProtectedRoute from '../components/layout/ProtectedRoute';
+import ProtectedRoute from './ProtectedRoute';
 import AppLayout from '../components/layout/AppLayout';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
@@ -14,12 +14,12 @@ import MealPlans from '../pages/MealPlans';
 import PendingApproval from '../pages/PendingApproval';
 
 /**
- * AppRoutes — React Router v7 Navigation Hierarchy & Route Map
+ * AppRoutes — React Router Navigation Hierarchy & Route Map
  *
  * Configures:
  * - Public routes: /login, /register
- * - Protected routes: /onboarding, /pending-approval, /recipe/:id
- * - AppLayout routes: / (Dashboard), /recipes (All Recipes Discovery Catalog), /my-recipes, /meal-plans, /settings, /admin
+ * - Base Protected routes: /onboarding, /pending-approval, /recipe/:id
+ * - Permission-Gated routes: /recipes/mine, /meal-plans, /admin-editor
  */
 export const AppRoutes = () => {
   return (
@@ -28,7 +28,7 @@ export const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* Protected Routes */}
+      {/* Protected Base Routes */}
       <Route element={<ProtectedRoute />}>
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/pending-approval" element={<PendingApproval />} />
@@ -38,12 +38,16 @@ export const AppRoutes = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/recipes" element={<Dashboard />} />
           <Route path="/recipes/all" element={<Dashboard />} />
-          <Route path="/recipes/mine" element={<MyRecipes />} />
-          <Route path="/my-recipes" element={<MyRecipes />} />
-          <Route path="/meal-plans" element={<MealPlans />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/admin" element={<AdminEditor />} />
-          <Route path="/admin-editor/:id?" element={<AdminEditor />} />
+
+          {/* Feature-Gated Protected Routes */}
+          <Route element={<ProtectedRoute requiredPermission="canCreateDrafts" />}>
+            <Route path="/recipes/mine" element={<MyRecipes />} />
+            <Route path="/my-recipes" element={<MyRecipes />} />
+            <Route path="/meal-plans" element={<MealPlans />} />
+            <Route path="/admin" element={<AdminEditor />} />
+            <Route path="/admin-editor/:id?" element={<AdminEditor />} />
+          </Route>
         </Route>
 
         {/* Full Viewport Recipe Details */}

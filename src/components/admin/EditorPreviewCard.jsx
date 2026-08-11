@@ -13,7 +13,7 @@ import ProgressBar from '../ui/ProgressBar';
 import { formatMediaUrl } from '../../utils/mediaUtils';
 
 export const EditorPreviewCard = ({ formData }) => {
-  const { unitSystem } = usePreferences();
+  const { unitSystem, dailyGlTarget = 45 } = usePreferences();
 
   const ingredientsList = Array.isArray(formData?.ingredients) ? formData.ingredients : [];
 
@@ -22,22 +22,22 @@ export const EditorPreviewCard = ({ formData }) => {
   }, [ingredientsList]);
 
   const gi = nutrition.glycemicIndex;
-  const gl = nutrition.glycemicLoad ?? 0;
+  const gl = Math.round(nutrition.glycemicLoad ?? 0);
   const glInfo = getGlycemicLoadCategory(gl);
 
-  // Glucose impact progress bar: GL of 25 = 100%
-  const glPercent = Math.min(Math.round((gl / 25) * 100), 100);
+  // Preattentive chromatic fill width based on Daily Target GL
+  const glPercent = Math.min(100, Math.max(0, Math.round((gl / dailyGlTarget) * 100)));
 
-  let rangeLabel = 'Low GL Range (Gentle)';
-  let rangeColor = 'text-primary-fixed-dim';
-  let barColor = 'bg-primary-fixed-dim';
+  let rangeLabel = 'Gentle Impact';
+  let rangeColor = 'text-primary';
+  let barColor = 'bg-primary';
 
   if (gl >= 20) {
-    rangeLabel = 'High GL Range (Spike Risk)';
+    rangeLabel = 'High Spike Risk';
     rangeColor = 'text-error';
     barColor = 'bg-error';
   } else if (gl >= 11) {
-    rangeLabel = 'Medium GL Range (Moderate)';
+    rangeLabel = 'Moderate Impact';
     rangeColor = 'text-tertiary';
     barColor = 'bg-tertiary';
   }
@@ -153,21 +153,29 @@ export const EditorPreviewCard = ({ formData }) => {
         <NutritionSnapshot nutrition={nutrition} />
       </div>
 
-      {/* ⑤ Live Metabolic Recalculation (Glucose Impact Bar) */}
-      <div className="px-5 pt-4 space-y-1.5">
-        <div className="flex justify-between items-end text-xs font-sans">
+      {/* ⑤ Live Metabolic Recalculation (Preattentive Chromatic GL Gauge) */}
+      <div className="px-5 pt-4 space-y-1.5 font-sans">
+        <div className="flex justify-between items-end text-xs">
           <span className="font-bold text-on-surface flex items-center gap-1">
-            Glucose Impact <small className="text-[10px] text-on-surface-variant font-normal">(Glycemic Load)</small>
+            Glycemic Load Gauge
           </span>
           <span className="font-bold text-on-surface-variant">
             GL {gl} • {nutrition.netCarbs ?? 0}g Net Carbs
           </span>
         </div>
-        <ProgressBar progress={glPercent} barColor={barColor} />
+
+        {/* Preattentive Chromatic Progress Meter */}
+        <div className="h-3 rounded-full bg-surface-container-high overflow-hidden w-full relative">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ease-out ${barColor}`}
+            style={{ width: `${glPercent}%` }}
+          />
+        </div>
+
         <p className="text-[11px] text-on-surface-variant leading-relaxed font-sans">
           This formulation sits in the{' '}
           <span className={`font-bold ${rangeColor}`}>{rangeLabel}</span>{' '}
-          for postprandial blood sugar control.
+          ({glPercent}% of Daily Target GL).
         </p>
       </div>
 

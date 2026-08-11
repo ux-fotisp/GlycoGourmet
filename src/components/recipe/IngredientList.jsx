@@ -5,7 +5,8 @@ import { getPrepStateLabel, PREP_STATES, getIngredientById } from '../../utils/n
 
 /**
  * IngredientList — Responsive ingredient table with category icons,
- * scaled quantities, macro tags, and smart substitution triggers.
+ * scaled quantities, macro tags, smart substitution triggers, and
+ * highest-impact ingredient signifiers ("Primary Carb Source" > 50% impact).
  */
 
 const CATEGORY_ICONS = {
@@ -29,6 +30,28 @@ export const IngredientList = ({
 }) => {
   const { unitSystem } = usePreferences();
   const hasSwaps = Object.keys(swappedIngredients).length > 0;
+
+  // Programmatically evaluate ingredient carb impact contributions
+  const ingredientCarbImpacts = ingredients.map(item => {
+    const ing = getIngredientById(item.ingredientId);
+    const defaultAmt = (ing?.defaultAmount && ing.defaultAmount > 0) ? ing.defaultAmount : 100;
+    const amt = (parseFloat(item?.amount) || 0) * servingMultiplier;
+    const ratio = amt / defaultAmt;
+    const netCarbs = (ing?.nutrition?.netCarbs ?? ing?.netCarbs ?? 0) * ratio;
+    return netCarbs > 0 ? netCarbs : 0;
+  });
+
+  const totalRecipeNetCarbs = ingredientCarbImpacts.reduce((acc, val) => acc + val, 0);
+
+  // Identify index of the single ingredient responsible for > 50% of recipe carb impact
+  let primaryCarbIndex = -1;
+  if (totalRecipeNetCarbs > 0) {
+    ingredientCarbImpacts.forEach((impact, idx) => {
+      if (impact / totalRecipeNetCarbs > 0.50) {
+        primaryCarbIndex = idx;
+      }
+    });
+  }
 
   return (
     <div className="space-y-3">
@@ -73,6 +96,8 @@ export const IngredientList = ({
           // Prep state
           const ps = PREP_STATES.find(p => p.value === item?.prepState);
 
+          const isPrimaryCarbSource = idx === primaryCarbIndex;
+
           return (
             <div
               key={idx}
@@ -83,22 +108,31 @@ export const IngredientList = ({
                   : 'border-outline-variant/50'
               }`}
             >
-              {/* Left: icon + quantity + name + prep badge */}
+              {/* Left: icon + quantity + name + prep badge + Primary Carb Source badge */}
               <div className="flex items-center gap-3 overflow-hidden min-w-0">
                 <span className="material-symbols-outlined text-primary text-xl shrink-0">
                   {icon}
                 </span>
                 <div className="min-w-0">
-                  <span className="text-sm font-medium text-on-surface block truncate">
-                    <span className="font-bold text-primary">{roundedAmount}</span>{' '}
-                    {finalUnit} {item?.name || 'Unknown'}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-medium text-on-surface block truncate">
+                      <span className="font-bold text-primary">{roundedAmount}</span>{' '}
+                      {finalUnit} {item?.name || 'Unknown'}
+                    </span>
+                    {/* Highest-Impact Ingredient Signifier */}
+                    {isPrimaryCarbSource && (
+                      <span className="bg-tertiary-container/50 text-on-tertiary-container text-xs px-2 py-0.5 rounded font-bold shrink-0 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px]">warning</span>
+                        Primary Carb Source
+                      </span>
+                    )}
+                  </div>
 
                   {/* Macro tag row */}
                   <div className="flex items-center gap-2 mt-0.5">
                     {ingCarbs !== null && (
                       <span className="text-[10px] font-medium text-on-surface-variant/70">
-                        {Math.round(ingCarbs * (scaledAmount / ((ing?.defaultAmount || 1))))  }g carbs
+                        {Math.round(ingCarbs * (scaledAmount / ((ing?.defaultAmount || 1))))}g carbs
                       </span>
                     )}
                     {ingGI !== null && (

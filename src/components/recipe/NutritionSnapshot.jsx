@@ -1,21 +1,17 @@
 import React from 'react';
 import NutritionBadge from '../ui/NutritionBadge';
 import { getGlycemicLoadCategory } from '../../utils/nutritionCalculator';
+import { usePreferences } from '../../context/UserPreferences';
 
 /**
- * NutritionSnapshot — Metabolic Bento Grid
+ * NutritionSnapshot — Metabolic Bento Grid with Progressive Disclosure
  *
- * Renders a high-density 8-item bento grid (grid grid-cols-2 md:grid-cols-4 gap-3):
- * 1. Glycemic Load (GL) — Solid pill badge (Sage ≤10, Copper 11-19, Rose ≥20)
- * 2. Glycemic Index (GI) — Minimalist outline pill badge
- * 3. Net Carbs (g)
- * 4. Dietary Fiber (g)
- * 5. Calories (kcal)
- * 6. Protein (g)
- * 7. Total Fat (g)
- * 8. Glucose Spike Prediction — Progress meter ("Gentle Range" vs "Elevated Spike")
+ * Keeps primary anchors (GL, GI, Net Carbs, Fiber) continuously visible,
+ * while rendering secondary macros (Calories, Fat, Protein) inside a collapsible accordion.
  */
 export const NutritionSnapshot = ({ nutrition }) => {
+  const { dailyGlTarget = 45 } = usePreferences();
+
   const gl = Math.round(nutrition?.glycemicLoad ?? 0);
   const glInfo = getGlycemicLoadCategory(gl);
 
@@ -28,10 +24,10 @@ export const NutritionSnapshot = ({ nutrition }) => {
     else { giSublabel = 'Low'; giColor = 'text-primary'; }
   }
 
-  // Glucose Spike Prediction logic based on GL
-  const spikePercent = Math.min(Math.round((gl / 30) * 100), 100);
+  // Preattentive GL Gauge fill width & color
+  const fillWidth = Math.min(100, Math.max(0, Math.round((gl / dailyGlTarget) * 100)));
   const isGentle = gl <= 10;
-  const spikeLabel = isGentle ? 'Gentle Range' : gl <= 19 ? 'Moderate Curve' : 'Elevated Spike';
+  const spikeLabel = isGentle ? 'Gentle Impact' : gl <= 19 ? 'Moderate Impact' : 'High Spike Risk';
   const spikeColor = isGentle ? 'bg-primary' : gl <= 19 ? 'bg-tertiary' : 'bg-error';
 
   return (
@@ -47,29 +43,38 @@ export const NutritionSnapshot = ({ nutrition }) => {
         </div>
       </div>
 
-      {/* 8-Item High-Density Bento Grid */}
+      {/* Primary Anchors (Continuously Visible) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        
-        {/* 1. Glycemic Load (GL) — Solid pill badge */}
+        {/* 1. Glycemic Load (GL) Meter */}
         <div className="bg-surface-container-low p-3 rounded-xl border border-outline-variant/30 flex flex-col justify-between min-h-[90px]">
           <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">
             Glycemic Load
           </span>
-          <div className="flex items-baseline gap-1.5 mt-1">
-            <span className={`text-xl md:text-2xl font-extrabold px-2.5 py-0.5 rounded-full text-xs ${
-              gl >= 20 ? 'bg-error-container text-on-error-container font-bold text-base' :
-              gl >= 11 ? 'bg-tertiary-container text-on-tertiary-container font-bold text-base' :
-              'bg-primary-container text-on-primary-container font-bold text-base'
-            }`}>
-              GL {gl}
-            </span>
+          <div className="space-y-1 my-1">
+            <div className="flex items-baseline justify-between">
+              <span className={`text-sm md:text-base font-extrabold px-2 py-0.5 rounded-full ${
+                gl >= 20 ? 'bg-error-container text-on-error-container font-bold' :
+                gl >= 11 ? 'bg-tertiary-container text-on-tertiary-container font-bold' :
+                'bg-primary-container text-on-primary-container font-bold'
+              }`}>
+                GL {gl}
+              </span>
+              <span className="text-[10px] font-bold text-on-surface-variant">{fillWidth}%</span>
+            </div>
+            {/* Preattentive Chromatic Meter */}
+            <div className="w-full h-3 bg-surface-container-high rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${spikeColor}`}
+                style={{ width: `${fillWidth}%` }}
+              />
+            </div>
           </div>
-          <span className="text-[10px] font-medium text-on-surface-variant/70 mt-1">
-            {glInfo.label} impact
+          <span className="text-[10px] font-semibold text-on-surface-variant/80">
+            {spikeLabel}
           </span>
         </div>
 
-        {/* 2. Glycemic Index (GI) — Minimalist outline pill badge */}
+        {/* 2. Glycemic Index (GI) */}
         <div className="bg-surface-container-low p-3 rounded-xl border border-outline-variant/30 flex flex-col justify-between min-h-[90px]">
           <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">
             Glycemic Index
@@ -97,52 +102,45 @@ export const NutritionSnapshot = ({ nutrition }) => {
           value={nutrition?.fiber !== undefined ? Math.round(nutrition.fiber * 10) / 10 : null}
           unit="g"
         />
-
-        {/* 5. Calories */}
-        <NutritionBadge
-          label="Calories"
-          value={nutrition?.kcal !== undefined ? Math.round(nutrition.kcal) : null}
-          unit=" kcal"
-        />
-
-        {/* 6. Protein */}
-        <NutritionBadge
-          label="Protein"
-          value={nutrition?.protein !== undefined ? Math.round(nutrition.protein * 10) / 10 : null}
-          unit="g"
-        />
-
-        {/* 7. Total Fat */}
-        <NutritionBadge
-          label="Total Fat"
-          value={nutrition?.fat !== undefined ? Math.round(nutrition.fat * 10) / 10 : null}
-          unit="g"
-        />
-
-        {/* 8. Glucose Spike Prediction — Progress meter */}
-        <div className="bg-surface-container-low p-3 rounded-xl border border-outline-variant/30 flex flex-col justify-between min-h-[90px]">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/80">
-            Glucose Spike Prediction
-          </span>
-          <div className="space-y-1.5 mt-1">
-            <div className="flex justify-between items-center text-[10px] font-bold">
-              <span className={isGentle ? 'text-primary' : gl <= 19 ? 'text-tertiary' : 'text-error'}>
-                {spikeLabel}
-              </span>
-            </div>
-            <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${spikeColor}`}
-                style={{ width: `${spikePercent}%` }}
-              />
-            </div>
-          </div>
-          <span className="text-[9px] text-on-surface-variant/70">
-            Postprandial curve estimate
-          </span>
-        </div>
-
       </div>
+
+      {/* Secondary Macros Collapsible Accordion (Progressive Disclosure) */}
+      <details className="group border border-outline-variant/30 rounded-xl p-3 bg-surface-container-low/40 transition-all">
+        <summary className="font-bold text-xs text-on-surface cursor-pointer flex items-center justify-between select-none py-1">
+          <span className="flex items-center gap-1.5 text-primary">
+            <span className="material-symbols-outlined text-[18px] group-open:rotate-180 transition-transform">
+              expand_more
+            </span>
+            Secondary Macros (Calories, Fat, Protein)
+          </span>
+          <span className="text-[10px] font-normal text-on-surface-variant group-open:hidden">
+            Tap to expand breakdown
+          </span>
+        </summary>
+
+        <div className="grid grid-cols-3 gap-3 pt-3 border-t border-outline-variant/20 mt-2">
+          {/* Calories */}
+          <NutritionBadge
+            label="Calories"
+            value={nutrition?.kcal !== undefined ? Math.round(nutrition.kcal) : null}
+            unit=" kcal"
+          />
+
+          {/* Protein */}
+          <NutritionBadge
+            label="Protein"
+            value={nutrition?.protein !== undefined ? Math.round(nutrition.protein * 10) / 10 : null}
+            unit="g"
+          />
+
+          {/* Total Fat */}
+          <NutritionBadge
+            label="Total Fat"
+            value={nutrition?.fat !== undefined ? Math.round(nutrition.fat * 10) / 10 : null}
+            unit="g"
+          />
+        </div>
+      </details>
     </div>
   );
 };
