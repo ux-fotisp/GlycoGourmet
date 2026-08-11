@@ -7,17 +7,30 @@
  * Blocks invalid macronutrient entries before database persistence.
  */
 
-const { errors } = require('@strapi/utils') || {};
-const ValidationError = errors?.ValidationError || Error;
+let ValidationError = Error;
+try {
+  const { errors } = require('@strapi/utils');
+  if (errors && errors.ValidationError) {
+    ValidationError = errors.ValidationError;
+  }
+} catch (err) {
+  // Defensive fallback for non-Strapi test runners
+  ValidationError = class CustomValidationError extends Error {
+    constructor(msg) {
+      super(msg);
+      this.name = 'ValidationError';
+    }
+  };
+}
 
 module.exports = {
   beforeCreate(event) {
-    const { data } = event.params;
+    const { data } = event?.params || {};
     validateIngredientMacros(data);
   },
 
   beforeUpdate(event) {
-    const { data } = event.params;
+    const { data } = event?.params || {};
     validateIngredientMacros(data);
   },
 };
