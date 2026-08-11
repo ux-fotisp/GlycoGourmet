@@ -120,13 +120,22 @@ export const AdminDashboard = () => {
           </p>
         </div>
 
-        <Link
-          to="/settings"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-on-surface-variant hover:text-primary transition-colors border border-outline-variant px-3.5 py-2 rounded-xl"
-        >
-          <span className="material-symbols-outlined text-[18px]">settings</span>
-          Profile Settings
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/admin/audit-queue"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 transition-colors border border-primary/30 px-3.5 py-2 rounded-xl"
+          >
+            <span className="material-symbols-outlined text-[18px]">rate_review</span>
+            Draft Audit Queue
+          </Link>
+          <Link
+            to="/settings"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-on-surface-variant hover:text-primary transition-colors border border-outline-variant px-3.5 py-2 rounded-xl"
+          >
+            <span className="material-symbols-outlined text-[18px]">settings</span>
+            Profile Settings
+          </Link>
+        </div>
       </header>
 
       {/* Audit Feedback Toast */}

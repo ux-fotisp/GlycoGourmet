@@ -9,6 +9,7 @@ import Dashboard from '../pages/Dashboard';
 import RecipeDetails from '../pages/RecipeDetails';
 import AdminEditor from '../pages/AdminEditor';
 import AdminDashboard from '../pages/AdminDashboard';
+import DraftAuditQueue from '../pages/DraftAuditQueue';
 import Settings from '../pages/Settings';
 import MyRecipes from '../pages/MyRecipes';
 import MealPlans from '../pages/MealPlans';
@@ -20,7 +21,7 @@ import PendingApproval from '../pages/PendingApproval';
  * Configures:
  * - Public routes: /login, /register
  * - Base Protected routes: /onboarding, /pending-approval, /recipe/:id
- * - Permission-Gated routes: /recipes/mine, /meal-plans, /admin-editor, /admin
+ * - Permission-Gated routes: /recipes/mine, /meal-plans, /admin-editor, /admin, /admin/audit-queue
  */
 export const AppRoutes = () => {
   return (
@@ -48,6 +49,10 @@ export const AppRoutes = () => {
             <Route path="/meal-plans" element={<MealPlans />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin-editor/:id?" element={<AdminEditor />} />
+          </Route>
+
+          <Route element={<ProtectedRoute requiredPermission="canPublishPublic" />}>
+            <Route path="/admin/audit-queue" element={<DraftAuditQueue />} />
           </Route>
         </Route>
 
