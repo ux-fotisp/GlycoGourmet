@@ -107,6 +107,13 @@ export const RecipeDetails = () => {
     setIsSubOpen(false);
   };
 
+  const handleQuickSwap = (originalId, targetId) => {
+    setSwappedIngredients(prev => ({
+      ...prev,
+      [originalId]: targetId,
+    }));
+  };
+
   const handleResetSwaps = () => {
     setSwappedIngredients({});
   };
@@ -162,6 +169,7 @@ export const RecipeDetails = () => {
               servingMultiplier={servingMultiplier}
               swappedIngredients={swappedIngredients}
               onOpenSubstitution={handleOpenSubstitution}
+              onQuickSwap={handleQuickSwap}
               onResetSwaps={handleResetSwaps}
             />
 

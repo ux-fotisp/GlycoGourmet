@@ -205,8 +205,26 @@ export function validateCustomIngredient(input) {
     }
   }
 
-  if (input.nutrition?.glycemicIndex !== null && input.nutrition?.glycemicIndex !== undefined) {
-    const gi = parseFloat(input.nutrition.glycemicIndex);
+  const carbs = parseFloat(input.nutrition?.carbs) || 0;
+  const fiber = parseFloat(input.nutrition?.fiber) || 0;
+  const netCarbs = carbs - fiber;
+  const gi = input.nutrition?.glycemicIndex !== null && input.nutrition?.glycemicIndex !== undefined ? parseFloat(input.nutrition?.glycemicIndex) : null;
+  const gl = gi !== null ? (gi * Math.max(0, netCarbs)) / 100 : 0;
+
+  // US-3.2 Database Anomaly Detection Rules
+  if (fiber > carbs) {
+    errors.push('Data anomaly detected. Please check carb and fiber values.');
+  }
+
+  if (netCarbs < 0) {
+    errors.push('Data anomaly detected. Please check carb and fiber values.');
+  }
+
+  if (gl > 100) {
+    errors.push('Data anomaly detected. Please check carb and fiber values.');
+  }
+
+  if (gi !== null) {
     if (isNaN(gi) || gi < 0 || gi > 100) {
       errors.push('Glycemic Index must be a number between 0 and 100.');
     }

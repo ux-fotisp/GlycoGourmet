@@ -5,8 +5,8 @@ import { getPrepStateLabel, PREP_STATES, getIngredientById } from '../../utils/n
 
 /**
  * IngredientList — Responsive ingredient table with category icons,
- * scaled quantities, macro tags, smart substitution triggers, and
- * highest-impact ingredient signifiers ("Primary Carb Source" > 50% impact).
+ * scaled quantities, macro tags, smart substitution triggers, highest-impact
+ * ingredient signifiers ("Primary Carb Source" > 50%), and 1-Click Low-GI Swap Presets.
  */
 
 const CATEGORY_ICONS = {
@@ -21,11 +21,21 @@ const CATEGORY_ICONS = {
   legume: 'grass',
 };
 
+// US-2.2 Smart Low-GI Swap Preset Dictionary
+const LOW_GI_SWAP_PRESETS = [
+  { match: ['white rice', 'rice', 'basmati rice', 'jasmine rice'], targetId: 'cauliflower-rice', substitute: 'Cauliflower Rice', gi: 15, glSavings: 12 },
+  { match: ['wheat pasta', 'pasta', 'spaghetti', 'penne', 'macaroni'], targetId: 'shirataki-noodles', substitute: 'Shirataki Noodles', gi: 15, glSavings: 14 },
+  { match: ['white bread', 'bread', 'baguette', 'toast'], targetId: 'almond-flour-bread', substitute: 'Almond Flour Bread', gi: 25, glSavings: 11 },
+  { match: ['sugar', 'white sugar', 'cane sugar', 'table sugar'], targetId: 'stevia', substitute: 'Stevia / Monk Fruit', gi: 0, glSavings: 15 },
+  { match: ['potato', 'potatoes', 'mashed potatoes'], targetId: 'mashed-cauliflower', substitute: 'Mashed Cauliflower', gi: 20, glSavings: 10 },
+];
+
 export const IngredientList = ({
   ingredients = [],
   servingMultiplier = 1,
   swappedIngredients = {},
   onOpenSubstitution,
+  onQuickSwap,
   onResetSwaps,
 }) => {
   const { unitSystem } = usePreferences();
@@ -54,7 +64,7 @@ export const IngredientList = ({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 font-sans">
       {/* Header */}
       <div className="flex items-center justify-between gap-4 border-b border-outline-variant/20 pb-3">
         <h4 className="font-display text-lg font-bold text-on-surface flex items-center gap-2">
@@ -80,6 +90,10 @@ export const IngredientList = ({
           const hasSub = item?.substitutions?.length > 0;
           const ing = getIngredientById(item.ingredientId);
 
+          // Check for Low-GI Swap Preset Match
+          const lowerName = (item?.name || '').toLowerCase();
+          const presetSwap = LOW_GI_SWAP_PRESETS.find(p => p.match.some(m => lowerName.includes(m)));
+
           // Scale amount
           const scaledAmount = (parseFloat(item?.amount) || 0) * servingMultiplier;
           const { amount: finalAmount, unit: finalUnit } = convertAmountAndUnit(scaledAmount, item?.unit, unitSystem);
@@ -102,7 +116,7 @@ export const IngredientList = ({
             <div
               key={idx}
               onClick={hasSub ? () => onOpenSubstitution(item) : undefined}
-              className={`bg-white p-3 md:p-4 rounded-lg border transition-all select-none flex items-center justify-between gap-3 ${
+              className={`bg-white p-3 md:p-4 rounded-lg border transition-all select-none flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
                 hasSub
                   ? 'border-outline-variant hover:border-primary cursor-pointer hover:shadow-[0_4px_20px_rgba(45,49,48,0.05)]'
                   : 'border-outline-variant/50'
@@ -119,6 +133,7 @@ export const IngredientList = ({
                       <span className="font-bold text-primary">{roundedAmount}</span>{' '}
                       {finalUnit} {item?.name || 'Unknown'}
                     </span>
+
                     {/* Highest-Impact Ingredient Signifier */}
                     {isPrimaryCarbSource && (
                       <span className="bg-tertiary-container/50 text-on-tertiary-container text-xs px-2 py-0.5 rounded font-bold shrink-0 flex items-center gap-1">
@@ -150,19 +165,40 @@ export const IngredientList = ({
                 </div>
               </div>
 
-              {/* Right: swap action */}
-              {hasSub && (
-                <div className="flex items-center gap-1.5 shrink-0">
-                  {isSwapped && (
-                    <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                      Swapped
+              {/* Right: US-2.2 Smart Low-GI Swap Ghost Button & Manual Swap Trigger */}
+              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                {presetSwap && !isSwapped && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onQuickSwap) {
+                        onQuickSwap(item.originalId || item.ingredientId, presetSwap.targetId);
+                      } else if (onOpenSubstitution) {
+                        onOpenSubstitution(item);
+                      }
+                    }}
+                    className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 text-xs px-2.5 py-1 rounded-full font-bold transition-all cursor-pointer shadow-2xs hover:scale-105 flex items-center gap-1 shrink-0"
+                    title={`Swap with ${presetSwap.substitute} to save ~${presetSwap.glSavings} GL`}
+                  >
+                    <span className="material-symbols-outlined text-[14px]">published_with_changes</span>
+                    Swap with {presetSwap.substitute} (GL -{presetSwap.glSavings})
+                  </button>
+                )}
+
+                {hasSub && (
+                  <div className="flex items-center gap-1.5">
+                    {isSwapped && (
+                      <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                        Swapped
+                      </span>
+                    )}
+                    <span className="material-symbols-outlined text-on-surface-variant/60 text-lg hover:text-primary transition-colors" title="Swap ingredient">
+                      swap_horiz
                     </span>
-                  )}
-                  <span className="material-symbols-outlined text-on-surface-variant/60 text-lg hover:text-primary transition-colors" title="Swap ingredient">
-                    swap_horiz
-                  </span>
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}
