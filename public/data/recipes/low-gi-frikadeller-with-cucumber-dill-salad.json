@@ -1,0 +1,117 @@
+{
+  "recipeNumber": 13,
+  "id": "low-gi-frikadeller-with-cucumber-dill-salad",
+  "title": "Low-GI Frikadeller with Cucumber-Dill Salad",
+  "description": "Traditional Danish Frikadeller use white flour and soaked white bread; replacing them with rolled oats introduces beta-glucan soluble fiber. The acetic acid in the cucumber salad actively blunts postprandial glucose absorption.",
+  "imageUrl": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 15,
+  "cookTime": 12,
+  "cookingTime": 27,
+  "difficulty": "Medium",
+  "servings": 1,
+  "yield": "1 Serving (3 patties)",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "High Protein",
+    "Scandi-Style",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 35,
+  "glycemicLoad": 7,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 390,
+    "protein": 31,
+    "fat": 22.5,
+    "saturatedFat": 6.5,
+    "carbs": 15,
+    "fiber": 3.5,
+    "netCarbs": 11.5,
+    "glycemicIndex": 35,
+    "glycemicLoad": 7
+  },
+  "diabeticNotes": "Traditional Danish Frikadeller use white flour and soaked white bread; replacing them with rolled oats introduces beta-glucan soluble fiber. The acetic acid in the cucumber salad actively blunts postprandial glucose absorption.",
+  "ingredients": [
+    {
+      "ingredientId": "ground-pork-lean",
+      "amount": 130,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "lean minced pork or turkey (7–10% fat)"
+    },
+    {
+      "ingredientId": "rolled-oats",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "boiled",
+      "name": "rolled oats (soaked in 2 tbsp water, replacing breadcrumbs)"
+    },
+    {
+      "ingredientId": "eggs",
+      "amount": 1,
+      "unit": "piece",
+      "prepState": "raw",
+      "name": "small egg white, beaten"
+    },
+    {
+      "ingredientId": "yellow-onion",
+      "amount": 20,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "finely minced yellow onion"
+    },
+    {
+      "ingredientId": "cucumber",
+      "amount": 150,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "medium English cucumber (shaved paper-thin)"
+    },
+    {
+      "ingredientId": "dill",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh dill"
+    },
+    {
+      "ingredientId": "olive-oil",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "butter / olive oil for cooking"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Mix Patty Base",
+      "description": "In a bowl, combine minced meat, soaked oats, egg white, minced onion, allspice, salt, and pepper. Mix with your hands until tacky and uniform. Shape into 3 oval patties.",
+      "timer": 5
+    },
+    {
+      "title": "Quick-Pickle Cucumber",
+      "description": "In a separate bowl, toss shaved cucumber with apple cider vinegar, water, sweetener, fresh dill, and salt. Set aside to pickle lightly.",
+      "timer": 3
+    },
+    {
+      "title": "Heat Pan",
+      "description": "Heat 1 teaspoon butter or oil in a skillet over medium heat.",
+      "timer": 2
+    },
+    {
+      "title": "Pan-Sear Frikadeller",
+      "description": "Add meat patties and cook for 5–6 minutes per side until deeply browned and cooked through (internal temp 165°F / 74°C).",
+      "timer": 12
+    },
+    {
+      "title": "Plate & Serve",
+      "description": "Serve hot frikadeller alongside the chilled, tangy cucumber-dill salad.",
+      "timer": 2
+    }
+  ]
+}

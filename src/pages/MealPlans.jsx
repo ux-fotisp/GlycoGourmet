@@ -217,7 +217,7 @@ export const MealPlans = () => {
                       style={{ width: `${dailyPercent}%` }}
                     />
                   </div>
-                  <div className="text-[9px] text-on-surface-variant/70 text-right font-medium">
+                  <div className="text-[9px] text-on-surface-variant text-right font-medium">
                     {dailyPercent}% of {targetCeiling} GL ceiling
                   </div>
                 </div>
@@ -235,7 +235,7 @@ export const MealPlans = () => {
                         className="bg-surface-container-lowest hover:bg-surface-container-low/60 rounded-lg p-2.5 border border-outline-variant/30 transition-all flex flex-col gap-1.5 group"
                       >
                         <div className="flex justify-between items-center">
-                          <span className="text-[9px] font-bold text-on-surface-variant/70 uppercase tracking-wider">
+                          <span className="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider">
                             {mealType}
                           </span>
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${mealGLInfo.bgClass} ${mealGLInfo.colorClass}`}>
@@ -245,7 +245,7 @@ export const MealPlans = () => {
                         <h4 className="font-bold text-xs text-on-surface group-hover:text-primary transition-colors line-clamp-1">
                           {meal.title}
                         </h4>
-                        <div className="flex items-center justify-between text-[10px] text-on-surface-variant/80 pt-1 border-t border-outline-variant/10">
+                        <div className="flex items-center justify-between text-[10px] text-on-surface-variant pt-1 border-t border-outline-variant/10">
                           <span>GI: {meal.nutrition.glycemicIndex ?? '—'}</span>
                           <span>{meal.nutrition.netCarbs}g carbs</span>
                         </div>

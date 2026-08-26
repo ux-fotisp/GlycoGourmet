@@ -1,0 +1,129 @@
+{
+  "recipeNumber": 20,
+  "id": "chana-masala-with-cucumber-raita",
+  "title": "Chana Masala with Cucumber Raita",
+  "description": "The substantial 11.2g fiber content creates a slow, sustained digestive breakdown. The lactic acid and protein from the yogurt raita further blunt postprandial glycemic excursions.",
+  "imageUrl": "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 10,
+  "cookTime": 20,
+  "cookingTime": 30,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Large Serving",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Med GL",
+    "High Fiber",
+    "Vegetarian",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 35,
+  "glycemicLoad": 15.3,
+  "glycemicImpact": "Medium Impact",
+  "nutrition": {
+    "kcal": 370,
+    "protein": 16,
+    "fat": 12.5,
+    "saturatedFat": 2.2,
+    "carbs": 45,
+    "fiber": 11.2,
+    "netCarbs": 33.8,
+    "glycemicIndex": 35,
+    "glycemicLoad": 15.3
+  },
+  "diabeticNotes": "The substantial 11.2g fiber content creates a slow, sustained digestive breakdown. The lactic acid and protein from the yogurt raita further blunt postprandial glycemic excursions.",
+  "ingredients": [
+    {
+      "ingredientId": "chickpeas",
+      "amount": 220,
+      "unit": "g",
+      "prepState": "boiled",
+      "name": "cooked chickpeas, rinsed and drained"
+    },
+    {
+      "ingredientId": "canned-tomatoes",
+      "amount": 180,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "crushed canned tomatoes"
+    },
+    {
+      "ingredientId": "extra-virgin-olive-oil",
+      "amount": 14,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "extra virgin olive oil or ghee"
+    },
+    {
+      "ingredientId": "yellow-onion",
+      "amount": 40,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "diced yellow onion"
+    },
+    {
+      "ingredientId": "garlic",
+      "amount": 6,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "cloves garlic, minced"
+    },
+    {
+      "ingredientId": "ginger",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "fresh ginger, grated"
+    },
+    {
+      "ingredientId": "greek-yogurt",
+      "amount": 80,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "nonfat Greek yogurt (Cucumber Raita)"
+    },
+    {
+      "ingredientId": "cucumber",
+      "amount": 50,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "grated cucumber (squeezed dry)"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Sauté Aromatics",
+      "description": "Heat olive oil in a saucepan over medium heat. Sauté onion, garlic, and ginger for 4 minutes until golden.",
+      "timer": 4
+    },
+    {
+      "title": "Toast Spices",
+      "description": "Add coriander, cumin, garam masala, and turmeric; toast for 30 seconds.",
+      "timer": 1
+    },
+    {
+      "title": "Simmer Tomato Gravy",
+      "description": "Add crushed tomatoes and 1/3 cup water. Simmer for 5 minutes.",
+      "timer": 5
+    },
+    {
+      "title": "Simmer & Thicken Chickpeas",
+      "description": "Stir in chickpeas. Lower heat and simmer gently for 10–12 minutes, lightly crushing a few chickpeas with the spoon to thicken the gravy.",
+      "timer": 12
+    },
+    {
+      "title": "Whisk Cooling Cucumber Raita",
+      "description": "In a small bowl, whisk Greek yogurt with grated cucumber, chopped mint, and roasted cumin.",
+      "timer": 3
+    },
+    {
+      "title": "Serve Warm with Raita",
+      "description": "Serve warm Chana Masala topped with a generous dollop of cooling Cucumber Raita.",
+      "timer": 1
+    }
+  ]
+}

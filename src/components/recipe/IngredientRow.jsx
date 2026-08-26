@@ -61,7 +61,7 @@ export const IngredientRow = ({
               Swapped
             </span>
           )}
-          <span className="material-symbols-outlined text-on-surface-variant/65 text-md hover:text-primary transition-colors">
+          <span className="material-symbols-outlined text-on-surface-variant text-md hover:text-primary transition-colors">
             swap_horiz
           </span>
         </div>

@@ -27,37 +27,33 @@ function getHeaders() {
 }
 
 /** Fallback sample system ingredients for standalone audit validation if API server is offline */
-const FALLBACK_INGREDIENTS = [
-  { id: 'atlantic-salmon', name: 'Atlantic Salmon', category: 'protein', kcal: 206, protein: 22, fat: 13, carbs: 0, fiber: 0, defaultAmount: 100, defaultUnit: 'g' },
-  { id: 'herb-asparagus', name: 'Asparagus', category: 'vegetable', kcal: 20, protein: 2.2, fat: 0.1, carbs: 3.9, fiber: 2.1, defaultAmount: 100, defaultUnit: 'g' },
-  { id: 'almond-flour', name: 'Almond Flour', category: 'grain', kcal: 590, protein: 21, fat: 50, carbs: 20, fiber: 10, defaultAmount: 100, defaultUnit: 'g' },
-  { id: 'quinoa-cooked', name: 'Quinoa (Cooked)', category: 'grain', kcal: 120, protein: 4.4, fat: 1.9, carbs: 21.3, fiber: 2.8, defaultAmount: 100, defaultUnit: 'g' },
-  { id: 'white-rice-cooked', name: 'White Rice (Cooked)', category: 'grain', kcal: 130, protein: 2.7, fat: 0.3, carbs: 28, fiber: 0.4, defaultAmount: 100, defaultUnit: 'g' },
-  { id: 'avocado', name: 'Avocado', category: 'fat', kcal: 160, protein: 2, fat: 15, carbs: 8.5, fiber: 6.7, defaultAmount: 100, defaultUnit: 'g' },
-  { id: 'greek-yogurt', name: 'Greek Yogurt', category: 'dairy', kcal: 59, protein: 10, fat: 0.4, carbs: 3.6, fiber: 0, defaultAmount: 100, defaultUnit: 'g' },
-  { id: 'strawberries', name: 'Strawberries', category: 'fruit', kcal: 32, protein: 0.7, fat: 0.3, carbs: 7.7, fiber: 2, defaultAmount: 100, defaultUnit: 'g' },
-];
+// Load full fallback datasets from data files
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const FALLBACK_RECIPES = [
-  {
-    id: 'crispy-salmon-asparagus',
-    title: 'Herb-Roasted Salmon with Lemon Asparagus',
-    servings: 2,
-    ingredients: [
-      { ingredientId: 'atlantic-salmon', amount: 300, unit: 'g' },
-      { ingredientId: 'herb-asparagus', amount: 200, unit: 'g' },
-    ],
-  },
-  {
-    id: 'quinoa-power-bowl',
-    title: 'High-Protein Quinoa & Avocado Bowl',
-    servings: 1,
-    ingredients: [
-      { ingredientId: 'quinoa-cooked', amount: 150, unit: 'g' },
-      { ingredientId: 'avocado', amount: 100, unit: 'g' },
-    ],
-  },
-];
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const ingredientsDataPath = path.resolve(__dirname, '../src/data/ingredients.json');
+const recipesDataPath = path.resolve(__dirname, '../src/data/recipes.json');
+
+const FALLBACK_INGREDIENTS = fs.existsSync(ingredientsDataPath)
+  ? JSON.parse(fs.readFileSync(ingredientsDataPath, 'utf8'))
+  : [
+      { id: 'atlantic-salmon', name: 'Atlantic Salmon', category: 'protein', kcal: 206, protein: 22, fat: 13, carbs: 0, fiber: 0, defaultAmount: 100, defaultUnit: 'g' },
+    ];
+
+const FALLBACK_RECIPES = fs.existsSync(recipesDataPath)
+  ? JSON.parse(fs.readFileSync(recipesDataPath, 'utf8'))
+  : [
+      {
+        id: 'low-glycemic-egg-salad-lettuce-wraps',
+        title: 'Low-Glycemic Egg Salad Lettuce Wraps',
+        servings: 1,
+        ingredients: [{ ingredientId: 'eggs', amount: 2, unit: 'piece' }],
+      },
+    ];
 
 async function runDatabaseAudit() {
   console.log('\n=============================================================');

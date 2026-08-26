@@ -1,0 +1,122 @@
+{
+  "recipeNumber": 4,
+  "id": "cantonese-steamed-sea-bass-with-ginger-scallion",
+  "title": "Cantonese Steamed Sea Bass with Ginger & Scallion",
+  "description": "Sea bass provides ultra-lean protein (34g) with minimal calories, making it ideal for aggressive fat loss protocols. Ginger and scallions contain gingerols and allicin, compounds shown to enhance peripheral insulin sensitivity and reduce vascular inflammation.",
+  "imageUrl": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 10,
+  "cookTime": 10,
+  "cookingTime": 20,
+  "difficulty": "Medium",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "High Protein",
+    "Anti-Inflammatory",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 20,
+  "glycemicLoad": 2.1,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 280,
+    "protein": 34,
+    "fat": 13.5,
+    "saturatedFat": 2.1,
+    "carbs": 4,
+    "fiber": 1.8,
+    "netCarbs": 2.2,
+    "glycemicIndex": 20,
+    "glycemicLoad": 2.1
+  },
+  "diabeticNotes": "Sea bass provides ultra-lean protein (34g) with minimal calories, making it ideal for aggressive fat loss protocols. Ginger and scallions contain gingerols and allicin, compounds shown to enhance peripheral insulin sensitivity and reduce vascular inflammation.",
+  "ingredients": [
+    {
+      "ingredientId": "sea-bass",
+      "amount": 180,
+      "unit": "g",
+      "prepState": "steamed",
+      "name": "fresh sea bass fillet (or cod / halibut), skin scored"
+    },
+    {
+      "ingredientId": "baby-bok-choy",
+      "amount": 150,
+      "unit": "g",
+      "prepState": "steamed",
+      "name": "heads baby bok choy, halved lengthwise"
+    },
+    {
+      "ingredientId": "ginger",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh ginger, cut into matchsticks (julienned)"
+    },
+    {
+      "ingredientId": "scallions",
+      "amount": 20,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "scallions, cut into fine 2-inch shreds"
+    },
+    {
+      "ingredientId": "tamari-soy-sauce",
+      "amount": 20,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "reduced-sodium tamari / gluten-free soy sauce"
+    },
+    {
+      "ingredientId": "sesame-oil",
+      "amount": 10,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "toasted sesame oil"
+    },
+    {
+      "ingredientId": "olive-oil",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "cold-pressed avocado / olive oil"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Setup Steamer",
+      "description": "Set up a steamer basket over a pot of boiling water. Arrange halved baby bok choy on a heatproof ceramic plate.",
+      "timer": 2
+    },
+    {
+      "title": "Plate Sea Bass",
+      "description": "Lay sea bass fillet on top of bok choy. Scatter half of julienned ginger and Shaoxing wine over the fish.",
+      "timer": 2
+    },
+    {
+      "title": "Steam Fish",
+      "description": "Place plate into steamer, cover tightly, and steam over medium-high heat for 8–9 minutes until fish flakes easily.",
+      "timer": 9
+    },
+    {
+      "title": "Add Scallions & Ginger",
+      "description": "Carefully remove plate. Pour off any excess watery steaming condensation. Scatter remaining fresh ginger and shredded scallions over the hot fish.",
+      "timer": 2
+    },
+    {
+      "title": "Pour Sizzling Aromatics",
+      "description": "Heat sesame and avocado oil in a small ladle or pan until smoking hot; pour sizzling oil directly over the scallions and ginger to unlock aromatics.",
+      "timer": 2
+    },
+    {
+      "title": "Drizzle Sauce & Serve",
+      "description": "Drizzle tamari soy sauce around the base of the fish and bok choy before serving.",
+      "timer": 1
+    }
+  ]
+}

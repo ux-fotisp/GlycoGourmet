@@ -1,0 +1,15 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { getRecipeById, saveRecipe } from '../utils/recipeStore';
+import { calculateRecipeNutrition, scaleNutrition, getIngredientById } from '../utils/nutritionCalculator';
+import DetailHero from '../components/recipe/DetailHero';
+import NutritionSnapshot from '../components/recipe/NutritionSnapshot';
+import IngredientList from '../components/recipe/IngredientList';
+import InstructionSteps from '../components/recipe/InstructionSteps';
+import CookModeModal from '../components/recipe/CookModeModal';
+import RecipeObjectBridge from '../components/recipe/RecipeObjectBridge';
+import SubstitutionModal from '../components/recipe/SubstitutionModal';
+import AddToMealPlanModal from '../components/recipe/AddToMealPlanModal';
+import DraftPreviewBanner from '../components/recipe/DraftPreviewBanner';
+import { useFavorites } from '../hooks/useFavorites';
+import { useAuth } from '../context/AuthContext';

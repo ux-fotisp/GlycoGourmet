@@ -1,0 +1,124 @@
+{
+  "recipeNumber": 6,
+  "id": "nicoise-salad-with-tuna-soft-boiled-eggs",
+  "title": "Niçoise Salad with Tuna & Soft-Boiled Eggs",
+  "description": "Removing traditional boiled potatoes eliminates the primary glycemic spike of classical French Niçoise. Extra virgin olive oil provides oleocanthal and polyphenols that protect LDL particles against oxidation.",
+  "imageUrl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 15,
+  "cookTime": 10,
+  "cookingTime": 25,
+  "difficulty": "Medium",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Salad",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "High Protein",
+    "Mediterranean",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 25,
+  "glycemicLoad": 3.3,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 350,
+    "protein": 32,
+    "fat": 19,
+    "saturatedFat": 3.2,
+    "carbs": 10,
+    "fiber": 4.2,
+    "netCarbs": 5.8,
+    "glycemicIndex": 25,
+    "glycemicLoad": 3.3
+  },
+  "diabeticNotes": "Removing traditional boiled potatoes eliminates the primary glycemic spike of classical French Niçoise. Extra virgin olive oil provides oleocanthal and polyphenols that protect LDL particles against oxidation.",
+  "ingredients": [
+    {
+      "ingredientId": "tuna-light",
+      "amount": 120,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "solid light tuna in spring water or olive oil, drained"
+    },
+    {
+      "ingredientId": "eggs",
+      "amount": 1,
+      "unit": "piece",
+      "prepState": "boiled",
+      "name": "large egg (boiled 6.5 minutes for a jammy soft center, halved)"
+    },
+    {
+      "ingredientId": "green-beans",
+      "amount": 100,
+      "unit": "g",
+      "prepState": "steamed",
+      "name": "tender haricots verts / green beans, trimmed"
+    },
+    {
+      "ingredientId": "romaine-lettuce",
+      "amount": 60,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "mixed artisan salad greens / butter lettuce"
+    },
+    {
+      "ingredientId": "cherry-tomato",
+      "amount": 60,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "cherry tomatoes, halved"
+    },
+    {
+      "ingredientId": "kalamata-olives",
+      "amount": 20,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "Kalamata olives, pitted and sliced"
+    },
+    {
+      "ingredientId": "extra-virgin-olive-oil",
+      "amount": 14,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "extra virgin olive oil"
+    },
+    {
+      "ingredientId": "dijon-mustard",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "Dijon mustard (vinaigrette)"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Blanch Green Beans",
+      "description": "Blanch green beans in boiling salted water for 3 minutes until crisp-tender. Transfer immediately to ice water to shock and lock in bright green color. Drain well.",
+      "timer": 5
+    },
+    {
+      "title": "Whisk Vinaigrette",
+      "description": "Whisk olive oil, red wine vinegar, Dijon mustard, oregano, salt, and pepper in a small bowl.",
+      "timer": 2
+    },
+    {
+      "title": "Base Greens",
+      "description": "Arrange mixed greens in a wide salad bowl.",
+      "timer": 2
+    },
+    {
+      "title": "Assemble Salad",
+      "description": "Artfully place flaked tuna, soft-boiled egg halves, blanched green beans, cherry tomatoes, and Kalamata olives over the greens.",
+      "timer": 3
+    },
+    {
+      "title": "Dress & Serve",
+      "description": "Drizzle vinaigrette evenly over the salad right before serving.",
+      "timer": 1
+    }
+  ]
+}

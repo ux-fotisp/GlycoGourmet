@@ -3,7 +3,7 @@ import { searchUSDAFoods } from '../../services/usdaClient';
 import { getAcademicGI } from '../../utils/giLookup';
 
 /**
- * UsdaIngredientSearch — Live USDA FoodData Central Search & Auto-Fill Component
+ * UsdaIngredientSearch � Live USDA FoodData Central Search & Auto-Fill Component
  *
  * Props:
  *   initialQuery: string
@@ -17,7 +17,7 @@ export const UsdaIngredientSearch = ({ initialQuery = '', onSelectFood }) => {
   const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = async (e) => {
-    if (e) e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (!query || !query.trim()) return;
 
     setIsSearching(true);
@@ -66,23 +66,30 @@ export const UsdaIngredientSearch = ({ initialQuery = '', onSelectFood }) => {
         </span>
       </div>
 
-      <form onSubmit={handleSearch} className="flex gap-2">
+      <div role="search" className="flex gap-2">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleSearch(e);
+            }
+          }}
           placeholder="Search USDA (e.g. Salmon, Quinoa, Asparagus)..."
           className="flex-1 bg-white border border-outline-variant focus:ring-2 focus:ring-primary/20 focus:border-primary rounded-lg h-9 px-3 text-xs outline-none transition-all"
         />
         <button
-          type="submit"
+          type="button"
+          onClick={handleSearch}
           disabled={isSearching || !query.trim()}
           className="h-9 px-4 rounded-lg bg-primary text-on-primary font-bold text-xs hover:bg-primary-container transition-all cursor-pointer disabled:opacity-50 flex items-center gap-1 shrink-0"
         >
           {isSearching ? (
             <>
               <span className="material-symbols-outlined text-[14px] animate-spin">progress_activity</span>
-              Fetching…
+              Fetching�
             </>
           ) : (
             <>
@@ -91,7 +98,7 @@ export const UsdaIngredientSearch = ({ initialQuery = '', onSelectFood }) => {
             </>
           )}
         </button>
-      </form>
+      </div>
 
       {error && (
         <p className="text-[11px] text-error font-medium flex items-center gap-1">
@@ -101,7 +108,7 @@ export const UsdaIngredientSearch = ({ initialQuery = '', onSelectFood }) => {
       )}
 
       {hasSearched && !isSearching && results.length === 0 && !error && (
-        <p className="text-xs text-on-surface-variant/70 italic py-1">
+        <p className="text-xs text-on-surface-variant italic py-1">
           No raw food items found in USDA database matching "{query}".
         </p>
       )}
@@ -122,15 +129,15 @@ export const UsdaIngredientSearch = ({ initialQuery = '', onSelectFood }) => {
                   <p className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-1">
                     {food.description}
                   </p>
-                  <p className="text-[10px] text-on-surface-variant/70">
-                    FDC #{food.fdcId} • {food.brandOwner}
+                  <p className="text-[10px] text-on-surface-variant">
+                    FDC #{food.fdcId} � {food.brandOwner}
                   </p>
                 </div>
 
                 <div className="text-right text-[11px] shrink-0 font-sans">
                   <p className="font-bold text-primary">{food.kcal} kcal</p>
                   <p className="text-[10px] text-on-surface-variant">
-                    {food.netCarbs}g Net Carbs • {food.protein}g Protein
+                    {food.netCarbs}g Net Carbs � {food.protein}g Protein
                   </p>
                 </div>
               </div>

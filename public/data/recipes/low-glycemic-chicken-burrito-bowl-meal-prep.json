@@ -1,0 +1,117 @@
+{
+  "recipeNumber": 19,
+  "id": "low-glycemic-chicken-burrito-bowl-meal-prep",
+  "title": "Low-Glycemic Chicken Burrito Bowl Meal Prep",
+  "description": "Using portion-controlled brown basmati rice paired with high-fiber black beans maintains a moderate GL (13.3). Greek yogurt and lean chicken breast drive a high 38g protein load, promoting GLP-1 secretion.",
+  "imageUrl": "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 15,
+  "cookTime": 15,
+  "cookingTime": 30,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Med GL",
+    "High Protein",
+    "Meal Prep",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 38,
+  "glycemicLoad": 13.3,
+  "glycemicImpact": "Medium Impact",
+  "nutrition": {
+    "kcal": 420,
+    "protein": 38,
+    "fat": 13,
+    "saturatedFat": 2.8,
+    "carbs": 36,
+    "fiber": 8.5,
+    "netCarbs": 27.5,
+    "glycemicIndex": 38,
+    "glycemicLoad": 13.3
+  },
+  "diabeticNotes": "Using portion-controlled brown basmati rice paired with high-fiber black beans maintains a moderate GL (13.3). Greek yogurt and lean chicken breast drive a high 38g protein load, promoting GLP-1 secretion.",
+  "ingredients": [
+    {
+      "ingredientId": "chicken-breast",
+      "amount": 120,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "skinless chicken breast, cubed and seasoned"
+    },
+    {
+      "ingredientId": "brown-basmati-rice",
+      "amount": 65,
+      "unit": "g",
+      "prepState": "boiled",
+      "name": "cooked brown basmati rice"
+    },
+    {
+      "ingredientId": "black-beans",
+      "amount": 90,
+      "unit": "g",
+      "prepState": "boiled",
+      "name": "cooked black beans, rinsed and drained"
+    },
+    {
+      "ingredientId": "romaine-lettuce",
+      "amount": 70,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "shredded Romaine lettuce"
+    },
+    {
+      "ingredientId": "cherry-tomato",
+      "amount": 45,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh pico de gallo (tomato, onion, cilantro, lime)"
+    },
+    {
+      "ingredientId": "avocado",
+      "amount": 40,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "ripe avocado, sliced"
+    },
+    {
+      "ingredientId": "greek-yogurt",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "2% Greek yogurt (substituting sour cream)"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Sear Seasoned Chicken",
+      "description": "Sear seasoned chicken breast cubes in a hot nonstick skillet lightly misted with olive oil for 6–7 minutes until fully cooked.",
+      "timer": 7
+    },
+    {
+      "title": "Create Volume Base",
+      "description": "Lay shredded Romaine lettuce across one side of a wide bowl as the low-calorie volume base.",
+      "timer": 2
+    },
+    {
+      "title": "Add Rice & Black Beans",
+      "description": "Add cooked brown rice and warm black beans side-by-side.",
+      "timer": 2
+    },
+    {
+      "title": "Top with Grilled Chicken",
+      "description": "Place grilled chicken breast over the top.",
+      "timer": 1
+    },
+    {
+      "title": "Garnish with Avocado & Crema",
+      "description": "Garnish with fresh pico de gallo, avocado slices, and a dollop of Greek yogurt.",
+      "timer": 3
+    }
+  ]
+}

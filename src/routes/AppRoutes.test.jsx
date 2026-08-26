@@ -1,10 +1,9 @@
-import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+﻿import React from 'react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import AppRoutes from './AppRoutes';
 import { useAuth } from '../context/AuthContext';
-
 import { UserPreferencesProvider } from '../context/UserPreferences';
 
 vi.mock('../context/AuthContext', () => ({
@@ -12,13 +11,23 @@ vi.mock('../context/AuthContext', () => ({
 }));
 
 describe('AppRoutes navigation hierarchy', () => {
+  let warnSpy;
+  let errorSpy;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     useAuth.mockReturnValue({
-      user: { name: 'Chef Julian', onboarded: true },
+      user: { name: 'Chef Julian', onboarded: true, roleType: 'admin', isApproved: true },
       isAuthenticated: true,
       logout: vi.fn(),
     });
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
+    errorSpy.mockRestore();
   });
 
   const renderWithProviders = (initialRoute = '/') =>

@@ -1,0 +1,113 @@
+{
+  "recipeNumber": 1,
+  "id": "low-glycemic-egg-salad-lettuce-wraps",
+  "title": "Low-Glycemic Egg Salad Lettuce Wraps",
+  "description": "Replacing refined sandwich bread with crisp Romaine lettuce eliminates 30g of fast-digesting carbohydrates, yielding a Glycemic Load of 0.0. Utilizing protein-rich Greek yogurt rather than commercial mayonnaise cuts heavy saturated fat and avoids inflammatory industrial seed oils.",
+  "imageUrl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 12,
+  "cookTime": 0,
+  "cookingTime": 12,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Serving (3 wraps)",
+  "category": "Lunch",
+  "tags": [
+    "Low GI",
+    "Zero GL",
+    "High Protein",
+    "Keto-Friendly",
+    "Under 30 Min",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 15,
+  "glycemicLoad": 0,
+  "glycemicImpact": "Zero Glycemic Impact",
+  "nutrition": {
+    "kcal": 240,
+    "protein": 14,
+    "fat": 18.5,
+    "saturatedFat": 4.2,
+    "carbs": 3,
+    "fiber": 1.5,
+    "netCarbs": 1.5,
+    "glycemicIndex": 15,
+    "glycemicLoad": 0
+  },
+  "diabeticNotes": "Replacing refined sandwich bread with crisp Romaine lettuce eliminates 30g of fast-digesting carbohydrates, yielding a Glycemic Load of 0.0. Utilizing protein-rich Greek yogurt rather than commercial mayonnaise cuts heavy saturated fat and avoids inflammatory industrial seed oils.",
+  "ingredients": [
+    {
+      "ingredientId": "eggs",
+      "amount": 2,
+      "unit": "piece",
+      "prepState": "boiled",
+      "name": "large hard-boiled eggs, peeled and diced"
+    },
+    {
+      "ingredientId": "greek-yogurt",
+      "amount": 30,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "2% Greek yogurt (substituting standard mayonnaise)"
+    },
+    {
+      "ingredientId": "dijon-mustard",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "Dijon mustard"
+    },
+    {
+      "ingredientId": "lemon-juice",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh lemon juice"
+    },
+    {
+      "ingredientId": "celery",
+      "amount": 20,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "finely diced celery (adds crunch and prebiotic insoluble fiber)"
+    },
+    {
+      "ingredientId": "chives",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "finely minced fresh chives or dill"
+    },
+    {
+      "ingredientId": "romaine-lettuce",
+      "amount": 45,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "large, crisp Romaine or butterhead lettuce leaves"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Mash Eggs",
+      "description": "In a medium bowl, mash the hard-boiled eggs coarsely with a fork.",
+      "timer": 2
+    },
+    {
+      "title": "Mix Dressing & Seasoning",
+      "description": "Add the Greek yogurt, Dijon mustard, lemon juice, diced celery, minced chives, salt, and pepper. Fold thoroughly until creamy yet structured.",
+      "timer": 3
+    },
+    {
+      "title": "Prepare Lettuce Leaves",
+      "description": "Wash and dry the Romaine lettuce leaves thoroughly.",
+      "timer": 2
+    },
+    {
+      "title": "Fill & Serve",
+      "description": "Spoon equal portions of the egg salad mixture down the center rib of each lettuce boat. Serve immediately or pack chilled for lunch.",
+      "timer": 5
+    }
+  ]
+}

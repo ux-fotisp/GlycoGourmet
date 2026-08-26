@@ -33,7 +33,7 @@ const SegmentRow = ({ label, options, value, onChange }) => (
       ))}
     </div>
     {options.find(o => o.value === value)?.desc && (
-      <p className="text-[10px] text-on-surface-variant/70 mt-1 ml-1">
+      <p className="text-[10px] text-on-surface-variant mt-1 ml-1">
         {options.find(o => o.value === value).desc}
       </p>
     )}

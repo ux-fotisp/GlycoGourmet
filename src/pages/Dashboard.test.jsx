@@ -20,7 +20,7 @@ vi.mock('../context/UserPreferences', () => ({
   }),
 }));
 
-// Mock recipeStore — async API
+// Mock recipeStore
 vi.mock('../utils/recipeStore', () => ({
   getAllRecipes: vi.fn(() => Promise.resolve([
     {
@@ -32,6 +32,9 @@ vi.mock('../utils/recipeStore', () => ({
       ingredients: [{ ingredientId: 'atlantic-salmon', amount: 6, unit: 'oz' }],
       status: 'published',
       cookingTime: 25,
+      prepTime: 10,
+      mealOccasion: 'dinner',
+      dietaryFlags: ['Gluten-Free'],
       isUserAuthored: false,
     },
     {
@@ -43,6 +46,9 @@ vi.mock('../utils/recipeStore', () => ({
       ingredients: [{ ingredientId: 'chia-seeds', amount: 2, unit: 'tbsp' }],
       status: 'published',
       cookingTime: 10,
+      prepTime: 5,
+      mealOccasion: 'breakfast',
+      dietaryFlags: ['Vegetarian', 'Vegan'],
       isUserAuthored: false,
     },
   ])),
@@ -50,7 +56,7 @@ vi.mock('../utils/recipeStore', () => ({
   getRecipeById: vi.fn(() => Promise.resolve(null)),
 }));
 
-// Mock nutritionCalculator (RecipeCard + HealthHeader use it)
+// Mock nutritionCalculator
 vi.mock('../utils/nutritionCalculator', () => ({
   calculateRecipeNutrition: vi.fn(() => ({
     kcal: 200,
@@ -69,7 +75,7 @@ vi.mock('../utils/nutritionCalculator', () => ({
   }),
 }));
 
-// Mock useFavorites for RecipeCard
+// Mock useFavorites
 vi.mock('../hooks/useFavorites', () => ({
   useFavorites: () => ({
     favorites: [],
@@ -105,27 +111,23 @@ describe('Dashboard page', () => {
       </MemoryRouter>
     );
 
-  // --- Greeting ---
   it('renders personalized greeting with user name', () => {
     renderDashboard();
     expect(screen.getByText(/Chef Julian/)).toBeDefined();
   });
 
-  // --- Search bar ---
   it('renders the AI-powered search bar', () => {
     renderDashboard();
     const searchInputs = screen.getAllByRole('textbox');
     expect(searchInputs.length).toBeGreaterThan(0);
   });
 
-  // --- Tag chips ---
   it('renders dietary tag chips for filtering', () => {
     renderDashboard();
-    expect(screen.getAllByText('Low GI').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('High Fiber').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Vegetarian').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Gluten-Free').length).toBeGreaterThan(0);
   });
 
-  // --- Recipe grid ---
   it('renders recipe cards from the store', async () => {
     renderDashboard();
     const salmonCards = await screen.findAllByText('Crispy Salmon & Asparagus');
@@ -134,7 +136,6 @@ describe('Dashboard page', () => {
     expect(chiaCards.length).toBeGreaterThan(0);
   });
 
-  // --- Recommendation section ---
   it('renders recommendation section heading', () => {
     renderDashboard();
     expect(screen.getByText(/Recommended/i)).toBeDefined();

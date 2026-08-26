@@ -55,7 +55,7 @@ const NUTRITION_FIELDS = [
  *   onSave(newIngredientId: string) — called after successful save
  *   onClose() — called on close request
  */
-export const CustomIngredientDrawer = ({ isOpen, onSave, onClose }) => {
+export const CustomIngredientDrawer = ({ isOpen, onSave, onSaveAndSelect, onClose }) => {
   const nameInputRef = useRef(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [giNA, setGiNA] = useState(false);
@@ -164,7 +164,7 @@ export const CustomIngredientDrawer = ({ isOpen, onSave, onClose }) => {
 
       setForm(EMPTY_FORM);
       setGiNA(false);
-      onSave(savedId);
+      if (typeof onSaveAndSelect === "function") { onSaveAndSelect(ingredientData); } if (typeof onSave === "function") { onSave(savedId); }
       onClose();
     } catch (err) {
       setGlobalError(err.message || 'Failed to save ingredient to Strapi.');

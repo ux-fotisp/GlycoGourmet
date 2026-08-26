@@ -68,7 +68,7 @@ export const DetailHero = ({
           <span className="bg-white/90 backdrop-blur-md text-on-surface border border-outline-variant/40 px-3 py-1 rounded-full text-[11px] font-bold shadow-sm">
             {giLabel}: {gi !== null && gi !== undefined ? Math.round(gi) : '—'}
           </span>
-          <span className={`px-3 py-1 rounded-full text-[11px] font-bold shadow-sm ${badgeBg}`}>
+          <span data-testid="recipe-gl-badge" className={`px-3 py-1 rounded-full text-[11px] font-bold shadow-sm ${badgeBg}`}>
             GL: {gl} ({impactLabel})
           </span>
         </div>
@@ -110,7 +110,7 @@ export const DetailHero = ({
           <div className="flex items-center gap-1.5">
             <span className="material-symbols-outlined text-primary text-base">speed</span>
             <span className="font-bold text-on-surface">Glycemic Load Gauge</span>
-            <span className={`font-extrabold text-[11px] px-2 py-0.5 rounded-full ${badgeBg}`}>
+            <span data-testid="metabolic-impact-label" className={`font-extrabold text-[11px] px-2 py-0.5 rounded-full ${badgeBg}`}>
               {impactLabel}
             </span>
           </div>
@@ -127,7 +127,7 @@ export const DetailHero = ({
           />
         </div>
 
-        <div className="flex justify-between items-center text-[10px] font-bold text-on-surface-variant/70 pt-0.5">
+        <div className="flex justify-between items-center text-[10px] font-bold text-on-surface-variant pt-0.5">
           <span>Primary Anchors: <strong className="text-on-surface">{netCarbs}g Net Carbs</strong> • <strong className="text-on-surface">{fiber}g Fiber</strong></span>
           <span>{fillWidth}% Daily Impact</span>
         </div>

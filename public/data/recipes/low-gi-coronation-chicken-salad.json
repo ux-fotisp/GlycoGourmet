@@ -1,0 +1,110 @@
+{
+  "recipeNumber": 10,
+  "id": "low-gi-coronation-chicken-salad",
+  "title": "Low-GI Coronation Chicken Salad",
+  "description": "Turmeric's active compound curcumin improves glycemic markers and insulin receptor activity, while almond fats provide monounsaturated lipid protection.",
+  "imageUrl": "https://images.unsplash.com/photo-1546069901-5ec6a79120b0?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 15,
+  "cookTime": 0,
+  "cookingTime": 15,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Salad",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "High Protein",
+    "Curry",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 30,
+  "glycemicLoad": 5.8,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 340,
+    "protein": 35,
+    "fat": 17.5,
+    "saturatedFat": 3.5,
+    "carbs": 9,
+    "fiber": 2.8,
+    "netCarbs": 6.2,
+    "glycemicIndex": 30,
+    "glycemicLoad": 5.8
+  },
+  "diabeticNotes": "Turmeric's active compound curcumin improves glycemic markers and insulin receptor activity, while almond fats provide monounsaturated lipid protection.",
+  "ingredients": [
+    {
+      "ingredientId": "chicken-breast",
+      "amount": 130,
+      "unit": "g",
+      "prepState": "boiled",
+      "name": "poached or roasted skinless chicken breast, shredded"
+    },
+    {
+      "ingredientId": "greek-yogurt",
+      "amount": 45,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "2% Greek yogurt (replaces traditional mayonnaise)"
+    },
+    {
+      "ingredientId": "lemon-juice",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh lemon juice"
+    },
+    {
+      "ingredientId": "ginger",
+      "amount": 3,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "grated ginger"
+    },
+    {
+      "ingredientId": "almonds-flaked",
+      "amount": 10,
+      "unit": "g",
+      "prepState": "roasted",
+      "name": "toasted flaked almonds"
+    },
+    {
+      "ingredientId": "romaine-lettuce",
+      "amount": 60,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "Little Gem lettuce, leaves separated"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Whisk Spiced Yogurt",
+      "description": "In a medium bowl, whisk together Greek yogurt, curry powder, turmeric, lemon juice, grated ginger, salt, and pepper.",
+      "timer": 3
+    },
+    {
+      "title": "Coat Chicken",
+      "description": "Fold shredded chicken breast and chopped dried apricots into the curry yogurt mixture until thoroughly coated.",
+      "timer": 3
+    },
+    {
+      "title": "Arrange Gem Cups",
+      "description": "Arrange Little Gem lettuce leaves across a serving plate.",
+      "timer": 2
+    },
+    {
+      "title": "Spoon Salad",
+      "description": "Spoon coronation chicken salad into the lettuce cups.",
+      "timer": 2
+    },
+    {
+      "title": "Garnish with Almonds",
+      "description": "Top with toasted flaked almonds for texture and heart-healthy fat.",
+      "timer": 1
+    }
+  ]
+}

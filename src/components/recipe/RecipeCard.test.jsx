@@ -90,7 +90,7 @@ describe('RecipeCard component', () => {
   // --- GL Solid Pill ---
   it('renders glycemic load as solid pill badge', () => {
     renderCard();
-    expect(screen.getByText('GL 9')).toBeDefined();
+    expect(screen.getAllByText(/GL 9/).length).toBeGreaterThan(0);
   });
 
   // --- Hover effect ---

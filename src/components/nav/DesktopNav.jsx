@@ -161,7 +161,7 @@ export const DesktopNav = () => {
               <span className="text-xs font-bold text-on-surface truncate leading-tight">
                 {user?.name || 'Chef User'}
               </span>
-              <span className="text-[9px] font-extrabold text-on-surface-variant/75 tracking-wider uppercase mt-0.5">
+              <span className="text-[9px] font-extrabold text-on-surface-variant tracking-wider uppercase mt-0.5">
                 ADMINISTRATOR
               </span>
             </div>

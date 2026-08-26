@@ -1,0 +1,7 @@
+  const handleCardClick = (recipe) => {
+    if (recipe.status === 'draft' || recipe.isUserAuthored) {
+      navigate(`/admin-editor?edit=${recipe.id}`);
+    } else {
+      navigate(`/recipe/${recipe.id}`);
+    }
+  };

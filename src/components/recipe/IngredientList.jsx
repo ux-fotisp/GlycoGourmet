@@ -146,12 +146,12 @@ export const IngredientList = ({
                   {/* Macro tag row */}
                   <div className="flex items-center gap-2 mt-0.5">
                     {ingCarbs !== null && (
-                      <span className="text-[10px] font-medium text-on-surface-variant/70">
+                      <span className="text-[10px] font-medium text-on-surface-variant">
                         {Math.round(ingCarbs * (scaledAmount / ((ing?.defaultAmount || 1))))}g carbs
                       </span>
                     )}
                     {ingGI !== null && (
-                      <span className="text-[10px] font-medium text-on-surface-variant/70">
+                      <span className="text-[10px] font-medium text-on-surface-variant">
                         • GI {ingGI}
                       </span>
                     )}
@@ -193,7 +193,7 @@ export const IngredientList = ({
                         Swapped
                       </span>
                     )}
-                    <span className="material-symbols-outlined text-on-surface-variant/60 text-lg hover:text-primary transition-colors" title="Swap ingredient">
+                    <span className="material-symbols-outlined text-on-surface-variant text-lg hover:text-primary transition-colors" title="Swap ingredient">
                       swap_horiz
                     </span>
                   </div>

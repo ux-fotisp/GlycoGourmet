@@ -318,7 +318,7 @@ export const CustomIngredientModal = ({ onSave, onClose }) => {
                 />
                 {/* Auto-generated ID preview */}
                 {form.name.trim() && (
-                  <p className="text-[10px] text-on-surface-variant/70 font-mono pl-1">
+                  <p className="text-[10px] text-on-surface-variant font-mono pl-1">
                     ID preview: <span className="text-primary font-bold">{previewId.replace(/-\d+$/, '-…')}</span>
                     <span className="ml-2 text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-sans font-bold">CUSTOM</span>
                   </p>
@@ -381,7 +381,7 @@ export const CustomIngredientModal = ({ onSave, onClose }) => {
             <section className="space-y-3">
               <h3 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
                 Nutritional Metrics
-                <span className="text-[9px] ml-2 text-on-surface-variant/60 normal-case font-normal">per default serving</span>
+                <span className="text-[9px] ml-2 text-on-surface-variant normal-case font-normal">per default serving</span>
               </h3>
 
               <div className="grid grid-cols-2 gap-3">
@@ -405,7 +405,7 @@ export const CustomIngredientModal = ({ onSave, onClose }) => {
                               className="w-3 h-3 accent-primary cursor-pointer"
                               aria-label="Set Glycemic Index to N/A"
                             />
-                            <span className="text-[9px] text-on-surface-variant/70 font-normal normal-case">N/A</span>
+                            <span className="text-[9px] text-on-surface-variant font-normal normal-case">N/A</span>
                           </label>
                         )}
                       </label>
@@ -424,7 +424,7 @@ export const CustomIngredientModal = ({ onSave, onClose }) => {
                           className="w-full bg-white border border-outline-variant focus:ring-2 focus:ring-primary/20 focus:border-primary rounded-lg h-11 px-3 text-sm outline-none transition-all disabled:bg-surface-container-high/40 disabled:text-on-surface-variant/50 disabled:cursor-not-allowed"
                         />
                         {unit && (
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-on-surface-variant/60 font-semibold pointer-events-none">
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-on-surface-variant font-semibold pointer-events-none">
                             {unit}
                           </span>
                         )}

@@ -1,0 +1,6 @@
+  return (
+    <div className="min-h-screen bg-background pb-28 md:pb-16">
+      {(!recipe.publishedAt || recipe.status === 'draft') && (
+        <DraftPreviewBanner onPublish={handlePublish} roleType={user?.roleType || 'user'} />
+      )}
+      {/* Top Header Navigation */}

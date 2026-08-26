@@ -66,7 +66,7 @@ export const Navbar = () => {
               GlycoGourmet Admin
             </h1>
           </Link>
-          <p className="text-on-surface-variant font-label-md mt-1 opacity-70">
+          <p className="text-on-surface-variant font-label-md mt-1">
             Managing Blood Sugar & Flavor
           </p>
         </div>
@@ -184,7 +184,7 @@ export const Navbar = () => {
                     Account Under Audit
                   </Link>
                 ) : (
-                  <span className="text-[9px] font-extrabold text-on-surface-variant/75 tracking-wider uppercase mt-0.5">
+                  <span className="text-[9px] font-extrabold text-on-surface-variant tracking-wider uppercase mt-0.5">
                     {(user?.roleType || 'admin') === 'admin' ? 'ADMINISTRATOR' : (user?.roleType || 'user').toUpperCase()}
                   </span>
                 )}

@@ -1,0 +1,126 @@
+{
+  "recipeNumber": 18,
+  "id": "mediterranean-rainbow-tuna-salad-with-mustard-dressing",
+  "title": "Mediterranean Rainbow Tuna Salad with Mustard Dressing",
+  "description": "Bell peppers provide abundant vitamin C and luteolin, reducing systemic oxidative stress and preventing vascular LDL particle glycation.",
+  "imageUrl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 12,
+  "cookTime": 0,
+  "cookingTime": 12,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Salad",
+  "tags": [
+    "Low GI",
+    "Med GL",
+    "High Protein",
+    "Under 30 Min",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 34,
+  "glycemicLoad": 11.5,
+  "glycemicImpact": "Medium Impact",
+  "nutrition": {
+    "kcal": 320,
+    "protein": 31,
+    "fat": 15,
+    "saturatedFat": 2.2,
+    "carbs": 16,
+    "fiber": 5.5,
+    "netCarbs": 10.5,
+    "glycemicIndex": 34,
+    "glycemicLoad": 11.5
+  },
+  "diabeticNotes": "Bell peppers provide abundant vitamin C and luteolin, reducing systemic oxidative stress and preventing vascular LDL particle glycation.",
+  "ingredients": [
+    {
+      "ingredientId": "tuna-light",
+      "amount": 120,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "chunk light tuna in spring water, drained"
+    },
+    {
+      "ingredientId": "bell-pepper-yellow",
+      "amount": 50,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "yellow bell pepper, finely diced"
+    },
+    {
+      "ingredientId": "bell-pepper-red",
+      "amount": 50,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "red bell pepper, finely diced"
+    },
+    {
+      "ingredientId": "celery",
+      "amount": 40,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "stalk celery, finely diced"
+    },
+    {
+      "ingredientId": "red-onion",
+      "amount": 20,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "finely chopped red onion"
+    },
+    {
+      "ingredientId": "kalamata-olives",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "Kalamata olives, pitted and chopped"
+    },
+    {
+      "ingredientId": "extra-virgin-olive-oil",
+      "amount": 14,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "extra virgin olive oil"
+    },
+    {
+      "ingredientId": "dijon-mustard",
+      "amount": 7,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "coarse whole-grain Dijon mustard"
+    },
+    {
+      "ingredientId": "lemon-juice",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh lemon juice"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Whisk Mustard Dressing",
+      "description": "Whisk olive oil, whole-grain mustard, lemon juice, oregano, salt, and pepper in a salad bowl.",
+      "timer": 2
+    },
+    {
+      "title": "Add Crisp Vegetables",
+      "description": "Add diced bell peppers, celery, red onion, and chopped Kalamata olives.",
+      "timer": 3
+    },
+    {
+      "title": "Flake Tender Tuna",
+      "description": "Add drained tuna and flake gently into large, bite-sized flakes.",
+      "timer": 2
+    },
+    {
+      "title": "Coat & Serve Chilled",
+      "description": "Toss until dressing evenly coats all vegetables and tuna. Serve chilled.",
+      "timer": 2
+    }
+  ]
+}

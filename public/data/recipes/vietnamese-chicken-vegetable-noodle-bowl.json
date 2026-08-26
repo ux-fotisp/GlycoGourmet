@@ -1,0 +1,117 @@
+{
+  "recipeNumber": 5,
+  "id": "vietnamese-chicken-vegetable-noodle-bowl",
+  "title": "Vietnamese Chicken & Vegetable Noodle Bowl",
+  "description": "Shirataki noodles are composed of glucomannan, a viscous water-soluble fiber with zero digestible carbohydrates. Glucomannan slows carbohydrate breakdown and traps dietary cholesterol, aiding excretion.",
+  "imageUrl": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 15,
+  "cookTime": 10,
+  "cookingTime": 25,
+  "difficulty": "Medium",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "High Fiber",
+    "Shirataki",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 25,
+  "glycemicLoad": 2.4,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 295,
+    "protein": 28,
+    "fat": 16,
+    "saturatedFat": 2.2,
+    "carbs": 8,
+    "fiber": 4.5,
+    "netCarbs": 3.5,
+    "glycemicIndex": 25,
+    "glycemicLoad": 2.4
+  },
+  "diabeticNotes": "Shirataki noodles are composed of glucomannan, a viscous water-soluble fiber with zero digestible carbohydrates. Glucomannan slows carbohydrate breakdown and traps dietary cholesterol, aiding excretion.",
+  "ingredients": [
+    {
+      "ingredientId": "shirataki-noodles",
+      "amount": 200,
+      "unit": "g",
+      "prepState": "boiled",
+      "name": "packet Konjac / Shirataki noodles (rinsed and drained)"
+    },
+    {
+      "ingredientId": "chicken-breast",
+      "amount": 100,
+      "unit": "g",
+      "prepState": "boiled",
+      "name": "poached chicken breast, shredded"
+    },
+    {
+      "ingredientId": "cabbage",
+      "amount": 70,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "shredded red and green cabbage"
+    },
+    {
+      "ingredientId": "cucumber",
+      "amount": 60,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "English cucumber, julienned"
+    },
+    {
+      "ingredientId": "peanuts",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "roasted",
+      "name": "crushed roasted peanuts"
+    },
+    {
+      "ingredientId": "lemon-juice",
+      "amount": 30,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh lime juice (Nuoc Cham)"
+    },
+    {
+      "ingredientId": "garlic",
+      "amount": 3,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "grated garlic clove (Nuoc Cham)"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Prep Shirataki Noodles",
+      "description": "Rinse shirataki noodles thoroughly in cold running water for 2 minutes. Parboil in boiling water for 1 minute, drain, and dry-fry in a hot skillet for 2 minutes to eliminate excess moisture.",
+      "timer": 5
+    },
+    {
+      "title": "Whisk Nuoc Cham",
+      "description": "Whisk the lime juice, fish sauce, water, allulose sweetener, minced chili, and garlic in a small bowl until sweetener dissolves completely.",
+      "timer": 3
+    },
+    {
+      "title": "Layer Noodle Base",
+      "description": "In a serving bowl, lay down the warm prepared shirataki noodles.",
+      "timer": 1
+    },
+    {
+      "title": "Add Toppings",
+      "description": "Arrange shredded chicken breast, cabbage slaw, cucumber, mint, and cilantro neatly over noodles.",
+      "timer": 3
+    },
+    {
+      "title": "Dress & Toss",
+      "description": "Pour dressing evenly over bowl and scatter crushed roasted peanuts over top. Toss before eating.",
+      "timer": 1
+    }
+  ]
+}

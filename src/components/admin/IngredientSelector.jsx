@@ -194,7 +194,7 @@ export const IngredientSelector = ({ ingredients = [], onChange, onAdd, onRemove
                     type="button"
                     onClick={() => onRemove(idx)}
                     aria-label={`Remove ingredient ${idx + 1}`}
-                    className="text-on-surface-variant/65 hover:text-error transition-colors cursor-pointer flex items-center gap-1 text-xs"
+                    className="text-on-surface-variant hover:text-error transition-colors cursor-pointer flex items-center gap-1 text-xs"
                   >
                     <span className="material-symbols-outlined text-[16px]">close</span>
                     <span className="text-[10px]">Remove</span>
@@ -247,7 +247,7 @@ export const IngredientSelector = ({ ingredients = [], onChange, onAdd, onRemove
                 {/* Amount, Unit & Prep State */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <div>
-                    <label className="text-[9px] font-bold text-on-surface-variant/70 uppercase block mb-1">
+                    <label className="text-[9px] font-bold text-on-surface-variant uppercase block mb-1">
                       Amount
                     </label>
                     <input
@@ -262,7 +262,7 @@ export const IngredientSelector = ({ ingredients = [], onChange, onAdd, onRemove
                   </div>
 
                   <div>
-                    <label className="text-[9px] font-bold text-on-surface-variant/70 uppercase block mb-1">
+                    <label className="text-[9px] font-bold text-on-surface-variant uppercase block mb-1">
                       Unit
                     </label>
                     <select
@@ -284,7 +284,7 @@ export const IngredientSelector = ({ ingredients = [], onChange, onAdd, onRemove
                   </div>
 
                   <div>
-                    <label className="text-[9px] font-bold text-on-surface-variant/70 uppercase block mb-1">
+                    <label className="text-[9px] font-bold text-on-surface-variant uppercase block mb-1">
                       Preparation State
                     </label>
                     <select
@@ -421,7 +421,7 @@ export const IngredientSelector = ({ ingredients = [], onChange, onAdd, onRemove
 
                 {/* Segment 2: Glycemic Impact Ranges */}
                 <div className="flex flex-nowrap items-center gap-1.5 overflow-x-auto hide-scrollbar py-0.5 whitespace-nowrap">
-                  <span className="text-[10px] font-bold text-on-surface-variant/60 uppercase mr-1 shrink-0">
+                  <span className="text-[10px] font-bold text-on-surface-variant uppercase mr-1 shrink-0">
                     GI Segment:
                   </span>
                   {GI_SEGMENTS.map(seg => (

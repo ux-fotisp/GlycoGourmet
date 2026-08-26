@@ -1,0 +1,117 @@
+{
+  "recipeNumber": 14,
+  "id": "low-gi-chili-con-carne-with-two-bean-base",
+  "title": "Low-GI Chili con Carne with Two-Bean Base",
+  "description": "Omitting white rice and utilizing a two-bean foundation provides 10.5g of dietary fiber. The high proportion of resistant starch creates a low glycemic excursion and fuels colonic SCFA production.",
+  "imageUrl": "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 10,
+  "cookTime": 25,
+  "cookingTime": 35,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Large Serving",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Med GL",
+    "High Protein",
+    "High Fiber",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 35,
+  "glycemicLoad": 10.5,
+  "glycemicImpact": "Medium Impact",
+  "nutrition": {
+    "kcal": 410,
+    "protein": 36,
+    "fat": 14.5,
+    "saturatedFat": 4.8,
+    "carbs": 30,
+    "fiber": 10.5,
+    "netCarbs": 19.5,
+    "glycemicIndex": 35,
+    "glycemicLoad": 10.5
+  },
+  "diabeticNotes": "Omitting white rice and utilizing a two-bean foundation provides 10.5g of dietary fiber. The high proportion of resistant starch creates a low glycemic excursion and fuels colonic SCFA production.",
+  "ingredients": [
+    {
+      "ingredientId": "ground-beef-lean",
+      "amount": 120,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "extra-lean ground beef (5% fat)"
+    },
+    {
+      "ingredientId": "black-beans",
+      "amount": 90,
+      "unit": "g",
+      "prepState": "boiled",
+      "name": "canned black beans, rinsed and drained"
+    },
+    {
+      "ingredientId": "red-kidney-beans",
+      "amount": 90,
+      "unit": "g",
+      "prepState": "boiled",
+      "name": "canned red kidney beans, rinsed and drained"
+    },
+    {
+      "ingredientId": "canned-tomatoes",
+      "amount": 180,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "crushed Italian canned tomatoes"
+    },
+    {
+      "ingredientId": "bell-pepper",
+      "amount": 60,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "green bell pepper, diced"
+    },
+    {
+      "ingredientId": "yellow-onion",
+      "amount": 40,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "diced onion"
+    },
+    {
+      "ingredientId": "garlic",
+      "amount": 3,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "clove garlic, minced"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Brown Ground Beef",
+      "description": "In a medium saucepan, brown the lean ground beef over medium heat for 5 minutes, breaking into crumbles. Drain any excess fat.",
+      "timer": 5
+    },
+    {
+      "title": "Sauté Veggies",
+      "description": "Add diced onion, bell pepper, and garlic; sauté for 3 minutes until softened.",
+      "timer": 3
+    },
+    {
+      "title": "Toast Aromatics",
+      "description": "Stir in chili powder, cumin, and smoked paprika for 30 seconds until fragrant.",
+      "timer": 1
+    },
+    {
+      "title": "Add Beans & Tomatoes",
+      "description": "Add crushed tomatoes, black beans, and red kidney beans with 1/4 cup water.",
+      "timer": 2
+    },
+    {
+      "title": "Simmer & Thicken",
+      "description": "Simmer gently uncovered for 15–18 minutes until rich and thickened. Garnish with fresh cilantro.",
+      "timer": 18
+    }
+  ]
+}

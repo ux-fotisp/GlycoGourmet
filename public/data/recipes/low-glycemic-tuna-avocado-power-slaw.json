@@ -1,0 +1,105 @@
+{
+  "recipeNumber": 8,
+  "id": "low-glycemic-tuna-avocado-power-slaw",
+  "title": "Low-Glycemic Tuna Avocado Power Slaw",
+  "description": "Cruciferous cabbage provides insoluble bulk that prolongs fullness, while the monounsaturated fats from avocado and lean marine proteins maintain stable postprandial blood sugar.",
+  "imageUrl": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 10,
+  "cookTime": 0,
+  "cookingTime": 10,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Salad",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "High Protein",
+    "Under 30 Min",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 22,
+  "glycemicLoad": 4.3,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 330,
+    "protein": 30,
+    "fat": 17.5,
+    "saturatedFat": 2.6,
+    "carbs": 11,
+    "fiber": 6,
+    "netCarbs": 5,
+    "glycemicIndex": 22,
+    "glycemicLoad": 4.3
+  },
+  "diabeticNotes": "Cruciferous cabbage provides insoluble bulk that prolongs fullness, while the monounsaturated fats from avocado and lean marine proteins maintain stable postprandial blood sugar.",
+  "ingredients": [
+    {
+      "ingredientId": "tuna-light",
+      "amount": 120,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "skipjack or albacore tuna in spring water, drained"
+    },
+    {
+      "ingredientId": "avocado",
+      "amount": 80,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "ripe avocado, diced"
+    },
+    {
+      "ingredientId": "cabbage",
+      "amount": 100,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "shredded purple and green cabbage"
+    },
+    {
+      "ingredientId": "carrots",
+      "amount": 30,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "shredded carrots"
+    },
+    {
+      "ingredientId": "greek-yogurt",
+      "amount": 30,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "2% Greek yogurt (dressing)"
+    },
+    {
+      "ingredientId": "lemon-juice",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh lime juice"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Whisk Cumin Yogurt Dressing",
+      "description": "Whisk Greek yogurt, lime juice, cumin, garlic powder, salt, and pepper in a large mixing bowl.",
+      "timer": 2
+    },
+    {
+      "title": "Toss Crunchy Slaw",
+      "description": "Add shredded cabbage, carrots, and fresh cilantro. Toss well with the dressing.",
+      "timer": 3
+    },
+    {
+      "title": "Fold Tuna & Avocado",
+      "description": "Add drained tuna and diced avocado. Gently fold into the slaw to keep avocado chunks intact.",
+      "timer": 2
+    },
+    {
+      "title": "Serve / Chill",
+      "description": "Serve immediately or chill for up to 4 hours for maximum crispness.",
+      "timer": 1
+    }
+  ]
+}

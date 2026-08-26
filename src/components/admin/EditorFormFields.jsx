@@ -94,7 +94,7 @@ export const EditorFormFields = ({
             <span className="material-symbols-outlined text-primary text-[18px]">menu_book</span>
             Basics & Overview
           </h3>
-          <span className="text-[10px] text-on-surface-variant/60">Step 1 of 4</span>
+          <span className="text-[10px] text-on-surface-variant">Step 1 of 4</span>
         </div>
 
         <div className="space-y-3">
@@ -167,7 +167,7 @@ export const EditorFormFields = ({
             <span className="material-symbols-outlined text-primary text-[18px]">sell</span>
             Dietary Tags
           </h3>
-          <span className="text-[10px] text-on-surface-variant/60">Step 2 of 4</span>
+          <span className="text-[10px] text-on-surface-variant">Step 2 of 4</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {availableTags.map(tag => {
@@ -187,7 +187,7 @@ export const EditorFormFields = ({
       {/* ③ Ingredient Assembly Array Section */}
       <div className="space-y-2">
         <div className="flex justify-between items-center px-1">
-          <span className="text-[10px] text-on-surface-variant/60 font-bold uppercase tracking-wider">Step 3 of 4</span>
+          <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Step 3 of 4</span>
         </div>
         <IngredientSelector
           ingredients={formData.ingredients || []}
@@ -204,7 +204,7 @@ export const EditorFormFields = ({
             <span className="material-symbols-outlined text-primary text-[18px]">format_list_numbered</span>
             Instructions & Steps ({(formData.steps || []).length})
           </h3>
-          <span className="text-[10px] text-on-surface-variant/60">Step 4 of 4</span>
+          <span className="text-[10px] text-on-surface-variant">Step 4 of 4</span>
         </div>
 
         <div className="space-y-4">
@@ -219,7 +219,7 @@ export const EditorFormFields = ({
                     type="button"
                     onClick={() => handleRemoveStep(idx)}
                     aria-label={`Remove step ${idx + 1}`}
-                    className="absolute top-3 right-3 text-on-surface-variant/60 hover:text-error transition-colors cursor-pointer"
+                    className="absolute top-3 right-3 text-on-surface-variant hover:text-error transition-colors cursor-pointer"
                   >
                     <span className="material-symbols-outlined text-[18px]">delete</span>
                   </button>

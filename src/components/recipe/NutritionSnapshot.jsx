@@ -1,6 +1,5 @@
 import React from 'react';
 import NutritionBadge from '../ui/NutritionBadge';
-import { getGlycemicLoadCategory } from '../../utils/nutritionCalculator';
 import { usePreferences } from '../../context/UserPreferences';
 
 /**
@@ -13,7 +12,6 @@ export const NutritionSnapshot = ({ nutrition }) => {
   const { dailyGlTarget = 45 } = usePreferences();
 
   const gl = Math.round(nutrition?.glycemicLoad ?? 0);
-  const glInfo = getGlycemicLoadCategory(gl);
 
   const gi = nutrition?.glycemicIndex;
   let giSublabel = 'Low';
@@ -37,7 +35,7 @@ export const NutritionSnapshot = ({ nutrition }) => {
           <span className="material-symbols-outlined text-primary text-xl">analytics</span>
           Nutritional Snapshot
         </h3>
-        <div className="flex items-center gap-1 text-on-surface-variant/70 text-xs">
+        <div className="flex items-center gap-1 text-on-surface-variant text-xs">
           <span className="material-symbols-outlined text-[16px]">info</span>
           <span className="font-label-md">Portion-adjusted calculation</span>
         </div>

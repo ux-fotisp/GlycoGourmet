@@ -1,8 +1,54 @@
+﻿# ==============================================================================
+# GlycoGourmet — Netlify Production Configuration
+# Clinical Digital Health SPA Deployment Directive
+# ==============================================================================
+
 [build]
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--prefer-offline --no-audit"
+
+# ------------------------------------------------------------------------------
+# SPA Routing & Fallback Rewrite
+# ------------------------------------------------------------------------------
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# ------------------------------------------------------------------------------
+# Global Security & Privacy Headers (HIPAA / WCAG Digital Health Baseline)
+# ------------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://images.unsplash.com https://*.strapi.io https://*.netlify.app; connect-src 'self' http://localhost:1337 https://*.strapi.io https://api.data.gov https://*.netlify.app;"
+
+# ------------------------------------------------------------------------------
+# Asset Cache Invalidation & Immutability Directives
+# ------------------------------------------------------------------------------
+# 1. Hashed JS/CSS Assets: Immutable 1-Year Long-Term Cache
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# 2. SPA Entrypoint: Prevent Stale Chunk Reference on Redeployment
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# 3. Static JSON Seed Data: Cache with Revalidation
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"

@@ -121,7 +121,7 @@ export const ImageUploader = ({ currentUrl = '', onUpload, onUrlChange }) => {
               <span className="text-xs font-bold text-on-surface-variant group-hover:text-primary transition-colors">
                 {isDragOver ? 'Drop to Upload' : 'Drag & Drop or Click to Upload'}
               </span>
-              <span className="text-[10px] text-on-surface-variant/60">
+              <span className="text-[10px] text-on-surface-variant">
                 JPEG, PNG, WebP, AVIF — max 5 MB
               </span>
             </>
@@ -159,7 +159,7 @@ export const ImageUploader = ({ currentUrl = '', onUpload, onUrlChange }) => {
         </button>
 
         {currentUrl && (
-          <span className="text-[10px] text-on-surface-variant/60 flex items-center gap-1">
+          <span className="text-[10px] text-on-surface-variant flex items-center gap-1">
             <span className="material-symbols-outlined text-[12px] text-primary">check_circle</span>
             Image set
           </span>

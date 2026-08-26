@@ -1,0 +1,124 @@
+{
+  "recipeNumber": 16,
+  "id": "bulgogi-beef-lettuce-wraps",
+  "title": "Bulgogi Beef Lettuce Wraps",
+  "description": "Replacing cane sugar and corn syrup with minimal grated fresh pear and allulose delivers authentic Korean bulgogi flavors without glycemic volatility. Kimchi provides live lactobacilli that modulate gut inflammation.",
+  "imageUrl": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 15,
+  "cookTime": 6,
+  "cookingTime": 21,
+  "difficulty": "Medium",
+  "servings": 1,
+  "yield": "1 Serving (4 large wraps)",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Med GL",
+    "High Protein",
+    "Korean-Inspired",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 36,
+  "glycemicLoad": 11,
+  "glycemicImpact": "Medium Impact",
+  "nutrition": {
+    "kcal": 380,
+    "protein": 34,
+    "fat": 21,
+    "saturatedFat": 5.8,
+    "carbs": 14,
+    "fiber": 3,
+    "netCarbs": 11,
+    "glycemicIndex": 36,
+    "glycemicLoad": 11
+  },
+  "diabeticNotes": "Replacing cane sugar and corn syrup with minimal grated fresh pear and allulose delivers authentic Korean bulgogi flavors without glycemic volatility. Kimchi provides live lactobacilli that modulate gut inflammation.",
+  "ingredients": [
+    {
+      "ingredientId": "sirloin-steak",
+      "amount": 150,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "lean top sirloin or flank steak, sliced paper-thin across the grain"
+    },
+    {
+      "ingredientId": "romaine-lettuce",
+      "amount": 60,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "large crisp Boston Bibb or butterhead lettuce leaves"
+    },
+    {
+      "ingredientId": "kimchi",
+      "amount": 75,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "kimchi (sugar-free probiotic fermented cabbage)"
+    },
+    {
+      "ingredientId": "tamari-soy-sauce",
+      "amount": 20,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "tamari soy sauce"
+    },
+    {
+      "ingredientId": "sesame-oil",
+      "amount": 14,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "toasted sesame oil"
+    },
+    {
+      "ingredientId": "garlic",
+      "amount": 6,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "cloves garlic, grated"
+    },
+    {
+      "ingredientId": "ginger",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "grated ginger"
+    },
+    {
+      "ingredientId": "scallions",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "scallion, chopped"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Mix Low-GI Bulgogi Marinade",
+      "description": "In a bowl, mix grated Asian pear, tamari, sesame oil, sweetener, garlic, ginger, and scallion.",
+      "timer": 3
+    },
+    {
+      "title": "Marinate Sirloin Slices",
+      "description": "Add sliced sirloin steak; toss to coat and marinate for 15 minutes at room temperature.",
+      "timer": 15
+    },
+    {
+      "title": "Preheat Heavy Skillet",
+      "description": "Heat a cast-iron skillet or grill pan over very high heat until smoking hot.",
+      "timer": 3
+    },
+    {
+      "title": "Flash-Sear Beef",
+      "description": "Add marinated beef in a single layer (do not crowd pan). Sear hard for 90 seconds per side until caramelized.",
+      "timer": 3
+    },
+    {
+      "title": "Assemble in Crisp Cups",
+      "description": "Divide hot bulgogi beef among 4 crisp lettuce cups. Top with probiotic kimchi and sesame seeds.",
+      "timer": 3
+    }
+  ]
+}

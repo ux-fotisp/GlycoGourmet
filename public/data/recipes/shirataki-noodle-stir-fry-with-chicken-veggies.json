@@ -1,0 +1,112 @@
+{
+  "recipeNumber": 9,
+  "id": "shirataki-noodle-stir-fry-with-chicken-veggies",
+  "title": "Shirataki Noodle Stir-Fry with Chicken & Veggies",
+  "description": "The combination of beta-glucans in cremini mushrooms and glucomannan in shirataki creates a powerful dual-fiber barrier that blunts carbohydrate absorption and aids bile acid binding.",
+  "imageUrl": "https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 10,
+  "cookTime": 12,
+  "cookingTime": 22,
+  "difficulty": "Medium",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "High Fiber",
+    "Shirataki",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 28,
+  "glycemicLoad": 5,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 310,
+    "protein": 33,
+    "fat": 13,
+    "saturatedFat": 2,
+    "carbs": 12,
+    "fiber": 6.5,
+    "netCarbs": 5.5,
+    "glycemicIndex": 28,
+    "glycemicLoad": 5
+  },
+  "diabeticNotes": "The combination of beta-glucans in cremini mushrooms and glucomannan in shirataki creates a powerful dual-fiber barrier that blunts carbohydrate absorption and aids bile acid binding.",
+  "ingredients": [
+    {
+      "ingredientId": "shirataki-noodles",
+      "amount": 200,
+      "unit": "g",
+      "prepState": "boiled",
+      "name": "packet Shirataki / Konjac noodles (rinsed and drained)"
+    },
+    {
+      "ingredientId": "chicken-breast",
+      "amount": 120,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "skinless chicken breast, cut into thin strips"
+    },
+    {
+      "ingredientId": "bell-pepper-red",
+      "amount": 60,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "red bell pepper, thinly sliced"
+    },
+    {
+      "ingredientId": "sugar-snap-peas",
+      "amount": 50,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "sugar snap peas, trimmed"
+    },
+    {
+      "ingredientId": "cremini-mushrooms",
+      "amount": 70,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "sliced button or cremini mushrooms"
+    },
+    {
+      "ingredientId": "sesame-oil",
+      "amount": 14,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "avocado oil or cold-pressed sesame oil"
+    },
+    {
+      "ingredientId": "tamari-soy-sauce",
+      "amount": 20,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "tamari soy sauce"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Parboil & Dry-Sear Noodles",
+      "description": "Rinse shirataki noodles thoroughly, boil for 1 minute, drain, and dry-sear in a hot pan for 2 minutes to dry out. Set aside.",
+      "timer": 4
+    },
+    {
+      "title": "Stir-Fry Chicken",
+      "description": "Heat oil in a wok over high heat. Add sliced chicken breast and stir-fry for 4 minutes until golden and cooked through.",
+      "timer": 4
+    },
+    {
+      "title": "Cook Vegetables",
+      "description": "Add bell pepper, sugar snap peas, and mushrooms. Stir-fry vigorously for 3 minutes until crisp-tender.",
+      "timer": 3
+    },
+    {
+      "title": "Combine & Glaze",
+      "description": "Add prepared shirataki noodles and pour stir-fry sauce over everything. Toss constantly for 2 minutes until liquid is fully absorbed and noodles are coated. Serve hot.",
+      "timer": 2
+    }
+  ]
+}

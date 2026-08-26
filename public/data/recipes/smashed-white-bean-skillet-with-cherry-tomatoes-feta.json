@@ -1,0 +1,110 @@
+{
+  "recipeNumber": 11,
+  "id": "smashed-white-bean-skillet-with-cherry-tomatoes-feta",
+  "title": "Smashed White Bean Skillet with Cherry Tomatoes & Feta",
+  "description": "Cannellini beans are rich in soluble resistant starch and alpha-amylase inhibitors (phaseolamin) which slow the conversion of complex carbohydrates into blood glucose. High soluble fiber binds LDL cholesterol.",
+  "imageUrl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 5,
+  "cookTime": 15,
+  "cookingTime": 20,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "High Fiber",
+    "Mediterranean",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 32,
+  "glycemicLoad": 6.1,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 320,
+    "protein": 16,
+    "fat": 17,
+    "saturatedFat": 4.8,
+    "carbs": 24,
+    "fiber": 8.5,
+    "netCarbs": 15.5,
+    "glycemicIndex": 32,
+    "glycemicLoad": 6.1
+  },
+  "diabeticNotes": "Cannellini beans are rich in soluble resistant starch and alpha-amylase inhibitors (phaseolamin) which slow the conversion of complex carbohydrates into blood glucose. High soluble fiber binds LDL cholesterol.",
+  "ingredients": [
+    {
+      "ingredientId": "cannellini-beans",
+      "amount": 180,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "cooked/canned cannellini white beans, rinsed and drained"
+    },
+    {
+      "ingredientId": "cherry-tomato",
+      "amount": 150,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "ripe cherry tomatoes, halved"
+    },
+    {
+      "ingredientId": "extra-virgin-olive-oil",
+      "amount": 14,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "extra virgin olive oil"
+    },
+    {
+      "ingredientId": "garlic",
+      "amount": 6,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "cloves garlic, thinly sliced"
+    },
+    {
+      "ingredientId": "feta-cheese",
+      "amount": 30,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "Greek sheep's milk feta cheese, crumbled"
+    },
+    {
+      "ingredientId": "lemon-juice",
+      "amount": 10,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh lemon juice"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Heat Olive Oil",
+      "description": "Heat olive oil in a medium nonstick or cast-iron skillet over medium heat.",
+      "timer": 2
+    },
+    {
+      "title": "Blister Cherry Tomatoes",
+      "description": "Add sliced garlic and cherry tomatoes; cook for 4–5 minutes until tomatoes blister and collapse.",
+      "timer": 5
+    },
+    {
+      "title": "Add & Smash White Beans",
+      "description": "Add drained cannellini beans and dried oregano. Using the back of a fork or potato masher, crush half of the beans directly in the pan to create a creamy texture while leaving the rest whole.",
+      "timer": 3
+    },
+    {
+      "title": "Simmer Saucy",
+      "description": "Cook for 3–4 minutes until hot and saucy. Season with black pepper.",
+      "timer": 4
+    },
+    {
+      "title": "Garnish with Feta & Basil",
+      "description": "Remove from heat, scatter crumbled feta and fresh basil over top, and finish with a squeeze of fresh lemon juice.",
+      "timer": 1
+    }
+  ]
+}

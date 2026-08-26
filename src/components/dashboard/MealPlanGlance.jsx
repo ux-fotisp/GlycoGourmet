@@ -4,7 +4,7 @@ import { getAllRecipes } from '../../utils/recipeStore';
 import { calculateRecipeNutrition, getGlycemicLoadCategory } from '../../utils/nutritionCalculator';
 
 /**
- * MealPlanGlance — Conditional Meal Plan summary for the Dashboard.
+ * MealPlanGlance � Conditional Meal Plan summary for the Dashboard.
  *
  * Reads the active meal plan state from a local hook (useMealPlan pattern).
  * Render A: If an active plan exists, displays today's scheduled meals with
@@ -13,11 +13,6 @@ import { calculateRecipeNutrition, getGlycemicLoadCategory } from '../../utils/n
  *           the user to build today's menu.
  */
 
-/**
- * Internal hook: useMealPlan
- * In production, this would connect to Snappi CMS meal-plan collections.
- * Currently uses a seeded sample plan from system recipes.
- */
 function useMealPlan() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -61,30 +56,30 @@ export const MealPlanGlance = () => {
 
   if (loading) {
     return (
-      <div className="bg-surface-container-low rounded-xl p-5 border border-outline-variant/30 animate-pulse">
+      <div className="bento-card p-5 animate-pulse">
         <div className="h-4 bg-outline-variant/20 rounded w-1/3 mb-3" />
         <div className="grid grid-cols-3 gap-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-20 bg-outline-variant/15 rounded-lg" />
+            <div key={i} className="h-20 bg-outline-variant/15 rounded-xl" />
           ))}
         </div>
       </div>
     );
   }
 
-  // ─── Render B: No Active Plan CTA ────────────────────────────────────────
+  // Render B: No Active Plan CTA
   if (!hasActivePlan) {
     return (
-      <div className="bg-surface-container-low rounded-xl p-6 border border-dashed border-outline-variant/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary-container/15 flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-primary text-xl">calendar_add_on</span>
+      <div className="bento-card p-6 border-dashed border-outline-variant/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-start gap-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-primary-container/15 flex items-center justify-center shrink-0 text-primary">
+            <span className="material-symbols-outlined text-2xl">calendar_add_on</span>
           </div>
           <div>
             <h4 className="font-bold text-sm text-on-surface">
               No meal plan set for today
             </h4>
-            <p className="text-xs text-on-surface-variant leading-relaxed mt-0.5 max-w-sm">
+            <p className="text-xs text-on-surface-variant leading-relaxed mt-0.5 max-w-sm font-medium">
               Want to generate a blood-sugar stable plan? Build a balanced menu optimized for your daily GL target.
             </p>
           </div>
@@ -100,8 +95,7 @@ export const MealPlanGlance = () => {
     );
   }
 
-  // ─── Render A: Active Plan Summary ───────────────────────────────────────
-  // Compute aggregated macros for today's meals
+  // Render A: Active Plan Summary
   const mealData = todayPlan.map(({ slot, recipe }) => {
     const nutrition = calculateRecipeNutrition(recipe?.ingredients ?? []);
     return {
@@ -117,47 +111,54 @@ export const MealPlanGlance = () => {
   const totalGLInfo = getGlycemicLoadCategory(totalGL);
 
   return (
-    <div className="bg-white rounded-xl p-4 md:p-5 border border-outline-variant/30 shadow-[0_4px_20px_rgba(45,49,48,0.05)] space-y-3">
+    <div className="bento-card p-5 md:p-6 space-y-4">
       {/* Header row */}
-      <div className="flex justify-between items-center">
-        <h4 className="font-bold text-xs uppercase tracking-widest text-primary flex items-center gap-1.5">
-          <span className="material-symbols-outlined text-sm font-bold">calendar_today</span>
-          Today's Meal Plan
-        </h4>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-xl font-bold">calendar_today</span>
+          <div>
+            <h4 className="font-extrabold text-sm uppercase tracking-wider text-on-surface">
+              Today's Meal Plan
+            </h4>
+            <p className="text-[11px] text-on-surface-variant font-medium">
+              Scheduled low-glycemic daily meals
+            </p>
+          </div>
+        </div>
         <div className="flex items-center gap-2">
           {/* Macro summary badges */}
-          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${totalGLInfo.bgClass} ${totalGLInfo.colorClass} border-current/20`}>
+          <span className={`text-[11px] font-extrabold px-3 py-1 rounded-full border ${totalGLInfo.bgClass} ${totalGLInfo.colorClass} border-current/20`}>
             Total GL: {totalGL}
           </span>
-          <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant border border-outline-variant/20">
+          <span className="text-[11px] font-extrabold px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant border border-outline-variant/20">
             {Math.round(totalNetCarbs)}g Net Carbs
           </span>
         </div>
       </div>
 
       {/* Meal slots grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
         {mealData.map(({ slot, recipe, gl }) => {
           const glInfo = getGlycemicLoadCategory(gl);
           return (
             <Link
               key={slot}
               to={`/recipe/${recipe.id}`}
-              className="bg-surface-container-lowest hover:bg-surface-container-low/60 p-3 rounded-lg border border-outline-variant/20 flex items-center gap-3 transition-all group"
+              className="bg-surface-container-low/50 hover:bg-surface-container p-3.5 rounded-xl border border-outline-variant/20 flex items-center gap-3 transition-all group hover:border-primary/40 hover:shadow-sm"
             >
               <img
                 src={recipe.imageUrl || 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=100'}
                 alt={recipe.title}
-                className="w-11 h-11 rounded-lg object-cover border border-outline-variant/20 shrink-0"
+                className="w-12 h-12 rounded-xl object-cover border border-outline-variant/20 shrink-0 group-hover:scale-105 transition-transform"
               />
               <div className="flex-1 min-w-0">
-                <span className="text-[9px] font-extrabold text-on-surface-variant/60 uppercase tracking-wider block">
+                <span className="text-[10px] font-extrabold text-primary uppercase tracking-wider block">
                   {slot}
                 </span>
                 <h5 className="text-xs font-bold text-on-surface truncate group-hover:text-primary transition-colors">
                   {recipe.title}
                 </h5>
-                <span className={`text-[10px] font-bold ${glInfo.colorClass}`}>
+                <span className={`text-[10px] font-extrabold ${glInfo.colorClass}`}>
                   GL: {gl}
                 </span>
               </div>
@@ -170,10 +171,10 @@ export const MealPlanGlance = () => {
       <div className="flex justify-end pt-1">
         <Link
           to="/meal-plans"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline group"
         >
           View Today's Full Schedule
-          <span className="material-symbols-outlined text-sm">arrow_forward</span>
+          <span className="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
         </Link>
       </div>
     </div>

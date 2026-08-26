@@ -1,0 +1,126 @@
+{
+  "recipeNumber": 2,
+  "id": "low-glycemic-green-goddess-power-salad",
+  "title": "Low-Glycemic Green Goddess Power Salad",
+  "description": "Kale and pumpkin seeds supply magnesium and phytosterols, which compete with dietary cholesterol absorption in the gut. The monounsaturated fats from avocado enhance the bioavailability of fat-soluble antioxidant carotenoids.",
+  "imageUrl": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 15,
+  "cookTime": 0,
+  "cookingTime": 15,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Salad",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "High Protein",
+    "High Fiber",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 20,
+  "glycemicLoad": 0.9,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 290,
+    "protein": 22,
+    "fat": 18,
+    "saturatedFat": 2.8,
+    "carbs": 8,
+    "fiber": 5.2,
+    "netCarbs": 2.8,
+    "glycemicIndex": 20,
+    "glycemicLoad": 0.9
+  },
+  "diabeticNotes": "Kale and pumpkin seeds supply magnesium and phytosterols, which compete with dietary cholesterol absorption in the gut. The monounsaturated fats from avocado enhance the bioavailability of fat-soluble antioxidant carotenoids.",
+  "ingredients": [
+    {
+      "ingredientId": "chicken-breast",
+      "amount": 80,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "grilled chicken breast, thinly sliced across the grain"
+    },
+    {
+      "ingredientId": "kale",
+      "amount": 70,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "chopped dinosaur / lacinato kale (stems removed, massaged)"
+    },
+    {
+      "ingredientId": "cucumber",
+      "amount": 50,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "medium Persian cucumber, thinly sliced"
+    },
+    {
+      "ingredientId": "avocado",
+      "amount": 50,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "ripe avocado, diced"
+    },
+    {
+      "ingredientId": "pumpkin-seeds",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "raw unsalted pumpkin seeds (pepitas)"
+    },
+    {
+      "ingredientId": "greek-yogurt",
+      "amount": 30,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "Greek yogurt (dressing)"
+    },
+    {
+      "ingredientId": "lemon-juice",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "lemon juice (dressing)"
+    },
+    {
+      "ingredientId": "garlic",
+      "amount": 3,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "garlic clove (dressing)"
+    },
+    {
+      "ingredientId": "olive-oil",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "extra virgin olive oil for massaging kale"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Blend Dressing",
+      "description": "Place dressing ingredients (1/4 avocado, 2 tbsp Greek yogurt, 1 tbsp lemon juice, 2 tbsp mixed fresh herbs, 1 clove garlic, 2 tbsp water, pinch of sea salt) into a small blender and blend until vibrant green and velvety smooth.",
+      "timer": 3
+    },
+    {
+      "title": "Massage Kale",
+      "description": "Place chopped kale in a large salad bowl. Drizzle 1 teaspoon of olive oil and massage leaves with clean hands for 60 seconds until softened and dark green.",
+      "timer": 2
+    },
+    {
+      "title": "Toss Greens & Cucumber",
+      "description": "Toss massaged kale with cucumber slices and 2 tablespoons of green goddess dressing.",
+      "timer": 2
+    },
+    {
+      "title": "Top & Serve",
+      "description": "Top with sliced grilled chicken breast, diced avocado, and raw pumpkin seeds.",
+      "timer": 3
+    }
+  ]
+}

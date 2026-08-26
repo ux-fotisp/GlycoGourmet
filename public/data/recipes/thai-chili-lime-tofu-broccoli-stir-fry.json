@@ -1,0 +1,112 @@
+{
+  "recipeNumber": 7,
+  "id": "thai-chili-lime-tofu-broccoli-stir-fry",
+  "title": "Thai Chili-Lime Tofu & Broccoli Stir-Fry",
+  "description": "Soy isoflavones and plant proteins lower serum total cholesterol and LDL. Broccoli delivers sulforaphane, a bioactive isothiocyanate with proven anti-inflammatory and glucose-stabilizing properties.",
+  "imageUrl": "https://images.unsplash.com/photo-1546069901-d5bfd2cbfb1f?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 10,
+  "cookTime": 12,
+  "cookingTime": 22,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "Plant-Based",
+    "Vegan",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 25,
+  "glycemicLoad": 3.6,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 260,
+    "protein": 18,
+    "fat": 15,
+    "saturatedFat": 2,
+    "carbs": 11,
+    "fiber": 5,
+    "netCarbs": 6,
+    "glycemicIndex": 25,
+    "glycemicLoad": 3.6
+  },
+  "diabeticNotes": "Soy isoflavones and plant proteins lower serum total cholesterol and LDL. Broccoli delivers sulforaphane, a bioactive isothiocyanate with proven anti-inflammatory and glucose-stabilizing properties.",
+  "ingredients": [
+    {
+      "ingredientId": "tofu-extra-firm",
+      "amount": 180,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "extra-firm organic tofu, pressed dry and cubed"
+    },
+    {
+      "ingredientId": "broccoli",
+      "amount": 150,
+      "unit": "g",
+      "prepState": "steamed",
+      "name": "fresh broccoli florets, chopped small"
+    },
+    {
+      "ingredientId": "garlic",
+      "amount": 3,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "clove garlic, minced"
+    },
+    {
+      "ingredientId": "ginger",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh ginger, grated"
+    },
+    {
+      "ingredientId": "sesame-oil",
+      "amount": 14,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "toasted sesame oil"
+    },
+    {
+      "ingredientId": "tamari-soy-sauce",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "tamari soy sauce"
+    },
+    {
+      "ingredientId": "lemon-juice",
+      "amount": 20,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh lime juice"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Sear Tofu",
+      "description": "Heat sesame oil in a nonstick wok or heavy skillet over high heat. Add tofu cubes and sear undisturbed for 4 minutes until golden on the bottom; flip and sear other sides until crisp. Transfer to a plate.",
+      "timer": 6
+    },
+    {
+      "title": "Steam-Fry Broccoli",
+      "description": "Add broccoli florets, garlic, ginger, and sliced chili to the hot wok with 2 tablespoons of water. Cover for 2 minutes to steam-fry until bright green.",
+      "timer": 3
+    },
+    {
+      "title": "Glaze & Toss",
+      "description": "Return tofu to wok, pour in sauce mixture, and toss vigorously over high heat for 1 minute until sauce glazes the vegetables.",
+      "timer": 2
+    },
+    {
+      "title": "Fold Herbs & Serve",
+      "description": "Remove from heat, fold in fresh Thai basil, and serve hot.",
+      "timer": 1
+    }
+  ]
+}

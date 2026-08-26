@@ -1,0 +1,120 @@
+{
+  "recipeNumber": 3,
+  "id": "salmon-stuffed-avocados-with-fresh-herbs",
+  "title": "Salmon-Stuffed Avocados with Fresh Herbs",
+  "description": "Rich in marine omega-3 polyunsaturated fatty acids (EPA and DHA) and plant monounsaturated oleic acid. This lipid pairing elevates HDL, lowers circulating triglycerides, and improves cell-membrane insulin sensitivity.",
+  "imageUrl": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 10,
+  "cookTime": 0,
+  "cookingTime": 10,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Serving (2 halves)",
+  "category": "Lunch",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "Omega-3",
+    "Keto-Friendly",
+    "Under 30 Min",
+    "LOGI"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 15,
+  "glycemicLoad": 1.4,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 360,
+    "protein": 24,
+    "fat": 25,
+    "saturatedFat": 3.5,
+    "carbs": 9,
+    "fiber": 6.8,
+    "netCarbs": 2.2,
+    "glycemicIndex": 15,
+    "glycemicLoad": 1.4
+  },
+  "diabeticNotes": "Rich in marine omega-3 polyunsaturated fatty acids (EPA and DHA) and plant monounsaturated oleic acid. This lipid pairing elevates HDL, lowers circulating triglycerides, and improves cell-membrane insulin sensitivity.",
+  "ingredients": [
+    {
+      "ingredientId": "avocado",
+      "amount": 150,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "medium ripe Hass avocado, sliced lengthwise and pitted"
+    },
+    {
+      "ingredientId": "wild-salmon",
+      "amount": 100,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "canned drained wild pink salmon or poached salmon flakes"
+    },
+    {
+      "ingredientId": "greek-yogurt",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "2% Greek yogurt"
+    },
+    {
+      "ingredientId": "extra-virgin-olive-oil",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "extra virgin olive oil"
+    },
+    {
+      "ingredientId": "lemon-juice",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh lemon juice + lemon zest"
+    },
+    {
+      "ingredientId": "red-onion",
+      "amount": 10,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "finely diced red onion"
+    },
+    {
+      "ingredientId": "dill",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "chopped fresh dill"
+    },
+    {
+      "ingredientId": "capers",
+      "amount": 5,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "drained capers"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Hollow Avocados",
+      "description": "Scoop a thin layer (about 1 tablespoon) of flesh from each avocado half to enlarge the center cavity; finely dice the scooped avocado.",
+      "timer": 2
+    },
+    {
+      "title": "Combine Filling",
+      "description": "In a bowl, combine wild salmon, diced scooped avocado, Greek yogurt, olive oil, lemon juice, lemon zest, red onion, dill, capers, salt, and pepper.",
+      "timer": 4
+    },
+    {
+      "title": "Flake Gently",
+      "description": "Flake gently with a fork until ingredients are evenly distributed without turning into a paste.",
+      "timer": 2
+    },
+    {
+      "title": "Mound & Garnish",
+      "description": "Mound generous portions of the salmon mixture into the avocado cavities. Garnish with an extra sprig of fresh dill.",
+      "timer": 2
+    }
+  ]
+}

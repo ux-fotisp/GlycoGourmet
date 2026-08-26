@@ -80,7 +80,7 @@ export const EditorPreviewCard = ({ formData }) => {
             <span className="material-symbols-outlined text-[32px]">restaurant</span>
           </div>
           <p className="text-xs font-bold text-on-surface-variant/80">Image Wireframe Placeholder</p>
-          <p className="text-[10px] text-on-surface-variant/60 max-w-xs leading-relaxed">
+          <p className="text-[10px] text-on-surface-variant max-w-xs leading-relaxed">
             Drop an image file or upload to Strapi Media Library to render recipe photography.
           </p>
         </div>
@@ -191,7 +191,7 @@ export const EditorPreviewCard = ({ formData }) => {
         {!hasIngredients ? (
           <div className="p-4 rounded-xl border border-dashed border-outline-variant/50 bg-surface-container-low/30 text-center space-y-1 my-1">
             <span className="material-symbols-outlined text-[24px] text-on-surface-variant/40">nutrition</span>
-            <p className="text-xs text-on-surface-variant/60 italic">
+            <p className="text-xs text-on-surface-variant italic">
               No ingredients added yet. Preview will populate as you type.
             </p>
           </div>

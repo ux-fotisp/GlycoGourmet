@@ -77,7 +77,7 @@ export function getGlycemicLoadCategory(gl) {
     return {
       category: 'Low GL',
       label: 'Low GL',
-      colorClass: 'text-primary-fixed-dim',
+      colorClass: 'text-primary',
       bgClass: 'bg-primary-container/15',
     };
   }

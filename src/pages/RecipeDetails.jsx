@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { getRecipeById } from '../utils/recipeStore';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { getRecipeById, saveRecipe } from '../utils/recipeStore';
 import { calculateRecipeNutrition, scaleNutrition, getIngredientById } from '../utils/nutritionCalculator';
 import DetailHero from '../components/recipe/DetailHero';
 import NutritionSnapshot from '../components/recipe/NutritionSnapshot';
@@ -10,7 +10,10 @@ import CookModeModal from '../components/recipe/CookModeModal';
 import RecipeObjectBridge from '../components/recipe/RecipeObjectBridge';
 import SubstitutionModal from '../components/recipe/SubstitutionModal';
 import AddToMealPlanModal from '../components/recipe/AddToMealPlanModal';
+import DraftPreviewBanner from '../components/recipe/DraftPreviewBanner';
 import { useFavorites } from '../hooks/useFavorites';
+import { useAuth } from '../context/AuthContext';
+
 
 /**
  * RecipeDetails / RecipeDetail Page
@@ -22,12 +25,16 @@ import { useFavorites } from '../hooks/useFavorites';
 export const RecipeDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get('preview') === 'true';
+  const { user } = useAuth();
 
   const [recipe, setRecipe] = useState(null);
   const [servingMultiplier, setServingMultiplier] = useState(1);
   const [swappedIngredients, setSwappedIngredients] = useState({}); // originalId -> replacementId
   const [isSubOpen, setIsSubOpen] = useState(false);
   const [selectedSub, setSelectedSub] = useState(null);
+
   const [isCookModeOpen, setIsCookModeOpen] = useState(false);
   const [showMobilePlanPicker, setShowMobilePlanPicker] = useState(false);
 
@@ -37,9 +44,17 @@ export const RecipeDetails = () => {
   useEffect(() => {
     let cancelled = false;
     async function loadRecipe() {
-      const found = await getRecipeById(id);
+      const found = await getRecipeById(id, { preview: isPreview });
       if (cancelled) return;
       if (found) {
+        if (found.status === 'draft' || !found.publishedAt) {
+          // Security Check
+          if (user?.roleType !== 'admin' && found.authorId !== user?.email) {
+            alert('Unauthorized: You do not have permission to view this draft.');
+            navigate('/');
+            return;
+          }
+        }
         setRecipe(found);
       } else {
         navigate('/');
@@ -47,9 +62,21 @@ export const RecipeDetails = () => {
     }
     loadRecipe();
     return () => { cancelled = true; };
-  }, [id, navigate]);
+  }, [id, navigate, isPreview, user]);
+
+  const handlePublish = async () => {
+    if (!recipe) return;
+    try {
+      await saveRecipe(recipe, { isUpdate: true, publishedAt: new Date().toISOString() });
+      setRecipe({ ...recipe, status: 'published', publishedAt: new Date().toISOString() });
+      alert('Recipe successfully published!');
+    } catch (err) {
+      alert('Failed to publish recipe: ' + err.message);
+    }
+  };
 
   if (!recipe) {
+
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <span className="material-symbols-outlined text-4xl text-primary animate-spin">
@@ -118,9 +145,13 @@ export const RecipeDetails = () => {
     setSwappedIngredients({});
   };
 
-  return (
+    return (
     <div className="min-h-screen bg-background pb-28 md:pb-16">
+      {(!recipe.publishedAt || recipe.status === 'draft') && (
+        <DraftPreviewBanner onPublish={handlePublish} roleType={user?.roleType || 'user'} />
+      )}
       {/* Top Header Navigation */}
+
       <header className="w-full sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-outline-variant/35 shadow-sm">
         <div className="flex justify-between items-center px-edge-margin md:px-md max-w-container-max mx-auto h-16">
           <Link to="/" className="flex items-center gap-1.5 font-bold text-primary hover:underline">
