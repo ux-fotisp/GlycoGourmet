@@ -38,6 +38,7 @@ Comprehensive system specifications are maintained in the [`docs/`](docs/) direc
 - **[Information Architecture & Clinical HCI Specification](docs/Information_Architecture.md):** Detailed Object-Oriented UX (OOUX / ORCA) domain models, cognitive ergonomics analysis, 10 Nielsen Norman UX heuristic citations, and preattentive visual design system.
 - **[Technical Architecture & Systems Engineering Directive](docs/Technical_Architecture.md):** Deterministic metabolic calculation engine math (LaTeX equations), TypeScript domain data contracts, Strapi CMS lifecycles, and security architecture.
 - **[Production Operations & Deployment Runbook](docs/DEPLOYMENT_RUNBOOK.md):** Environment variable setup, first-time Netlify/Strapi provisioning, and disaster recovery procedures.
+- **[Strapi API Reference](docs/API_REFERENCE.md):** Comprehensive Strapi REST endpoints, query filters, and JWT authentication payloads documentation.
 - **[Agentic QA Guidelines](docs/AGENTIC_QA_GUIDELINES.md):** Autonomous test triage directives and 100% coverage invariants.
 
 ---
