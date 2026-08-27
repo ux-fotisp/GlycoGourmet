@@ -46,6 +46,7 @@ jobs:
 
       - name: Boot Strapi in Background
         run: |
+          mv tsconfig.json tsconfig.json.bak
           npm run develop --prefix server > strapi.log 2>&1 &
         env:
           NODE_ENV: development
@@ -77,7 +78,9 @@ jobs:
           fi
 
       - name: Run Integration Tests
-        run: npx vitest run tests/integration/TenantScopingIntegration.spec.js
+        run: |
+          mv tsconfig.json.bak tsconfig.json
+          npx vitest run tests/integration/TenantScopingIntegration.spec.js
 
       - name: Upload Test Results
         if: always()
