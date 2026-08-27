@@ -25,12 +25,24 @@ async function seed() {
     }
   });
 
+  // Create Patient User
+  const patientA = await strapi.entityService.create('plugin::users-permissions.user', {
+    data: {
+      username: 'patientA_' + Date.now(),
+      email: 'patienta' + Date.now() + '@glyco.com',
+      password: 'Password123!',
+      roleType: 'user',
+      confirmed: true
+    }
+  });
+
   // Create ClientProfile for A
   await strapi.entityService.create('api::client-profile.client-profile', {
     data: {
-      userId: 'client_123',
+      patient: patientA.id,
       dietitian: dietitianA.id,
-      currentWeight: 150
+      diabeticSubtype: 'T2D',
+      status: 'active'
     }
   });
   
