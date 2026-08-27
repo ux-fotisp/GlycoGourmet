@@ -118,3 +118,12 @@ If client browsers encounter stale chunks or corrupted local state:
 - **Lead Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **Repository:** `https://github.com/fotispastrakis/GlycoGourmet`
 - **Issue Tracker:** `https://github.com/fotispastrakis/GlycoGourmet/issues`
+
+## Local Strapi Development & Testing
+**CRITICAL**: Local Strapi backend development and integration testing MUST be executed via Docker (using 
+pm run test:integration:docker). 
+
+The host system's Node.js 24 environment is fundamentally incompatible with the etter-sqlite3 native bindings required by Strapi v4. Attempting to run Strapi natively on Node 24 Windows will result in an unrecoverable C++20 MSBuild compiler crash during 
+pm install.
+
+Use the provided docker-compose.yml to isolate the backend runtime to a Node 20 LTS Alpine container.

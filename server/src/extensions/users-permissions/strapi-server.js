@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Strapi Users & Permissions Plugin Server Extension
  * Overrides auth controllers to enforce isApproved = false on Google OAuth registration
  * and RBAC default role type assignment.
@@ -59,5 +59,33 @@ module.exports = (plugin) => {
     }
   };
 
+  
+  // Override register controller to prevent roleType forgery
+  const originalRegister = plugin.controllers.auth.register;
+  plugin.controllers.auth.register = async (ctx) => {
+    // Force roleType to 'user' server-side
+    if (ctx.request.body) {
+      ctx.request.body.roleType = 'user';
+    }
+    await originalRegister(ctx);
+  };
+  
+  // Override user update controller to prevent self-service privilege escalation
+  if (plugin.controllers.user && plugin.controllers.user.update) {
+    const originalUserUpdate = plugin.controllers.user.update;
+    plugin.controllers.user.update = async (ctx) => {
+      if (ctx.request && ctx.request.body) {
+        const forbiddenFields = ['roleType', 'isApproved', 'clientIds', 'licenseId', 'credential', 'clinicName'];
+        forbiddenFields.forEach(field => {
+          if (ctx.request.body[field] !== undefined) {
+            delete ctx.request.body[field];
+          }
+        });
+      }
+      await originalUserUpdate(ctx);
+    };
+  }
+
   return plugin;
 };
+
