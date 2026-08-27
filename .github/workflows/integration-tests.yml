@@ -46,7 +46,7 @@ jobs:
 
       - name: Boot Strapi in Background
         run: |
-          npm run develop --prefix server &
+          npm run develop --prefix server > strapi.log 2>&1 &
         env:
           NODE_ENV: development
           HOST: 0.0.0.0
@@ -70,6 +70,11 @@ jobs:
             echo "Waiting..."
             sleep 5
           done
+          if ! curl -s http://localhost:1337/_health; then
+            echo "Strapi failed to boot. Here are the logs:"
+            cat strapi.log
+            exit 1
+          fi
 
       - name: Run Integration Tests
         run: npx vitest run tests/integration/TenantScopingIntegration.spec.js
