@@ -27,7 +27,7 @@ jobs:
         run: npm install --prefix server
 
       - name: Create Public Dir
-        run: mkdir -p server/public
+        run: mkdir -p server/public/uploads
 
       - name: Seed Database
         run: node seed.js
