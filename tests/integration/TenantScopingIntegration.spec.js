@@ -34,6 +34,12 @@ describe('Strapi Integration - Tenant Scoping', () => {
       .get('/api/client-profiles')
       .set('Authorization', 'Bearer ' + jwtB);
 
+    if (resB.status !== 200) {
+      console.log('Diagnostic resB.status:', resB.status);
+      console.log('Diagnostic resB.body:', JSON.stringify(resB.body, null, 2));
+      console.log('Diagnostic jwtB:', jwtB.substring(0, 10) + '...');
+    }
+    
     expect(resB.status).toBe(200);
     const profilesB = resB.body.data;
     expect(profilesB.length).toBe(0); // Should be completely empty since B has no clients
