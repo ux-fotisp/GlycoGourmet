@@ -174,6 +174,41 @@ export const AdminEditor = () => {
   /**
    * Saves the recipe as a draft to Strapi `/api/recipes` with `publishedAt: null`.
    */
+  
+  const handleSubmitReview = async () => {
+    if (isSaving || !isPublishValid) return;
+    setIsSaving(true);
+
+    try {
+      const finalId = editId || formData.id || generateRecipeId(formData.title);
+      const newRecipe = {
+        ...formData,
+        id: finalId,
+        title: formData.title || 'Untitled Draft',
+        authorId: user?.email || 'user@glycogourmet.com',
+        isUserAuthored: true,
+        status: 'pending_review',
+        publishedAt: null,
+      };
+
+      await saveRecipe(newRecipe, {
+        isUpdate: isExistingRecipe || !!editId,
+        publishedAt: null,
+      });
+
+      sessionStorage.removeItem(DRAFT_SESSION_KEY);
+      showNotification('Submitted to clinical review', 'success');
+      setTimeout(() => {
+        navigate('/recipes/mine');
+      }, 1200);
+    } catch (err) {
+      console.error('[AdminEditor] Submit for review failed:', err);
+      showNotification(`❌ Submit failed: ${err.message}`, 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSaveDraft = async () => {
     if (isSaving) return;
     setIsSaving(true);
@@ -197,6 +232,9 @@ export const AdminEditor = () => {
 
       sessionStorage.removeItem(DRAFT_SESSION_KEY);
       showNotification('💾 Draft saved to Strapi CMS successfully.', 'draft');
+      if (!editId) {
+        navigate(`/admin-editor?edit=${finalId}`);
+      }
     } catch (err) {
       console.error('[AdminEditor] Strapi draft save failed:', err);
       showNotification(`❌ Save failed: ${err.message}`, 'error');
@@ -380,7 +418,7 @@ export const AdminEditor = () => {
             <div className="relative group">
               <Button
                 type="button"
-                onClick={canPublishPublic ? handlePublish : () => showNotification('Submitted to clinical review', 'success')}
+                onClick={canPublishPublic ? handlePublish : handleSubmitReview}
                 disabled={isSaving || !isPublishValid || (!canPublishPublic && !editId)}
                 className="h-12 px-6 font-bold text-xs md:text-sm shadow-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               >

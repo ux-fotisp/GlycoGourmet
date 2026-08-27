@@ -49,7 +49,7 @@ export const RecipeDetails = () => {
       if (found) {
         if (found.status === 'draft' || !found.publishedAt) {
           // Security Check
-          if (user?.roleType !== 'admin' && found.authorId !== user?.email) {
+          if (user?.roleType !== 'admin' && user?.roleType !== 'dietitian' && found.authorId !== user?.email) {
             alert('Unauthorized: You do not have permission to view this draft.');
             navigate('/');
             return;
@@ -148,7 +148,7 @@ export const RecipeDetails = () => {
     return (
     <div className="min-h-screen bg-background pb-28 md:pb-16">
       {(!recipe.publishedAt || recipe.status === 'draft') && (
-        <DraftPreviewBanner onPublish={handlePublish} roleType={user?.roleType || 'user'} />
+        <DraftPreviewBanner recipe={recipe} onPublish={handlePublish} roleType={user?.roleType || 'user'} />
       )}
       {/* Top Header Navigation */}
 
