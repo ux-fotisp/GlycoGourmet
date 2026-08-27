@@ -1,0 +1,73 @@
+name: Integration Tests
+
+on:
+  push:
+    branches:
+      - fix/tenant-scoping-middleware
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Root Dependencies
+        run: npm install
+
+      - name: Install Server Dependencies
+        run: npm install --prefix server
+
+      - name: Build Server Admin Panel
+        run: npm run build --prefix server
+        env:
+          NODE_ENV: development
+
+      - name: Boot Strapi in Background
+        run: |
+          npm run develop --prefix server &
+        env:
+          NODE_ENV: development
+          HOST: 0.0.0.0
+          PORT: 1337
+          APP_KEYS: testKey1,testKey2
+          API_TOKEN_SALT: testApiSalt
+          ADMIN_JWT_SECRET: testAdminSecret
+          TRANSFER_TOKEN_SALT: testTransferSalt
+          JWT_SECRET: testJwtSecret
+          DATABASE_CLIENT: sqlite
+          DATABASE_FILENAME: .tmp/data.db
+
+      - name: Wait for Strapi to Boot
+        run: |
+          echo "Waiting for Strapi to boot..."
+          for i in {1..30}; do
+            if curl -s http://localhost:1337/_health; then
+              echo "Strapi is ready!"
+              break
+            fi
+            echo "Waiting..."
+            sleep 5
+          done
+
+      - name: Run Integration Tests
+        run: npx vitest run tests/integration/TenantScopingIntegration.spec.js
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            test-results/
+            coverage/
+            .tmp/data.db
+          retention-days: 7
