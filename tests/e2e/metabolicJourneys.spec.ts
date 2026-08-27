@@ -1,6 +1,73 @@
 ﻿import { test, expect } from '@playwright/test';
 
 test.describe('Clinical Metabolic End-to-End User Journeys', () => {
+
+  test('Single-Recipe GI/GL Rendering and Secondary Macro Expansion', async ({ page }) => {
+    // 1. Inject standard user session
+    await page.addInitScript(() => {
+      window.localStorage.setItem('glyco_session', JSON.stringify({ jwt: 'fake-jwt' }));
+      window.localStorage.setItem('glyco_users', JSON.stringify([{ id: 1, email: 'test@example.com', roleType: 'user', isApproved: true }]));
+    });
+
+    // 2. Mock network response for recipe 1
+    await page.route('**/api/recipes/1*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: {
+            id: 1,
+            documentId: 'doc1',
+            title: 'Testing GL rendering',
+            servings: 1,
+            status: 'published',
+            publishedAt: '2026-01-01T00:00:00Z',
+            ingredients: [
+              {
+                id: 10,
+                amount: 100,
+                unit: 'g',
+                ingredient: {
+                  id: 99,
+                  name: 'Test Carb',
+                  defaultPrepState: 'raw',
+                  nutrition: {
+                    defaultAmount: 100,
+                    carbs: 50,
+                    fiber: 0,
+                    protein: 0,
+                    fat: 0,
+                    kcal: 200,
+                    glycemicIndex: 50
+                  }
+                }
+              }
+            ]
+          }
+        })
+      });
+    });
+
+    // 3. Visit Recipe details
+    await page.goto('/recipe/1');
+
+    // 4. Verify GL and GI anchor badges are rendered
+    const glAnchor = page.locator('span.bg-error-container'); // Because GL will be 25
+    await expect(glAnchor).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('text=GL 25')).toBeVisible();
+
+    const giAnchor = page.locator('text=GI 50');
+    await expect(giAnchor).toBeVisible();
+
+    // 5. Verify Secondary Macros are visible by default
+    const detailsAccordion = page.locator('details[aria-label="Secondary Macronutrient Breakdown"]');
+    await expect(detailsAccordion).toBeVisible();
+    await expect(detailsAccordion).toHaveAttribute('open', '');
+    
+    // Check calories badge is inside
+    await expect(page.locator('text=Calories').first()).toBeVisible();
+  });
+
   test('Persona A (Type 1 Manager): Filter by Low GL and execute Smart Low-GI Swap', async ({ page }) => {
     page.on('pageerror', err => console.log(`[PAGE ERROR]: ${err.message}`));
     page.on('console', msg => console.log(`[CONSOLE]: ${msg.text()}`));
