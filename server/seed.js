@@ -9,6 +9,33 @@ async function seed() {
   });
   const authRole = roles[0];
 
+
+  // Grant find and findOne permissions to Authenticated Role for client-profile
+  
+  // Create permissions manually because they don't exist by default until generated
+  // Or we can just find them if they exist
+  const permissions = await strapi.entityService.findMany('plugin::users-permissions.permission', {
+    filters: {
+      role: authRole.id,
+      action: { $in: ['api::client-profile.client-profile.find', 'api::client-profile.client-profile.findOne'] }
+    }
+  });
+  
+  if (permissions.length === 0) {
+    await strapi.entityService.create('plugin::users-permissions.permission', {
+      data: {
+        action: 'api::client-profile.client-profile.find',
+        role: authRole.id
+      }
+    });
+    await strapi.entityService.create('plugin::users-permissions.permission', {
+      data: {
+        action: 'api::client-profile.client-profile.findOne',
+        role: authRole.id
+      }
+    });
+  }
+
   const userService = strapi.plugin('users-permissions').service('user');
 
   // Create Dietitian A
