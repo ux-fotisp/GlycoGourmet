@@ -18,9 +18,8 @@
     },
     "dietitian": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "recipes"
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }
