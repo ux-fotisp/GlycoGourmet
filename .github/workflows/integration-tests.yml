@@ -26,11 +26,6 @@ jobs:
       - name: Install Server Dependencies
         run: npm install --prefix server
 
-      - name: Build Server Admin Panel
-        run: npm run build --prefix server
-        env:
-          NODE_ENV: development
-
       - name: Boot Strapi in Background
         run: |
           npm run develop --prefix server &
