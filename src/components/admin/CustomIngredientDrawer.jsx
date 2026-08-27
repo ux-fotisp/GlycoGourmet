@@ -125,7 +125,7 @@ export const CustomIngredientDrawer = ({ isOpen, onSave, onSaveAndSelect, onClos
     }));
   };
 
-  const executeSave = async (forceDuplicate = false) => {
+  const executeSave = async (/* forceDuplicate = false */) => {
     setGlobalError(null);
     setIsSaving(true);
 

@@ -61,8 +61,8 @@ export const AuditComparisonView = ({ recipe, onApproveAndPublish, onRejectAndRe
     setIsRejectModalOpen(false);
   };
 
-  const authorGLCategory = getGlycemicLoadCategory(activeAuthorNutrition.glycemicLoad ?? 0);
-  const systemGLCategory = getGlycemicLoadCategory(systemNutrition.glycemicLoad ?? 0);
+  
+  
 
   return (
     <div className="bg-white rounded-2xl border border-outline-variant/40 p-6 shadow-sm space-y-6 font-sans">

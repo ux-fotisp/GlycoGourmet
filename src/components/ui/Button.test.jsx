@@ -12,24 +12,27 @@ describe('Button component', () => {
   it('renders primary variant with correct base classes', () => {
     render(<Button>Click Me</Button>);
     const btn = screen.getByRole('button', { name: 'Click Me' });
-    expect(btn.className).toContain('bg-primary');
-    expect(btn.className).toContain('text-on-primary');
-    expect(btn.className).toContain('rounded-full');
+    expect(btn).toHaveAttribute('data-variant', 'primary');
+    expect(btn.className).toContain('bg-brand-strong');
+    expect(btn.className).toContain('text-text-inverse');
+    expect(btn.className).toContain('rounded-control');
   });
 
   it('renders secondary variant with border styling', () => {
     render(<Button variant="secondary">Secondary</Button>);
     const btn = screen.getByRole('button', { name: 'Secondary' });
+    expect(btn).toHaveAttribute('data-variant', 'secondary');
     expect(btn.className).toContain('border');
-    expect(btn.className).toContain('border-primary');
-    expect(btn.className).toContain('text-primary');
+    expect(btn.className).toContain('border-border-interactive');
+    expect(btn.className).toContain('text-brand-strong');
   });
 
   it('renders ghost variant with underline hover', () => {
     render(<Button variant="ghost">Ghost</Button>);
     const btn = screen.getByRole('button', { name: 'Ghost' });
+    expect(btn).toHaveAttribute('data-variant', 'ghost');
     expect(btn.className).toContain('hover:underline');
-    expect(btn.className).not.toContain('bg-primary');
+    expect(btn.className).not.toContain('bg-brand-strong');
   });
 
   // --- Disabled State ---
@@ -49,11 +52,11 @@ describe('Button component', () => {
     expect(handleClick).not.toHaveBeenCalled();
   });
 
-  // --- Minimum Hit Target (48px = h-12) ---
-  it('enforces 48px minimum hit target on default md size', () => {
+  // --- Minimum Hit Target (44px) ---
+  it('enforces 44px minimum hit target on default md size', () => {
     render(<Button>Target</Button>);
     const btn = screen.getByRole('button', { name: 'Target' });
-    expect(btn.className).toContain('h-12');
+    expect(btn.className).toContain('min-h-[44px]');
   });
 
   it('renders lg size with h-14 (56px)', () => {

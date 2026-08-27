@@ -21,8 +21,8 @@ describe('ServingStepper', () => {
     expect(inactivePill).toHaveAttribute('aria-checked', 'false');
     
     // Check colors class presence (Deep Pine active, Neutral inactive)
-    expect(activePill.className).toContain('bg-[#1B3B22]');
-    expect(inactivePill.className).toContain('bg-[#F0EFE9]');
+    expect(activePill.className).toContain('bg-brand-strong');
+    expect(inactivePill.className).toContain('bg-surface-container');
   });
 
   it('calls onScaleChange with correct multiplier on click', () => {

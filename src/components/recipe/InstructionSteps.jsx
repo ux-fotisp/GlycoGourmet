@@ -73,10 +73,10 @@ const CountdownChip = ({ seconds, label }) => {
       onClick={handleToggle}
       className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full transition-all cursor-pointer mt-2 border min-h-[36px] ${
         isDone
-          ? 'bg-primary/10 border-primary/30 text-primary'
+          ? 'bg-success-surface border-success-border text-brand-strong'
           : isRunning
             ? 'bg-tertiary-container/20 border-tertiary/30 text-tertiary animate-pulse'
-            : 'bg-surface-container-low border-outline-variant/40 text-on-surface-variant hover:border-primary'
+            : 'bg-surface-container-low border-border-subtle text-text-body hover:border-brand-strong'
       }`}
       title={isRunning ? 'Pause timer' : isDone ? 'Timer complete — click to restart' : 'Start timer'}
     >
@@ -99,11 +99,11 @@ const CountdownChip = ({ seconds, label }) => {
 
 export const InstructionSteps = ({ steps = [] }) => {
   return (
-    <div className="space-y-4" id="recipe-steps">
-      <h4 className="font-display text-lg font-bold text-on-surface border-b border-outline-variant/20 pb-3 flex items-center gap-2">
-        <span className="material-symbols-outlined text-primary text-xl">menu_book</span>
+    <div className="bg-card rounded-card p-4 md:p-6 border border-border-subtle shadow-card space-y-4 font-sans" id="recipe-steps">
+      <h3 className="text-sm md:text-base font-bold text-text-strong border-b border-border-subtle/50 pb-3 flex items-center gap-2 uppercase tracking-wider">
+        <span className="material-symbols-outlined text-brand-strong text-xl">menu_book</span>
         Preparation Steps
-      </h4>
+      </h3>
 
       <div className="space-y-0 mt-4">
         {steps.map((step, idx) => {
@@ -113,24 +113,24 @@ export const InstructionSteps = ({ steps = [] }) => {
             <div key={idx} className="flex gap-4 group">
               {/* Timeline connector */}
               <div className="flex flex-col items-center shrink-0">
-                <div className="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-xs shrink-0 z-10 shadow-sm">
+                <div className="w-8 h-8 rounded-full bg-brand-strong text-text-inverse flex items-center justify-center font-bold text-xs shrink-0 z-10 shadow-xs">
                   {idx + 1}
                 </div>
                 {idx < steps.length - 1 && (
-                  <div className="w-[2px] flex-grow bg-outline-variant/40 group-hover:bg-primary/20 transition-colors my-1.5" />
+                  <div className="w-[2px] flex-grow bg-border-subtle group-hover:bg-brand-strong/30 transition-colors my-1.5" />
                 )}
               </div>
 
               {/* Step content card */}
               <div className="pb-6 flex-1 min-w-0">
-                <h5 className="font-label-md text-xs font-bold text-primary uppercase tracking-widest mb-1.5">
-                  {step?.title}
-                </h5>
-                <p className="text-sm text-on-surface-variant leading-relaxed font-medium">
+                <h4 className="font-label-md text-xs font-bold text-brand-strong uppercase tracking-widest mb-1.5">
+                  {step?.title || `Step ${idx + 1}`}
+                </h4>
+                <p className="text-sm text-text-body leading-relaxed font-medium">
                   {step?.description}
                 </p>
 
-                {/* Timer chips: from step.timer OR parsed from text */}
+                {/* Timer chips */}
                 <div className="flex flex-wrap gap-2">
                   {step?.timer && (
                     <CountdownChip seconds={step.timer * 60} label={`${step.timer} mins`} />

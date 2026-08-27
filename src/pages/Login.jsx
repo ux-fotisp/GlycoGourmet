@@ -51,7 +51,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-edge-margin md:p-gutter bg-[#F9F6F0] relative">
+    <div className="min-h-screen flex items-center justify-center p-edge-margin md:p-gutter bg-canvas relative">
       
       {/* Decorative Subtle Background Elements from Stitch */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
@@ -62,7 +62,7 @@ export const Login = () => {
       <main className="w-full max-w-[480px] z-10">
         
         {/* Login Card Container */}
-        <div className="bg-surface-container-lowest rounded-xl p-8 md:p-10 border border-[#E8E2D5] shadow-[0px_4px_20px_rgba(45,49,48,0.05)]">
+        <div className="bg-surface-container-lowest rounded-xl p-8 md:p-10 border border-border-subtle shadow-[0px_4px_20px_rgba(45,49,48,0.05)]">
           
           {/* Brand Logo & Header */}
           <header className="text-center mb-lg">
@@ -183,7 +183,7 @@ export const Login = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-12 bg-[#4A6B5D] hover:bg-[#3d5a4e] text-white rounded-full font-label-md font-bold shadow-md active:scale-[0.98] transition-all duration-200 mt-2 cursor-pointer flex items-center justify-center gap-2"
+              className="w-full h-12 bg-brand-strong hover:bg-brand-hover text-white rounded-full font-label-md font-bold shadow-md active:scale-[0.98] transition-all duration-200 mt-2 cursor-pointer flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>

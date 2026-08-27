@@ -36,7 +36,7 @@ vi.mock('../components/admin/EditorFormFields', () => ({
 }));
 
 vi.mock('../components/admin/EditorPreviewCard', () => ({
-  default: (props) => <div data-testid="editor-preview">EditorPreview</div>,
+  default: () => <div data-testid="editor-preview">EditorPreview</div>,
 }));
 
 describe('AdminEditor page', () => {

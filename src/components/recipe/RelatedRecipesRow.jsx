@@ -5,7 +5,7 @@ export const RelatedRecipesRow = ({ currentRecipe }) => {
   // In a real app, this would fetch from an API based on category or tags.
   // For now, we simulate with a few static cards similar to the mockup.
   const related = [
-    { id: '101', title: 'Niçoise Salad with Tuna & Soft-Boiled Eggs', category: 'Mediterranean', cookingTime: 20, imageUrl: '/assets/recipes/nicoise.jpg', nutrition: { glycemicLoad: 1, glycemicIndex: 16 } },
+    { id: '101', title: 'Nicoise Salad with Tuna & Soft-Boiled Eggs', category: 'Mediterranean', cookingTime: 20, imageUrl: '/assets/recipes/nicoise.jpg', nutrition: { glycemicLoad: 1, glycemicIndex: 16 } },
     { id: '102', title: 'Low-Glycemic Egg Salad Lettuce Wraps', category: 'American', cookingTime: 15, imageUrl: '/assets/recipes/eggsalad.jpg', nutrition: { glycemicLoad: 2, glycemicIndex: 14 } },
     { id: '103', title: 'Salmon-Stuffed Avocados with Fresh Herbs', category: 'California', cookingTime: 20, imageUrl: '/assets/recipes/salmonavo.jpg', nutrition: { glycemicLoad: 2, glycemicIndex: 12 } },
   ];

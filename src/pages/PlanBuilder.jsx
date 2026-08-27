@@ -113,9 +113,9 @@ export const PlanBuilder = () => {
   };
 
   const getGLColor = (gl) => {
-    if (gl <= 10) return { bg: 'bg-[#D8E8CB]', text: 'text-[#1B3B22]', hex: '#1B3B22' };
-    if (gl <= 19) return { bg: 'bg-[#FFE082]', text: 'text-[#5D4037]', hex: '#5D4037' };
-    return { bg: 'bg-[#FFCDD2]', text: 'text-[#B71C1C]', hex: '#B71C1C' };
+    if (gl <= 10) return { bg: 'bg-success-surface', text: 'text-brand-strong', hex: 'var(--color-brand-strong)' };
+    if (gl <= 19) return { bg: 'bg-warning-surface', text: 'text-warning-strong', hex: 'var(--color-warning-strong)' };
+    return { bg: 'bg-error-surface', text: 'text-error-strong', hex: 'var(--color-error-strong)' };
   };
 
   if (!client) return <div className="p-10 text-center">Loading client data...</div>;

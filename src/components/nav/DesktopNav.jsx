@@ -17,6 +17,8 @@ export const DesktopNav = () => {
   const isRecipesActive =
     activePath === '/recipes' ||
     activePath === '/' ||
+    activePath === '/recipes/all' ||
+    activePath === '/recipes/mine' ||
     activePath === '/my-recipes' ||
     activePath.startsWith('/recipe/');
 
@@ -54,21 +56,24 @@ export const DesktopNav = () => {
   };
 
   return (
-    <aside className="hidden md:flex flex-col h-screen sticky left-0 w-64 top-0 bg-surface-container-low border-r border-outline-variant py-md space-y-xs z-50">
+    <aside className="hidden md:flex flex-col h-screen sticky left-0 w-64 top-0 bg-brand-strong text-text-inverse py-4 px-3 space-y-2 z-50 select-none">
       {/* Brand Header */}
-      <div className="px-md mb-lg">
-        <Link to="/" className="block">
-          <h1 className="font-display text-headline-md text-primary tracking-tight font-bold">
-            GlycoGourmet Admin
-          </h1>
+      <div className="px-3 py-2 mb-4">
+        <Link to="/" className="block group focus-visible:ring-2 focus-visible:ring-brand-container rounded-control focus-visible:outline-none">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-brand-container text-2xl">nutrition</span>
+            <h1 className="font-display text-xl text-text-inverse tracking-tight font-bold">
+              GlycoGourmet
+            </h1>
+          </div>
+          <p className="text-brand-container/80 text-[11px] font-medium mt-1">
+            Managing Blood Sugar & Flavor
+          </p>
         </Link>
-        <p className="text-on-surface-variant font-label-md mt-1 opacity-70">
-          Managing Blood Sugar & Flavor
-        </p>
       </div>
 
       {/* Main Navigation Links */}
-      <nav className="flex-1 px-sm space-y-1">
+      <nav className="flex-1 space-y-1.5 overflow-y-auto hide-scrollbar" aria-label="Main Navigation">
         {/* Unified "Recipes" Parent Menu Node */}
         <div
           ref={dropdownRef}
@@ -83,11 +88,11 @@ export const DesktopNav = () => {
             onKeyDown={handleKeyDown}
             aria-expanded={isRecipesOpen}
             aria-haspopup="true"
-            className={`w-full flex items-center justify-between px-4 py-3 min-h-[48px] rounded-r-full font-body-md text-sm transition-all cursor-pointer select-none ${
+            className={`w-full flex items-center justify-between px-3.5 py-3 min-h-[44px] rounded-control text-sm transition-all cursor-pointer ${
               isRecipesActive
-                ? 'bg-primary-container text-on-primary-container font-bold shadow-xs'
-                : 'text-on-surface-variant hover:bg-surface-variant/50 hover:text-on-surface'
-            }`}
+                ? 'bg-brand-hover text-text-inverse font-bold shadow-xs'
+                : 'text-brand-container/90 hover:bg-brand-hover/60 hover:text-text-inverse'
+            } focus-visible:ring-2 focus-visible:ring-brand-container focus-visible:outline-none`}
           >
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-[20px]">restaurant_menu</span>
@@ -104,27 +109,29 @@ export const DesktopNav = () => {
 
           {/* Sub-menu Dropdown */}
           {isRecipesOpen && (
-            <div className="pl-6 pt-1 space-y-1 animate-fade-in">
+            <div className="pl-6 pt-1 space-y-1 animate-fade-in" role="menu">
               <Link
                 to="/recipes/all"
+                role="menuitem"
                 onClick={() => setIsRecipesOpen(false)}
-                className={`flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-r-full text-xs font-bold transition-all ${
+                className={`flex items-center gap-2 px-3.5 py-2 min-h-[40px] rounded-control text-xs transition-all ${
                   activePath === '/recipes/all' || activePath === '/recipes' || activePath === '/'
-                    ? 'bg-primary text-on-primary'
-                    : 'text-on-surface-variant hover:bg-surface-variant/40 hover:text-on-surface'
-                }`}
+                    ? 'bg-white/20 text-text-inverse font-bold'
+                    : 'text-brand-container/80 hover:bg-white/10 hover:text-text-inverse'
+                } focus-visible:ring-2 focus-visible:ring-brand-container focus-visible:outline-none`}
               >
                 <span className="material-symbols-outlined text-[16px]">menu_book</span>
                 <span>All Recipes</span>
               </Link>
               <Link
                 to="/recipes/mine"
+                role="menuitem"
                 onClick={() => setIsRecipesOpen(false)}
-                className={`flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-r-full text-xs font-bold transition-all ${
+                className={`flex items-center gap-2 px-3.5 py-2 min-h-[40px] rounded-control text-xs transition-all ${
                   activePath === '/recipes/mine' || activePath === '/my-recipes'
-                    ? 'bg-primary text-on-primary'
-                    : 'text-on-surface-variant hover:bg-surface-variant/40 hover:text-on-surface'
-                }`}
+                    ? 'bg-white/20 text-text-inverse font-bold'
+                    : 'text-brand-container/80 hover:bg-white/10 hover:text-text-inverse'
+                } focus-visible:ring-2 focus-visible:ring-brand-container focus-visible:outline-none`}
               >
                 <span className="material-symbols-outlined text-[16px]">edit_note</span>
                 <span>My Recipes</span>
@@ -151,18 +158,18 @@ export const DesktopNav = () => {
       </nav>
 
       {/* Persistent Bottom Profile Container */}
-      <div className="px-sm mt-auto">
-        <div className="flex flex-col gap-3 p-3 border-t border-outline-variant/20">
+      <div className="pt-3 border-t border-white/15 mt-auto">
+        <div className="flex flex-col gap-2.5 p-2">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold shrink-0">
+            <div className="w-9 h-9 rounded-full bg-brand-container text-brand-container-on flex items-center justify-center font-bold text-sm shrink-0">
               {user?.name?.[0] || 'C'}
             </div>
             <div className="flex flex-col overflow-hidden">
-              <span className="text-xs font-bold text-on-surface truncate leading-tight">
+              <span className="text-xs font-bold text-text-inverse truncate leading-tight">
                 {user?.name || 'Chef User'}
               </span>
-              <span className="text-[9px] font-extrabold text-on-surface-variant tracking-wider uppercase mt-0.5">
-                ADMINISTRATOR
+              <span className="text-[9px] font-extrabold text-brand-container/80 tracking-wider uppercase mt-0.5">
+                {user?.roleType === 'dietitian' ? 'DIETITIAN' : user?.roleType === 'admin' ? 'ADMINISTRATOR' : 'PATIENT'}
               </span>
             </div>
           </div>
@@ -170,7 +177,7 @@ export const DesktopNav = () => {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex items-center gap-1.5 text-xs font-bold text-tertiary hover:underline cursor-pointer py-1 min-h-[44px]"
+            className="flex items-center gap-1.5 text-xs font-bold text-brand-container hover:text-white hover:underline cursor-pointer py-1 min-h-[44px] focus-visible:ring-2 focus-visible:ring-brand-container rounded-control focus-visible:outline-none"
           >
             <span className="material-symbols-outlined text-sm">logout</span>
             Log Out

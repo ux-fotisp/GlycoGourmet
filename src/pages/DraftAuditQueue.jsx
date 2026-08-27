@@ -100,7 +100,7 @@ export const DraftAuditQueue = () => {
     );
   }
 
-  const handleApproveAndPublish = async (recipeId, updatedNutrition) => {
+  const handleApproveAndPublish = async (/* recipeId, updatedNutrition */) => {
     // Mock save
     const approvedRecipe = draftRecipes[selectedDraftIndex];
     setDraftRecipes(prev => prev.filter((_, idx) => idx !== selectedDraftIndex));
@@ -109,7 +109,7 @@ export const DraftAuditQueue = () => {
     setTimeout(() => setAuditNotice(''), 4000);
   };
 
-  const handleRejectAndRequestChanges = (recipeId, reason) => {
+  const handleRejectAndRequestChanges = (/* recipeId, reason */) => {
     const rejectedRecipe = draftRecipes[selectedDraftIndex];
     setDraftRecipes(prev => prev.filter((_, idx) => idx !== selectedDraftIndex));
     setSelectedDraftIndex(0);

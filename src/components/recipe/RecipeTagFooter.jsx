@@ -39,9 +39,9 @@ export const RecipeTagFooter = ({
       : 'Spike Risk';
 
   return (
-    <div className={`flex flex-wrap items-center gap-1.5 ${compact ? 'pt-2' : 'pt-3'}`}>
+    <div className={`flex flex-wrap items-center gap-1.5 ${compact ? 'pt-2' : 'pt-3'} font-sans`}>
       {mealOccasion && (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/8 text-primary text-[10px] font-bold">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-surface text-brand-strong border border-success-border text-[10px] font-bold">
           <span className="material-symbols-outlined text-[12px]">
             {occasionIcons[mealOccasion] || 'restaurant'}
           </span>
@@ -51,13 +51,13 @@ export const RecipeTagFooter = ({
 
       <span className={`metabolic-badge ${glBadgeClass}`}>
         GL {glycemicLoad}
-        <span className="text-[9px] font-medium font-bold">� {clinicalLabel}</span>
+        <span className="text-[9px] font-medium font-bold">• {clinicalLabel}</span>
       </span>
 
       {matchedTags.map((tag, idx) => (
         <span
           key={`match-${idx}`}
-          className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-primary/12 text-primary text-[10px] font-bold ring-1 ring-primary/30"
+          className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-brand-container text-brand-container-on text-[10px] font-bold"
         >
           <span className="material-symbols-outlined text-[11px]">{tag.icon}</span>
           {tag.label}
@@ -67,14 +67,14 @@ export const RecipeTagFooter = ({
       {dietaryFlags.map(flag => (
         <span
           key={flag}
-          className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-surface-container-low text-on-surface-variant text-[10px] font-semibold"
+          className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-surface-container text-text-body text-[10px] font-semibold"
         >
           {flag}
         </span>
       ))}
 
       {fiber > 5 && !dietaryFlags.includes('High Fiber') && (
-        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-primary-container/15 text-primary text-[10px] font-bold">
+        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-success-surface text-brand-strong border border-success-border text-[10px] font-bold">
           <span className="material-symbols-outlined text-[11px]">grass</span>
           High Fiber
         </span>

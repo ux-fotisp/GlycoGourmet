@@ -2,23 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-/**
- * RecipeObjectBridge — OOUX relationship bridge connecting the recipe object
- * to Meal Plans, Favorites, and the Admin Editor.
- *
- * Provides quick-action hooks:
- * - "Add to Meal Plan" with calendar slot picker
- * - "Favorite" toggle
- * - "Edit Recipe" (visible only if isUserAuthored)
- */
-const MEAL_SLOTS = ['Monday Breakfast', 'Monday Lunch', 'Monday Dinner',
-  'Tuesday Breakfast', 'Tuesday Lunch', 'Tuesday Dinner',
-  'Wednesday Breakfast', 'Wednesday Lunch', 'Wednesday Dinner',
-  'Thursday Breakfast', 'Thursday Lunch', 'Thursday Dinner',
-  'Friday Breakfast', 'Friday Lunch', 'Friday Dinner',
-  'Saturday Breakfast', 'Saturday Lunch', 'Saturday Dinner',
-  'Sunday Breakfast', 'Sunday Lunch', 'Sunday Dinner'];
-
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const SLOTS = ['Breakfast', 'Lunch', 'Dinner'];
 
@@ -27,6 +10,7 @@ export const RecipeObjectBridge = ({
   isFavorite,
   onToggleFavorite,
   onStartCooking,
+  onAddToMealPlan,
 }) => {
   const { user } = useAuth();
   const [showPlanPicker, setShowPlanPicker] = useState(false);
@@ -37,26 +21,34 @@ export const RecipeObjectBridge = ({
 
   const handleSlotSelect = (day, slot) => {
     setSelectedSlot(`${day} ${slot}`);
-    // In production: dispatch to meal plan store/API
     setTimeout(() => {
       setShowPlanPicker(false);
       setSelectedSlot(null);
     }, 800);
   };
 
+  const handlePlanClick = () => {
+    if (onAddToMealPlan) {
+      onAddToMealPlan();
+    } else {
+      setShowPlanPicker(!showPlanPicker);
+    }
+  };
+
   return (
-    <div className="space-y-3">
-      <h4 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant flex items-center gap-1.5">
-        <span className="material-symbols-outlined text-sm">hub</span>
+    <div className="bg-card rounded-card p-4 md:p-6 border border-border-subtle shadow-card space-y-4">
+      <h3 className="text-xs font-bold uppercase tracking-widest text-text-body flex items-center gap-1.5 border-b border-border-subtle/40 pb-2">
+        <span className="material-symbols-outlined text-brand-strong text-base">hub</span>
         Quick Actions
-      </h4>
+      </h3>
 
       {/* Action buttons stack */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2.5">
         {/* Start Cooking — Primary CTA */}
         <button
+          type="button"
           onClick={onStartCooking}
-          className="bg-primary hover:bg-primary-container text-on-primary h-12 rounded-full flex items-center justify-center gap-2.5 font-bold text-sm transition-all active:scale-95 shadow-md cursor-pointer w-full"
+          className="bg-brand-strong hover:bg-brand-hover text-text-inverse min-h-[44px] h-12 rounded-control flex items-center justify-center gap-2 font-bold text-sm transition-all active:scale-95 shadow-sm cursor-pointer w-full focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:outline-none"
         >
           <span className="material-symbols-outlined text-[20px]">auto_videocam</span>
           Start Cooking
@@ -64,24 +56,26 @@ export const RecipeObjectBridge = ({
 
         {/* Add to Meal Plan */}
         <button
-          onClick={() => setShowPlanPicker(!showPlanPicker)}
-          className="bg-surface-container-low hover:bg-surface-container border border-outline-variant/30 h-12 rounded-full flex items-center justify-center gap-2.5 font-bold text-sm text-on-surface transition-all cursor-pointer w-full"
+          type="button"
+          onClick={handlePlanClick}
+          className="bg-card hover:bg-surface-container-low border border-border-interactive min-h-[44px] h-12 rounded-control flex items-center justify-center gap-2 font-bold text-sm text-brand-strong transition-all cursor-pointer w-full focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:outline-none"
         >
-          <span className="material-symbols-outlined text-[20px] text-primary">calendar_add_on</span>
+          <span className="material-symbols-outlined text-[20px] text-brand-strong">calendar_add_on</span>
           Add to Meal Plan
         </button>
 
         {/* Favorite toggle */}
         <button
+          type="button"
           onClick={onToggleFavorite}
-          className={`border h-12 rounded-full flex items-center justify-center gap-2.5 font-bold text-sm transition-all cursor-pointer w-full ${
+          className={`border min-h-[44px] h-12 rounded-control flex items-center justify-center gap-2 font-bold text-sm transition-all cursor-pointer w-full ${
             isFavorite
-              ? 'bg-primary/5 border-primary text-primary'
-              : 'bg-surface-container-low border-outline-variant/30 text-on-surface hover:border-primary'
-          }`}
+              ? 'bg-success-surface border-success-border text-brand-strong'
+              : 'bg-card border-border-interactive text-text-strong hover:bg-surface-container-low'
+          } focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:outline-none`}
         >
           <span
-            className="material-symbols-outlined text-[20px]"
+            className="material-symbols-outlined text-[20px] text-brand-strong"
             style={{ fontVariationSettings: isFavorite ? "'FILL' 1" : "'FILL' 0" }}
           >
             favorite
@@ -89,11 +83,11 @@ export const RecipeObjectBridge = ({
           {isFavorite ? 'Saved to Favorites' : 'Save Favorite'}
         </button>
 
-        {/* Edit Recipe — only if author */}
-        {isAuthor && (
+        {/* Edit Recipe — only if author or admin/dietitian */}
+        {(isAuthor || user?.roleType === 'admin' || user?.roleType === 'dietitian') && (
           <Link
-            to="/admin"
-            className="bg-surface-container-low hover:bg-surface-container border border-outline-variant/30 h-12 rounded-full flex items-center justify-center gap-2.5 font-bold text-sm text-tertiary transition-all w-full"
+            to={`/admin-editor?edit=${recipe?.id}`}
+            className="bg-card hover:bg-surface-container-low border border-border-subtle min-h-[44px] h-12 rounded-control flex items-center justify-center gap-2 font-bold text-sm text-text-body hover:text-text-strong transition-all w-full focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:outline-none"
           >
             <span className="material-symbols-outlined text-[20px]">edit_note</span>
             Edit Recipe
@@ -103,14 +97,14 @@ export const RecipeObjectBridge = ({
 
       {/* Calendar slot picker (expandable) */}
       {showPlanPicker && (
-        <div className="bg-white rounded-xl border border-outline-variant/30 p-4 shadow-lg space-y-3 animate-fade-in">
-          <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+        <div className="bg-canvas rounded-control border border-border-subtle p-3.5 shadow-sm space-y-2.5 animate-fade-in">
+          <p className="text-[11px] font-bold text-text-body uppercase tracking-wider">
             Select a meal slot
           </p>
           <div className="grid grid-cols-3 gap-1 text-center">
-            <div /> {/* empty top-left cell */}
+            <div />
             {SLOTS.map(slot => (
-              <span key={slot} className="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider py-1">
+              <span key={slot} className="text-[9px] font-bold text-text-body uppercase tracking-wider py-1">
                 {slot}
               </span>
             ))}
@@ -118,17 +112,18 @@ export const RecipeObjectBridge = ({
           <div className="space-y-1">
             {DAYS.map(day => (
               <div key={day} className="grid grid-cols-[1fr_1fr_1fr_1fr] gap-1 items-center">
-                <span className="text-[10px] font-bold text-on-surface pr-2 truncate">{day.slice(0, 3)}</span>
+                <span className="text-[10px] font-bold text-text-strong pr-2 truncate">{day.slice(0, 3)}</span>
                 {SLOTS.map(slot => {
                   const isSelected = selectedSlot === `${day} ${slot}`;
                   return (
                     <button
                       key={slot}
+                      type="button"
                       onClick={() => handleSlotSelect(day, slot)}
-                      className={`py-2 rounded-lg text-[10px] font-bold transition-all cursor-pointer border ${
+                      className={`py-1.5 rounded-control text-[10px] font-bold transition-all cursor-pointer border min-h-[32px] ${
                         isSelected
-                          ? 'bg-primary text-on-primary border-primary'
-                          : 'bg-surface-container-low text-on-surface-variant border-outline-variant/20 hover:border-primary hover:text-primary'
+                          ? 'bg-brand-strong text-text-inverse border-brand-strong'
+                          : 'bg-card text-text-body border-border-interactive hover:border-brand-strong hover:text-brand-strong'
                       }`}
                     >
                       {isSelected ? '✓' : '+'}

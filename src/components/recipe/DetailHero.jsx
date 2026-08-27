@@ -1,172 +1,147 @@
 import React from 'react';
-import { usePreferences } from '../../context/UserPreferences';
 import { formatMediaUrl } from '../../utils/mediaUtils';
 import ServingStepper from './ServingStepper';
+import DraftPreviewBanner from './DraftPreviewBanner';
 
-/**
- * DetailHero — Interactive Hero Header with chromatic GL progress meter,
- * image, status badges, and 48px discrete portion touch pills.
- */
 export const DetailHero = ({
   recipe,
-  nutrition,
   servingMultiplier = 1,
   onServingChange,
-  isFavorite,
-  onToggleFavorite,
+  nutrition,
+  isDraft = false,
+  isAuditor = false,
+  isFavorite = false,
+  onToggleFavorite = null,
 }) => {
-  const { dailyGlTarget = 45 } = usePreferences();
+  const metabolics = recipe?._metabolics || {
+    glycemicLoad: nutrition?.glycemicLoad ?? recipe?.glycemicLoad ?? 0,
+    glycemicIndex: nutrition?.glycemicIndex ?? recipe?.glycemicIndex,
+    netCarbs: nutrition?.netCarbs ?? recipe?.netCarbs ?? 0,
+    fiber: nutrition?.fiber ?? recipe?.fiber ?? 0,
+  };
 
-  const gi = nutrition?.glycemicIndex;
-  const gl = Math.round(nutrition?.glycemicLoad ?? 0);
-  const netCarbs = nutrition?.netCarbs ?? 0;
-  const fiber = nutrition?.fiber ?? 0;
+  const gl = Math.round(metabolics.glycemicLoad ?? 0);
+  const gi = metabolics.glycemicIndex;
 
-  // Preattentive fill width & chromatic styling
-  const fillWidth = Math.min(100, Math.max(0, Math.round((gl / dailyGlTarget) * 100)));
-
-  let impactLabel = 'Gentle Impact';
-  let gaugeColor = 'bg-primary';
-  let textColor = 'text-primary';
-  let badgeBg = 'bg-primary-container text-on-primary-container';
-
-  if (gl >= 20) {
-    impactLabel = 'High Spike Risk';
-    gaugeColor = 'bg-error';
-    textColor = 'text-error';
-    badgeBg = 'bg-error-container text-on-error-container';
-  } else if (gl >= 11) {
-    impactLabel = 'Moderate Impact';
-    gaugeColor = 'bg-tertiary';
-    textColor = 'text-tertiary';
-    badgeBg = 'bg-tertiary-container text-on-tertiary-container';
-  }
-
-  // GI classification
   let giLabel = 'Low GI';
   if (gi !== null && gi !== undefined) {
     if (gi > 69) giLabel = 'High GI';
     else if (gi > 55) giLabel = 'Med GI';
+    else giLabel = 'Low GI';
   }
 
-  // Discrete portion options
-  const PORTION_OPTIONS = [0.5, 1, 1.5, 2];
+  let glBadgeClasses = 'bg-success-surface text-brand-strong border-success-border';
+  if (gl >= 20) {
+    glBadgeClasses = 'bg-error-container text-on-error-container border-error font-bold';
+  } else if (gl >= 11) {
+    glBadgeClasses = 'bg-tertiary-container text-on-tertiary-container border-tertiary font-bold';
+  }
 
   return (
-    <section className="space-y-5">
-      {/* Image container with badges */}
-      <div className="relative w-full overflow-hidden rounded-2xl shadow-md">
-        <img
-          className="h-64 md:h-80 w-full object-cover"
-          src={formatMediaUrl(recipe?.imageUrl)}
-          alt={recipe?.title || 'Recipe Details'}
-          onError={(e) => { e.target.src = '/assets/recipe-placeholder.svg'; }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+    <div className="space-y-4 font-sans">
+      {/* Draft Preview Banner */}
+      {isDraft && <DraftPreviewBanner recipe={recipe} isAuditor={isAuditor} />}
 
-        {/* Status badges */}
-        <div className="absolute top-3 left-3 flex flex-wrap items-center gap-1.5">
-          <span className="bg-white/90 backdrop-blur-md text-on-surface border border-outline-variant/40 px-3 py-1 rounded-full text-[11px] font-bold shadow-sm">
-            {giLabel}: {gi !== null && gi !== undefined ? Math.round(gi) : '—'}
-          </span>
-          <span data-testid="recipe-gl-badge" className={`px-3 py-1 rounded-full text-[11px] font-bold shadow-sm ${badgeBg}`}>
-            GL: {gl} ({impactLabel})
-          </span>
-        </div>
-
-        {/* Tags + cooking time */}
-        <div className="absolute top-3 right-3 flex gap-1.5">
-          {recipe?.tags?.slice(0, 2).map(tag => (
-            <span key={tag} className="bg-primary/90 text-on-primary text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded shadow-sm">
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        {/* Bottom left — cooking time */}
-        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full text-white text-xs font-bold">
-          <span className="material-symbols-outlined text-[16px]">schedule</span>
-          {recipe?.cookingTime || '—'} min
-        </div>
-      </div>
-
-      {/* Title + Description */}
-      <div className="space-y-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="bg-primary-container/15 text-primary px-3 py-1 rounded-full font-label-md text-xs font-semibold">
-            {recipe?.category || 'Main Course'}
-          </span>
-        </div>
-        <h1 className="font-display text-2xl md:text-3xl font-extrabold text-on-surface leading-tight">
-          {recipe?.title}
-        </h1>
-        <p className="text-sm md:text-base text-on-surface-variant leading-relaxed max-w-2xl">
-          {recipe?.description}
-        </p>
-      </div>
-
-      {/* Preattentive GL Progress Gauge Card */}
-      <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 space-y-2.5 shadow-xs">
-        <div className="flex items-center justify-between text-xs font-sans">
-          <div className="flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-primary text-base">speed</span>
-            <span className="font-bold text-on-surface">Glycemic Load Gauge</span>
-            <span data-testid="metabolic-impact-label" className={`font-extrabold text-[11px] px-2 py-0.5 rounded-full ${badgeBg}`}>
-              {impactLabel}
-            </span>
-          </div>
-          <div className="font-bold text-on-surface-variant text-[11px]">
-            GL <span className={textColor}>{gl}</span> / {dailyGlTarget} Target
-          </div>
-        </div>
-
-        {/* Preattentive Chromatic Progress Meter */}
-        <div className="h-3 rounded-full bg-surface-container-high overflow-hidden w-full relative">
-          <div
-            className={`h-full rounded-full transition-all duration-500 ease-out ${gaugeColor}`}
-            style={{ width: `${fillWidth}%` }}
+      {/* Asymmetric 2-Column Hero */}
+      <div className="bg-card rounded-card p-4 md:p-6 lg:p-8 border border-border-subtle shadow-card grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+        {/* Left Column: Image with Overlay Badges */}
+        <div className="lg:col-span-5 relative rounded-control overflow-hidden aspect-[4/3] bg-surface-container shadow-sm group">
+          <img
+            src={formatMediaUrl(recipe?.imageUrl)}
+            alt={recipe?.title || 'Recipe Image'}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={(e) => { e.target.src = '/assets/recipe-placeholder.svg'; }}
           />
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-        <div className="flex justify-between items-center text-[10px] font-bold text-on-surface-variant pt-0.5">
-          <span>Primary Anchors: <strong className="text-on-surface">{netCarbs}g Net Carbs</strong> • <strong className="text-on-surface">{fiber}g Fiber</strong></span>
-          <span>{fillWidth}% Daily Impact</span>
-        </div>
-      </div>
+          {/* Floating Badges */}
+          <div className="absolute top-3 left-3 flex flex-wrap items-center gap-2">
+            <span
+              data-testid="recipe-gl-badge"
+              className={`${glBadgeClasses} px-3 py-1 rounded-full text-xs font-extrabold border shadow-sm`}
+            >
+              GL {gl}
+            </span>
+            <span className="bg-white/95 backdrop-blur-md text-text-strong border border-border-subtle/60 px-2.5 py-1 rounded-full text-xs font-extrabold shadow-sm">
+              {`GI ${gi !== null && gi !== undefined ? Math.round(gi) : '—'}`}
+            </span>
+          </div>
 
-      {/* Discrete Portion Stepper (48px Touch Pills) */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-outline-variant/30 shadow-xs">
-        <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary text-xl">restaurant</span>
-          <div>
-            <span className="text-xs font-bold text-on-surface block">Portion Multiplier</span>
-            <span className="text-[10px] text-on-surface-variant">Zero mental math — auto-scales GL & ingredients</span>
+          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs font-bold">
+            <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full">
+              <span className="material-symbols-outlined text-[16px] text-brand-container">timer</span>
+              <span>{recipe?.cookingTime || 20} mins</span>
+            </div>
+            {recipe?.category && (
+              <span className="bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full uppercase tracking-wider text-[10px]">
+                {recipe.category}
+              </span>
+            )}
           </div>
         </div>
 
-        {/* 48px Touch Pill Multipliers */}
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          {PORTION_OPTIONS.map(mult => {
-            const isActive = servingMultiplier === mult;
-            return (
-              <button
-                key={mult}
-                type="button"
-                onClick={() => onServingChange(mult)}
-                className={`min-h-[48px] min-w-[48px] px-4 rounded-full border text-xs font-bold transition-all cursor-pointer flex items-center justify-center shadow-xs ${
-                  isActive
-                    ? 'bg-primary text-on-primary border-primary shadow-sm ring-2 ring-primary/20 scale-105'
-                    : 'bg-surface-container-low text-on-surface border-outline hover:border-primary/50 hover:bg-surface-container'
-                }`}
-                aria-label={`Scale recipe by ${mult}x`}
-              >
-                {mult}x
-              </button>
-            );
-          })}
+        {/* Right Column: Editorial Title, Description, Metabolic Pill & Portion Stepper */}
+        <div className="lg:col-span-7 flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <span className="bg-success-surface text-brand-strong border border-success-border px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
+              {recipe?.category || 'Recipe'}
+            </span>
+            {recipe?.difficulty && (
+              <span className="bg-surface-container text-text-body px-2.5 py-0.5 rounded-full text-[11px] font-semibold">
+                {recipe.difficulty}
+              </span>
+            )}
+          </div>
+
+          {/* Recipe Title: Serif Editorial */}
+          <h1 className="font-display text-2xl md:text-3xl lg:text-4xl font-extrabold text-text-strong leading-tight">
+            {recipe?.title}
+          </h1>
+
+          <p className="text-sm md:text-base text-text-body leading-relaxed line-clamp-3">
+            {recipe?.description}
+          </p>
+
+          {/* Metabolic Summary Banner */}
+          <div
+            data-testid="metabolic-impact-label"
+            className="bg-canvas border border-border-subtle p-3.5 rounded-control flex flex-wrap items-center justify-between gap-3"
+          >
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-brand-strong text-xl">speed</span>
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-text-body block">
+                  Metabolic Curve
+                </span>
+                <span className="text-xs font-bold text-text-strong">
+                  {gl <= 10 ? 'Minimal Glucose Impact' : gl <= 19 ? 'Moderate Glucose Curve' : 'High Glucose Load'}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="bg-card border border-border-interactive text-text-strong px-2.5 py-1 rounded-full text-xs font-bold shadow-xs">
+                {`GI ${gi !== null && gi !== undefined ? Math.round(gi) : '—'}`}
+              </span>
+              <span className={`${glBadgeClasses} px-2.5 py-1 rounded-full text-xs font-bold`}>
+                GL {gl}
+              </span>
+            </div>
+          </div>
+
+          {/* Portions & Servings Stepper */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-border-subtle/50">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-text-body text-[18px]">group</span>
+              <span className="text-xs font-bold text-text-strong">Scale Portion Multiplier</span>
+            </div>
+            <ServingStepper
+              servingMultiplier={servingMultiplier}
+              onServingChange={onServingChange}
+            />
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

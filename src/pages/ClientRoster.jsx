@@ -50,9 +50,9 @@ export const ClientRoster = () => {
   };
 
   const getAdherenceColor = (score) => {
-    if (score >= 80) return { bg: 'bg-[#D8E8CB]', dot: 'bg-[#1B3B22]', text: 'text-[#1B3B22]' }; // Sage Green
-    if (score >= 50) return { bg: 'bg-[#FFE082]', dot: 'bg-[#5D4037]', text: 'text-[#5D4037]' }; // Amber
-    return { bg: 'bg-[#FFCDD2]', dot: 'bg-[#B71C1C]', text: 'text-[#B71C1C]' }; // Soft Rose
+    if (score >= 80) return { bg: 'bg-success-surface', dot: 'bg-brand-strong', text: 'text-brand-strong' }; // Sage Green
+    if (score >= 50) return { bg: 'bg-warning-surface', dot: 'bg-warning-strong', text: 'text-warning-strong' }; // Amber
+    return { bg: 'bg-error-surface', dot: 'bg-error-strong', text: 'text-error-strong' }; // Soft Rose
   };
 
   const filteredClients = clients.filter(c => {

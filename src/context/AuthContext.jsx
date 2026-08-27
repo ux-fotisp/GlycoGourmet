@@ -79,6 +79,19 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(false);
       return null;
     }
+
+    if (ENABLE_DEMO_AUTH && token.startsWith('demo-token-')) {
+      const stored = localStorage.getItem('glyco_current_user');
+      if (stored) {
+        try {
+          const u = JSON.parse(stored);
+          const sessionUser = buildSession(u);
+          setUser(sessionUser);
+          setIsAuthenticated(true);
+          return sessionUser;
+        } catch {}
+      }
+    }
     
     try {
       const res = await fetch('/api/users/me', {
@@ -97,7 +110,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
         return null;
       }
-    } catch (err) {
+    } catch (_err) {
       console.warn('Unable to refresh user status:', err);
       localStorage.removeItem('glyco_jwt');
       setUser(null);
@@ -114,6 +127,8 @@ export const AuthProvider = ({ children }) => {
       const existingUser = users[email.toLowerCase()];
 
       if (existingUser && existingUser.password === password) {
+        localStorage.setItem('glyco_jwt', 'demo-token-' + (existingUser.id || 1));
+        localStorage.setItem('glyco_current_user', JSON.stringify(existingUser));
         const sessionUser = buildSession(existingUser);
         setUser(sessionUser);
         setIsAuthenticated(true);
@@ -142,7 +157,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false);
         return { success: false, error: errorData.error?.message || 'Invalid email or password.' };
       }
-    } catch (err) {
+    } catch (_err) {
       setIsLoading(false);
       return { success: false, error: 'Network error during login' };
     }
@@ -172,7 +187,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false);
         return { success: false, error: errorData.error?.message || 'Registration failed' };
       }
-    } catch (err) {
+    } catch (_err) {
       setIsLoading(false);
       return { success: false, error: 'Network error during registration' };
     }
@@ -206,7 +221,7 @@ export const AuthProvider = ({ children }) => {
         },
         body: JSON.stringify(updatedFields)
       });
-    } catch (err) {
+    } catch (_err) {
       console.warn('Failed to persist user fields to Strapi:', err);
     }
   };

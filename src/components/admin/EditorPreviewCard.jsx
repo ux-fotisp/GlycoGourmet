@@ -19,7 +19,7 @@ export const EditorPreviewCard = ({ formData }) => {
 
   const nutrition = useMemo(() => {
     return calculateRecipeNutrition(ingredientsList);
-  }, [ingredientsList]);
+  }, [ingredientsList.length]);
 
   const gi = nutrition.glycemicIndex;
   const gl = Math.round(nutrition.glycemicLoad ?? 0);

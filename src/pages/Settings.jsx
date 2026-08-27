@@ -135,7 +135,7 @@ export const Settings = () => {
 
       setExportMessage('Clinical Log exported successfully as JSON summary!');
       setTimeout(() => setExportMessage(''), 4000);
-    } catch (err) {
+    } catch (_err) {
       setExportMessage('Export failed: Unable to parse log.');
     }
   };

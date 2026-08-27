@@ -1,34 +1,36 @@
 import React from 'react';
 import IngredientRow from './IngredientRow';
 import MetabolicCalculationPanel from './MetabolicCalculationPanel';
-import ServingStepper from './ServingStepper';
 
-export const IngredientsPanel = ({ ingredients, servingMultiplier, onServingChange, nutrition }) => {
+export const IngredientsPanel = ({ ingredients = [], servingMultiplier = 1, onServingChange, nutrition }) => {
   const breakdown = nutrition?.ingredientBreakdown || [];
 
   return (
-    <div className="bg-white rounded-2xl p-5 border border-outline-variant/30 shadow-sm space-y-4">
+    <div className="bg-card rounded-card p-4 md:p-6 border border-border-subtle shadow-card space-y-4 font-sans">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-bold text-on-surface flex items-center gap-2 uppercase tracking-wider">
-          <span className="material-symbols-outlined text-primary text-[18px]">restaurant</span>
+        <h3 className="text-sm md:text-base font-bold text-text-strong flex items-center gap-2 uppercase tracking-wider">
+          <span className="material-symbols-outlined text-brand-strong text-[20px]">restaurant</span>
           Ingredients
         </h3>
         
-        {/* Custom inline serving stepper matching mockup */}
-        <div className="flex items-center gap-3 bg-surface-container-low border border-outline-variant/30 rounded-full px-2 py-1">
+        <div className="flex items-center gap-2 bg-canvas border border-border-subtle rounded-control px-2 py-1">
           <button 
-            onClick={() => onServingChange(Math.max(0.5, servingMultiplier - 0.5))}
-            className="w-6 h-6 flex items-center justify-center rounded-full bg-white shadow-xs text-on-surface font-bold hover:bg-surface-container transition-colors"
+            type="button"
+            onClick={() => onServingChange && onServingChange(Math.max(0.5, servingMultiplier - 0.5))}
+            className="w-7 h-7 flex items-center justify-center rounded-control bg-card shadow-xs text-text-strong font-bold hover:bg-surface-container transition-colors cursor-pointer"
+            aria-label="Decrease servings"
           >-</button>
-          <span className="text-xs font-bold text-on-surface min-w-[70px] text-center">{servingMultiplier} Servings</span>
+          <span className="text-xs font-bold text-text-strong min-w-[70px] text-center">{servingMultiplier} Servings</span>
           <button 
-            onClick={() => onServingChange(servingMultiplier + 0.5)}
-            className="w-6 h-6 flex items-center justify-center rounded-full bg-white shadow-xs text-on-surface font-bold hover:bg-surface-container transition-colors"
+            type="button"
+            onClick={() => onServingChange && onServingChange(servingMultiplier + 0.5)}
+            className="w-7 h-7 flex items-center justify-center rounded-control bg-card shadow-xs text-text-strong font-bold hover:bg-surface-container transition-colors cursor-pointer"
+            aria-label="Increase servings"
           >+</button>
         </div>
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col divide-y divide-border-subtle/30">
         {ingredients.map((item, idx) => {
           const originalId = item.originalId || item.ingredientId;
           const bd = breakdown.find(b => b.originalId === originalId) || breakdown[idx];

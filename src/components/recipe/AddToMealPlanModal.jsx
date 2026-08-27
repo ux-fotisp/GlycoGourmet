@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { calculateRecipeNutrition } from '../../utils/nutritionCalculator';
 
 const DAILY_GL_TARGET = 45;
@@ -22,6 +22,19 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [syncError, setSyncError] = useState(false);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   // Compute Current Daily GL from existing meal plan in localStorage
   const currentDailyGL = useMemo(() => {
     try {
@@ -39,7 +52,7 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
   const recipeGL = useMemo(() => {
     if (!recipe) return 0;
     const nutrition = calculateRecipeNutrition(recipe.ingredients ?? []);
-    return nutrition?.glycemicLoad ?? 0;
+    return Math.round(nutrition?.glycemicLoad ?? 0);
   }, [recipe]);
 
   // Projected GL after adding this meal
@@ -55,22 +68,22 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
     if (projectedRatio <= 0.75) {
       return {
         label: 'Safe Range',
-        colorClass: 'bg-primary-container text-on-primary-container border-primary-container',
-        barColor: 'bg-primary',
+        colorClass: 'bg-success-surface text-brand-strong border border-success-border',
+        barColor: 'bg-brand-strong',
         microcopy: 'Within optimal blood sugar range.',
       };
     }
     if (projectedRatio <= 1.0) {
       return {
         label: 'Approaching Target',
-        colorClass: 'bg-tertiary-container text-on-tertiary-container border-tertiary-container',
+        colorClass: 'bg-tertiary-container text-on-tertiary-container border border-tertiary',
         barColor: 'bg-tertiary',
         microcopy: 'Approaching daily glycemic target.',
       };
     }
     return {
       label: 'Exceeds Target',
-      colorClass: 'bg-error-container text-on-error-container border-error-container',
+      colorClass: 'bg-error-container text-on-error-container border border-error',
       barColor: 'bg-error',
       microcopy: 'Exceeds target. Consider swapping high-GI items.',
     };
@@ -89,54 +102,46 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
       addedAt: new Date().toISOString(),
     };
 
-    // 1. Optimistic State Update: Write directly to localStorage & dispatch event
     try {
       const raw = localStorage.getItem('glyco_meal_plan');
       const plan = raw ? JSON.parse(raw) : {};
-      const dayList = plan[selectedDay] || [];
-      plan[selectedDay] = [...dayList, mealEntry];
+      if (!plan[selectedDay]) {
+        plan[selectedDay] = [];
+      }
+      plan[selectedDay].push(mealEntry);
       localStorage.setItem('glyco_meal_plan', JSON.stringify(plan));
-
-      // Global sync event for HealthHeader.jsx
-      window.dispatchEvent(new CustomEvent('glyco_meal_plan_updated', { detail: plan }));
 
       if (onConfirm) {
         onConfirm(mealEntry);
       }
+
+      setIsSubmitting(false);
       onClose();
-    } catch (err) {
+    } catch {
       setSyncError(true);
-    } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!isOpen || !recipe) return null;
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-inverse-surface/40 backdrop-blur-sm transition-opacity"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="Add Meal to Plan"
-        className="relative w-full max-w-lg bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/30 overflow-hidden z-50 animate-fade-in"
-      >
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-headline"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in font-sans"
+    >
+      <div className="w-full max-w-lg bg-card rounded-card border border-border-subtle shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Header */}
-        <header className="px-6 py-4 border-b border-outline-variant/20 flex items-center justify-between bg-surface">
+        <header className="px-6 py-4 border-b border-border-subtle/50 flex items-center justify-between bg-card">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary text-[22px]">calendar_add_on</span>
+            <span className="material-symbols-outlined text-brand-strong text-[22px]">calendar_add_on</span>
             <div>
-              <h2 className="font-display text-base font-bold text-on-surface">
+              <h2 id="modal-headline" className="font-display text-base font-bold text-text-strong">
                 Schedule Meal & Analyze Impact
               </h2>
-              <p className="text-xs text-on-surface-variant line-clamp-1">
+              <p className="text-xs text-text-body line-clamp-1">
                 {recipe?.title}
               </p>
             </div>
@@ -145,23 +150,22 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
             type="button"
             onClick={onClose}
             aria-label="Close meal planning modal"
-            className="w-10 h-10 rounded-full bg-surface-container-high/60 hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-text-body transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:outline-none"
           >
-            <span className="material-symbols-outlined text-[20px]">close</span>
+            <span className="material-symbols-outlined text-[18px]">close</span>
           </button>
         </header>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-6">
-
+        <div className="p-6 space-y-5 overflow-y-auto">
           {/* Sync Error Retry Banner */}
           {syncError && (
-            <div className="p-3.5 rounded-xl bg-error-container/30 border border-error/30 flex items-center justify-between text-xs text-error">
+            <div className="p-3 rounded-control bg-error-container/30 border border-error/30 flex items-center justify-between text-xs text-error">
               <span>Failed to sync with meal plan storage.</span>
               <button
                 type="button"
                 onClick={handleCommit}
-                className="px-3 py-1 bg-error text-on-error rounded-lg font-bold hover:bg-error/90 cursor-pointer"
+                className="px-3 py-1 bg-error text-on-error rounded-control font-bold hover:bg-error/90 cursor-pointer"
               >
                 Retry
               </button>
@@ -170,7 +174,7 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
 
           {/* Day Selection */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-on-surface uppercase tracking-wider">
+            <label className="block text-xs font-bold text-text-strong uppercase tracking-wider">
               Target Day
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -183,11 +187,11 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
                   key={day.id}
                   type="button"
                   onClick={() => setSelectedDay(day.id)}
-                  className={`min-h-[48px] px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center ${
+                  className={`min-h-[44px] px-3 rounded-control border text-xs font-bold transition-all cursor-pointer flex items-center justify-center ${
                     selectedDay === day.id
-                      ? 'bg-primary text-on-primary border-primary shadow-sm'
-                      : 'bg-surface-container-low border-outline-variant/40 text-on-surface hover:bg-surface-container'
-                  }`}
+                      ? 'bg-brand-strong text-text-inverse border-brand-strong shadow-xs'
+                      : 'bg-card border-border-interactive text-text-strong hover:bg-surface-container-low'
+                  } focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:outline-none`}
                 >
                   {day.label}
                 </button>
@@ -197,7 +201,7 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
 
           {/* Meal Slot Selection */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-on-surface uppercase tracking-wider">
+            <label className="block text-xs font-bold text-text-strong uppercase tracking-wider">
               Meal Slot
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -206,11 +210,11 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
                   key={slot.id}
                   type="button"
                   onClick={() => setSelectedSlot(slot.id)}
-                  className={`min-h-[48px] p-2 rounded-xl border text-xs font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
+                  className={`min-h-[44px] p-2 rounded-control border text-xs font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
                     selectedSlot === slot.id
-                      ? 'bg-primary text-on-primary border-primary shadow-sm'
-                      : 'bg-surface-container-low border-outline-variant/40 text-on-surface hover:bg-surface-container'
-                  }`}
+                      ? 'bg-brand-strong text-text-inverse border-brand-strong shadow-xs'
+                      : 'bg-card border-border-interactive text-text-strong hover:bg-surface-container-low'
+                  } focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:outline-none`}
                 >
                   <span className="material-symbols-outlined text-[18px]">{slot.icon}</span>
                   <span>{slot.label}</span>
@@ -219,59 +223,58 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
             </div>
           </div>
 
-          {/* Flow 3 Predictive Daily GL Impact Display */}
-          <section className="p-4 rounded-xl bg-surface-container-low border border-outline-variant/30 space-y-3">
+          {/* Projected Daily GL Impact Display */}
+          <section className="p-4 rounded-control bg-canvas border border-border-subtle space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest flex items-center gap-1">
-                <span className="material-symbols-outlined text-[15px] text-primary">analytics</span>
+              <span className="text-[10px] font-bold text-text-body uppercase tracking-widest flex items-center gap-1">
+                <span className="material-symbols-outlined text-[15px] text-brand-strong">analytics</span>
                 Projected Daily GL Impact
               </span>
-              <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${budgetFeedback.colorClass}`}>
+              <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${budgetFeedback.colorClass}`}>
                 {budgetFeedback.label}
               </span>
             </div>
 
-            {/* Predictive Math Formula: Current GL + Recipe GL -> Projected GL */}
-            <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-outline-variant/20 text-xs">
+            {/* Math Formula */}
+            <div className="flex items-center justify-between bg-card p-3 rounded-control border border-border-subtle text-xs">
               <div className="text-center">
-                <span className="block text-[9px] text-on-surface-variant font-bold uppercase">Current GL</span>
-                <span className="font-display font-extrabold text-on-surface text-sm">{currentDailyGL} GL</span>
+                <span className="block text-[9px] text-text-body font-bold uppercase">Current GL</span>
+                <span className="font-display font-extrabold text-text-strong text-sm">{currentDailyGL} GL</span>
               </div>
-              <span className="material-symbols-outlined text-on-surface-variant/50 text-[16px]">add</span>
+              <span className="material-symbols-outlined text-text-body/50 text-[16px]">add</span>
               <div className="text-center">
-                <span className="block text-[9px] text-primary font-bold uppercase">Recipe GL</span>
-                <span className="font-display font-extrabold text-primary text-sm">+{recipeGL} GL</span>
+                <span className="block text-[9px] text-brand-strong font-bold uppercase">Recipe GL</span>
+                <span className="font-display font-extrabold text-brand-strong text-sm">+{recipeGL} GL</span>
               </div>
-              <span className="material-symbols-outlined text-on-surface-variant/50 text-[16px]">arrow_forward</span>
+              <span className="material-symbols-outlined text-text-body/50 text-[16px]">arrow_forward</span>
               <div className="text-center">
-                <span className="block text-[9px] text-on-surface-variant font-bold uppercase">Projected Total</span>
-                <span className="font-display font-extrabold text-on-surface text-base">{projectedGL} / {DAILY_GL_TARGET} GL</span>
+                <span className="block text-[9px] text-text-body font-bold uppercase">Projected Total</span>
+                <span className="font-display font-extrabold text-text-strong text-base">{projectedGL} / {DAILY_GL_TARGET} GL</span>
               </div>
             </div>
 
             {/* Projected Progress Bar */}
             <div className="space-y-1">
-              <div className="w-full h-2 rounded-full bg-outline-variant/30 overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-300 ${budgetFeedback.barColor}`}
                   style={{ width: `${Math.min(projectedPercent, 100)}%` }}
                 />
               </div>
-              <p className="text-xs font-semibold text-on-surface-variant flex items-center gap-1">
+              <p className="text-xs font-medium text-text-body flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px]">info</span>
                 {budgetFeedback.microcopy}
               </p>
             </div>
           </section>
-
         </div>
 
         {/* Modal Footer */}
-        <footer className="px-6 py-4 border-t border-outline-variant/20 bg-surface flex items-center justify-end gap-3">
+        <footer className="px-6 py-4 border-t border-border-subtle/50 bg-card flex items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="min-h-[48px] px-5 rounded-xl border border-outline-variant text-on-surface text-xs font-bold hover:bg-surface-container-low cursor-pointer transition-colors"
+            className="min-h-[44px] px-5 rounded-control border border-border-interactive bg-card text-brand-strong text-xs font-bold hover:bg-surface-container-low cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:outline-none"
           >
             Cancel
           </button>
@@ -279,7 +282,7 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
             type="button"
             onClick={handleCommit}
             disabled={isSubmitting}
-            className="min-h-[48px] px-6 rounded-xl bg-primary text-on-primary text-xs font-bold hover:bg-primary/90 disabled:opacity-50 cursor-pointer transition-all shadow-md flex items-center gap-2"
+            className="min-h-[44px] px-6 rounded-control bg-brand-strong text-text-inverse text-xs font-bold hover:bg-brand-hover disabled:opacity-50 cursor-pointer transition-all shadow-sm flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:outline-none"
           >
             {isSubmitting ? (
               <>
@@ -294,7 +297,6 @@ export const AddToMealPlanModal = ({ recipe, isOpen, onClose, onConfirm }) => {
             )}
           </button>
         </footer>
-
       </div>
     </div>
   );

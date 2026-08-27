@@ -1,15 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
-  getSystemIngredients,
-  getCustomIngredients,
-  getIngredientsRegistry,
-  getIngredientById,
-  isSystemIngredient,
-  isCustomIngredient,
+            isCustomIngredient,
   generateCustomId,
   validateCustomIngredient,
   saveCustomIngredient,
-  deleteCustomIngredient,
+  
 } from './ingredientStore';
 
 // Mock strapiClient so tests don't make real HTTP requests

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 /**
  * NavPill — Accessible, ergonomic navigation link or parent button component.
- * Enforces minimum 48px x 48px touch target on mobile viewports.
+ * Enforces minimum 44px touch target on all viewports.
  */
 export const NavPill = ({
   to,
@@ -18,11 +18,11 @@ export const NavPill = ({
   className = '',
   children,
 }) => {
-  const baseClasses = `flex items-center gap-3 px-4 py-3 min-h-[48px] rounded-r-full font-body-md text-sm transition-all cursor-pointer select-none active:scale-95 ${
+  const baseClasses = `flex items-center gap-3 px-3.5 py-3 min-h-[44px] rounded-control font-body-md text-sm transition-all cursor-pointer select-none active:scale-95 ${
     isActive
-      ? 'bg-primary text-on-primary font-bold shadow-xs'
-      : 'text-on-surface-variant hover:bg-surface-variant/50 hover:text-on-surface'
-  } ${className}`;
+      ? 'bg-brand-hover text-text-inverse font-bold shadow-xs'
+      : 'text-brand-container/90 hover:bg-brand-hover/60 hover:text-text-inverse'
+  } focus-visible:ring-2 focus-visible:ring-brand-container focus-visible:outline-none ${className}`;
 
   if (to) {
     return (

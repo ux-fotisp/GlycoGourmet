@@ -31,7 +31,7 @@ export const UserPreferencesProvider = ({ children }) => {
         if (parsed.diabeticProfiles) setDiabeticProfilesState(parsed.diabeticProfiles);
         if (parsed.dietaryRestrictions) setDietaryRestrictionsState(parsed.dietaryRestrictions);
       }
-    } catch (e) {
+    } catch (_e) {
       // ignore JSON parse fallback
     }
 
@@ -48,7 +48,7 @@ export const UserPreferencesProvider = ({ children }) => {
       const current = JSON.parse(localStorage.getItem('glyco_user_preferences') || '{}');
       const merged = { ...current, ...updated };
       localStorage.setItem('glyco_user_preferences', JSON.stringify(merged));
-    } catch (e) {
+    } catch (_e) {
       // ignore storage error
     }
   };

@@ -13,21 +13,23 @@ export const IngredientRow = ({ item, servingMultiplier = 1, breakdownData }) =>
   const isHighGL = glContrib >= 5;
 
   return (
-    <div className="flex items-center justify-between py-3 border-b border-outline-variant/20 last:border-0">
+    <div className="flex items-center justify-between py-3 border-b border-border-subtle/40 last:border-0 font-sans">
       <div className="flex items-center gap-3">
-        <div className={w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white }>
-          {Math.round(glContrib * 10)}
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shadow-xs ${
+          isHighGL ? 'bg-tertiary-container text-on-tertiary-container' : 'bg-success-surface text-brand-strong border border-success-border'
+        }`}>
+          {Math.round(glContrib * 10) / 10}
         </div>
         <div>
-          <div className="text-sm font-bold text-on-surface">{item?.name || 'Unknown'}</div>
-          <div className="text-[10px] font-semibold text-on-surface-variant mt-0.5">
-            {prepLabel} ×{prepMultiplier}
+          <div className="text-sm font-bold text-text-strong">{item?.name || 'Unknown'}</div>
+          <div className="text-[10px] font-semibold text-text-body mt-0.5">
+            {prepLabel} (x{prepMultiplier})
           </div>
         </div>
       </div>
       <div className="text-right">
-        <div className="text-sm font-bold text-on-surface">{roundedAmount} {item?.unit || 'g'}</div>
-        <div className="text-[10px] font-semibold text-on-surface-variant mt-0.5">{Math.round(netCarbs)}g NC</div>
+        <div className="text-sm font-bold text-text-strong">{roundedAmount} {item?.unit || 'g'}</div>
+        <div className="text-[10px] font-semibold text-text-body mt-0.5">{Math.round(netCarbs)}g NC</div>
       </div>
     </div>
   );

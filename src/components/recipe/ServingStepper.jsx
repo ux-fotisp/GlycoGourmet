@@ -4,8 +4,8 @@ import React from 'react';
  * ServingStepper - Discrete portion scaling touch pills.
  *
  * Touch targets: strictly >= 48x48px per button pill.
- * Active state: bg-[#1B3B22] text-[#FFFFFF] border-[#1B3B22] shadow-sm
- * Inactive state: bg-[#F0EFE9] text-[#1A2118] hover:bg-[#E4E2DC]
+ * Active state: bg-brand-strong text-text-inverse border-brand-strong shadow-sm
+ * Inactive state: bg-surface-container text-text-strong hover:bg-surface-container-high
  */
 export const ServingStepper = ({ currentMultiplier, onScaleChange, disabled }) => {
   const PORTION_OPTIONS = [0.5, 1, 1.5, 2];
@@ -28,8 +28,8 @@ export const ServingStepper = ({ currentMultiplier, onScaleChange, disabled }) =
             onClick={() => !disabled && onScaleChange(mult)}
             className={`min-h-[48px] min-w-[48px] px-4 rounded-full border text-sm font-bold transition-all cursor-pointer flex items-center justify-center
               ${isActive
-                ? 'bg-[#1B3B22] text-[#FFFFFF] border-[#1B3B22] shadow-sm scale-105'
-                : 'bg-[#F0EFE9] text-[#1A2118] hover:bg-[#E4E2DC] border-transparent'
+                ? 'bg-brand-strong text-text-inverse border-brand-strong shadow-sm scale-105'
+                : 'bg-surface-container text-text-strong hover:bg-surface-container-high border-transparent'
               }
               ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
             `}

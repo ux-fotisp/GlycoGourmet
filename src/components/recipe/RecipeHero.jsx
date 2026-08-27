@@ -17,12 +17,12 @@ export const RecipeHero = ({ recipe, nutrition }) => {
 
       {/* Top badges */}
       <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-        <span className="bg-[#1B3B22] text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
+        <span className="bg-brand-strong text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
           VERIFIED
         </span>
       </div>
       <div className="absolute top-4 right-4 flex flex-wrap gap-2">
-        <span className="bg-white/90 backdrop-blur-md text-[#1B3B22] px-3 py-1 rounded-full text-xs font-bold shadow-md">
+        <span className="bg-white/90 backdrop-blur-md text-brand-strong px-3 py-1 rounded-full text-xs font-bold shadow-md">
           LOW GL
         </span>
       </div>

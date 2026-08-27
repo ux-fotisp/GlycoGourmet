@@ -31,7 +31,7 @@ export const MetabolicCalculationPanel = ({ nutrition }) => {
         </div>
       </div>
       <div className="bg-white px-3 py-2 rounded border border-outline-variant/30 text-center text-[11px] font-mono font-medium text-on-surface">
-        round(({compositeGI} × {netCarbs}) / 100)
+        round(({compositeGI}  {netCarbs}) / 100)
       </div>
     </div>
   );

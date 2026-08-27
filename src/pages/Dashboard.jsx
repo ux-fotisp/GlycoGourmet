@@ -10,7 +10,7 @@ import RecipeFilterBar from '../components/filters/RecipeFilterBar';
 import RecipeCard from '../components/recipe/RecipeCard';
 
 export const Dashboard = () => {
-  const { user } = useAuth();
+  const { /* user */ } = useAuth();
   const {
     allRecipes,
     isLoading,

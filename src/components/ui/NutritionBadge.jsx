@@ -1,12 +1,12 @@
-﻿import React from 'react';
+import React from 'react';
 
 export const NutritionBadge = ({ label, value, unit, highlight = false, sublabel, colorClass, title }) => {
-  const valueFormatted = value !== null && value !== undefined ? `${value}${unit || ''}` : '\u2014';
+  const valueFormatted = value !== null && value !== undefined ? `${value}${unit || ''}` : '—';
   
   return (
     <div
       title={title}
-      className="flex flex-col items-center justify-center p-3 bg-surface-container-low rounded-lg border border-transparent hover:border-primary-fixed-dim transition-all group text-center min-h-[90px] relative hover:bg-surface-container"
+      className="flex flex-col items-center justify-center p-3 bg-surface-container-low rounded-lg border border-transparent hover:border-primary-fixed-dim transition-all group text-center min-h-[90px] relative font-sans"
     >
       <span
         className={`font-bold font-display text-lg md:text-xl leading-none mb-1 ${

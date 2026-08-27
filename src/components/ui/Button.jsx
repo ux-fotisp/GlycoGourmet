@@ -13,15 +13,15 @@ export const Button = ({
   const baseStyle = 'inline-flex items-center justify-center font-label-md transition-all active:scale-95 duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100';
 
   const variants = {
-    primary: 'bg-primary text-on-primary rounded-full hover:bg-primary-container hover:shadow-recipe-hover active:scale-95',
-    secondary: 'border border-primary text-primary rounded-full hover:bg-primary/5 active:scale-95',
-    ghost: 'text-primary hover:underline hover:bg-transparent active:scale-100'
+    primary: 'bg-brand-strong text-text-inverse rounded-control hover:bg-brand-hover hover:shadow-recipe-hover active:scale-95 focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:ring-offset-2 focus-visible:outline-none',
+    secondary: 'bg-card text-brand-strong border border-border-interactive rounded-control hover:bg-surface-container-low active:scale-95 focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:ring-offset-2 focus-visible:outline-none',
+    ghost: 'text-brand-strong hover:underline hover:bg-transparent active:scale-100 focus-visible:ring-2 focus-visible:ring-brand-strong focus-visible:outline-none'
   };
 
   const sizes = {
-    sm: 'h-8 px-4 text-xs font-semibold',
-    md: 'h-12 px-6 text-sm font-semibold',
-    lg: 'h-14 px-8 text-base font-semibold'
+    sm: 'min-h-[36px] h-9 px-4 text-xs font-semibold',
+    md: 'min-h-[44px] h-11 px-6 text-sm font-semibold',
+    lg: 'min-h-[48px] h-14 px-8 text-base font-semibold'
   };
 
   return (
@@ -29,7 +29,8 @@ export const Button = ({
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={`${baseStyle} ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`${baseStyle} ${variants[variant] || variants.primary} ${sizes[size] || sizes.md} ${className}`}
+      data-variant={variant}
       {...rest}
     >
       {children}

@@ -2405,7 +2405,13 @@ export function normalizeRecipe(r) {
     status,
     authorId: r?.authorId ?? '',
     isUserAuthored: r?.isUserAuthored ?? (!!r?.authorId),
-    ingredients: Array.isArray(r?.ingredients) ? r.ingredients : [],
+    ingredients: Array.isArray(r?.ingredients) ? r.ingredients.map(ing => ({
+      ...ing,
+      ingredientId: String(ing?.ingredient?.id || ing?.ingredientId || ing?.id || ''),
+      amount: parseFloat(ing?.amount) || 0,
+      unit: ing?.unit || 'g',
+      prepState: ing?.prepState || ing?.ingredient?.defaultPrepState || 'raw',
+    })) : [],
     steps: Array.isArray(r?.steps) ? r.steps : [],
   };
 }

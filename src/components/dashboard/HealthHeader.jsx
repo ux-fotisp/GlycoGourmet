@@ -70,18 +70,18 @@ export const HealthHeader = () => {
   const clampedPercent = Math.min(percent, 100);
 
   // Color thresholds per spec
-  let barColor = 'bg-[#325346]';     // Sage Green � safe
+  let barColor = 'bg-brand-strong';     // Sage Green � safe
   let textColor = 'text-primary';
   let statusLabel = 'On Track';
   let statusBadgeClass = 'bg-primary-container/15 text-primary border-primary/20';
 
   if (ratio > 1) {
-    barColor = 'bg-[#BA1A1A]';        // Soft Rose � exceeded
+    barColor = 'bg-error-strong';        // Soft Rose � exceeded
     textColor = 'text-error';
     statusLabel = 'Exceeded';
     statusBadgeClass = 'bg-error-container/20 text-error border-error/20';
   } else if (ratio >= 0.75) {
-    barColor = 'bg-[#9E4D2A]';        // Copper/Amber � moderate
+    barColor = 'bg-warning-strong';        // Copper/Amber � moderate
     textColor = 'text-tertiary';
     statusLabel = 'Approaching Limit';
     statusBadgeClass = 'bg-tertiary-container/20 text-tertiary border-tertiary/20';
