@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const DraftPreviewBanner = ({ recipe, onPublish, roleType }) => {
@@ -11,7 +11,7 @@ const DraftPreviewBanner = ({ recipe, onPublish, roleType }) => {
         <span className="material-symbols-outlined text-amber-600 font-bold">warning</span>
         
         <span className="bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wide">
-          Draft — Not Public
+          Draft - Not Public
         </span>
 
         {recipe?.authorId && (

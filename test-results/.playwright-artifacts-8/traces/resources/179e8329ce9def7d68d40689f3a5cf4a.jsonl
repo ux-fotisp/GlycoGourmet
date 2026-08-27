@@ -1,3 +1,0 @@
-{"type":"receive","time":1787813483984.09,"opcode":1,"data":"{\"type\":\"connected\"}"}
-{"type":"send","time":1787813484024.989,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"vite:forward-console\",\"data\":{\"type\":\"log\",\"data\":{\"level\":\"error\",\"message\":\"[recipeStore] Strapi /api/recipes fetch failed: Unexpected token '<', \\\"<!doctype \\\"... is not valid JSON\"}}}"}
-{"type":"send","time":1787813484025.2092,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"vite:forward-console\",\"data\":{\"type\":\"log\",\"data\":{\"level\":\"error\",\"message\":\"[recipeStore] Strapi /api/recipes fetch failed: Unexpected token '<', \\\"<!doctype \\\"... is not valid JSON\"}}}"}

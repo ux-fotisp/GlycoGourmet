@@ -72,7 +72,7 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
     // 2. Navigate to Admin Audit Queue via HashRouter path
     await page.goto('/#/admin/audit-queue');
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('h2, h1').first()).toBeVisible();
+    await expect(page.locator('h2, h1').locator('visible=true').first()).toBeVisible();
 
     // 3. Assert Discrepancy indicator and execute Overwrite / Sync
     const discrepancyBadge = page.locator('span:has-text("Discrepancy"), span:has-text("1.0")').first();
@@ -252,7 +252,7 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
     await previewButton.click();
 
     // Verify DraftPreviewBanner
-    const banner = page.locator('div', { hasText: 'Draft — Not Public' }).last();
+    const banner = page.locator('div', { hasText: 'Draft - Not Public' }).last();
     await banner.waitFor({ state: 'visible' });
     
     // Go back and submit for review

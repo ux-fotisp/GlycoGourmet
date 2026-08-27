@@ -89,7 +89,7 @@ export const RecipeDetails = () => {
 
   // Resolve current ingredients, taking swaps into account
   const resolvedIngredients = (recipe.ingredients ?? []).map(item => {
-    const originalId = item.ingredientId;
+    const originalId = item.ingredientId || item.ingredient?.id;
     const currentId = swappedIngredients[originalId] || originalId;
     const ing = getIngredientById(currentId);
 
@@ -106,8 +106,8 @@ export const RecipeDetails = () => {
   });
 
   // Calculate dynamic recipe nutrition based on resolved (possibly swapped) ingredients
-  const baseNutrition = calculateRecipeNutrition(resolvedIngredients);
-  const currentNutrition = scaleNutrition(baseNutrition, servingMultiplier);
+  const scaleResult = applyServingScale(resolvedIngredients, servingMultiplier);
+  const currentNutrition = scaleResult.profile;
 
   const handleOpenSubstitution = (item) => {
     const ing = getIngredientById(item.originalId);
