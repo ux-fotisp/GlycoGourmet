@@ -30,6 +30,12 @@ describe('Strapi Integration - Tenant Scoping', () => {
     expect(jwtB).toBeDefined();
 
     // --- b & c. Dietitian B receives HTTP 200 for GET /api/client-profiles but sees no ClientProfile owned by Dietitian A ---
+    const meRes = await request('http://localhost:1337')
+      .get('/api/users/me?populate=role')
+      .set('Authorization', 'Bearer ' + jwtB);
+    console.log('Diagnostic /api/users/me status:', meRes.status);
+    console.log('Diagnostic /api/users/me body:', JSON.stringify(meRes.body, null, 2));
+
     const resB = await request('http://localhost:1337')
       .get('/api/client-profiles')
       .set('Authorization', 'Bearer ' + jwtB);
