@@ -1,52 +1,64 @@
 "use strict";
+
 const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController("api::smart-swap-rule.smart-swap-rule", ({ strapi }) => ({
   async find(ctx) {
+    // 1. Let Strapi validate and sanitize the query as usual
+    await this.validateQuery(ctx);
+    const sanitizedQuery = await this.sanitizeQuery(ctx);
+
     const user = ctx.state.user;
-    let query = { ...ctx.query };
     
+    // 2. If user is a dietitian, enforce tenant scoping directly on the query object 
+    // passed to the service, bypassing Koa ctx.query issues.
     if (user && user.roleType === 'dietitian') {
-      query = {
-        ...query,
-        filters: {
-          ...(query.filters || {}),
-          dietitian: user.id
-        }
+      sanitizedQuery.filters = {
+        ...sanitizedQuery.filters,
+        dietitian: user.id,
       };
     }
+
+    // 3. Call the core service with the mutated query
+    const { results, pagination } = await strapi.service("api::smart-swap-rule.smart-swap-rule").find(sanitizedQuery);
     
-    // Use entityService directly to bypass sanitizeQuery limitations
-    const results = await strapi.entityService.findMany("api::smart-swap-rule.smart-swap-rule", query);
-    
-    // Sanitize with contentAPI
-    const sanitizedResults = await strapi.contentAPI.sanitize.output(results, strapi.getModel("api::smart-swap-rule.smart-swap-rule"), { auth: ctx.state.auth });
-    return this.transformResponse(sanitizedResults);
+    // 4. Sanitize and return
+    const sanitizedResults = await this.sanitizeOutput(results, ctx);
+    return this.transformResponse(sanitizedResults, { pagination });
   },
-  
+
   async findOne(ctx) {
+    await this.validateQuery(ctx);
+    const sanitizedQuery = await this.sanitizeQuery(ctx);
+    const { id } = ctx.params;
+
     const user = ctx.state.user;
-    let query = { ...ctx.query };
     
+    // For findOne, inject the filter into the query so the service only returns
+    // it if it matches the dietitian.
     if (user && user.roleType === 'dietitian') {
-      query = {
-        ...query,
-        filters: {
-          ...(query.filters || {}),
-          dietitian: user.id
-        }
+      sanitizedQuery.filters = {
+        ...sanitizedQuery.filters,
+        dietitian: user.id,
       };
     }
+
+    const entity = await strapi.service("api::smart-swap-rule.smart-swap-rule").findOne(id, sanitizedQuery);
     
-    const entity = await strapi.entityService.findOne("api::smart-swap-rule.smart-swap-rule", ctx.params.id, query);
-    
-    if (!entity) return ctx.notFound();
+    // If not found (or filtered out by tenant scope), return 404
+    if (!entity) {
+      return ctx.notFound();
+    }
+
+    // Extra safety check in case the service findOne didn't strictly apply the top-level filter
     if (user && user.roleType === 'dietitian') {
       const ownerId = entity.dietitian?.id || entity.dietitian;
-      if (Number(ownerId) !== Number(user.id)) return ctx.notFound();
+      if (Number(ownerId) !== Number(user.id)) {
+        return ctx.notFound(); // Hide existence of other tenant's records
+      }
     }
-    
-    const sanitizedEntity = await strapi.contentAPI.sanitize.output(entity, strapi.getModel("api::smart-swap-rule.smart-swap-rule"), { auth: ctx.state.auth });
+
+    const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
     return this.transformResponse(sanitizedEntity);
   }
 }));

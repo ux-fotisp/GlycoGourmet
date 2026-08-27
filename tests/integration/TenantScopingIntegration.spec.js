@@ -43,7 +43,7 @@ describe('Strapi Integration - Tenant Scoping', () => {
     if (resB.status !== 200) {
       console.log('Diagnostic resB.status:', resB.status);
       console.log('Diagnostic resB.body:', JSON.stringify(resB.body, null, 2));
-      console.log('Diagnostic jwtB:', jwtB.substring(0, 10) + '...');
+
     }
     
     expect(resB.status).toBe(200);
