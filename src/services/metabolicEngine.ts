@@ -116,7 +116,7 @@ export function calculateMetabolicProfile(
     const nutrition = ing.nutrition || ing;
     const carbs = safeNum(nutrition.carbs) * ratio;
     const fiber = safeNum(nutrition.fiber) * ratio;
-    const nc = Math.max(0, carbs - fiber);
+    const nc = calculateNetCarbs(carbs, fiber);
 
     const kcal = safeNum(nutrition.kcal) * ratio;
     const protein = safeNum(nutrition.protein) * ratio;

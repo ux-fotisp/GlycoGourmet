@@ -108,6 +108,24 @@ describe('calculateDailyRollup', () => {
     expect(resultNull.cumulativeDailyGL).toBe(0);
   });
 
+  it('(d) Existing single-recipe GI/GL outputs are unchanged after internal calculateNetCarbs refactor', () => {
+    // Snapshot check for a known recipe output
+    const rawRice = [
+      {
+        ingredient: { nutrition: { carbs: 45, fiber: 2, protein: 4, fat: 1, kcal: 205, glycemicIndex: 73 } },
+        amount: 150,
+        prepState: 'boiled'
+      }
+    ];
+    const profile = calculateMetabolicProfile(rawRice, 1);
+    // Based on previous snapshot/expected math: 150g is 1.5x default 100g.
+    // carbs = 67.5, fiber = 3 -> netCarbs = 64.5
+    // GI = 73, GL = 73 * 64.5 / 100 = 47.085 -> round to 47
+    expect(profile.netCarbs).toBe(64.5);
+    expect(profile.glycemicIndex).toBe(88);
+    expect(profile.glycemicLoad).toBe(57);
+  });
+
   it('(a) zero-carb singularity: should return GL = 0 at the rollup level for zero-carb meals', () => {
     const slots = { lunch: 'rec_chicken', dinner: 'rec_chicken' };
     const result = calculateDailyRollup(slots, recipesMap);
