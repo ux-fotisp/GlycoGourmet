@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GlycoGourmet - Deterministic Metabolic Math Engine
  * Standardized Clinical Implementation
  */
@@ -36,7 +36,16 @@ export interface RecipeIngredientItem {
   [key: string]: any;
 }
 
+export interface IngredientBreakdown {
+  originalId: string;
+  name: string;
+  netCarbs: number;
+  effectiveGI: number;
+  glContribution: number;
+}
+
 export interface MetabolicProfileResult {
+  ingredientBreakdown?: IngredientBreakdown[];
   kcal: number;
   protein: number;
   fat: number;
@@ -101,8 +110,10 @@ export function calculateMetabolicProfile(
   let totalFiber = 0;
   let totalNetCarbs = 0;
 
-  let weightedGISum = 0;
-  let totalCarbWeight = 0;
+      let weightedGISum = 0;
+    let totalCarbWeight = 0;
+  
+    const ingredientBreakdown: IngredientBreakdown[] = [];
 
   for (let i = 0; i < list.length; i++) {
     const item = list[i];
@@ -134,10 +145,21 @@ export function calculateMetabolicProfile(
     const multiplier = getPrepStateMultiplier(prepKey);
     const effectiveGI = nc <= 0 ? 0 : Math.min(100, Math.max(0, baseGI * multiplier));
 
+    
     if (nc > 0 && effectiveGI > 0) {
       weightedGISum += effectiveGI * nc;
       totalCarbWeight += nc;
     }
+    
+    const glContribution = calculateIngredientGL(effectiveGI, nc);
+    ingredientBreakdown.push({
+      originalId: item.originalId || item.ingredientId || ing.id || String(i),
+      name: ing.name || 'Unknown',
+      netCarbs: Math.max(0, Math.round(nc * 10) / 10),
+      effectiveGI: Math.round(effectiveGI),
+      glContribution: Math.round(glContribution * 10) / 10
+    });
+
   }
 
   const roundedNetCarbsTotal = Math.max(0, Math.round(totalNetCarbs * 10) / 10);
@@ -409,3 +431,4 @@ export default {
   calculateWeeklyAdherence,
   applyServingScale,
 };
+
