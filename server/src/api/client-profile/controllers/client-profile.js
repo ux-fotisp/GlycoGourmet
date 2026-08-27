@@ -6,11 +6,11 @@ module.exports = createCoreController("api::client-profile.client-profile", ({ s
   async find(ctx) {
     const user = ctx.state.user;
 
-    // 1. Validate and sanitize the client-supplied query
+    // 1. Validate and sanitize the client-supplied query params
     await this.validateQuery(ctx);
     const sanitizedQuery = await this.sanitizeQuery(ctx);
 
-    // 2. Inject tenant isolation filter AFTER sanitization (server-side only)
+    // 2. Inject tenant isolation AFTER client-side sanitization (server enforced)
     if (user && user.roleType === "dietitian") {
       sanitizedQuery.filters = {
         ...(sanitizedQuery.filters || {}),
@@ -18,20 +18,16 @@ module.exports = createCoreController("api::client-profile.client-profile", ({ s
       };
     }
 
-    // 3. Query via entityService (Strapi v4 stable API)
+    // 3. Fetch from DB
     const entities = await strapi.entityService.findMany(
       "api::client-profile.client-profile",
       sanitizedQuery
     );
 
-    // 4. Sanitize output to strip private/password fields from related users
-    const sanitized = await strapi.contentAPI.sanitize.output(
-      entities,
-      strapi.getModel("api::client-profile.client-profile"),
-      { auth: ctx.state.auth }
-    );
+    // 4. Sanitize output using inherited base controller method (Strapi v4 stable)
+    const sanitizedEntities = await this.sanitizeOutput(entities, ctx);
 
-    return this.transformResponse(sanitized);
+    return this.transformResponse(sanitizedEntities);
   },
 
   async findOne(ctx) {
@@ -49,17 +45,13 @@ module.exports = createCoreController("api::client-profile.client-profile", ({ s
 
     if (!entity) return ctx.notFound();
 
+    // Tenant check: dietitians can only see their own records
     if (user && user.roleType === "dietitian") {
       const ownerId = entity.dietitian?.id || entity.dietitian;
       if (Number(ownerId) !== Number(user.id)) return ctx.notFound();
     }
 
-    const sanitized = await strapi.contentAPI.sanitize.output(
-      entity,
-      strapi.getModel("api::client-profile.client-profile"),
-      { auth: ctx.state.auth }
-    );
-
-    return this.transformResponse(sanitized);
+    const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
+    return this.transformResponse(sanitizedEntity);
   },
 }));
