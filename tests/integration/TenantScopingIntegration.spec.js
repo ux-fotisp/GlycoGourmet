@@ -21,6 +21,11 @@ describe('Strapi Integration - Tenant Scoping', () => {
         password: seedData.dietitianBPassword
       });
       
+    if (authRes.status !== 200) {
+      console.log('Diagnostic authRes.status:', authRes.status);
+      console.log('Diagnostic authRes.body:', JSON.stringify(authRes.body, null, 2));
+    }
+      
     const jwtB = authRes.body.jwt;
     expect(jwtB).toBeDefined();
 
