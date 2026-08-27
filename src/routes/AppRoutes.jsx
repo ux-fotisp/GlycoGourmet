@@ -45,6 +45,9 @@ export const AppRoutes = () => {
           <Route path="/recipes/all" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
 
+                    {/* Recipe Details (moved into AppLayout for persistent sidebar) */}
+          <Route path="/recipe/:id" element={<RecipeDetails />} />
+
           {/* Feature-Gated Protected Routes */}
           <Route element={<ProtectedRoute requiredPermission="canCreateDrafts" />}>
             <Route path="/recipes/mine" element={<MyRecipes />} />
@@ -64,9 +67,6 @@ export const AppRoutes = () => {
             <Route path="/client/:id/plan-builder" element={<PlanBuilder />} />
           </Route>
         </Route>
-
-        {/* Full Viewport Recipe Details */}
-        <Route path="/recipe/:id" element={<RecipeDetails />} />
       </Route>
     </Routes>
   );

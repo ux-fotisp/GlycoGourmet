@@ -3,7 +3,16 @@ import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { getRecipeById, saveRecipe } from '../utils/recipeStore';
 import { getIngredientById } from '../utils/nutritionCalculator';
 import { applyServingScale } from '../services/metabolicEngine';
-import DetailHero from '../components/recipe/DetailHero';
+
+import RecipeHero from '../components/recipe/RecipeHero';
+import RecipeMetaHeader from '../components/recipe/RecipeMetaHeader';
+import RecipeActionBar from '../components/recipe/RecipeActionBar';
+import GlycemicSnapshotCard from '../components/recipe/GlycemicSnapshotCard';
+import NutritionFactsCard from '../components/recipe/NutritionFactsCard';
+import SmartSwapsCard from '../components/recipe/SmartSwapsCard';
+import IngredientsPanel from '../components/recipe/IngredientsPanel';
+import RelatedRecipesRow from '../components/recipe/RelatedRecipesRow';
+
 import NutritionSnapshot from '../components/recipe/NutritionSnapshot';
 import IngredientList from '../components/recipe/IngredientList';
 import InstructionSteps from '../components/recipe/InstructionSteps';
@@ -148,121 +157,98 @@ export const RecipeDetails = () => {
   };
 
     return (
-    <div className="min-h-screen bg-background pb-28 md:pb-16">
+    <div className="bg-background min-h-screen">
       {(!recipe.publishedAt || recipe.status === 'draft') && (
         <DraftPreviewBanner recipe={recipe} onPublish={handlePublish} roleType={user?.roleType || 'user'} />
       )}
-      {/* Top Header Navigation */}
-
-      <header className="w-full sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-outline-variant/35 shadow-sm">
-        <div className="flex justify-between items-center px-edge-margin md:px-md max-w-container-max mx-auto h-16">
-          <Link to="/" className="flex items-center gap-1.5 font-bold text-primary hover:underline">
-            <span className="material-symbols-outlined text-primary font-bold">arrow_back</span>
-            <span className="font-display text-md text-primary font-extrabold tracking-tight">GlycoGourmet</span>
-          </Link>
-          <div className="hidden md:flex space-x-md items-center">
-            <Link to="/" className="text-primary font-bold border-b-2 border-primary py-2 text-sm">Dashboard</Link>
-            <Link to="/meal-plans" className="text-on-surface-variant hover:text-primary py-2 text-sm font-medium">Meal Plans</Link>
-            <Link to="/my-recipes" className="text-on-surface-variant hover:text-primary py-2 text-sm font-medium">My Recipes</Link>
-          </div>
-          <div className="flex items-center space-x-sm">
-            <Link to="/settings" className="p-2 hover:bg-surface-container rounded-full text-primary transition-colors">
-              <span className="material-symbols-outlined text-primary cursor-pointer">settings</span>
-            </Link>
-          </div>
-        </div>
-      </header>
 
       {/* Main Container */}
-      <main className="max-w-container-max mx-auto px-edge-margin md:px-lg py-6 space-y-6">
+      <main className="max-w-7xl mx-auto px-4 md:px-8 py-6 space-y-6">
 
-        {/* Desktop Split-Pane Layout (lg:flex-row gap-8) */}
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
+        {/* Top Breadcrumb & Action Row */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-on-surface-variant">
+            <Link to="/recipes/all" className="hover:text-primary transition-colors flex items-center gap-1">
+              <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+              All Recipes
+            </Link>
+            <span>/</span>
+            <span className="text-on-surface truncate max-w-[200px] sm:max-w-xs">{recipe?.title}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="px-4 py-2 bg-white border border-outline-variant/40 rounded-full text-xs font-bold text-on-surface hover:bg-surface-container transition-colors flex items-center gap-1 shadow-sm min-h-[48px] cursor-pointer">
+              <span className="material-symbols-outlined text-[16px]">edit</span>
+              Edit Recipe
+            </button>
+            <button className="px-4 py-2 bg-primary text-on-primary rounded-full text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1 shadow-sm min-h-[48px] cursor-pointer" onClick={() => setShowMobilePlanPicker(true)}>
+              <span className="material-symbols-outlined text-[16px]">calendar_add_on</span>
+              Add to Meal Plan
+            </button>
+          </div>
+        </div>
 
-          {/* Left Pane (lg:w-[65%]): Hero Media, Ingredients List, Instruction Pipeline */}
-          <div className="w-full lg:w-[65%] space-y-8">
-            {/* Hero Header + Serving Scaler */}
-            <DetailHero
-              recipe={recipe}
-              nutrition={currentNutrition}
-              servingMultiplier={servingMultiplier}
-              onServingChange={setServingMultiplier}
-              isFavorite={isFavorite}
+        {/* Desktop Split-Pane Layout (lg:flex-row gap-10) */}
+        <div className="flex flex-col lg:flex-row gap-10 items-start">
+
+          {/* Left Pane (lg:w-[35%]): Hero Media, Snapshots, Swaps */}
+          <div className="w-full lg:w-[38%] space-y-6">
+            <RecipeHero recipe={recipe} nutrition={currentNutrition} />
+            <GlycemicSnapshotCard nutrition={currentNutrition} servingMultiplier={servingMultiplier} />
+            <NutritionFactsCard nutrition={currentNutrition} servingMultiplier={servingMultiplier} />
+            <SmartSwapsCard 
+              ingredients={resolvedIngredients} 
+              swappedIngredients={swappedIngredients} 
+              onQuickSwap={handleQuickSwap} 
+              nutrition={currentNutrition} 
+            />
+          </div>
+
+          {/* Right Pane (lg:w-[65%]): Meta Header, Actions, Ingredients, Instructions */}
+          <div className="w-full lg:w-[62%] space-y-8 lg:pt-4">
+            
+            <RecipeMetaHeader recipe={recipe} />
+            <RecipeActionBar 
+              onAddToMealPlan={() => setShowMobilePlanPicker(true)}
               onToggleFavorite={() => toggleFavorite(recipe.id)}
+              isFavorite={isFavorite}
             />
 
-            {/* Mobile-only Nutrition Bento Grid (visible on < lg screens) */}
-            <div className="block lg:hidden">
-              <NutritionSnapshot nutrition={currentNutrition} servingMultiplier={servingMultiplier} />
-            </div>
-
-            {/* Ingredient List with Smart Substitutions */}
-            <IngredientList
-              ingredients={resolvedIngredients}
-              servingMultiplier={servingMultiplier}
-              swappedIngredients={swappedIngredients}
-              onOpenSubstitution={handleOpenSubstitution}
-              onQuickSwap={handleQuickSwap}
-              onResetSwaps={handleResetSwaps}
+            <IngredientsPanel 
+              ingredients={resolvedIngredients} 
+              servingMultiplier={servingMultiplier} 
+              onServingChange={setServingMultiplier} 
+              nutrition={currentNutrition}
             />
 
-            {/* Step-by-Step Instruction Pipeline with Countdown Timers */}
             <InstructionSteps steps={recipe.steps ?? []} />
           </div>
 
-          {/* Right Pane (lg:w-[35%]): Sticky Bento Box & Recipe Object Bridge */}
-          <div className="w-full lg:w-[35%] lg:sticky lg:top-20 space-y-6">
-
-            {/* Desktop Nutrition Bento Grid */}
-            <div className="hidden lg:block">
-              <NutritionSnapshot nutrition={currentNutrition} servingMultiplier={servingMultiplier} />
-            </div>
-
-            {/* Recipe Object Bridge (Quick Action Stack & Meal Plan picker) */}
-            <div className="bg-white rounded-xl p-5 border border-outline-variant/30 shadow-[0_4px_20px_rgba(45,49,48,0.05)]">
-              <RecipeObjectBridge
-                recipe={recipe}
-                isFavorite={isFavorite}
-                onToggleFavorite={() => toggleFavorite(recipe.id)}
-                onStartCooking={() => setIsCookModeOpen(true)}
-              />
-            </div>
-
-          </div>
-
         </div>
+
+        <RelatedRecipesRow currentRecipe={recipe} />
 
       </main>
 
       {/* Persistent Fixed Mobile Dock (< 768px) */}
       <nav className="lg:hidden fixed bottom-0 z-40 w-full p-3 bg-surface/95 backdrop-blur-md border-t border-outline-variant/30 flex items-center gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-        {/* Button 1: [+ Meal Plan] */}
         <button
           onClick={() => setShowMobilePlanPicker(!showMobilePlanPicker)}
-          className="flex-1 bg-surface-container-high hover:bg-surface-container border border-outline-variant/40 h-12 rounded-full flex items-center justify-center gap-2 font-bold text-xs text-on-surface transition-all cursor-pointer min-h-[48px]"
+          className="flex-1 bg-surface-container-high hover:bg-surface-container border border-outline-variant/40 rounded-full flex items-center justify-center gap-2 font-bold text-xs text-on-surface transition-all cursor-pointer min-h-[48px]"
         >
           <span className="material-symbols-outlined text-[18px] text-primary">calendar_add_on</span>
           + Meal Plan
         </button>
-
-        {/* Button 2: [Start Cooking] â€” High Contrast Primary */}
         <button
           onClick={() => setIsCookModeOpen(true)}
-          className="flex-1 bg-primary hover:bg-primary-container text-on-primary h-12 rounded-full flex items-center justify-center gap-2 font-bold text-xs transition-all active:scale-95 shadow-md cursor-pointer min-h-[48px]"
+          className="flex-1 bg-primary hover:bg-primary-container text-on-primary rounded-full flex items-center justify-center gap-2 font-bold text-xs transition-all active:scale-95 shadow-md cursor-pointer min-h-[48px]"
         >
           <span className="material-symbols-outlined text-[18px]">auto_videocam</span>
           Start Cooking
         </button>
       </nav>
 
-      {/* Flow 3 Predictive Meal Plan Modal */}
-      <AddToMealPlanModal
-        recipe={recipe}
-        isOpen={showMobilePlanPicker}
-        onClose={() => setShowMobilePlanPicker(false)}
-      />
-
-      {/* Substitution Modal Popover */}
+      {/* Modals */}
+      <AddToMealPlanModal recipe={recipe} isOpen={showMobilePlanPicker} onClose={() => setShowMobilePlanPicker(false)} />
       {selectedSub && (
         <SubstitutionModal
           isOpen={isSubOpen}
@@ -273,13 +259,7 @@ export const RecipeDetails = () => {
           onSwap={handleSwap}
         />
       )}
-
-      {/* Mobile-Optimized Ambient Cook Mode Overlay */}
-      <CookModeModal
-        recipe={recipe}
-        isOpen={isCookModeOpen}
-        onClose={() => setIsCookModeOpen(false)}
-      />
+      <CookModeModal recipe={recipe} isOpen={isCookModeOpen} onClose={() => setIsCookModeOpen(false)} />
     </div>
   );
 };
