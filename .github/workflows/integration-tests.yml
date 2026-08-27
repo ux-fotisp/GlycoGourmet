@@ -47,7 +47,7 @@ jobs:
       - name: Boot Strapi in Background
         run: |
           mv tsconfig.json tsconfig.json.bak
-          npm run develop --prefix server > strapi.log 2>&1 &
+          cd server && npm run develop > ../strapi.log 2>&1 &
         env:
           NODE_ENV: development
           HOST: 0.0.0.0
@@ -73,14 +73,22 @@ jobs:
           done
           if ! curl -s http://localhost:1337/_health; then
             echo "Strapi failed to boot. Here are the logs:"
-            cat server/strapi.log
+            cat strapi.log
             exit 1
           fi
 
       - name: Run Integration Tests
         run: |
           mv tsconfig.json.bak tsconfig.json
-          npx vitest run tests/integration/TenantScopingIntegration.spec.js || (echo '=== STRAPI LOG ===' && cat server/strapi.log && exit 1)
+          npx vitest run tests/integration/TenantScopingIntegration.spec.js || (echo '=== STRAPI LOG ===' && cat strapi.log && exit 1)
+
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: strapi-log
+          path: strapi.log
+          retention-days: 7
 
       - name: Upload Test Results
         if: always()
@@ -90,5 +98,4 @@ jobs:
           path: |
             test-results/
             coverage/
-            .tmp/data.db
           retention-days: 7
