@@ -26,6 +26,21 @@ jobs:
       - name: Install Server Dependencies
         run: npm install --prefix server
 
+      - name: Seed Database
+        run: node seed.js
+        working-directory: ./server
+        env:
+          NODE_ENV: development
+          HOST: 0.0.0.0
+          PORT: 1337
+          APP_KEYS: testKey1,testKey2
+          API_TOKEN_SALT: testApiSalt
+          ADMIN_JWT_SECRET: testAdminSecret
+          TRANSFER_TOKEN_SALT: testTransferSalt
+          JWT_SECRET: testJwtSecret
+          DATABASE_CLIENT: sqlite
+          DATABASE_FILENAME: .tmp/data.db
+
       - name: Boot Strapi in Background
         run: |
           npm run develop --prefix server &
