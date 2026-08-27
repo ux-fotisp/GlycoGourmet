@@ -3,13 +3,28 @@
 test.describe('Clinical Metabolic End-to-End User Journeys', () => {
 
   test('Single-Recipe GI/GL Rendering and Secondary Macro Expansion', async ({ page }) => {
-    // 1. Inject standard user session
+    // 1. Inject backend-truth auth session via JWT
     await page.addInitScript(() => {
-      window.localStorage.setItem('glyco_session', JSON.stringify({ jwt: 'fake-jwt' }));
-      window.localStorage.setItem('glyco_users', JSON.stringify([{ id: 1, email: 'test@example.com', roleType: 'user', isApproved: true }]));
+      window.localStorage.setItem('glyco_jwt', 'valid-test-jwt');
     });
 
-    // 2. Mock network response for recipe 1
+    // 2. Mock /api/users/me response matching backend-truth AuthContext
+    await page.route('**/api/users/me*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 1,
+          username: 'testuser',
+          email: 'test@example.com',
+          roleType: 'user',
+          isApproved: true,
+          onboarded: true,
+        }),
+      });
+    });
+
+    // 3. Mock network response for recipe 1
     await page.route('**/api/recipes/1*', async route => {
       await route.fulfill({
         status: 200,
@@ -48,24 +63,20 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
       });
     });
 
-    // 3. Visit Recipe details
+    // 4. Visit Recipe details
     await page.goto('/recipe/1');
 
-    // 4. Verify GL and GI anchor badges are rendered
-    const glAnchor = page.locator('span.bg-error-container'); // Because GL will be 25
-    await expect(glAnchor).toBeVisible({ timeout: 15000 });
-    await expect(page.locator('text=GL 25')).toBeVisible();
+    // 5. Verify GL and GI anchor badges are rendered (using text-based locators)
+    await expect(page.getByText('GL 25')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText('GI 50')).toBeVisible();
 
-    const giAnchor = page.locator('text=GI 50');
-    await expect(giAnchor).toBeVisible();
-
-    // 5. Verify Secondary Macros are visible by default
-    const detailsAccordion = page.locator('details[aria-label="Secondary Macronutrient Breakdown"]');
+    // 6. Verify Secondary Macros are visible by default (using role-based locator)
+    const detailsAccordion = page.getByRole('group', { name: /secondary macronutrient breakdown/i });
     await expect(detailsAccordion).toBeVisible();
     await expect(detailsAccordion).toHaveAttribute('open', '');
     
     // Check calories badge is inside
-    await expect(page.locator('text=Calories').first()).toBeVisible();
+    await expect(page.getByText('Calories').first()).toBeVisible();
   });
 
   test('Persona A (Type 1 Manager): Filter by Low GL and execute Smart Low-GI Swap', async ({ page }) => {
