@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 
 describe('Strapi Integration - Tenant Scoping', () => {
-  it('Dietitian B cannot see ClientProfiles owned by Dietitian A via GET /api/client-profiles', async () => {
+  it('Verifies end-to-end tenant isolation for ClientProfiles', async () => {
     
     // Read seed data
     const seedPath = path.join(__dirname, '.seed_data.json');
@@ -13,32 +13,86 @@ describe('Strapi Integration - Tenant Scoping', () => {
     }
     const seedData = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
 
-    // 4. Authenticate as Dietitian B to get a JWT
-    const authRes = await request('http://localhost:1337')
+    // --- a. Dietitian B successfully receives a real JWT ---
+    const authResB = await request('http://localhost:1337')
       .post('/api/auth/local')
       .send({
         identifier: seedData.dietitianBEmail,
         password: seedData.dietitianBPassword
       });
       
-    if (authRes.status !== 200) {
-      console.log('Diagnostic authRes.status:', authRes.status);
-      console.log('Diagnostic authRes.body:', JSON.stringify(authRes.body, null, 2));
+    if (authResB.status !== 200) {
+      console.log('authResB.status:', authResB.status);
+      console.log('authResB.body:', JSON.stringify(authResB.body));
     }
       
-    const jwtB = authRes.body.jwt;
+    const jwtB = authResB.body.jwt;
     expect(jwtB).toBeDefined();
 
-    // 5. Make a GET request to /api/client-profiles as Dietitian B
-    const res = await request('http://localhost:1337')
+    // --- b & c. Dietitian B receives HTTP 200 for GET /api/client-profiles but sees no ClientProfile owned by Dietitian A ---
+    const resB = await request('http://localhost:1337')
       .get('/api/client-profiles')
       .set('Authorization', 'Bearer ' + jwtB);
 
-    expect(res.status).toBe(200);
+    expect(resB.status).toBe(200);
+    const profilesB = resB.body.data;
+    expect(profilesB.length).toBe(0); // Should be completely empty since B has no clients
 
-    // 6. Assert that ClientProfile A is NOT in the results
-    const returnedProfiles = res.body.data;
-    // Since Dietitian B has no clients, it should just be empty
-    expect(returnedProfiles.length).toBe(0);
+    // --- d. Dietitian A can retrieve their own ClientProfile ---
+    const authResA = await request('http://localhost:1337')
+      .post('/api/auth/local')
+      .send({
+        identifier: seedData.dietitianAEmail,
+        password: seedData.dietitianAPassword
+      });
+    const jwtA = authResA.body.jwt;
+    expect(jwtA).toBeDefined();
+
+    const resA = await request('http://localhost:1337')
+      .get('/api/client-profiles')
+      .set('Authorization', 'Bearer ' + jwtA);
+
+    expect(resA.status).toBe(200);
+    const profilesA = resA.body.data;
+    expect(profilesA.length).toBeGreaterThan(0);
+    expect(profilesA[0].id).toBe(seedData.profileAId);
+
+
+    // --- e. An admin can retrieve ClientProfile records across tenants ---
+    const authResAdmin = await request('http://localhost:1337')
+      .post('/api/auth/local')
+      .send({
+        identifier: seedData.adminAEmail,
+        password: seedData.adminAPassword
+      });
+    const jwtAdmin = authResAdmin.body.jwt;
+    expect(jwtAdmin).toBeDefined();
+
+    const resAdmin = await request('http://localhost:1337')
+      .get('/api/client-profiles')
+      .set('Authorization', 'Bearer ' + jwtAdmin);
+
+    expect(resAdmin.status).toBe(200);
+    const profilesAdmin = resAdmin.body.data;
+    // Admin sees all clients (which is at least 1)
+    expect(profilesAdmin.length).toBeGreaterThan(0);
+
+    
+    // --- f. A normal patient/user account receives denial for the dietitian-only client-profile route ---
+    const authResPatient = await request('http://localhost:1337')
+      .post('/api/auth/local')
+      .send({
+        identifier: seedData.patientAEmail,
+        password: seedData.patientAPassword
+      });
+    const jwtPatient = authResPatient.body.jwt;
+    expect(jwtPatient).toBeDefined();
+
+    const resPatient = await request('http://localhost:1337')
+      .get('/api/client-profiles')
+      .set('Authorization', 'Bearer ' + jwtPatient);
+
+    // Should be denied (Forbidden) because is-dietitian-owner prevents users with roleType 'user'
+    expect([403, 401]).toContain(resPatient.status);
   });
 });
