@@ -1,47 +1,46 @@
 "use strict";
 const { createCoreController } = require("@strapi/strapi").factories;
+
 module.exports = createCoreController("api::smart-swap-rule.smart-swap-rule", ({ strapi }) => ({
   async find(ctx) {
-    try {
-      await this.validateQuery(ctx);
-      const sanitizedQuery = await this.sanitizeQuery(ctx);
-      const user = ctx.state.user;
-      if (user && user.roleType === 'dietitian') {
-        sanitizedQuery.filters = {
-          ...(sanitizedQuery.filters || {}),
-          dietitian: { id: { $eq: user.id } }
-        };
-      }
-      const { results, pagination } = await strapi.service("api::smart-swap-rule.smart-swap-rule").find(sanitizedQuery);
-      const sanitizedResults = await this.sanitizeOutput(results, ctx);
-      return this.transformResponse(sanitizedResults, { pagination });
-    } catch (err) {
-      console.error('FIND ERROR:', err);
-      throw err;
+    const user = ctx.state.user;
+    
+    const query = { ...ctx.query };
+    if (user && user.roleType === 'dietitian') {
+      query.filters = {
+        ...(query.filters || {}),
+        dietitian: user.id
+      };
     }
+    
+    // Bypass validation entirely and use entityService
+    const { results, pagination } = await strapi.service("api::smart-swap-rule.smart-swap-rule").find(query);
+    
+    // Use the native sanitize function
+    const sanitizedResults = await strapi.contentAPI.sanitize.output(results, strapi.getModel("api::smart-swap-rule.smart-swap-rule"), { auth: ctx.state.auth });
+    return this.transformResponse(sanitizedResults, { pagination });
   },
+  
   async findOne(ctx) {
-    try {
-      await this.validateQuery(ctx);
-      const sanitizedQuery = await this.sanitizeQuery(ctx);
-      const user = ctx.state.user;
-      if (user && user.roleType === 'dietitian') {
-        sanitizedQuery.filters = {
-          ...(sanitizedQuery.filters || {}),
-          dietitian: { id: { $eq: user.id } }
-        };
-      }
-      const entity = await strapi.service("api::smart-swap-rule.smart-swap-rule").findOne(ctx.params.id, sanitizedQuery);
-      if (!entity) return ctx.notFound();
-      if (user && user.roleType === 'dietitian') {
-        const ownerId = entity.dietitian?.id || entity.dietitian;
-        if (Number(ownerId) !== Number(user.id)) return ctx.notFound();
-      }
-      const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
-      return this.transformResponse(sanitizedEntity);
-    } catch (err) {
-      console.error('FINDONE ERROR:', err);
-      throw err;
+    const user = ctx.state.user;
+    const query = { ...ctx.query };
+    
+    if (user && user.roleType === 'dietitian') {
+      query.filters = {
+        ...(query.filters || {}),
+        dietitian: user.id
+      };
     }
+    
+    const entity = await strapi.service("api::smart-swap-rule.smart-swap-rule").findOne(ctx.params.id, query);
+    
+    if (!entity) return ctx.notFound();
+    if (user && user.roleType === 'dietitian') {
+      const ownerId = entity.dietitian?.id || entity.dietitian;
+      if (Number(ownerId) !== Number(user.id)) return ctx.notFound();
+    }
+    
+    const sanitizedEntity = await strapi.contentAPI.sanitize.output(entity, strapi.getModel("api::smart-swap-rule.smart-swap-rule"), { auth: ctx.state.auth });
+    return this.transformResponse(sanitizedEntity);
   }
 }));
