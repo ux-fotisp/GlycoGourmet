@@ -4,35 +4,41 @@ const { createCoreController } = require("@strapi/strapi").factories;
 module.exports = createCoreController("api::smart-swap-rule.smart-swap-rule", ({ strapi }) => ({
   async find(ctx) {
     const user = ctx.state.user;
+    let query = { ...ctx.query };
     
-    const query = { ...ctx.query };
     if (user && user.roleType === 'dietitian') {
-      query.filters = {
-        ...(query.filters || {}),
-        dietitian: user.id
+      query = {
+        ...query,
+        filters: {
+          ...(query.filters || {}),
+          dietitian: user.id
+        }
       };
     }
     
-    // Bypass validation entirely and use entityService
-    const { results, pagination } = await strapi.service("api::smart-swap-rule.smart-swap-rule").find(query);
+    // Use entityService directly to bypass sanitizeQuery limitations
+    const results = await strapi.entityService.findMany("api::smart-swap-rule.smart-swap-rule", query);
     
-    // Use the native sanitize function
+    // Sanitize with contentAPI
     const sanitizedResults = await strapi.contentAPI.sanitize.output(results, strapi.getModel("api::smart-swap-rule.smart-swap-rule"), { auth: ctx.state.auth });
-    return this.transformResponse(sanitizedResults, { pagination });
+    return this.transformResponse(sanitizedResults);
   },
   
   async findOne(ctx) {
     const user = ctx.state.user;
-    const query = { ...ctx.query };
+    let query = { ...ctx.query };
     
     if (user && user.roleType === 'dietitian') {
-      query.filters = {
-        ...(query.filters || {}),
-        dietitian: user.id
+      query = {
+        ...query,
+        filters: {
+          ...(query.filters || {}),
+          dietitian: user.id
+        }
       };
     }
     
-    const entity = await strapi.service("api::smart-swap-rule.smart-swap-rule").findOne(ctx.params.id, query);
+    const entity = await strapi.entityService.findOne("api::smart-swap-rule.smart-swap-rule", ctx.params.id, query);
     
     if (!entity) return ctx.notFound();
     if (user && user.roleType === 'dietitian') {

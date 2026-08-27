@@ -73,14 +73,14 @@ jobs:
           done
           if ! curl -s http://localhost:1337/_health; then
             echo "Strapi failed to boot. Here are the logs:"
-            cat strapi.log
+            cat server/strapi.log
             exit 1
           fi
 
       - name: Run Integration Tests
         run: |
           mv tsconfig.json.bak tsconfig.json
-          npx vitest run tests/integration/TenantScopingIntegration.spec.js
+          npx vitest run tests/integration/TenantScopingIntegration.spec.js || (echo '=== STRAPI LOG ===' && cat server/strapi.log && exit 1)
 
       - name: Upload Test Results
         if: always()
