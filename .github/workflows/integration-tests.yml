@@ -26,6 +26,9 @@ jobs:
       - name: Install Server Dependencies
         run: npm install --prefix server
 
+      - name: Create Public Dir
+        run: mkdir -p server/public
+
       - name: Seed Database
         run: node seed.js
         working-directory: ./server
