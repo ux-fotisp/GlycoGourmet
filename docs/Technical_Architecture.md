@@ -240,24 +240,23 @@ When a user executes a Smart Low-GI Swap:
 
 ---
 
-## 5. Security, RBAC & Database Invariant Guards
+## 5. Security & Authorization Architecture
 
-### 5.1 Role-Based Access Control (RBAC) State Machine
+The system employs a strict backend-truth isolation model utilizing Strapi v4's users-permissions plugin augmented with custom schema extensions, lifecycle guards, and middleware scoping.
 
-```mermaid
-stateDiagram-v2
-    [*] --> Unauthenticated
-    Unauthenticated --> Authenticated : Login / Register
-    Authenticated --> PendingApproval : isApproved === false
-    PendingApproval --> /pending-approval : Intercept & Lock Navigation
-    Authenticated --> PatientTier : isApproved === true && role === 'user'
-    Authenticated --> DietitianTier : isApproved === true && role === 'dietitian'
-    Authenticated --> AdminTier : isApproved === true && role === 'admin'
+### 5.1 Authentication & Privilege Field Protection
+- **JWT-Backed Session Refresh**: The frontend relies entirely on /api/users/me JWT verification rather than insecure local storage identity fallbacks. Invalid or missing JWTs immediately eject the session.
+- **Role Relation Retention**: The extended user schema explicitly retains the native Strapi 
+ole manyToOne relation. This prevents Strapi from dropping the column during boot, ensuring the core users-permissions middleware can accurately validate JWT roles and avoid 401 Unauthorized errors on valid tokens.
+- **Server-Side Privilege Sanitization**: Custom controllers for 
+egister and update intercept API payloads and systematically strip sensitive fields (
+oleType, isApproved, clientIds, licenseId, credential) before they reach the database, preventing client-side privilege escalation. 
 
-    PatientTier --> PersonalWorkspace : Can Author Drafts
-    DietitianTier --> AuditQueue : Can Review & Publish
-    AdminTier --> FullControl : Full Publishing & User Elevation
-```
+### 5.1.1 Tenant Scoping & Isolation
+Row-level tenant isolation is actively enforced across the four primary clinical entities (ClientProfile, MetabolicTargetCalibration, PrescribedMealPlan, SmartSwapRule):
+- **Role-Level Access**: The is-dietitian-owner policy intercepts incoming requests and verifies appropriate clinical role classification (dmin or dietitian).
+- **Row-Level Filtering**: Controllers use the canonical Strapi v4 pattern: alidateQuery -> sanitizeQuery -> server-side dietitian filter injection -> entityService.findMany/findOne -> this.sanitizeOutput -> transformResponse. This guarantees that dietitians can only retrieve, modify, or delete records belonging exclusively to their own assigned clients.
+- **CI Verification**: This isolation is continuously verified in a live GitHub Actions CI environment that boots a complete Strapi v4.25.4 instance, seeds test data, and runs end-to-end integration assertions against cross-tenant JWT requests.
 
 ### 5.2 Strapi Backend Lifecycle Invariant Guards (`lifecycles.js`)
 The Strapi database layer enforces strict rejection of physiologically invalid payloads prior to database commit:

@@ -1,31 +1,34 @@
 # Changelog
 
+All notable changes to GlycoGourmet will be documented in this file.
 
-### Chunk 15
-* CI Strapi runtime boot established
-* Live HTTP authentication fixture corrected
+## [Phase 4: Security Hardening & CI Verification] — Chunks 9–17
+- **Authentication Modernization**: Removed insecure localStorage identity fallbacks. Frontend now strictly relies on /api/users/me JWT backend-truth verification.
+- **Server-Side Privilege Protection**: Locked down Strapi 
+egister and update controllers to systematically strip privileged fields (
+oleType, isApproved, clientIds, licenseId) from incoming payloads, preventing client-side forgery.
+- **Role Relation Schema Fix (401 Resolution)**: Restored the native 
+ole manyToOne relation in users-permissions schema extension, ensuring valid JWTs are correctly authorized without throwing 401s.
+- **Tenant Isolation (500 Resolution)**: Enforced strict row-level scoping across clinical entities (client-profile, metabolic-target-calibration, prescribed-meal-plan, smart-swap-rule) using a canonical Strapi v4 override pattern (alidateQuery -> sanitizeQuery -> server-side dietitian filter -> entityService -> sanitizeOutput).
+- **Live CI Integration Testing**: Built a GitHub Actions pipeline that boots a live Strapi v4.25.4 instance, seeds SQLite test data, and runs real E2E cross-tenant isolation assertions (verified green in GitHub Actions runs 33101524223 and 33102014459).
+- **Single-Recipe Metabolic Display (Chunk 17)**: Connected the deterministic metabolic engine output directly to RecipeDetails.jsx. 
+  - GI/GL values now accurately reflect scaled ingredients.
+  - Rendered explicit portion scaling labels (per 1x serving) in NutritionSnapshot.
+  - Expanded secondary macros natively (<details open>) with an accessible 48px hit target, providing Calories, Total Carbohydrates, Protein, and Total Fat. Missing fields predictably display —.
+- **E2E & Unit Test Upgrades**: Modernized the E2E suite (metabolicJourneys.spec.ts) with strict backend JWT injection and semantic accessible locators. Currently 271 passing unit tests and 1 passing multi-tenant integration suite.
 
-## [Unreleased] - Chunks 9-12
-- **Security**: Fixed trust boundary by removing localStorage auth fallbacks. Locked down Strapi 
-egister and update controllers to prevent client-side role forgery.
-- **Tenancy**: Activated true row-level tenant isolation via is-dietitian-owner.js across all 4 clinical entities (ClientProfile, MetabolicTargetCalibration, PrescribedMealPlan, SmartSwapRule).
-- **Testing**: Backfilled entity security tests and lifecycle tests. Total passing test count: 271.
-- **Metabolic Engine**: Standardized calculateNetCarbs helper usage. Aggregation now fully supports multi-day clinical rollups with carbohydrate-weighted average Glycemic Load (calculateDailyRollup, calculateWeeklyAdherence, applyServingScale).
-- **Housekeeping**: Removed scratch artifacts, unified file structures, and synced architecture docs.
+## [Phase 3: Recipe Lifecycle, Planning & Audits]
+- **Recipe Lifecycle Gating**: Implemented Draft/Public status mechanisms and preview modes. 
+- **Dietitian Audit Queue**: Implemented discrepancy flags when author inputs deviate from the deterministic calculation engine (e.g. deltaGL > 1.0 or deltaNetCarbs > 1.0g).
+- **Plan Functions & Presets**: Enabled safe meal plan duplication across the 7-day calendar scheduler, tracking daily GL adherence targets.
+- **Smart Low-GI Swaps**: Automatically detects high-GI staples and pairs them with clinical low-GI alternatives, dynamically recalculating the recipe's metabolic profile without page reloads.
 
-### Chunk 16 (Part A & B) � Tenant Isolation Authorization & Scoping Verification (VERIFIED)
-* **Auth & Role Schema Fix (401 Resolution):** Restored the native `role` manyToOne relation in `server/src/extensions/users-permissions/content-types/user/schema.json`. Without this relation definition, Strapi dropped the role relation in the DB schema on boot, causing Strapi's authentication middleware to return 401 Unauthorized when validating valid JWTs against users with null roles.
-* **Tenant Isolation Controller Pattern (500 Resolution):** Implemented the canonical Strapi v4 controller override pattern across all 4 clinical entities (`client-profile`, `metabolic-target-calibration`, `prescribed-meal-plan`, `smart-swap-rule`):
-  1. `await this.validateQuery(ctx)` and `await this.sanitizeQuery(ctx)`
-  2. Server-side injection of `dietitian: user.id` filter for dietitian roles
-  3. Query execution via `strapi.entityService.findMany` / `findOne`
-  4. Output sanitization via `this.sanitizeOutput(entities, ctx)`
-  5. Response transformation via `this.transformResponse(sanitizedEntities)`
-* **End-to-End CI Verification:** Verified passing on GitHub Actions (runs 33079017457 and 33079705050). The live integration test (`tests/integration/TenantScopingIntegration.spec.js`) boots a real Strapi v4.25.4 instance and confirms:
-  - Dietitian B authenticates via `/api/auth/local` and obtains a valid JWT
-  - `GET /api/client-profiles` returns HTTP 200 with 0 records (Dietitian A's profiles are completely hidden)
-  - Dietitian A receives HTTP 200 with their own profile records
-  - Admin user receives HTTP 200 with full cross-tenant visibility
-  - Patient user is rejected with HTTP 403/401
-* **Recipe Detail Metabolic Display:** Fixed `RecipeDetails.jsx` so `resolvedIngredients` retains full ingredient reference (`ingredient: ing`), enabling `calculateMetabolicProfile` and `applyServingScale` to calculate exact GL and GI values. Kept secondary macros accessible via `<details open>` with accessible 48px touch targets in `NutritionSnapshot.jsx`.
-* **Test Suite Alignment:** Updated unit tests (`TenantScopingController.spec.js`, `NutritionSnapshot.spec.jsx`) and E2E test (`metabolicJourneys.spec.ts`) to conform to backend-truth auth models and semantic role/text locators. Local Vitest suite: 271 unit tests passing.
+## [Phase 2: Deterministic Engine & USDA Integration]
+- **Metabolic Engine (metabolicEngine.ts)**: Built a pure (1)$ math engine decoupled from UI state, evaluating Glycemic Load via carbohydrate-weighted GI interpolation and zero-division protections.
+- **Thermal Preparation Multipliers**: Enforced scientifically backed GI modifiers for preparation states (e.g., roasted, cooled, mashed).
+- **USDA FoodData Central Ingestion**: Implemented foundation for live nutrient data fetching and normalization into the engine's core schema.
+
+## [Phase 1: Original Platform & Design System]
+- **OOUX-Driven Information Architecture**: Designed the progressive disclosure bento-grid (NutritionSnapshot) and deep green visual token system (#1B3B22 to #386A20).
+- **WCAG 2.1 AA Compliance**: Standardized ARIA schemas, min-h-[48px] interactive touch targets, and high-contrast color pairings.
+- **Strapi CMS Bootstrapping**: Scaffolded the underlying headless CMS capabilities and headless schema mapping.
