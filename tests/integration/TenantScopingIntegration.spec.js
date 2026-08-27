@@ -46,6 +46,39 @@ describe('Strapi Integration - Tenant Scoping', () => {
 
     }
     
+    
+    // --- DIAGNOSTIC BLOCK (PHASE 2) ---
+    // Fetch registered actions/permissions
+    try {
+      // 1. Log response error name/message
+      console.log('Diagnostic resB error name/message:', resB.body?.error?.name, resB.body?.error?.message);
+
+      // We use the admin JWT to fetch the role and permissions
+      const roleRes = await request(app)
+        .get('/api/users-permissions/roles')
+        .set('Authorization', 'Bearer ' + jwtAdmin);
+      
+      const authRole = roleRes.body.roles?.find(r => r.type === 'authenticated');
+      console.log('Diagnostic Built-in Authenticated Role ID:', authRole?.id);
+      
+      if (authRole?.id) {
+        const permRes = await request(app)
+          .get('/api/users-permissions/roles/' + authRole.id)
+          .set('Authorization', 'Bearer ' + jwtAdmin);
+        
+        console.log('Diagnostic Role Permissions:', JSON.stringify(permRes.body.role?.permissions, null, 2));
+      }
+      
+      const meRes = await request(app)
+        .get('/api/users/me?populate=role')
+        .set('Authorization', 'Bearer ' + jwtB);
+      console.log('Diagnostic Dietitian B role attachment:', meRes.body.role?.type);
+      
+    } catch (err) {
+      console.log('Diagnostic block failed:', err.message);
+    }
+    // ----------------------------------
+
     expect(resB.status).toBe(200);
     const profilesB = resB.body.data;
     expect(profilesB.length).toBe(0); // Should be completely empty since B has no clients
