@@ -1,0 +1,45 @@
+﻿{
+  "kind": "collectionType",
+  "collectionName": "client_profiles",
+  "info": {
+    "singularName": "client-profile",
+    "pluralName": "client-profiles",
+    "displayName": "Client Profile",
+    "description": "Dietitian-managed client profile linking a patient user to clinical configuration"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "dietitian": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "description": "The dietitian who manages this client profile (1:N)"
+    },
+    "patient": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "description": "The patient user who is the subject of this profile (1:1)"
+    },
+    "diabeticSubtype": {
+      "type": "enumeration",
+      "enum": ["T1D", "T2D", "GDM", "Prediabetes", "InsulinResistance"],
+      "required": true,
+      "description": "Clinical diabetic classification for glycemic target calibration"
+    },
+    "dietaryRestrictions": {
+      "type": "json",
+      "description": "JSON array of dietary restriction strings (e.g. ['gluten-free', 'dairy-free'])"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["active", "archived"],
+      "default": "active",
+      "required": true,
+      "description": "Profile lifecycle status — archived profiles are read-only"
+    }
+  }
+}

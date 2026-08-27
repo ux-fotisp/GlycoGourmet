@@ -3,7 +3,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext(null);
 
 // Default localization + accessibility preferences
-// Default localization + accessibility preferences
 const DEFAULT_SETTINGS = {
   unitSystem: 'imperial',      // 'imperial' | 'metric'
   glucoseUnit: 'mgdl',         // 'mgdl' | 'mmoll'
@@ -14,9 +13,12 @@ const DEFAULT_SETTINGS = {
   roleType: 'admin',
 };
 
-// Pre-seed demo user in localStorage if not exists
+// Pre-seed demo users in localStorage if not exists
 const preseedDemoUser = () => {
   const users = JSON.parse(localStorage.getItem('glyco_users') || '{}');
+  let changed = false;
+
+  // Original admin demo user
   if (!users['demo@glyco.com']) {
     users['demo@glyco.com'] = {
       name: 'Chef Julian',
@@ -31,6 +33,50 @@ const preseedDemoUser = () => {
       isApproved: true,
       roleType: 'admin',
     };
+    changed = true;
+  }
+
+  // Dietitian demo user
+  if (!users['dietitian@glyco.com']) {
+    users['dietitian@glyco.com'] = {
+      name: 'Dr. Sarah Chen',
+      email: 'dietitian@glyco.com',
+      password: 'dietitian123',
+      preferences: [],
+      onboarded: true,
+      favorites: [],
+      unitSystem: 'metric',
+      glucoseUnit: 'mmoll',
+      visualDensity: 'comfortable',
+      isApproved: true,
+      roleType: 'dietitian',
+      licenseId: 'RDN-2024-0042',
+      credential: 'RDN',
+      clinicName: 'Glycemic Wellness Center',
+      clientIds: [],
+    };
+    changed = true;
+  }
+
+  // Patient demo user
+  if (!users['patient@glyco.com']) {
+    users['patient@glyco.com'] = {
+      name: 'Alex Rivera',
+      email: 'patient@glyco.com',
+      password: 'patient123',
+      preferences: ['Type 1 Diabetic', 'Low GI'],
+      onboarded: true,
+      favorites: [],
+      unitSystem: 'imperial',
+      glucoseUnit: 'mgdl',
+      visualDensity: 'comfortable',
+      isApproved: true,
+      roleType: 'user',
+    };
+    changed = true;
+  }
+
+  if (changed) {
     localStorage.setItem('glyco_users', JSON.stringify(users));
   }
 };
@@ -48,6 +94,11 @@ const buildSession = (u) => ({
   visualDensity: u.visualDensity || DEFAULT_SETTINGS.visualDensity,
   isApproved: u.isApproved !== undefined ? u.isApproved : true,
   roleType: u.roleType || 'admin',
+  // Dietitian-specific metadata (safe defaults for non-dietitian users)
+  clientIds: u.clientIds || [],
+  licenseId: u.licenseId || null,
+  credential: u.credential || null,
+  clinicName: u.clinicName || null,
 });
 
 export const AuthProvider = ({ children }) => {
@@ -67,6 +118,11 @@ export const AuthProvider = ({ children }) => {
           ...userData,
           isApproved: userData.isApproved !== undefined ? userData.isApproved : true,
           roleType: userData.roleType || 'admin',
+          // Backfill dietitian metadata for legacy sessions
+          clientIds: userData.clientIds || [],
+          licenseId: userData.licenseId || null,
+          credential: userData.credential || null,
+          clinicName: userData.clinicName || null,
         };
         setUser(hydrated);
         setIsAuthenticated(true);
@@ -92,6 +148,11 @@ export const AuthProvider = ({ children }) => {
             ...user,
             isApproved: freshData.isApproved !== undefined ? freshData.isApproved : true,
             roleType: freshData.roleType || user?.roleType || 'user',
+            // Refresh dietitian metadata
+            clientIds: freshData.clientIds || user?.clientIds || [],
+            licenseId: freshData.licenseId || user?.licenseId || null,
+            credential: freshData.credential || user?.credential || null,
+            clinicName: freshData.clinicName || user?.clinicName || null,
           };
           setUser(updated);
           localStorage.setItem('glyco_session', JSON.stringify(updated));
@@ -109,6 +170,10 @@ export const AuthProvider = ({ children }) => {
             ...user,
             isApproved: dbUser.isApproved !== undefined ? dbUser.isApproved : true,
             roleType: dbUser.roleType || user.roleType || 'user',
+            clientIds: dbUser.clientIds || user.clientIds || [],
+            licenseId: dbUser.licenseId || user.licenseId || null,
+            credential: dbUser.credential || user.credential || null,
+            clinicName: dbUser.clinicName || user.clinicName || null,
           };
           setUser(updated);
           localStorage.setItem('glyco_session', JSON.stringify(updated));

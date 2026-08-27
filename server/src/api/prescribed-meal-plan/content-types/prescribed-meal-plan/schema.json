@@ -1,0 +1,53 @@
+﻿{
+  "kind": "collectionType",
+  "collectionName": "prescribed_meal_plans",
+  "info": {
+    "singularName": "prescribed-meal-plan",
+    "pluralName": "prescribed-meal-plans",
+    "displayName": "Prescribed Meal Plan",
+    "description": "7-day meal plan prescribed by a dietitian for a client profile"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "clientProfile": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::client-profile.client-profile",
+      "description": "The client profile this meal plan is prescribed for (N:1)"
+    },
+    "dietitian": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "description": "The dietitian who created/owns this meal plan"
+    },
+    "weekStartDate": {
+      "type": "date",
+      "required": true,
+      "description": "ISO date (YYYY-MM-DD) marking the Monday of the plan week"
+    },
+    "scheduledSlots": {
+      "type": "json",
+      "required": true,
+      "description": "JSON map: { [DayOfWeek]: { [OccasionType]: RecipeId } } — up to 42 addressable slots"
+    },
+    "cumulativeDailyGL": {
+      "type": "json",
+      "description": "JSON map: { [DayOfWeek]: number } — daily cumulative Glycemic Load totals"
+    },
+    "cumulativeDailyNetCarbs": {
+      "type": "json",
+      "description": "JSON map: { [DayOfWeek]: number } — daily cumulative net carbohydrate totals"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["draft", "active", "archived"],
+      "default": "active",
+      "required": true,
+      "description": "Plan lifecycle: only one 'active' plan per client at a time"
+    }
+  }
+}

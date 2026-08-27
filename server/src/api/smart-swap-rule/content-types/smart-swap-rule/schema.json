@@ -1,0 +1,48 @@
+﻿{
+  "kind": "collectionType",
+  "collectionName": "smart_swap_rules",
+  "info": {
+    "singularName": "smart-swap-rule",
+    "pluralName": "smart-swap-rules",
+    "displayName": "Smart Swap Rule",
+    "description": "Dietitian-defined auto-substitution rule for low-GI ingredient alternatives"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "clientProfile": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::client-profile.client-profile",
+      "description": "The client profile this swap rule applies to (N:1)"
+    },
+    "sourceIngredient": {
+      "type": "string",
+      "required": true,
+      "description": "Identifier of the ingredient to be replaced (ingredient ID or name)"
+    },
+    "targetIngredient": {
+      "type": "string",
+      "required": true,
+      "description": "Identifier of the low-GI substitute ingredient"
+    },
+    "scope": {
+      "type": "string",
+      "default": "all-plans",
+      "required": true,
+      "description": "'all-plans' to apply globally, or a specific PrescribedMealPlan ID"
+    },
+    "reason": {
+      "type": "text",
+      "description": "Clinical rationale for this substitution rule"
+    },
+    "createdByDietitian": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "description": "The dietitian who defined this swap rule"
+    }
+  }
+}

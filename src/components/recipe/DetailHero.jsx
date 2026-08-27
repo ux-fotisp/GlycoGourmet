@@ -1,6 +1,7 @@
 import React from 'react';
 import { usePreferences } from '../../context/UserPreferences';
 import { formatMediaUrl } from '../../utils/mediaUtils';
+import ServingStepper from './ServingStepper';
 
 /**
  * DetailHero — Interactive Hero Header with chromatic GL progress meter,

@@ -14,6 +14,8 @@ import Settings from '../pages/Settings';
 import MyRecipes from '../pages/MyRecipes';
 import MealPlans from '../pages/MealPlans';
 import PendingApproval from '../pages/PendingApproval';
+import ClientRoster from '../pages/ClientRoster';
+import PlanBuilder from '../pages/PlanBuilder';
 
 /**
  * AppRoutes — React Router Navigation Hierarchy & Route Map
@@ -22,6 +24,7 @@ import PendingApproval from '../pages/PendingApproval';
  * - Public routes: /login, /register
  * - Base Protected routes: /onboarding, /pending-approval, /recipe/:id
  * - Permission-Gated routes: /recipes/mine, /meal-plans, /admin-editor, /admin, /admin/audit-queue
+ * - Dietitian-Gated routes: /client-roster, /client/:id/plan-builder
  */
 export const AppRoutes = () => {
   return (
@@ -53,6 +56,12 @@ export const AppRoutes = () => {
 
           <Route element={<ProtectedRoute requiredPermission="canPublishPublic" />}>
             <Route path="/admin/audit-queue" element={<DraftAuditQueue />} />
+          </Route>
+
+          {/* Dietitian Clinical Workspace Routes */}
+          <Route element={<ProtectedRoute requiredPermission="canManageClients" />}>
+            <Route path="/client-roster" element={<ClientRoster />} />
+            <Route path="/client/:id/plan-builder" element={<PlanBuilder />} />
           </Route>
         </Route>
 

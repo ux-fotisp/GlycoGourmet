@@ -1,0 +1,67 @@
+﻿{
+  "kind": "collectionType",
+  "collectionName": "audit_records",
+  "info": {
+    "singularName": "audit-record",
+    "pluralName": "audit-records",
+    "displayName": "Audit Record",
+    "description": "Discrepancy audit comparing author-claimed vs. engine-calculated nutritional values"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "recipe": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::recipe.recipe",
+      "description": "The recipe being audited (1:0..1 — at most one audit per recipe)"
+    },
+    "authorGL": {
+      "type": "decimal",
+      "required": true,
+      "description": "Glycemic Load value as claimed by the recipe author"
+    },
+    "systemGL": {
+      "type": "decimal",
+      "required": true,
+      "description": "Glycemic Load value recalculated by the metabolic engine from USDA data"
+    },
+    "deltaGL": {
+      "type": "decimal",
+      "description": "Absolute difference |authorGL - systemGL|"
+    },
+    "authorNetCarbs": {
+      "type": "decimal",
+      "required": true,
+      "description": "Net carbohydrate value as claimed by the recipe author"
+    },
+    "systemNetCarbs": {
+      "type": "decimal",
+      "required": true,
+      "description": "Net carbohydrate value recalculated by the metabolic engine"
+    },
+    "deltaNetCarbs": {
+      "type": "decimal",
+      "description": "Absolute difference |authorNetCarbs - systemNetCarbs|"
+    },
+    "flagged": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if any delta exceeds the 1.0 discrepancy threshold"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["passed", "pending", "rejected"],
+      "default": "passed",
+      "description": "Audit verdict — 'pending' enforced automatically when discrepancy > 1.0"
+    },
+    "auditedByDietitian": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "description": "The dietitian who performed or reviewed this audit"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+﻿{
+  "kind": "collectionType",
+  "collectionName": "metabolic_target_calibrations",
+  "info": {
+    "singularName": "metabolic-target-calibration",
+    "pluralName": "metabolic-target-calibrations",
+    "displayName": "Metabolic Target Calibration",
+    "description": "Per-client clinical glycemic target and bolus timing configuration"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "clientProfile": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::client-profile.client-profile",
+      "description": "One-to-one link to the client profile this calibration belongs to"
+    },
+    "glTargetDaily": {
+      "type": "decimal",
+      "default": 45,
+      "required": true,
+      "description": "Target daily Glycemic Load budget (e.g. 45-60 GL/day)"
+    },
+    "bolusOffsetMinutes": {
+      "type": "integer",
+      "default": 15,
+      "required": true,
+      "description": "Pre-meal bolus timing offset in minutes (e.g. 15-30 min)"
+    },
+    "netCarbCapDaily": {
+      "type": "decimal",
+      "description": "Optional daily net carbohydrate cap in grams"
+    },
+    "calorieBudgetDaily": {
+      "type": "integer",
+      "description": "Optional daily calorie target"
+    },
+    "glucoseUnit": {
+      "type": "enumeration",
+      "enum": ["mg/dL", "mmol/L"],
+      "default": "mg/dL",
+      "description": "Preferred glucose measurement unit for display"
+    },
+    "updatedByDietitian": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "description": "The dietitian who last updated this calibration"
+    }
+  }
+}

@@ -1,7 +1,9 @@
-/**
+﻿/**
  * Strapi Users & Permissions Plugin Server Extension
  * Overrides auth controllers to enforce isApproved = false on Google OAuth registration
  * and RBAC default role type assignment.
+ *
+ * Extended with dietitian credential fields (licenseId, credential, clinicName, onboarded).
  */
 module.exports = (plugin) => {
   const sanitizeUser = (user) => ({
@@ -11,6 +13,10 @@ module.exports = (plugin) => {
     provider: user.provider,
     isApproved: user.isApproved ?? false,
     roleType: user.roleType || 'user',
+    onboarded: user.onboarded ?? false,
+    licenseId: user.licenseId || null,
+    credential: user.credential || null,
+    clinicName: user.clinicName || null,
     auditNotes: user.auditNotes || '',
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,

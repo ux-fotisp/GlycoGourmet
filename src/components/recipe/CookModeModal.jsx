@@ -104,7 +104,7 @@ export const CookModeModal = ({ recipe, isOpen, onClose }) => {
       role="dialog"
       aria-modal="true"
       aria-label="Hands-free Cook Mode"
-      className="fixed inset-0 z-[200] bg-inverse-surface text-inverse-on-surface font-body-md overflow-hidden flex flex-col justify-between"
+      className="fixed inset-0 z-[200] bg-[#121A13] text-[#FFFFFF] font-body-md overflow-hidden flex flex-col justify-between"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -182,10 +182,10 @@ export const CookModeModal = ({ recipe, isOpen, onClose }) => {
           </div>
         ) : (
           <article className="w-full text-center space-y-lg px-2">
-            <h2 className="font-display text-2xl md:text-4xl text-primary-fixed-dim font-bold tracking-tight">
+            <h2 className="font-serif text-2xl md:text-4xl text-[#FFFFFF] font-bold tracking-tight">
               {currentStepData.title}
             </h2>
-            <p className="font-sans text-xl md:text-2xl leading-relaxed text-inverse-on-surface max-w-3xl mx-auto font-medium py-4">
+            <p className="font-serif text-xl md:text-2xl leading-relaxed text-[#FFFFFF]/90 max-w-3xl mx-auto font-medium py-4">
               {currentStepData.description}
             </p>
             {currentStepData.timer && (

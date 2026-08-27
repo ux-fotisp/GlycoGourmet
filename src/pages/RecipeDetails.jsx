@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { getRecipeById, saveRecipe } from '../utils/recipeStore';
-import { calculateRecipeNutrition, scaleNutrition, getIngredientById } from '../utils/nutritionCalculator';
+import { getIngredientById } from '../utils/nutritionCalculator';
+import { applyServingScale } from '../services/metabolicEngine';
 import DetailHero from '../components/recipe/DetailHero';
 import NutritionSnapshot from '../components/recipe/NutritionSnapshot';
 import IngredientList from '../components/recipe/IngredientList';

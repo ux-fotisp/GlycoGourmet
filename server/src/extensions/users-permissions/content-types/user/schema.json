@@ -1,9 +1,9 @@
-{
+﻿{
   "kind": "collectionType",
   "collectionName": "up_users",
   "info": {
     "name": "user",
-    "description": "Extended Strapi User content-type with RBAC & Admin Approval Workflow",
+    "description": "Extended Strapi User content-type with RBAC, Admin Approval Workflow & Dietitian credentials",
     "singularName": "user",
     "pluralName": "users",
     "displayName": "User"
@@ -70,6 +70,28 @@
       "default": "user",
       "configurable": true,
       "description": "Clinical role assignment for RBAC permissions"
+    },
+    "onboarded": {
+      "type": "boolean",
+      "default": false,
+      "configurable": true,
+      "description": "Whether the user has completed the onboarding flow"
+    },
+    "licenseId": {
+      "type": "string",
+      "configurable": true,
+      "description": "Professional license identifier (dietitian role only)"
+    },
+    "credential": {
+      "type": "enumeration",
+      "enum": ["RDN", "CDCES", "LDN", "MD"],
+      "configurable": true,
+      "description": "Professional credential type (dietitian role only)"
+    },
+    "clinicName": {
+      "type": "string",
+      "configurable": true,
+      "description": "Affiliated clinic or practice name (dietitian role only)"
     },
     "auditNotes": {
       "type": "text",
