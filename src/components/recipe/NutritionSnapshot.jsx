@@ -1,14 +1,14 @@
-import React from 'react';
+﻿import React from 'react';
 import NutritionBadge from '../ui/NutritionBadge';
 import { usePreferences } from '../../context/UserPreferences';
 
 /**
- * NutritionSnapshot — Metabolic Bento Grid with Progressive Disclosure
+ * NutritionSnapshot - Metabolic Bento Grid with Progressive Disclosure
  *
  * Keeps primary anchors (GL, GI, Net Carbs, Fiber) continuously visible,
- * while rendering secondary macros (Calories, Fat, Protein) inside a collapsible accordion.
+ * while rendering secondary macros (Calories, Carbs, Fat, Protein) inside a collapsible accordion.
  */
-export const NutritionSnapshot = ({ nutrition }) => {
+export const NutritionSnapshot = ({ nutrition, servingMultiplier = 1 }) => {
   const { dailyGlTarget = 45 } = usePreferences();
 
   const gl = Math.round(nutrition?.glycemicLoad ?? 0);
@@ -35,9 +35,9 @@ export const NutritionSnapshot = ({ nutrition }) => {
           <span className="material-symbols-outlined text-primary text-xl">analytics</span>
           Nutritional Snapshot
         </h3>
-        <div className="flex items-center gap-1 text-on-surface-variant text-xs">
+        <div className="flex items-center gap-1 text-on-surface-variant text-xs bg-surface-container px-2 py-1 rounded-full border border-outline-variant/30">
           <span className="material-symbols-outlined text-[16px]">info</span>
-          <span className="font-label-md">Portion-adjusted calculation</span>
+          <span className="font-label-md font-bold">per {servingMultiplier}× serving</span>
         </div>
       </div>
 
@@ -79,7 +79,7 @@ export const NutritionSnapshot = ({ nutrition }) => {
           </span>
           <div className="flex items-baseline gap-1.5 mt-1">
             <span className="bg-white border border-outline-variant/60 text-on-surface px-2.5 py-0.5 rounded-full font-bold text-sm">
-              GI {gi !== null && gi !== undefined ? Math.round(gi) : '—'}
+              GI {gi !== null && gi !== undefined ? Math.round(gi) : '\u2014'}
             </span>
           </div>
           <span className={`text-[10px] font-medium mt-1 ${giColor}`}>
@@ -109,35 +109,62 @@ export const NutritionSnapshot = ({ nutrition }) => {
             <span className="material-symbols-outlined text-[18px] group-open:rotate-180 transition-transform">
               expand_more
             </span>
-            Secondary Macros (Calories, Fat, Protein)
+            Secondary Macros (Calories, Carbs, Fat, Protein)
           </span>
           <span className="text-[10px] font-normal text-on-surface-variant group-open:hidden">
             Tap to expand breakdown
           </span>
         </summary>
 
-        <div className="grid grid-cols-3 gap-3 pt-3 border-t border-outline-variant/20 mt-2">
+        <dl className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 border-t border-outline-variant/20 mt-2">
           {/* Calories */}
-          <NutritionBadge
-            label="Calories"
-            value={nutrition?.kcal !== undefined ? Math.round(nutrition.kcal) : null}
-            unit=" kcal"
-          />
+          <div className="contents">
+            <dt className="sr-only">Calories</dt>
+            <dd className="w-full">
+              <NutritionBadge
+                label="Calories"
+                value={nutrition?.kcal !== undefined ? Math.round(nutrition.kcal) : null}
+                unit=" kcal"
+              />
+            </dd>
+          </div>
+
+          {/* Total Carbs */}
+          <div className="contents">
+            <dt className="sr-only">Total Carbohydrates</dt>
+            <dd className="w-full">
+              <NutritionBadge
+                label="Total Carbs"
+                value={nutrition?.carbs !== undefined ? Math.round(nutrition.carbs * 10) / 10 : null}
+                unit="g"
+              />
+            </dd>
+          </div>
 
           {/* Protein */}
-          <NutritionBadge
-            label="Protein"
-            value={nutrition?.protein !== undefined ? Math.round(nutrition.protein * 10) / 10 : null}
-            unit="g"
-          />
+          <div className="contents">
+            <dt className="sr-only">Protein</dt>
+            <dd className="w-full">
+              <NutritionBadge
+                label="Protein"
+                value={nutrition?.protein !== undefined ? Math.round(nutrition.protein * 10) / 10 : null}
+                unit="g"
+              />
+            </dd>
+          </div>
 
           {/* Total Fat */}
-          <NutritionBadge
-            label="Total Fat"
-            value={nutrition?.fat !== undefined ? Math.round(nutrition.fat * 10) / 10 : null}
-            unit="g"
-          />
-        </div>
+          <div className="contents">
+            <dt className="sr-only">Total Fat</dt>
+            <dd className="w-full">
+              <NutritionBadge
+                label="Total Fat"
+                value={nutrition?.fat !== undefined ? Math.round(nutrition.fat * 10) / 10 : null}
+                unit="g"
+              />
+            </dd>
+          </div>
+        </dl>
       </details>
     </div>
   );

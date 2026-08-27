@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { getRecipeById, saveRecipe } from '../utils/recipeStore';
 import { getIngredientById } from '../utils/nutritionCalculator';
@@ -21,7 +21,7 @@ import { useAuth } from '../context/AuthContext';
  *
  * Restructured with OOUX object-relationship mapping and Don Norman design principles:
  * - Mobile (< 768px): Single-column view with persistent fixed bottom dock (+ Meal Plan & Start Cooking)
- * - Desktop (≥ 1024px): Asymmetric split-pane layout (Left 65% hero/ingredients/steps, Right 35% sticky bento/bridge)
+ * - Desktop (â‰¥ 1024px): Asymmetric split-pane layout (Left 65% hero/ingredients/steps, Right 35% sticky bento/bridge)
  */
 export const RecipeDetails = () => {
   const { id } = useParams();
@@ -193,7 +193,7 @@ export const RecipeDetails = () => {
 
             {/* Mobile-only Nutrition Bento Grid (visible on < lg screens) */}
             <div className="block lg:hidden">
-              <NutritionSnapshot nutrition={currentNutrition} />
+              <NutritionSnapshot nutrition={currentNutrition} servingMultiplier={servingMultiplier} />
             </div>
 
             {/* Ingredient List with Smart Substitutions */}
@@ -215,7 +215,7 @@ export const RecipeDetails = () => {
 
             {/* Desktop Nutrition Bento Grid */}
             <div className="hidden lg:block">
-              <NutritionSnapshot nutrition={currentNutrition} />
+              <NutritionSnapshot nutrition={currentNutrition} servingMultiplier={servingMultiplier} />
             </div>
 
             {/* Recipe Object Bridge (Quick Action Stack & Meal Plan picker) */}
@@ -245,7 +245,7 @@ export const RecipeDetails = () => {
           + Meal Plan
         </button>
 
-        {/* Button 2: [Start Cooking] — High Contrast Primary */}
+        {/* Button 2: [Start Cooking] â€” High Contrast Primary */}
         <button
           onClick={() => setIsCookModeOpen(true)}
           className="flex-1 bg-primary hover:bg-primary-container text-on-primary h-12 rounded-full flex items-center justify-center gap-2 font-bold text-xs transition-all active:scale-95 shadow-md cursor-pointer min-h-[48px]"
