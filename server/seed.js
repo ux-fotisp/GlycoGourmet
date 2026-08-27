@@ -1,7 +1,7 @@
 const Strapi = require('@strapi/strapi');
 
 async function seed() {
-  const strapi = await Strapi({ distDir: './dist', appDir: '.', serveAdminPanel: false }).load();
+  const strapi = await Strapi({ appDir: '.', serveAdminPanel: false }).load();
 
   // Create Dietitian A
   const dietitianA = await strapi.entityService.create('plugin::users-permissions.user', {
