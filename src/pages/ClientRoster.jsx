@@ -5,9 +5,10 @@ import { getClientProfiles, createClientProfile, updateClientCalibration } from 
 import { calculateWeeklyAdherence } from '../services/metabolicEngine';
 import ClientOnboardingWizard from '../components/dietitian/ClientOnboardingWizard';
 import ClientCalibrationDrawer from '../components/dietitian/ClientCalibrationDrawer';
+import FeatureGate from '../components/common/FeatureGate';
 
 /**
- * ClientRoster - Clinical surveillance workspace with advanced forecasting badges.
+ * ClientRoster - Clinical surveillance workspace with advanced forecasting badges and SaaS feature gates.
  */
 export const ClientRoster = () => {
   const { user } = useAuth();
@@ -48,6 +49,10 @@ export const ClientRoster = () => {
     setIsDrawerOpen(true);
   };
 
+  const handleBulkFHIRExport = () => {
+    alert(`Exporting ${clients.length} patient records into HL7 FHIR JSON Bundle...`);
+  };
+
   const getAdherenceColor = (score) => {
     if (score >= 80) return { bg: 'bg-success-surface', dot: 'bg-brand-strong', text: 'text-brand-strong' }; // Sage Green
     if (score >= 50) return { bg: 'bg-warning-surface', dot: 'bg-warning-strong', text: 'text-warning-strong' }; // Amber
@@ -77,13 +82,32 @@ export const ClientRoster = () => {
                 Active Caseload: <strong className="text-on-surface">{clients.length} patients</strong>
               </p>
             </div>
-            <button 
-              onClick={() => setIsWizardOpen(true)}
-              className="bg-primary text-on-primary font-bold px-6 py-2.5 rounded-full text-xs flex items-center gap-2 hover:bg-primary-container hover:text-on-primary-container active:scale-95 transition-all shadow-sm min-h-[44px] cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-[18px]">person_add</span>
-              Add New Client
-            </button>
+
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* Enterprise Feature Gated Bulk EHR FHIR Export Button */}
+              <FeatureGate
+                requiredTier="ENTERPRISE"
+                featureName="Bulk EHR (FHIR) Export"
+                fallbackType="upsellOverlay"
+              >
+                <button 
+                  type="button"
+                  onClick={handleBulkFHIRExport}
+                  className="bg-surface-container-high text-on-surface hover:bg-surface-container border border-outline-variant/40 font-bold px-4 py-2.5 rounded-full text-xs flex items-center gap-2 transition-all min-h-[44px] cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[18px]">download_for_offline</span>
+                  Export Roster to EHR (FHIR)
+                </button>
+              </FeatureGate>
+
+              <button 
+                onClick={() => setIsWizardOpen(true)}
+                className="bg-primary text-on-primary font-bold px-6 py-2.5 rounded-full text-xs flex items-center gap-2 hover:bg-primary-container hover:text-on-primary-container active:scale-95 transition-all shadow-sm min-h-[44px] cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[18px]">person_add</span>
+                Add New Client
+              </button>
+            </div>
           </div>
           
           <div className="flex flex-col md:flex-row gap-4 items-center">

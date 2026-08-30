@@ -1,7 +1,7 @@
 ﻿import { useAuth } from '../context/AuthContext';
 
 /**
- * usePermissions — Reactive Multi-Tenant Role-Based Permission & Feature Gating Hook
+ * usePermissions — Reactive Multi-Tenant Role-Based Permission & SaaS Feature Gating Hook
  *
  * Evaluates the current authenticated user's roleType, approval status, and clinic tenant context:
  * - canCreateDrafts: True for User, Dietitian, ClinicAdmin, and Admin (if isApproved !== false)
@@ -11,6 +11,9 @@
  * - canManageClinic: True ONLY for ClinicAdmin and SuperAdmin (if isApproved !== false)
  * - canViewCrossRoster: True for ClinicAdmin and SuperAdmin (cross-dietitian visibility within clinicId)
  * - canShareTemplates: True if clinic tier is CLINIC_PRO or ENTERPRISE
+ * - canExportBulkFHIR: True ONLY if clinic tier is ENTERPRISE
+ * - canAccessPredictiveAnalytics: True if clinic tier is CLINIC_PRO or ENTERPRISE
+ * - hasSSOEnabled: True ONLY if clinic tier is ENTERPRISE
  * - isPendingAudit: True if isApproved === false
  * - validateTenantAccess(entityClinicId): Validates tenant boundary against user.clinicId
  */
@@ -28,6 +31,9 @@ export function usePermissions() {
       canManageClinic: false,
       canViewCrossRoster: false,
       canShareTemplates: false,
+      canExportBulkFHIR: false,
+      canAccessPredictiveAnalytics: false,
+      hasSSOEnabled: false,
       isPendingAudit: false,
       role: null,
       isApproved: false,
@@ -41,7 +47,7 @@ export function usePermissions() {
   const isApproved = user.isApproved !== false;
   const isPendingAudit = user.isApproved === false;
   const clinicId = user.clinicId || user.clinic?.id || null;
-  const clinicTier = user.clinicTier || user.clinic?.tier || 'INDEPENDENT';
+  const clinicTier = user.clinicTier || user.clinic?.tier || (user.clinic ? 'INDEPENDENT' : 'INDEPENDENT');
 
   const canCreateDrafts = isApproved && ['user', 'dietitian', 'clinic_admin', 'admin', 'super_admin'].includes(role);
   const canPublishPublic = isApproved && ['dietitian', 'clinic_admin', 'admin', 'super_admin'].includes(role);
@@ -52,6 +58,11 @@ export function usePermissions() {
   const canManageClinic = isApproved && ['clinic_admin', 'super_admin'].includes(role);
   const canViewCrossRoster = isApproved && ['clinic_admin', 'super_admin'].includes(role);
   const canShareTemplates = isApproved && ['CLINIC_PRO', 'ENTERPRISE'].includes(clinicTier);
+
+  // SaaS Subscription Tier Boundaries
+  const canExportBulkFHIR = isApproved && (clinicTier === 'ENTERPRISE' || role === 'super_admin');
+  const canAccessPredictiveAnalytics = isApproved && (['CLINIC_PRO', 'ENTERPRISE'].includes(clinicTier) || role === 'super_admin');
+  const hasSSOEnabled = isApproved && (clinicTier === 'ENTERPRISE' || role === 'super_admin');
 
   /**
    * Validates whether an entity belonging to `entityClinicId` is accessible by the current tenant user.
@@ -70,6 +81,9 @@ export function usePermissions() {
     canManageClinic,
     canViewCrossRoster,
     canShareTemplates,
+    canExportBulkFHIR,
+    canAccessPredictiveAnalytics,
+    hasSSOEnabled,
     isPendingAudit,
     role,
     isApproved,
