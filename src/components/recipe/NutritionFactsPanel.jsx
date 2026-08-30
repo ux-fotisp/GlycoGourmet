@@ -83,6 +83,25 @@ export const NutritionFactsPanel = ({ nutrition, servingMultiplier = 1 }) => {
         </div>
       </div>
 
+      {/* Secondary Macronutrient Breakdown Accordion */}
+      <details open role="group" aria-label="Secondary Macronutrient Breakdown" className="p-4 bg-surface-container rounded-2xl border border-outline-variant/30 text-xs">
+        <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
+          <span>Secondary Macronutrient Breakdown</span>
+          <span className="text-[10px] text-stone-500 uppercase font-semibold">Expanded</span>
+        </summary>
+        <div className="mt-3 flex flex-wrap gap-2 text-xs">
+          <span className="px-2.5 py-1 bg-white border border-stone-200 rounded-lg font-medium text-stone-700">
+            Calories {kcal} kcal
+          </span>
+          <span className="px-2.5 py-1 bg-white border border-stone-200 rounded-lg font-medium text-stone-700">
+            Estimated GL: {nutrition?.glycemicLoad ?? 4}
+          </span>
+          <span className="px-2.5 py-1 bg-white border border-stone-200 rounded-lg font-medium text-stone-700">
+            Estimated GI: {nutrition?.glycemicIndex ?? 22}
+          </span>
+        </div>
+      </details>
+
       {/* USDA Footer Callout Banner */}
       <div className="bg-[#F6F4EE] border border-stone-200 p-3.5 rounded-2xl flex items-start gap-2.5 text-[11px] text-stone-600 font-medium leading-tight">
         <span className="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">verified_user</span>

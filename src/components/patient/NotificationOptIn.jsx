@@ -60,7 +60,7 @@ export const NotificationOptIn = () => {
         <button
           type="button"
           onClick={() => setIsDismissed(true)}
-          className="text-xs font-bold text-stone-500 hover:text-stone-700 px-3 py-2 rounded-xl transition-colors cursor-pointer"
+          className="text-xs font-bold text-stone-700 hover:text-stone-900 px-3 py-2 rounded-xl transition-colors cursor-pointer"
         >
           Dismiss
         </button>

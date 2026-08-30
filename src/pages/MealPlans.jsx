@@ -158,7 +158,7 @@ export const MealPlans = () => {
             <span className="material-symbols-outlined text-[18px]">check_circle</span>
             <span>{duplicateSuccessMsg}</span>
           </div>
-          <button onClick={() => setDuplicateSuccessMsg('')} className="text-stone-500 hover:text-stone-800">
+          <button onClick={() => setDuplicateSuccessMsg('')} className="text-stone-700 hover:text-stone-800">
             <span className="material-symbols-outlined text-sm">close</span>
           </button>
         </div>
@@ -204,7 +204,7 @@ export const MealPlans = () => {
                       aria-label="Duplicate Day"
                       title={`Duplicate ${day}'s meals to another day`}
                       onClick={() => setActiveDuplicateModal(day)}
-                      className="p-1 rounded-lg text-stone-400 hover:text-[#1B3B22] hover:bg-stone-100 transition-colors"
+                      className="p-1 rounded-lg text-stone-600 hover:text-[#1B3B22] hover:bg-stone-100 transition-colors"
                     >
                       <span className="material-symbols-outlined text-[16px]">content_copy</span>
                     </button>
@@ -233,7 +233,7 @@ export const MealPlans = () => {
                         style={{ width: `${fillWidth}%` }}
                       />
                     </div>
-                    <div className="text-[10px] text-stone-500 font-medium text-right">
+                    <div className="text-[10px] text-stone-700 font-medium text-right">
                       {totalNetCarbs}g Net Carbs
                     </div>
                   </div>
@@ -262,7 +262,7 @@ export const MealPlans = () => {
                         <h4 className="font-bold text-xs text-[#1B3B22] group-hover:text-[#386A20] transition-colors line-clamp-1 mt-1">
                           {meal.title}
                         </h4>
-                        <div className="flex items-center justify-between text-[10px] text-stone-500 pt-1 mt-1 border-t border-stone-200/50">
+                        <div className="flex items-center justify-between text-[10px] text-stone-700 pt-1 mt-1 border-t border-stone-200/50">
                           <span>GI: {meal.nutrition.glycemicIndex ?? '--'}</span>
                           <span>{meal.nutrition.netCarbs}g carbs</span>
                         </div>

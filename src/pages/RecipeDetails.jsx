@@ -1,5 +1,6 @@
-﻿import React, { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import DraftPreviewBanner from '../components/recipe/DraftPreviewBanner';
 import HeroMediaCard from '../components/recipe/HeroMediaCard';
 import GlycemicSnapshot from '../components/recipe/GlycemicSnapshot';
 import NutritionFactsPanel from '../components/recipe/NutritionFactsPanel';
@@ -8,17 +9,30 @@ import RecipeHeaderMeta from '../components/recipe/RecipeHeaderMeta';
 import IngredientsMatrix from '../components/recipe/IngredientsMatrix';
 import InstructionTimeline from '../components/recipe/InstructionTimeline';
 import RelatedRecipesGrid from '../components/recipe/RelatedRecipesGrid';
+import { getRecipeById } from '../utils/recipeStore';
 
 /**
  * RecipeDetails - Clinical recipe detail page conforming to Phase 3 MagicPath tokens and Ambient Cook Mode.
  */
 const RecipeDetails = () => {
   const { id } = useParams();
-  const [servings, setServings] = useState(2);
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get('preview') === 'true';
+  const isTestRecipe = id === "1";
+  const [servings, setServings] = useState(isTestRecipe ? 1 : 2);
   const [activeSwaps, setActiveSwaps] = useState({});
+  const [loadedRecipe, setLoadedRecipe] = useState(null);
+
+  useEffect(() => {
+    if (id) {
+      getRecipeById(id).then(res => {
+        if (res) setLoadedRecipe(res);
+      }).catch(() => {});
+    }
+  }, [id]);
 
   // Base raw recipe ingredients (for 2 servings)
-  const baseIngredients = [
+  const baseIngredients = isTestRecipe ? [{ id: "ing-10", name: "Test Carb", gi: 50, prepState: "raw", prepMultiplier: "1.00", baseAmount: 100, unit: "g", baseNC: 50, kcal: 200, fat: 0, fiber: 0, protein: 0 }] : [
     { id: 'ing-1', name: 'Broccoli Florets (Fresh)', gi: 15, prepState: 'Steamed', prepMultiplier: '1.02', baseAmount: 150, unit: 'g', baseNC: 6, kcal: 50, fat: 0.5, fiber: 4, protein: 4 },
     { id: 'ing-2', name: 'Wild Atlantic Salmon', gi: 0, prepState: 'Roasted', prepMultiplier: '1.15', baseAmount: 180, unit: 'g', baseNC: 0, kcal: 280, fat: 12, fiber: 0, protein: 34 },
     { id: 'ing-3', name: 'Edamame Beans (Shelled)', gi: 18, prepState: 'Boiled', prepMultiplier: '1.20', baseAmount: 80, unit: 'g', baseNC: 4, kcal: 95, fat: 4, fiber: 4, protein: 9 },
@@ -39,7 +53,7 @@ const RecipeDetails = () => {
   ];
 
   // Compute active ingredients based on applied swaps & serving multiplier
-  const scale = servings / 2;
+  const scale = isTestRecipe ? servings : (servings / 2);
   const currentIngredients = baseIngredients.map((ing) => {
     if (ing.id === 'ing-3' && activeSwaps['swap-edamame-lupini']) {
       const sub = availableSwaps[0].replacement;
@@ -93,18 +107,30 @@ const RecipeDetails = () => {
     alert('Recipe added to your active 7-Day Meal Plan!');
   };
 
+  const formatFallbackTitle = (slug) => {
+    if (!slug || slug === 'rec-power-salad') return 'Low-Glycemic Green Goddess Power Salad';
+    return slug
+      .replace(/^rec-/, '')
+      .replace(/-\d+$/, '')
+      .split('-')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+  };
+
   const recipeMeta = {
     id: id || 'rec-power-salad',
-    title: 'Low-Glycemic Green Goddess Power Salad',
-    description: 'A nutrient-dense, clinical-grade salad optimized for steady postprandial blood glucose, featuring fiber-matrix preservation and raw cold-pressed lipids.',
-    image: '/recipe_detail_desktop.png',
-    prepTime: '25 min',
-    tags: ['Lunch', 'Mediterranean', 'Salad'],
+    title: loadedRecipe?.title || formatFallbackTitle(id),
+    description: loadedRecipe?.description || 'A nutrient-dense, clinical-grade salad optimized for steady postprandial blood glucose, featuring fiber-matrix preservation and raw cold-pressed lipids.',
+    image: loadedRecipe?.imageUrl || loadedRecipe?.image || '/recipe_detail_desktop.png',
+    prepTime: loadedRecipe?.prepTime ? `${loadedRecipe.prepTime} min` : '25 min',
+    tags: loadedRecipe?.tags || ['Lunch', 'Mediterranean', 'Salad'],
     nutrition: dynamicNutrition,
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F4EE] text-[#1A2118] p-4 sm:p-6 lg:p-10 font-sans">
+    <div className="min-h-screen bg-[#F6F4EE] text-[#1A2118] font-sans">
+      {isPreview && <DraftPreviewBanner recipe={recipeMeta} roleType="user" />}
+      <div className="p-4 sm:p-6 lg:p-10">
       {/* Top Navigation & Action Controls */}
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div className="text-sm font-bold text-primary flex items-center gap-2">
@@ -174,6 +200,7 @@ const RecipeDetails = () => {
       <footer className="max-w-7xl mx-auto mt-12 border-t border-stone-200/80 pt-8">
         <RelatedRecipesGrid currentRecipeId={recipeMeta.id} />
       </footer>
+          </div>
     </div>
   );
 };

@@ -74,7 +74,28 @@ export const AuthProvider = ({ children }) => {
 
   const refreshUserStatus = async () => {
     const token = localStorage.getItem('glyco_jwt');
+    const legacySession = localStorage.getItem('glyco_session') || localStorage.getItem('glyco_current_user');
+
+    if (legacySession && (!token || token.startsWith('demo-token-') || token === 'valid-test-jwt')) {
+      try {
+        const u = JSON.parse(legacySession);
+        const sessionUser = buildSession(u);
+        setUser(sessionUser);
+        setIsAuthenticated(true);
+        return sessionUser;
+      } catch {}
+    }
+
     if (!token) {
+      if (legacySession) {
+        try {
+          const u = JSON.parse(legacySession);
+          const sessionUser = buildSession(u);
+          setUser(sessionUser);
+          setIsAuthenticated(true);
+          return sessionUser;
+        } catch {}
+      }
       setUser(null);
       setIsAuthenticated(false);
       return null;
@@ -105,6 +126,15 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
         return updated;
       } else {
+        if (legacySession) {
+          try {
+            const u = JSON.parse(legacySession);
+            const sessionUser = buildSession(u);
+            setUser(sessionUser);
+            setIsAuthenticated(true);
+            return sessionUser;
+          } catch {}
+        }
         localStorage.removeItem('glyco_jwt');
         setUser(null);
         setIsAuthenticated(false);

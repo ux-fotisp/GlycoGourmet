@@ -205,7 +205,7 @@ export const Navbar = () => {
             }`}
           >
             <span className="material-symbols-outlined text-[20px]">settings</span>
-            <span>Settings</span>
+            <span>Profile Settings</span>
           </Link>
         </nav>
 
@@ -213,7 +213,7 @@ export const Navbar = () => {
         <div className="px-sm pt-xs border-t border-outline-variant">
           <div className="p-sm rounded-xl bg-surface-container flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-2xl">account_circle</span>
+              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">{user?.name ? user.name.charAt(0).toUpperCase() : "C"}</div>
               <div className="flex flex-col min-w-0">
                 <span className="text-xs font-bold text-on-surface truncate leading-tight">
                   {user?.name || 'Chef User'}

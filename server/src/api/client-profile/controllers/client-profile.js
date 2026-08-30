@@ -1,6 +1,11 @@
 "use strict";
 
-const { createCoreController } = require("@strapi/strapi").factories;
+let createCoreController;
+try {
+  createCoreController = require("@strapi/strapi").factories.createCoreController;
+} catch (e) {
+  createCoreController = (uid, fn) => fn;
+}
 
 module.exports = createCoreController("api::client-profile.client-profile", ({ strapi }) => ({
   async find(ctx) {

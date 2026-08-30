@@ -32,13 +32,11 @@ export const HeroMediaCard = ({ recipe }) => {
       <div className="absolute bottom-4 left-4 z-10">
         <div className="bg-black/60 backdrop-blur-md border border-white/20 px-4 py-2 rounded-2xl flex items-center gap-4 text-white text-xs font-bold shadow-lg">
           <div className="flex items-center gap-1">
-            <span className="text-white/70 font-medium text-[10px] uppercase tracking-wider">GI</span>
-            <span className="font-extrabold text-sm">{gi}</span>
+            <span className="font-extrabold text-sm" data-testid="recipe-gi-badge">GI {gi}</span>
           </div>
           <span className="w-1 h-1 rounded-full bg-white/40" />
           <div className="flex items-center gap-1">
-            <span className="text-white/70 font-medium text-[10px] uppercase tracking-wider">GL</span>
-            <span className="font-extrabold text-sm text-sage-bg">{gl}</span>
+            <span className="font-extrabold text-sm text-sage-bg voice-pulse" data-testid="recipe-gl-badge">GL {gl}</span>
           </div>
           <span className="w-1 h-1 rounded-full bg-white/40" />
           <div className="flex items-center gap-1">
