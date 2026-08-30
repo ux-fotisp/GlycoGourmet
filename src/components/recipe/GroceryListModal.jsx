@@ -1,48 +1,65 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
+import { useOfflineMutation } from '../../hooks/useOfflineMutation';
+
+const categories = [
+  { key: 'produce', title: 'Produce & Fresh Vegetables', icon: 'nutrition', color: 'text-emerald-700' },
+  { key: 'proteins', title: 'Lean Proteins & Seafood', icon: 'set_meal', color: 'text-amber-800' },
+  { key: 'dairy', title: 'Dairy & Plant Alternatives', icon: 'egg_alt', color: 'text-blue-700' },
+  { key: 'pantry', title: 'Pantry & Whole Grains', icon: 'grain', color: 'text-amber-900' },
+  { key: 'spices', title: 'Spices, Herbs & Oils', icon: 'eco', color: 'text-teal-700' },
+  { key: 'other', title: 'Other Essentials', icon: 'inventory_2', color: 'text-stone-700' },
+];
 
 /**
- * GroceryListModal - Categorized Grocery Shopping Checklist with offline persistence and print support.
+ * GroceryListModal — Interactive, categorized 7-day grocery shopping checklist with offline mutation support.
  */
 export const GroceryListModal = ({ isOpen, onClose, manifest }) => {
+  const { mutate } = useOfflineMutation();
+  const [copied, setCopied] = useState(false);
   const [checkedItems, setCheckedItems] = useState(() => {
     try {
-      const saved = localStorage.getItem('glyco_checked_grocery_items');
+      const saved = localStorage.getItem('glyco_grocery_checks');
       return saved ? JSON.parse(saved) : {};
     } catch {
       return {};
     }
   });
 
-  const [copied, setCopied] = useState(false);
-
   useEffect(() => {
-    try {
-      localStorage.setItem('glyco_checked_grocery_items', JSON.stringify(checkedItems));
-    } catch {}
-  }, [checkedItems]);
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' && isOpen) onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
 
-  if (!isOpen || !manifest) return null;
+  if (!isOpen) return null;
 
-  const toggleItem = (key) => {
-    setCheckedItems((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  const toggleItem = async (itemKey) => {
+    const nextState = !checkedItems[itemKey];
+    const updated = {
+      ...checkedItems,
+      [itemKey]: nextState,
+    };
+    setCheckedItems(updated);
+    localStorage.setItem('glyco_grocery_checks', JSON.stringify(updated));
+
+    // Offline-resilient sync mutation
+    await mutate('/api/grocery-checks', 'POST', {
+      itemKey,
+      checked: nextState,
+      updatedAt: new Date().toISOString(),
+    });
   };
 
-  const clearAll = () => {
+  const clearAll = async () => {
     setCheckedItems({});
+    localStorage.removeItem('glyco_grocery_checks');
+    await mutate('/api/grocery-checks/reset', 'POST', {
+      timestamp: Date.now(),
+    });
   };
 
-  const categories = [
-    { key: 'produce', title: 'Produce & Greens', icon: 'nutrition', color: 'text-emerald-700' },
-    { key: 'proteins', title: 'Proteins & Seafood', icon: 'egg_alt', color: 'text-amber-700' },
-    { key: 'dairy', title: 'Dairy & Alternatives', icon: 'local_drink', color: 'text-sky-700' },
-    { key: 'pantry', title: 'Grains & Pantry Staples', icon: 'inventory_2', color: 'text-stone-700' },
-    { key: 'other', title: 'Other Items', icon: 'shopping_bag', color: 'text-stone-600' },
-  ];
-
-  // Calculate totals
   let totalItems = 0;
   let checkedCount = 0;
 
@@ -60,7 +77,7 @@ export const GroceryListModal = ({ isOpen, onClose, manifest }) => {
   const percentComplete = totalItems > 0 ? Math.round((checkedCount / totalItems) * 100) : 0;
 
   const handleCopyText = () => {
-    let text = '?? GlycoGourmet 7-Day Grocery Shopping Manifest\n\n';
+    let text = '📋 GlycoGourmet 7-Day Grocery Shopping Manifest\n\n';
     categories.forEach(({ key, title }) => {
       const items = manifest[key] || [];
       if (items.length > 0) {
@@ -80,7 +97,7 @@ export const GroceryListModal = ({ isOpen, onClose, manifest }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in print:p-0 print:bg-transparent">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in print:p-0 print:bg-transparent font-sans">
       <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl border border-stone-200 overflow-hidden font-sans text-[#1A2118] print:max-h-none print:shadow-none print:border-0 print:rounded-none">
         
         {/* Header */}

@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { UserPreferencesProvider } from './context/UserPreferences';
 import AppRoutes from './routes/AppRoutes';
 import PwaUpdater from './components/common/PwaUpdater';
+import NetworkStatusToast from './components/common/NetworkStatusToast';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <UserPreferencesProvider>
           <AppRoutes />
           <PwaUpdater />
+          <NetworkStatusToast />
         </UserPreferencesProvider>
       </AuthProvider>
     </HashRouter>

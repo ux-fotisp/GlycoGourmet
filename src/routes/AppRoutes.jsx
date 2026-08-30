@@ -13,6 +13,7 @@ import DraftAuditQueue from '../pages/DraftAuditQueue';
 import Settings from '../pages/Settings';
 import MyRecipes from '../pages/MyRecipes';
 import MealPlans from '../pages/MealPlans';
+import GroceryList from '../pages/GroceryList';
 import PendingApproval from '../pages/PendingApproval';
 import ClientRoster from '../pages/ClientRoster';
 import PlanBuilder from '../pages/PlanBuilder';
@@ -24,7 +25,7 @@ import ClinicLibrary from '../pages/ClinicLibrary';
  *
  * Configures:
  * - Public routes: /login, /register
- * - Base Protected routes: /onboarding, /pending-approval, /recipe/:id
+ * - Base Protected routes: /onboarding, /pending-approval, /recipe/:id, /grocery-list
  * - Permission-Gated routes: /recipes/mine, /meal-plans, /admin-editor, /admin, /admin/audit-queue
  * - Dietitian-Gated routes: /client-roster, /client/:id/plan-builder, /clinic-library
  * - Clinic Admin Workspace: /clinic-dashboard
@@ -47,6 +48,7 @@ export const AppRoutes = () => {
           <Route path="/recipes" element={<Dashboard />} />
           <Route path="/recipes/all" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/grocery-list" element={<GroceryList />} />
 
           {/* Recipe Details */}
           <Route path="/recipe/:id" element={<RecipeDetails />} />
