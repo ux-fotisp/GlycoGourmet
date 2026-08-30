@@ -1,29 +1,8 @@
-﻿'use strict';
+'use strict';
 
 /**
- * Tenant Isolation Policy — Dietitian Scope Guard
+ * Tenant Isolation Policy - Dietitian Scope Guard
  * Path: server/src/policies/is-dietitian-owner.js
- *
- * Ensures that dietitian-role users can only access ClientProfile records
- * (and their dependent entities: MetabolicTargetCalibration, PrescribedMealPlan,
- * SmartSwapRule) that are associated with their own user ID via the
- * dietitian relation.
- *
- * Usage (route config):
- *   config: {
- *     policies: ['global::is-dietitian-owner']
- *   }
- *
- * IMPLEMENTATION STATUS: Draft scaffold — tenant-scoped query injection
- * requires Strapi middleware integration in a future chunk.
- *
- * TODO (Chunk N):
- *   1. For find/findOne: inject ilters: { dietitian: ctx.state.user.id }
- *      into the query so dietitians never see other dietitians' client data.
- *   2. For create: validate that data.dietitian matches ctx.state.user.id.
- *   3. For update/delete: verify the target entity's dietitian matches the
- *      authenticated user before allowing mutation.
- *   4. Admin-role users bypass this policy entirely.
  */
 
 module.exports = async (policyContext, config, { strapi }) => {
@@ -44,14 +23,65 @@ module.exports = async (policyContext, config, { strapi }) => {
     return false;
   }
 
-  // --- Dietitian tenant scoping ---
-  // At this stage the user is a confirmed dietitian.
-  // The calling route handler is responsible for filtering queries by
-  // dietitian: user.id. This policy confirms the role gate only.
-  //
-  // Full query-level tenant isolation (injecting filters into entityService
-  // calls) will be implemented as a Strapi middleware in a subsequent chunk
-  // to avoid duplicating filter logic across every controller action.
+  const method = policyContext.request.method;
 
-  return true;
+  // 1. For read queries (find / findOne)
+  if (method === 'GET') {
+    // Note: Query mutation here (policyContext.query.filters) is dropped by Strapi v4's
+    // core sanitizeQuery. The actual tenant isolation for GET requests is explicitly
+    // enforced via custom controller overrides for each entity.
+    // This policy just validates the role for GET requests.
+    return true;
+  }
+
+  // 2. For create (POST)
+  if (method === 'POST') {
+    if (policyContext.request.body && policyContext.request.body.data) {
+      // Coerce the payload to belong to the authenticated dietitian
+      policyContext.request.body.data.dietitian = user.id;
+    }
+    return true;
+  }
+
+  // 3. For update / delete (PUT / DELETE)
+  if (method === 'PUT' || method === 'DELETE') {
+    const recordId = policyContext.params.id;
+    if (!recordId) return false;
+
+    const modelUid = config.uid;
+    if (!modelUid) {
+      console.warn('is-dietitian-owner policy requires a uid in its config');
+      return false;
+    }
+
+    try {
+      const existingRecord = await strapi.entityService.findOne(modelUid, recordId, {
+        populate: ['dietitian'],
+      });
+
+      if (!existingRecord) {
+        return false; // Reject if not found
+      }
+
+      // Check if the record belongs to the dietitian
+      const dietitianId = existingRecord.dietitian?.id || existingRecord.dietitian;
+      if (Number(dietitianId) !== Number(user.id)) {
+        return false; // 403 Forbidden
+      }
+
+      // Ensure they don't try to change the dietitian owner on update
+      if (method === 'PUT') {
+        if (policyContext.request.body && policyContext.request.body.data && policyContext.request.body.data.dietitian !== undefined) {
+           policyContext.request.body.data.dietitian = user.id;
+        }
+      }
+
+      return true;
+    } catch (err) {
+      console.error('Tenant Scoping Policy Error:', err);
+      return false;
+    }
+  }
+
+  return false;
 };

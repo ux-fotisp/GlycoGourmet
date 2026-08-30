@@ -15,7 +15,9 @@
     "test:e2e": "playwright test",
     "test:a11y": "playwright test tests/a11y/contrastAudit.spec.ts",
     "validate-db": "node scripts/validateNutritionDatabase.js",
-    "seed:content": "node scripts/seedNewRecipes.js"
+    "seed:content": "node scripts/seedNewRecipes.js",
+    "test:integration:docker": "docker-compose up -d --build && npm run test:integration:wait && docker-compose down",
+    "test:integration:wait": "npx vitest run tests/integration/TenantScopingIntegration.spec.js"
   },
   "dependencies": {
     "react": "^19.2.7",
@@ -38,6 +40,7 @@
     "tailwindcss": "^4.3.2",
     "typescript": "^7.0.2",
     "vite": "^8.1.1",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "supertest": "^6.3.3"
   }
 }

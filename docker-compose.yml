@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  strapi:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: glycogourmet-strapi
+    container_name: glycogourmet-strapi
+    ports:
+      - '1337:1337'
+    volumes:
+      - ./server:/opt/app
+      - /opt/app/node_modules
+      - /opt/app/build
+      - /opt/app/.tmp
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=1337
+      - APP_KEYS=testKey1,testKey2
+      - API_TOKEN_SALT=testApiSalt
+      - ADMIN_JWT_SECRET=testAdminSecret
+      - TRANSFER_TOKEN_SALT=testTransferSalt
+      - JWT_SECRET=testJwtSecret
+      - DATABASE_CLIENT=sqlite
+      - DATABASE_FILENAME=.tmp/data.db
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:1337/_health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5

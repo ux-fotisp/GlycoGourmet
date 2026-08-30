@@ -103,8 +103,8 @@ export const NutritionSnapshot = ({ nutrition }) => {
       </div>
 
       {/* Secondary Macros Collapsible Accordion (Progressive Disclosure) */}
-      <details className="group border border-outline-variant/30 rounded-xl p-3 bg-surface-container-low/40 transition-all">
-        <summary className="font-bold text-xs text-on-surface cursor-pointer flex items-center justify-between select-none py-1">
+      <details open className="group border border-outline-variant/30 rounded-xl p-3 bg-surface-container-low/40 transition-all" aria-label="Secondary Macronutrient Breakdown">
+        <summary className="font-bold text-xs text-on-surface cursor-pointer flex items-center justify-between select-none py-1 min-h-[48px]">
           <span className="flex items-center gap-1.5 text-primary">
             <span className="material-symbols-outlined text-[18px] group-open:rotate-180 transition-transform">
               expand_more

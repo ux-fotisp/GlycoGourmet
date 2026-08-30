@@ -2,103 +2,56 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
-// Default localization + accessibility preferences
 const DEFAULT_SETTINGS = {
-  unitSystem: 'imperial',      // 'imperial' | 'metric'
-  glucoseUnit: 'mgdl',         // 'mgdl' | 'mmoll'
-  visualDensity: 'comfortable', // 'comfortable' | 'compact'
-  favorites: [],
-  onboarded: false,
-  isApproved: true,
-  roleType: 'admin',
+  unitSystem: 'imperial',
+  glucoseUnit: 'mgdl',
+  visualDensity: 'comfortable',
 };
 
-// Pre-seed demo users in localStorage if not exists
 const preseedDemoUser = () => {
   const users = JSON.parse(localStorage.getItem('glyco_users') || '{}');
   let changed = false;
 
-  // Original admin demo user
   if (!users['demo@glyco.com']) {
     users['demo@glyco.com'] = {
-      name: 'Chef Julian',
-      email: 'demo@glyco.com',
-      password: 'demo123',
-      preferences: ['Type 2 Diabetic', 'High Protein', 'Low GI'],
-      onboarded: true,
-      favorites: [],
-      unitSystem: 'imperial',
-      glucoseUnit: 'mgdl',
-      visualDensity: 'comfortable',
-      isApproved: true,
-      roleType: 'admin',
+      name: 'Chef Julian', email: 'demo@glyco.com', password: 'demo123', preferences: ['Type 2 Diabetic', 'High Protein', 'Low GI'], onboarded: true, favorites: [], unitSystem: 'imperial', glucoseUnit: 'mgdl', visualDensity: 'comfortable', isApproved: true, roleType: 'admin'
     };
     changed = true;
   }
-
-  // Dietitian demo user
   if (!users['dietitian@glyco.com']) {
     users['dietitian@glyco.com'] = {
-      name: 'Dr. Sarah Chen',
-      email: 'dietitian@glyco.com',
-      password: 'dietitian123',
-      preferences: [],
-      onboarded: true,
-      favorites: [],
-      unitSystem: 'metric',
-      glucoseUnit: 'mmoll',
-      visualDensity: 'comfortable',
-      isApproved: true,
-      roleType: 'dietitian',
-      licenseId: 'RDN-2024-0042',
-      credential: 'RDN',
-      clinicName: 'Glycemic Wellness Center',
-      clientIds: [],
+      name: 'Dr. Sarah Chen', email: 'dietitian@glyco.com', password: 'dietitian123', preferences: [], onboarded: true, favorites: [], unitSystem: 'metric', glucoseUnit: 'mmoll', visualDensity: 'comfortable', isApproved: true, roleType: 'dietitian', licenseId: 'RDN-2024-0042', credential: 'RDN', clinicName: 'Glycemic Wellness Center', clientIds: []
     };
     changed = true;
   }
-
-  // Patient demo user
   if (!users['patient@glyco.com']) {
     users['patient@glyco.com'] = {
-      name: 'Alex Rivera',
-      email: 'patient@glyco.com',
-      password: 'patient123',
-      preferences: ['Type 1 Diabetic', 'Low GI'],
-      onboarded: true,
-      favorites: [],
-      unitSystem: 'imperial',
-      glucoseUnit: 'mgdl',
-      visualDensity: 'comfortable',
-      isApproved: true,
-      roleType: 'user',
+      name: 'Alex Rivera', email: 'patient@glyco.com', password: 'patient123', preferences: ['Type 1 Diabetic', 'Low GI'], onboarded: true, favorites: [], unitSystem: 'imperial', glucoseUnit: 'mgdl', visualDensity: 'comfortable', isApproved: true, roleType: 'user'
     };
     changed = true;
   }
-
   if (changed) {
     localStorage.setItem('glyco_users', JSON.stringify(users));
   }
 };
 
-// Build a clean session object from a stored user record
 const buildSession = (u) => ({
   id: u.id || 1,
-  name: u.name,
   email: u.email,
+  name: u.name || u.username,
   preferences: u.preferences || [],
-  onboarded: u.onboarded !== undefined ? u.onboarded : true,
   favorites: u.favorites || [],
+  onboarded: u.onboarded || false,
   unitSystem: u.unitSystem || DEFAULT_SETTINGS.unitSystem,
   glucoseUnit: u.glucoseUnit || DEFAULT_SETTINGS.glucoseUnit,
   visualDensity: u.visualDensity || DEFAULT_SETTINGS.visualDensity,
   isApproved: u.isApproved !== undefined ? u.isApproved : true,
-  roleType: u.roleType || 'admin',
-  // Dietitian-specific metadata (safe defaults for non-dietitian users)
+  roleType: u.roleType || 'user',
   clientIds: u.clientIds || [],
   licenseId: u.licenseId || null,
   credential: u.credential || null,
   clinicName: u.clinicName || null,
+  auditNotes: u.auditNotes || '',
 });
 
 export const AuthProvider = ({ children }) => {
@@ -106,202 +59,181 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Expose demo credentials ONLY if explicit flag is set
+  // This flag MUST NEVER be true in a deployed environment
+  const ENABLE_DEMO_AUTH = import.meta.env.VITE_ENABLE_DEMO_AUTH === 'true';
+
   useEffect(() => {
-    preseedDemoUser();
-    const activeSession = localStorage.getItem('glyco_session');
-    if (activeSession) {
-      try {
-        const userData = JSON.parse(activeSession);
-        // Backfill any missing fields for sessions created before this update
-        const hydrated = {
-          ...DEFAULT_SETTINGS,
-          ...userData,
-          isApproved: userData.isApproved !== undefined ? userData.isApproved : true,
-          roleType: userData.roleType || 'admin',
-          // Backfill dietitian metadata for legacy sessions
-          clientIds: userData.clientIds || [],
-          licenseId: userData.licenseId || null,
-          credential: userData.credential || null,
-          clinicName: userData.clinicName || null,
-        };
-        setUser(hydrated);
-        setIsAuthenticated(true);
-      } catch (e) {
-        localStorage.removeItem('glyco_session');
-      }
+    if (ENABLE_DEMO_AUTH) {
+      preseedDemoUser();
     }
-    setIsLoading(false);
+    refreshUserStatus().finally(() => {
+      setIsLoading(false);
+    });
   }, []);
 
-  // Poll/refresh current user status from Strapi /api/users/me or localStorage
   const refreshUserStatus = async () => {
-    setIsLoading(true);
+    const token = localStorage.getItem('glyco_jwt');
+    if (!token) {
+      setUser(null);
+      setIsAuthenticated(false);
+      return null;
+    }
+    
     try {
-      const token = localStorage.getItem('glyco_jwt');
-      if (token) {
-        const res = await fetch('/api/users/me', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const freshData = await res.json();
-          const updated = {
-            ...user,
-            isApproved: freshData.isApproved !== undefined ? freshData.isApproved : true,
-            roleType: freshData.roleType || user?.roleType || 'user',
-            // Refresh dietitian metadata
-            clientIds: freshData.clientIds || user?.clientIds || [],
-            licenseId: freshData.licenseId || user?.licenseId || null,
-            credential: freshData.credential || user?.credential || null,
-            clinicName: freshData.clinicName || user?.clinicName || null,
-          };
-          setUser(updated);
-          localStorage.setItem('glyco_session', JSON.stringify(updated));
-          setIsLoading(false);
-          return updated;
-        }
-      }
-
-      // Local fallback refresh
-      if (user && user.email) {
-        const users = JSON.parse(localStorage.getItem('glyco_users') || '{}');
-        const dbUser = users[user.email.toLowerCase()];
-        if (dbUser) {
-          const updated = {
-            ...user,
-            isApproved: dbUser.isApproved !== undefined ? dbUser.isApproved : true,
-            roleType: dbUser.roleType || user.roleType || 'user',
-            clientIds: dbUser.clientIds || user.clientIds || [],
-            licenseId: dbUser.licenseId || user.licenseId || null,
-            credential: dbUser.credential || user.credential || null,
-            clinicName: dbUser.clinicName || user.clinicName || null,
-          };
-          setUser(updated);
-          localStorage.setItem('glyco_session', JSON.stringify(updated));
-          setIsLoading(false);
-          return updated;
-        }
+      const res = await fetch('/api/users/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (res.ok) {
+        const freshData = await res.json();
+        const updated = buildSession(freshData);
+        setUser(updated);
+        setIsAuthenticated(true);
+        return updated;
+      } else {
+        localStorage.removeItem('glyco_jwt');
+        setUser(null);
+        setIsAuthenticated(false);
+        return null;
       }
     } catch (err) {
       console.warn('Unable to refresh user status:', err);
+      localStorage.removeItem('glyco_jwt');
+      setUser(null);
+      setIsAuthenticated(false);
+      return null;
     }
-    setIsLoading(false);
-    return user;
   };
-
-  // --- Swappable Adapters Placeholder ---
-  // Replace below with Firebase / JWT calls to connect a real backend.
 
   const login = async (email, password) => {
     setIsLoading(true);
-    const users = JSON.parse(localStorage.getItem('glyco_users') || '{}');
-    const existingUser = users[email.toLowerCase()];
 
-    if (existingUser && existingUser.password === password) {
-      const sessionUser = buildSession(existingUser);
-      localStorage.setItem('glyco_session', JSON.stringify(sessionUser));
-      setUser(sessionUser);
-      setIsAuthenticated(true);
-      setIsLoading(false);
-      return { success: true };
+    if (ENABLE_DEMO_AUTH) {
+      const users = JSON.parse(localStorage.getItem('glyco_users') || '{}');
+      const existingUser = users[email.toLowerCase()];
+
+      if (existingUser && existingUser.password === password) {
+        const sessionUser = buildSession(existingUser);
+        setUser(sessionUser);
+        setIsAuthenticated(true);
+        setIsLoading(false);
+        return { success: true };
+      }
     }
 
-    setIsLoading(false);
-    return { success: false, error: 'Invalid email or password. Hint: Try demo@glyco.com / demo123' };
+    try {
+      const res = await fetch('/api/auth/local', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: email, password })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('glyco_jwt', data.jwt);
+        const sessionUser = buildSession(data.user);
+        setUser(sessionUser);
+        setIsAuthenticated(true);
+        setIsLoading(false);
+        return { success: true };
+      } else {
+        const errorData = await res.json();
+        setIsLoading(false);
+        return { success: false, error: errorData.error?.message || 'Invalid email or password.' };
+      }
+    } catch (err) {
+      setIsLoading(false);
+      return { success: false, error: 'Network error during login' };
+    }
   };
 
   const register = async (name, email, password) => {
     setIsLoading(true);
-    const users = JSON.parse(localStorage.getItem('glyco_users') || '{}');
     const lowerEmail = email.toLowerCase();
-
-    if (users[lowerEmail]) {
+    
+    try {
+      const res = await fetch('/api/auth/local/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: lowerEmail, email: lowerEmail, password, name })
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('glyco_jwt', data.jwt);
+        const sessionUser = buildSession(data.user);
+        setUser(sessionUser);
+        setIsAuthenticated(true);
+        setIsLoading(false);
+        return { success: true };
+      } else {
+        const errorData = await res.json();
+        setIsLoading(false);
+        return { success: false, error: errorData.error?.message || 'Registration failed' };
+      }
+    } catch (err) {
       setIsLoading(false);
-      return { success: false, error: 'User already exists' };
+      return { success: false, error: 'Network error during registration' };
     }
-
-    const newUser = {
-      name,
-      email: lowerEmail,
-      password,
-      preferences: [],
-      onboarded: false,
-      favorites: [],
-      unitSystem: DEFAULT_SETTINGS.unitSystem,
-      glucoseUnit: DEFAULT_SETTINGS.glucoseUnit,
-      visualDensity: DEFAULT_SETTINGS.visualDensity,
-    };
-
-    users[lowerEmail] = newUser;
-    localStorage.setItem('glyco_users', JSON.stringify(users));
-
-    const sessionUser = buildSession(newUser);
-    localStorage.setItem('glyco_session', JSON.stringify(sessionUser));
-    setUser(sessionUser);
-    setIsAuthenticated(true);
-    setIsLoading(false);
-    return { success: true };
   };
 
   const logout = async () => {
-    localStorage.removeItem('glyco_session');
+    localStorage.removeItem('glyco_jwt');
     setUser(null);
     setIsAuthenticated(false);
   };
 
-  // Save dietary preference selections + mark onboarding complete
+  const _persistUser = async (updatedFields) => {
+    if (!user) return;
+    
+    const optimisticUser = { ...user, ...updatedFields };
+    setUser(optimisticUser);
+    
+    if (ENABLE_DEMO_AUTH && !localStorage.getItem('glyco_jwt')) {
+      return;
+    }
+
+    const token = localStorage.getItem('glyco_jwt');
+    if (!token) return;
+
+    try {
+      await fetch(`/api/users/${user.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(updatedFields)
+      });
+    } catch (err) {
+      console.warn('Failed to persist user fields to Strapi:', err);
+    }
+  };
+
   const setPreferences = (prefs) => {
-    if (!user) return;
-    const updatedUser = { ...user, preferences: prefs, onboarded: true };
-    _persistUser(updatedUser);
+    _persistUser({ preferences: prefs, onboarded: true });
   };
 
-  // Save all localization + accessibility settings at once
   const setSettings = ({ unitSystem, glucoseUnit, visualDensity }) => {
-    if (!user) return;
-    const updatedUser = {
-      ...user,
-      ...(unitSystem !== undefined && { unitSystem }),
-      ...(glucoseUnit !== undefined && { glucoseUnit }),
-      ...(visualDensity !== undefined && { visualDensity }),
-    };
-    _persistUser(updatedUser);
+    const updates = {};
+    if (unitSystem !== undefined) updates.unitSystem = unitSystem;
+    if (glucoseUnit !== undefined) updates.glucoseUnit = glucoseUnit;
+    if (visualDensity !== undefined) updates.visualDensity = visualDensity;
+    if (Object.keys(updates).length > 0) _persistUser(updates);
   };
 
-  // Auto-favorite a recipe by ID (called immediately on Admin publish)
   const addFavorite = (recipeId) => {
     if (!user || !recipeId) return;
     const currentFavs = user.favorites || [];
-    if (currentFavs.includes(recipeId)) return; // idempotent
-    const updatedUser = { ...user, favorites: [...currentFavs, recipeId] };
-    _persistUser(updatedUser);
+    if (currentFavs.includes(recipeId)) return;
+    _persistUser({ favorites: [...currentFavs, recipeId] });
   };
 
   const removeFavorite = (recipeId) => {
     if (!user) return;
-    const updatedUser = {
-      ...user,
-      favorites: (user.favorites || []).filter((id) => id !== recipeId),
-    };
-    _persistUser(updatedUser);
-  };
-
-  // Internal: write updated user to both session and user store
-  const _persistUser = (updatedUser) => {
-    localStorage.setItem('glyco_session', JSON.stringify(updatedUser));
-    const users = JSON.parse(localStorage.getItem('glyco_users') || '{}');
-    if (users[updatedUser.email]) {
-      users[updatedUser.email] = {
-        ...users[updatedUser.email],
-        preferences: updatedUser.preferences,
-        onboarded: updatedUser.onboarded,
-        favorites: updatedUser.favorites,
-        unitSystem: updatedUser.unitSystem,
-        glucoseUnit: updatedUser.glucoseUnit,
-        visualDensity: updatedUser.visualDensity,
-      };
-      localStorage.setItem('glyco_users', JSON.stringify(users));
-    }
-    setUser(updatedUser);
+    const favorites = (user.favorites || []).filter((id) => id !== recipeId);
+    _persistUser({ favorites });
   };
 
   return (

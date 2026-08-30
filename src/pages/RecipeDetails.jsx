@@ -99,6 +99,7 @@ export const RecipeDetails = () => {
       unit: item.unit,
       prepState: item.prepState || ing?.defaultPrepState || 'raw',
       originalId,
+      ingredient: ing,
       name: ing?.name || 'Unknown',
       category: ing?.category || '',
       substitutions: ing?.substitutions || [],
