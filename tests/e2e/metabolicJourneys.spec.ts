@@ -375,7 +375,7 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
 
       if (method === 'POST' || method === 'PUT') {
         const rawPost = route.request().postData();
-        let recipe = {};
+        let recipe: any = {};
         if (rawPost) {
           try {
             const postData = JSON.parse(rawPost);

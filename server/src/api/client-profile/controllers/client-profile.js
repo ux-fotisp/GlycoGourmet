@@ -3,8 +3,8 @@
 let createCoreController;
 try {
   createCoreController = require("@strapi/strapi").factories.createCoreController;
-} catch (e) {
-  createCoreController = (uid, fn) => fn;
+} catch (err) {
+  createCoreController = (uid, factory) => factory;
 }
 
 module.exports = createCoreController("api::client-profile.client-profile", ({ strapi }) => ({

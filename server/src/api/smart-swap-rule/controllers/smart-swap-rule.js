@@ -1,6 +1,11 @@
 "use strict";
 
-const { createCoreController } = require("@strapi/strapi").factories;
+let createCoreController;
+try {
+  createCoreController = require("@strapi/strapi").factories.createCoreController;
+} catch (err) {
+  createCoreController = (uid, factory) => factory;
+}
 
 module.exports = createCoreController("api::smart-swap-rule.smart-swap-rule", ({ strapi }) => ({
   async find(ctx) {
