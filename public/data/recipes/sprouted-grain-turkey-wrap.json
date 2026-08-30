@@ -3,23 +3,136 @@
   "title": "Sprouted Grain Turkey Wrap",
   "isUserAuthored": false,
   "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
   "description": "Slow-digesting sprouted wheat with avocado cream and lean turkey. High protein and packed with fiber for sustained energy.",
   "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuB2gOJCpjJKi2wHlnfT5NdCCABwJ1lAGo5zouwfi29S3MxqXIORMi15Ii_z-Z4lPfqvpvgyJ16fUDkpOEzX3_KObeOZ50lQr6_tuxG6iouzpZfMc8tpWGeplsx9XySvu-D1FrpKWT7W6120e1f0KMPLrL5bOU8acC9bI44PCokfLOqZNNSsKJlgUC1NpMvqVkBg3kcpoGK0mVbIgSEXwtQTclIkhPxVwtmbhS1DA4en59pksXc3ZUSU",
+  "prepTime": 10,
+  "cookTime": 5,
   "cookingTime": 15,
+  "prepTimeMinutes": 10,
+  "cookTimeMinutes": 5,
   "difficulty": "Easy",
   "category": "Main Course",
-  "tags": ["Low GI", "High Fiber", "High Protein"],
+  "tags": [
+    "Low GI",
+    "High Fiber",
+    "High Protein"
+  ],
+  "allergens": ["wheat"],
+  "dietaryTags": ["dairy_free", "heart_healthy"],
   "servings": 1,
+  "yield": "1 Wrap (2 Halves)",
+  "glycemicIndex": 31,
+  "glycemicLoad": 8.2,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 446,
+    "protein": 43.5,
+    "fat": 15.6,
+    "carbs": 38.6,
+    "fiber": 12.6,
+    "netCarbs": 26.0,
+    "glycemicIndex": 31,
+    "glycemicLoad": 8.2
+  },
   "ingredients": [
-    { "ingredientId": "sprouted-wheat-wrap", "amount": 1, "unit": "piece", "prepState": "raw" },
-    { "ingredientId": "turkey-breast", "amount": 4, "unit": "oz", "prepState": "raw" },
-    { "ingredientId": "avocado", "amount": 0.5, "unit": "piece", "prepState": "raw" },
-    { "ingredientId": "spinach", "amount": 0.5, "unit": "cup", "prepState": "raw" },
-    { "ingredientId": "bell-pepper", "amount": 0.5, "unit": "piece", "prepState": "raw" }
+    {
+      "ingredientId": "sprouted-wheat-wrap",
+      "name": "Sprouted Grain Whole Wheat Tortilla",
+      "amount": 1,
+      "unit": "piece",
+      "prepState": "raw",
+      "kcal": 150,
+      "protein": 7.0,
+      "fat": 2.5,
+      "carbs": 28.0,
+      "fiber": 6.0,
+      "netCarbs": 22.0,
+      "glycemicIndex": 35,
+      "glycemicLoad": 7.7,
+      "allergens": ["wheat"],
+      "nutritionSource": "Sydney University GI Database"
+    },
+    {
+      "ingredientId": "turkey-breast",
+      "name": "Sliced Lean Roasted Turkey Breast",
+      "amount": 113,
+      "unit": "g",
+      "prepState": "raw",
+      "kcal": 153,
+      "protein": 34.0,
+      "fat": 1.8,
+      "carbs": 0,
+      "fiber": 0,
+      "netCarbs": 0,
+      "glycemicIndex": null,
+      "glycemicLoad": 0,
+      "nutritionSource": "USDA FoodData Central"
+    },
+    {
+      "ingredientId": "avocado",
+      "name": "Fresh Hass Avocado",
+      "amount": 75,
+      "unit": "g",
+      "prepState": "raw",
+      "kcal": 120,
+      "protein": 1.5,
+      "fat": 11.0,
+      "carbs": 6.4,
+      "fiber": 5.0,
+      "netCarbs": 1.4,
+      "glycemicIndex": 15,
+      "glycemicLoad": 0.2,
+      "nutritionSource": "Sydney University GI Database"
+    },
+    {
+      "ingredientId": "spinach",
+      "name": "Fresh Baby Spinach Leaves",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "kcal": 4,
+      "protein": 0.4,
+      "fat": 0.1,
+      "carbs": 0.6,
+      "fiber": 0.3,
+      "netCarbs": 0.3,
+      "glycemicIndex": 15,
+      "glycemicLoad": 0.0,
+      "nutritionSource": "Sydney University GI Database"
+    },
+    {
+      "ingredientId": "bell-pepper",
+      "name": "Crisp Bell Pepper Strips",
+      "amount": 60,
+      "unit": "g",
+      "prepState": "raw",
+      "kcal": 19,
+      "protein": 0.6,
+      "fat": 0.2,
+      "carbs": 3.6,
+      "fiber": 1.3,
+      "netCarbs": 2.3,
+      "glycemicIndex": 15,
+      "glycemicLoad": 0.3,
+      "nutritionSource": "Sydney University GI Database"
+    }
   ],
   "steps": [
-    { "title": "Prep Wrap & Avocado", "description": "Place the sprouted grain wrap on a clean board. Mash the half avocado directly on the wrap to form a nutrient-dense, healthy-fat barrier.", "timer": 3 },
-    { "title": "Layer Fillings", "description": "Layer fresh turkey breast slices over the avocado spread. Add baby spinach and thinly sliced bell peppers.", "timer": 3 },
-    { "title": "Roll & Slice", "description": "Roll the wrap tightly, tucking in the sides. Slice diagonally and enjoy immediately for steady blood sugar release.", "timer": 2 }
+    {
+      "title": "Prep Wrap & Avocado",
+      "description": "Place the sprouted grain wrap on a clean board. Mash the half avocado directly on the wrap to form a nutrient-dense, healthy-fat barrier.",
+      "timer": 3
+    },
+    {
+      "title": "Layer Fillings",
+      "description": "Layer fresh turkey breast slices over the avocado spread. Add baby spinach and thinly sliced bell peppers.",
+      "timer": 3
+    },
+    {
+      "title": "Roll & Slice",
+      "description": "Roll the wrap tightly, tucking in the sides. Slice diagonally and enjoy immediately for steady blood sugar release.",
+      "timer": 2
+    }
   ]
 }
