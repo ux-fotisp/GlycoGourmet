@@ -17,20 +17,38 @@
 
 ---
 
-## 📚 Platform Documentation Suite
+## 📚 Platform Documentation Suite (12 Canonical Manuals)
 
-The complete architectural, clinical, and engineering specifications are organized into the `docs/` directory:
+The complete architectural, clinical, and engineering specifications are organized into canonical manuals across the repository:
 
-| Specification | Focus & Technical Scope |
+| Document | Focus & Technical Scope |
 | :--- | :--- |
-| 📋 **[information_architecture.md](docs/information_architecture.md)** | Object-Oriented UX (OOUX / ORCA) domain models, persona taxonomies (Patient, Dietitian, Admin), 6-occasion circadian meal segmentation, and system schemas. |
-| 🧠 **[UX.md](docs/UX.md)** | Cognitive ergonomics, Nielsen Norman Group 10 UX Heuristics, end-to-end persona customer journeys, and interactive userflows. |
-| 🎨 **[design.md](docs/design.md)** | Sage & Grain Design DNA, color token specifications, typography scales, 8px grid system, and WCAG 2.1 AA contrast certification matrix. |
-| ⚛️ **[frontend_dev.md](docs/frontend_dev.md)** | React 19 SPA architecture, Tailwind CSS v4 `@theme` configuration, deterministic metabolic math engine, and dynamic GI/GL resolution pipelines. |
-| 🛡️ **[backend_dev.md](docs/backend_dev.md)** | Headless Strapi CMS (v4/v5), PostgreSQL schemas, lifecycle invariant validation guards, RBAC policies, and production operations runbook. |
-| 🧪 **[testing.md](docs/testing.md)** | Comprehensive test pyramid, full 60-test core inventory table, 243-test passing Vitest summary, fuzzing vectors, and CI/CD validation gates. |
-| 🤖 **[agentic.md](docs/agentic.md)** | Autonomous QA directives (QA-DIRECTIVE-2026), self-healing selector protocols, synthetic data fuzzing, and Antigravity agent orchestration. |
-| 📜 **[changelog.md](docs/changelog.md)** | Semantic versioning history, release milestones (`v1.0.0` to `v2.0.0`), and complete Git commit trajectory. |
+| 📋 **[information_architecture.md](information_architecture.md)** | Object-Oriented UX (OOUX / ORCA) domain models, persona taxonomies (Patient, Dietitian, Admin), 6-occasion circadian meal segmentation, and system schemas. |
+| 🧠 **[UX.md](UX.md)** | Cognitive ergonomics, Nielsen Norman Group 10 UX Heuristics, 3 persona customer journeys, and 4 interactive userflows. |
+| 🎨 **[design.md](design.md)** | Sage & Grain Design DNA, color token specifications, typography scales, 8px grid system, and WCAG 2.1 AA/AAA contrast matrix. |
+| ⚛️ **[frontend_dev.md](frontend_dev.md)** | React 19 SPA architecture, Tailwind CSS v4 `@theme` configuration, deterministic metabolic math engine, and dynamic GI/GL resolution pipelines. |
+| 🛡️ **[backend_dev.md](backend_dev.md)** | Headless Strapi CMS (v4/v5), PostgreSQL schemas, lifecycle invariant validation guards, RBAC policies, and production operations runbook. |
+| 🧪 **[testing.md](testing.md)** | Comprehensive test pyramid, full test inventory table, 281-test passing Vitest summary, fuzzing vectors, and CI/CD validation gates. |
+| 🤖 **[agentic.md](agentic.md)** | Autonomous QA directives (QA-DIRECTIVE-2026), self-healing selector protocols, synthetic data fuzzing, and Antigravity agent orchestration. |
+| 🚀 **[ci_cd.md](ci_cd.md)** | GitHub Actions production & integration pipelines, certified live CI runs (33079017457 & 33079705050), and verification gates. |
+| 📜 **[changelog.md](changelog.md)** | Semantic versioning history, release milestones (`v1.0.0` to `v2.0.0`), and complete Git commit trajectory. |
+| 🔒 **[SECURITY.md](SECURITY.md)** | Vulnerability disclosure policy, clinical data scope, tenant isolation, and security contact. |
+| 🤝 **[CONTRIBUTING.md](CONTRIBUTING.md)** | Git branching strategy, Conventional Commits standard, and pre-submission quality gate checklist. |
+| 📁 **[server/README.md](server/README.md)** | Backend quickstart pointer directing Strapi contributors to `backend_dev.md`. |
+
+---
+
+## ⚙️ Environment Variables Specification (`.env.example`)
+
+| Environment Variable | Required | Default / Example Value | Description & Clinical Security Scope |
+| :--- | :---: | :--- | :--- |
+| **`VITE_SNAPPI_API_BASE`** | Yes | `https://instance.snappi.io/api/v1` | Public API gateway endpoint for Strapi/Snappi CMS instance. |
+| **`VITE_SNAPPI_READ_TOKEN`**| Yes | `your-read-only-api-key` | Public read-only API key for fetching published master recipes and USDA ingredients. |
+| **`VITE_STRAPI_API_URL`** | Optional | `http://localhost:1337` | Local or staging Strapi backend API base URL. |
+| **`VITE_ENABLE_DEMO_AUTH`** | Optional | `false` (`true` in dev) | Enables mock authentication fallback for local offline development. |
+| **`VITE_USDA_API_KEY`** | Optional | `DEMO_KEY` | USDA FoodData Central API token for live custom ingredient lookups. |
+
+> ⚠️ **Security Note:** User JWTs for write and publish operations are dynamically injected via `AuthContext` and stored in secure browser memory. **Never store user write tokens in `.env` files.**
 
 ---
 
@@ -70,6 +88,9 @@ npm run test:e2e
 
 # Run automated WCAG 2.1 AA accessibility audit
 npm run test:a11y
+
+# Run database nutritional ground truth verification
+npm run validate-db
 ```
 
 ---

@@ -7,17 +7,17 @@
 
 ## 1. Frontend System Topology & Presentation Tier Architecture
 
-GlycoGourmet is engineered as a high-performance, accessible Single Page Application (SPA) built on **React 19** and bundled with **Vite 8**. The frontend presentation tier coordinates client-side routing, state management, and deterministic metabolic calculations:
+GlycoGourmet is engineered as a high-performance, accessible Single Page Application (SPA) built on **React 19** and bundled with **Vite 8**. The presentation tier coordinates client-side routing, state management, and deterministic metabolic calculations:
 
 ```mermaid
 flowchart TD
     subgraph Presentation ["Presentation Layer (React 19)"]
         Pages["Page Views
-(RecipeDetails, MyRecipes, MealPlans, AdminEditor)"]
+(RecipeDetails, MyRecipes, MealPlans, AdminEditor, ClinicLibrary)"]
         Components["Bento & UI Atoms
-(NutritionSnapshot, ServingStepper, SmartSwapTrigger)"]
+(NutritionSnapshot, ServingStepper, SmartSwapTrigger, ExcursionChart)"]
         CookMode["Ambient Cook Mode
-(CookModeModal)"]
+(AmbientCookMode, StepTimer)"]
     end
 
     subgraph State ["State & Hook Tier"]
@@ -28,7 +28,9 @@ flowchart TD
         AuthCtx["AuthContext
 (JWT & User Permissions)"]
         Store["Client Store Layer
-(recipeStore / ingredientStore)"]
+(recipeStore / ingredientStore / clientStore)"]
+        OfflineSync["Offline Mutation Queue
+(syncQueue / useOfflineMutation)"]
     end
 
     subgraph Logic ["Deterministic Metabolic Engine"]
@@ -36,6 +38,10 @@ flowchart TD
 (Deterministic GI/GL & Serving Scaler)"]
         Rollups["metabolicEngineRollups
 (Daily & Weekly Adherence)"]
+        Excursion["excursionEngine.ts
+(Predictive Blood Glucose Modeling)"]
+        Recommend["recommendationEngine.ts
+(Clinical Allergy & Swap Gates)"]
     end
 
     subgraph Infrastructure ["Edge Infrastructure (Netlify CDN)"]
@@ -49,18 +55,84 @@ flowchart TD
     Pages <--> FiltersHook
     Pages <--> AuthCtx
     Pages <--> Store
+    Store <--> OfflineSync
     Store <--> Engine
     Store <--> Rollups
+    Store <--> Excursion
+    Store <--> Recommend
     Router <--> CDN
 ```
 
 ---
 
-## 2. Tailwind CSS v4 Theme Engine & Styling Architecture
+## 2. Frontend Directory Structure Overview (`src/`)
+
+```
+src/
+├── components/
+│   ├── admin/                # Split-pane editor, USDA drawers, audit views
+│   ├── common/               # FeatureGate, PwaUpdater, NetworkStatusToast
+│   ├── dashboard/            # HealthHeader, MealPlanGlance, MetricCounters
+│   ├── dietitian/            # ExcursionForecastModal, ExcursionChart, SmartSwapRuleEditor
+│   ├── layout/               # AppLayout, Navbar, NavigationPill
+│   ├── nav/                  # DesktopNav, MobileBottomNav
+│   ├── patient/              # NotificationOptIn, AdherenceWidget
+│   ├── recipe/               # DetailHero, BentoGrid, IngredientsMatrix, ServingStepper, SmartSwapTrigger
+│   └── ui/                   # Button, Badge, Modal, OfflineBanner
+├── context/
+│   ├── AuthContext.jsx       # JWT authentication, session hydration, and demo mode
+│   └── UserPreferences.jsx   # UI density (comfortable vs compact) and default filters
+├── hooks/
+│   ├── useFavorites.js       # Local & remote recipe bookmarking
+│   ├── useOfflineMutation.js # Optimistic mutations with background sync
+│   ├── usePermissions.js     # RBAC role verification and route gates
+│   ├── useRecipeFilters.js   # Bidirectional URLSearchParams synchronization
+│   ├── useRecipes.js         # Reactive catalog queries and caching
+│   └── useWakeLock.js        # Screen wake-lock API for hands-free kitchen cooking
+├── pages/
+│   ├── AdminDashboard.jsx    # System metrics and user approval queue
+│   ├── AdminEditor.jsx       # Clinical recipe authoring studio
+│   ├── AmbientCookMode.jsx   # High-contrast step-by-step cooking companion
+│   ├── ClientRoster.jsx      # Dietitian multi-client portfolio management
+│   ├── ClinicDashboard.jsx   # Clinic-wide patient cohorts and analytics
+│   ├── ClinicLibrary.jsx     # Institutional meal plan and recipe library
+│   ├── Dashboard.jsx         # Main discovery catalog and GL budget tracker
+│   ├── DraftAuditQueue.jsx   # Side-by-side recipe discrepancy resolution
+│   ├── GroceryList.jsx       # Offline-ready grocery checklist manifest
+│   ├── Login.jsx / Register.jsx # Authentication portals
+│   ├── MealPlans.jsx         # 7-day calendar scheduler and budget gauge
+│   ├── MyRecipes.jsx         # Personal drafts and favorited recipes
+│   ├── PendingApproval.jsx   # Unapproved account holding screen
+│   ├── PlanBuilder.jsx       # 42-slot prescriptive meal plan designer
+│   ├── RecipeDetails.jsx     # Full viewport clinical recipe detail view
+│   └── Settings.jsx          # Profile, glucose units, and target GL budgets
+├── routes/
+│   ├── AppRoutes.jsx         # React Router v7 HashRouter route matrix
+│   └── ProtectedRoute.jsx    # Role-based access control route interceptor
+├── services/
+│   ├── excursionEngine.ts    # Postprandial glucose excursion modeling
+│   ├── metabolicEngine.ts    # Deterministic GI/GL and portion scaling math
+│   ├── recommendationEngine.ts # Smart Swap auto-suggestion rules
+│   └── strapiClient.js       # Centralized REST client with JWT management
+├── types/
+│   ├── domain.ts             # Clinical domain contracts and interfaces
+│   └── index.ts              # Core TypeScript type definitions
+└── utils/
+    ├── clientStore.js        # Dietitian client profiles and calibrations
+    ├── exportPipeline.js     # EHR and PDF clinical export generator
+    ├── ingredientStore.js    # Master USDA ingredient registry
+    ├── notificationEngine.ts # Push notification and bolus reminder scheduling
+    ├── recipeStore.js        # Recipe persistence and draft management
+    └── syncQueue.ts          # Offline IndexedDB/localStorage mutation queue
+```
+
+---
+
+## 3. Tailwind CSS v4 Theme Engine & Styling Architecture
 
 GlycoGourmet utilizes **Tailwind CSS v4** with a native CSS-first configuration model, driven by the `@tailwindcss/vite` plugin.
 
-### 2.1 Configuration & CSS Layer Organization
+### 3.1 Configuration & CSS Layer Organization
 In Tailwind v4, JavaScript configuration files (`tailwind.config.js`) are deprecated in favor of direct CSS imports and the native `@theme` directive in `src/index.css`:
 
 ```css
@@ -106,7 +178,7 @@ In Tailwind v4, JavaScript configuration files (`tailwind.config.js`) are deprec
 
 ---
 
-### 2.2 Reusable Component Tokens (`@layer components`)
+### 3.2 Reusable Component Tokens (`@layer components`)
 Key clinical UI components defined in `src/index.css`:
 - **`.glyco-badge`**: Compact macronutrient and glycemic score display.
 - **`.glyco-chip`**: Interactive pill button for occasion facets and dietary tags.
@@ -116,11 +188,11 @@ Key clinical UI components defined in `src/index.css`:
 
 ---
 
-## 3. Deterministic Metabolic Math Engine Specification
+## 4. Deterministic Metabolic Math Engine Specification
 
 Located at `src/services/metabolicEngine.ts`, the engine provides pure, side-effect-free calculations protected against floating-point drift and zero-division singularities.
 
-### 3.1 Net Carbohydrates Clamping Invariant
+### 4.1 Net Carbohydrates Clamping Invariant
 When dietary fiber exceeds total carbohydrates due to laboratory assay reporting artifacts, net carbohydrates must be strictly clamped to $0.0\text{g}$:
 
 $$\text{NetCarbs}(C, F) = \max\left(0, \operatorname{round}_{1}(C - F)\right)$$
@@ -129,7 +201,7 @@ $$\text{NetCarbs}(C, F) = \max\left(0, \operatorname{round}_{1}(C - F)\right)$$
 
 ---
 
-### 3.2 Thermal Starch Gelatinization & Retrogradation Multipliers
+### 4.2 Thermal Starch Gelatinization & Retrogradation Multipliers
 Cooking methods alter starch crystallinity and enzymatic amylase access. The engine applies an empirical coefficient $M_{\text{prep}}$ to baseline Glycemic Index ($GI_0$):
 
 $$GI_{\text{effective}} = \operatorname{clamp}\left(0, 100, \operatorname{round}\left(GI_0 \times M_{\text{prep}}\right)\right)$$
@@ -148,7 +220,7 @@ $$\begin{array}{l|c|l}
 
 ---
 
-### 3.3 Composite Recipe Glycemic Index ($GI_{\text{recipe}}$)
+### 4.3 Composite Recipe Glycemic Index ($GI_{\text{recipe}}$)
 The recipe-level glycemic index is the carbohydrate-weighted average of all constituent ingredients. Zero division is defensively trapped:
 
 $$GI_{\text{recipe}} = \begin{cases} 
@@ -158,7 +230,7 @@ $$GI_{\text{recipe}} = \begin{cases}
 
 ---
 
-### 3.4 Recipe Glycemic Load per Serving ($GL_{\text{recipe}}$)
+### 4.4 Recipe Glycemic Load per Serving ($GL_{\text{recipe}}$)
 Measures the real physiological glucose impact per consumed portion:
 
 $$GL_{\text{recipe}} = \operatorname{clamp}\left(0, 100, \operatorname{round}\left(\frac{GI_{\text{recipe}} \times \sum_{i=1}^{n} NC_i}{100 \times S}\right)\right)$$
@@ -167,16 +239,16 @@ $$GL_{\text{recipe}} = \operatorname{clamp}\left(0, 100, \operatorname{round}\le
 
 ---
 
-### 3.5 Multi-Day Rollup & Weekly Adherence Aggregation
+### 4.5 Multi-Day Rollup & Weekly Adherence Aggregation
 - **`calculateDailyRollup(slots, recipesMap, servingMultipliers)`**: Computes daily cumulative GL, net carbs, and macros across up to 6 meal occasions with portion scaling.
 - **`calculateWeeklyAdherence(plan, calibration)`**: Evaluates 7-day adherence against prescribed daily GL target budgets.
 - **`applyServingScale(ingredients, multiplier)`**: Scales ingredient weights and macronutrients proportionally while preserving Glycemic Index invariance.
 
 ---
 
-## 4. Component Patterns & Dynamic GI/GL Resolution Pipeline
+## 5. Component Patterns & Dynamic GI/GL Resolution Pipeline
 
-### 4.1 `RecipeDetails.jsx` Resolution Pipeline
+### 5.1 `RecipeDetails.jsx` Resolution Pipeline
 In `src/pages/RecipeDetails.jsx`, dynamic glycemic resolution executes in a four-stage pipeline upon every user interaction:
 
 ```
@@ -222,14 +294,14 @@ const currentNutrition = scaleResult.profile;
 
 ---
 
-### 4.2 Serving Stepper & Multipliers (`ServingStepper.jsx`)
+### 5.2 Serving Stepper & Multipliers (`ServingStepper.jsx`)
 - Renders four discrete portion multipliers: `0.5x`, `1x`, `1.5x`, `2x`.
 - Operates via accessible radio group (`role="radio"`, `aria-checked`).
 - Complies with mobile touch target bounding requirements ($\ge 48 \times 48\text{px}$).
 
 ---
 
-### 4.3 1-Click Smart Swap Trigger & Telemetry (`SmartSwapTrigger.jsx`)
+### 5.3 1-Click Smart Swap Trigger & Telemetry (`SmartSwapTrigger.jsx`)
 - Provides immediate 1-click substitution for high-glycemic staples (e.g. White Rice $\to$ Cauliflower Pearl Rice).
 - Displays explicit clinical rationale and anticipated GL reduction.
 - Triggers active CSS pulse (`.voice-pulse`) on the target Glycemic Load badge upon execution.
@@ -238,16 +310,16 @@ const currentNutrition = scaleResult.profile;
 
 ---
 
-### 4.4 Non-Blocking Sub-Form Drawer Pattern (`CustomIngredientDrawer.jsx`)
+### 5.4 Non-Blocking Sub-Form Drawer Pattern (`CustomIngredientDrawer.jsx`)
 - Slides out over the active recipe canvas during authoring.
 - Queries USDA FoodData Central in an isolated execution context.
 - Ingests new custom ingredients **without resetting or unmounting parent recipe draft state**.
 
 ---
 
-## 5. State Management & Custom Hooks Architecture
+## 6. State Management & Custom Hooks Architecture
 
-### 5.1 URL Query Parameter Synchronization (`useRecipeFilters.js`)
+### 6.1 URL Query Parameter Synchronization (`useRecipeFilters.js`)
 Catalog filter states synchronize bidirectionally with browser query strings:
 
 $$\text{URLSearchParams} \underset{\text{deserialization}}{\overset{\text{serialization}}{\longleftrightarrow}} \text{React State } (\text{occasion}, \text{sortOrder}, \text{maxGL})$$
@@ -257,24 +329,24 @@ $$\text{URLSearchParams} \underset{\text{deserialization}}{\overset{\text{serial
 
 ---
 
-### 5.2 Permission & Role Access Control (`usePermissions.js`)
+### 6.2 Permission & Role Access Control (`usePermissions.js`)
 - Inspects authenticated user state (`roleType`, `isApproved`, `onboarded`).
 - Restricts navigation through `ProtectedRoute.jsx`:
   - Standard patients $\to$ Personal Studio (`/#/my-recipes`) and Meal Planner (`/#/meal-plans`).
-  - Dietitians $\to$ Client Roster (`/#/dietitian/clients`) and Audit Queue (`/#/audit-queue`).
+  - Dietitians $\to$ Client Roster (`/#/dietitian/clients`), Clinic Library (`/#/clinic/library`), and Audit Queue (`/#/audit-queue`).
   - Unapproved registrations $\to$ Verification Gate (`/#/pending-approval`).
 
 ---
 
-### 5.3 Global Context Providers
+### 6.3 Global Context Providers
 - **`AuthContext.jsx`**: Manages JWT authentication tokens, current user profile, login/logout, and demo mode fallback (`VITE_ENABLE_DEMO_AUTH`).
 - **`UserPreferences.jsx`**: Persists UI density preferences (`comfortable` vs `compact`) and default occasion filters.
 
 ---
 
-## 6. TypeScript Contracts & Frontend Domain Interfaces
+## 7. TypeScript Contracts & Frontend Domain Interfaces
 
-Located at `src/types/index.ts` and `src/services/metabolicEngine.ts`:
+Located at `src/types/domain.ts` and `src/services/metabolicEngine.ts`:
 
 ```typescript
 export interface MacronutrientProfile {
@@ -340,7 +412,7 @@ export interface Recipe {
 
 ---
 
-## 7. Client-Side Routing & Navigation Matrix
+## 8. Client-Side Routing & Navigation Matrix
 
 Managed by **React Router v7** using `HashRouter` in `src/routes/AppRoutes.jsx`:
 
@@ -350,8 +422,11 @@ Managed by **React Router v7** using `HashRouter` in `src/routes/AppRoutes.jsx`:
 | `/#/recipe/:id` | `RecipeDetails.jsx` | Public / All | Clinical Recipe Detail with portion steppers. |
 | `/#/my-recipes` | `MyRecipes.jsx` | Authenticated | User's authored recipe drafts & favorites. |
 | `/#/meal-plans` | `MealPlans.jsx` | Authenticated | 7-day meal schedule & GL budget gauge. |
-| `/#/cook/:id` | `CookModeModal.jsx` | Authenticated | Ambient hands-free step-by-step guidance. |
+| `/#/grocery-list` | `GroceryList.jsx` | Authenticated | Offline-ready interactive shopping manifest. |
+| `/#/cook/:id` | `AmbientCookMode.jsx`| Authenticated | Ambient hands-free step-by-step guidance. |
 | `/#/dietitian/clients` | `ClientRoster.jsx` | Dietitian / Admin | Multi-client portfolio management. |
+| `/#/clinic/dashboard` | `ClinicDashboard.jsx`| Dietitian / Admin | Institutional patient cohort analytics. |
+| `/#/clinic/library` | `ClinicLibrary.jsx` | Dietitian / Admin | Shared institutional meal plan library. |
 | `/#/audit-queue` | `DraftAuditQueue.jsx`| Dietitian / Admin | Recipe discrepancy review queue. |
 | `/#/admin-editor` | `AdminEditor.jsx` | Dietitian / Admin | USDA ingredient & recipe authoring canvas. |
 | `/#/pending-approval` | `PendingApproval.jsx`| Unapproved | Account review holding state. |
@@ -360,20 +435,20 @@ Managed by **React Router v7** using `HashRouter` in `src/routes/AppRoutes.jsx`:
 
 ---
 
-## 8. Build, Optimization & Netlify Edge Deployment
+## 9. Build, Optimization & Netlify Edge Deployment
 
-### 8.1 Vite 8 Production Build Pipeline
+### 9.1 Vite 8 Production Build Pipeline
 - **Bundler:** Vite with `@vitejs/plugin-react` and `@tailwindcss/vite`.
 - **Command:** `npm run build` outputs optimized ES modules and hashed assets to `dist/`.
 - **SPA Fallback:** `dist/_redirects` (`/* /index.html 200`) guarantees client-side hash and deep route resolution on Netlify Edge CDN.
 
-### 8.2 Asset Caching & Optimization
+### 9.2 Asset Caching & Optimization
 - **Production Asset Chunks (`/assets/*`):** Configured with `Cache-Control: public, max-age=31536000, immutable` for zero redundant transfers.
 - **Entrypoint (`/index.html`):** `Cache-Control: public, max-age=0, must-revalidate` for instant deployment updates.
 
 ---
 
-## 9. Document Metadata & Attribution
+## 10. Document Metadata & Attribution
 
 - **Document Version:** `2.0.0`
 - **Frontend Lead & Systems Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
