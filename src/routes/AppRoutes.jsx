@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import AppLayout from '../components/layout/AppLayout';
@@ -16,6 +16,7 @@ import MealPlans from '../pages/MealPlans';
 import PendingApproval from '../pages/PendingApproval';
 import ClientRoster from '../pages/ClientRoster';
 import PlanBuilder from '../pages/PlanBuilder';
+import ClinicDashboard from '../pages/ClinicDashboard';
 
 /**
  * AppRoutes — React Router Navigation Hierarchy & Route Map
@@ -25,6 +26,7 @@ import PlanBuilder from '../pages/PlanBuilder';
  * - Base Protected routes: /onboarding, /pending-approval, /recipe/:id
  * - Permission-Gated routes: /recipes/mine, /meal-plans, /admin-editor, /admin, /admin/audit-queue
  * - Dietitian-Gated routes: /client-roster, /client/:id/plan-builder
+ * - Clinic Admin Workspace: /clinic-dashboard
  */
 export const AppRoutes = () => {
   return (
@@ -45,7 +47,7 @@ export const AppRoutes = () => {
           <Route path="/recipes/all" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
 
-                    {/* Recipe Details (moved into AppLayout for persistent sidebar) */}
+          {/* Recipe Details */}
           <Route path="/recipe/:id" element={<RecipeDetails />} />
 
           {/* Feature-Gated Protected Routes */}
@@ -65,6 +67,11 @@ export const AppRoutes = () => {
           <Route element={<ProtectedRoute requiredPermission="canManageClients" />}>
             <Route path="/client-roster" element={<ClientRoster />} />
             <Route path="/client/:id/plan-builder" element={<PlanBuilder />} />
+          </Route>
+
+          {/* Clinic Admin Multi-Tenant Workspace Route */}
+          <Route element={<ProtectedRoute requiredPermission="canManageClinic" />}>
+            <Route path="/clinic-dashboard" element={<ClinicDashboard />} />
           </Route>
         </Route>
       </Route>
