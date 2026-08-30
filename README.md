@@ -19,18 +19,18 @@
 
 ## 📚 Platform Documentation Suite
 
-The complete architectural, clinical, and engineering specifications are consolidated into 8 canonical root documents:
+The complete architectural, clinical, and engineering specifications are organized into the `docs/` directory:
 
 | Specification | Focus & Technical Scope |
 | :--- | :--- |
-| 📋 **[information_architecture.md](information_architecture.md)** | Object-Oriented UX (OOUX / ORCA) domain models, persona taxonomies (Patient, Dietitian, Admin), 6-occasion circadian meal segmentation, and system schemas. |
-| 🧠 **[UX.md](UX.md)** | Cognitive ergonomics, Nielsen Norman Group 10 UX Heuristics, end-to-end persona customer journeys, and interactive userflows. |
-| 🎨 **[design.md](design.md)** | Sage & Grain Design DNA, color token specifications, typography scales, 8px grid system, and WCAG 2.1 AA contrast certification matrix. |
-| ⚛️ **[frontend_dev.md](frontend_dev.md)** | React 19 SPA architecture, Tailwind CSS v4 `@theme` configuration, deterministic metabolic math engine, and dynamic GI/GL resolution pipelines. |
-| 🛡️ **[backend_dev.md](backend_dev.md)** | Headless Strapi CMS (v4/v5), PostgreSQL schemas, lifecycle invariant validation guards, RBAC policies, and production operations runbook. |
-| 🧪 **[testing.md](testing.md)** | Comprehensive test pyramid, full 60-test core inventory table, 243-test passing Vitest summary, fuzzing vectors, and CI/CD validation gates. |
-| 🤖 **[agentic.md](agentic.md)** | Autonomous QA directives (QA-DIRECTIVE-2026), self-healing selector protocols, synthetic data fuzzing, and Antigravity agent orchestration. |
-| 📜 **[changelog.md](changelog.md)** | Semantic versioning history, release milestones (`v1.0.0` to `v2.0.0`), and complete Git commit trajectory. |
+| 📋 **[information_architecture.md](docs/information_architecture.md)** | Object-Oriented UX (OOUX / ORCA) domain models, persona taxonomies (Patient, Dietitian, Admin), 6-occasion circadian meal segmentation, and system schemas. |
+| 🧠 **[UX.md](docs/UX.md)** | Cognitive ergonomics, Nielsen Norman Group 10 UX Heuristics, end-to-end persona customer journeys, and interactive userflows. |
+| 🎨 **[design.md](docs/design.md)** | Sage & Grain Design DNA, color token specifications, typography scales, 8px grid system, and WCAG 2.1 AA contrast certification matrix. |
+| ⚛️ **[frontend_dev.md](docs/frontend_dev.md)** | React 19 SPA architecture, Tailwind CSS v4 `@theme` configuration, deterministic metabolic math engine, and dynamic GI/GL resolution pipelines. |
+| 🛡️ **[backend_dev.md](docs/backend_dev.md)** | Headless Strapi CMS (v4/v5), PostgreSQL schemas, lifecycle invariant validation guards, RBAC policies, and production operations runbook. |
+| 🧪 **[testing.md](docs/testing.md)** | Comprehensive test pyramid, full 60-test core inventory table, 243-test passing Vitest summary, fuzzing vectors, and CI/CD validation gates. |
+| 🤖 **[agentic.md](docs/agentic.md)** | Autonomous QA directives (QA-DIRECTIVE-2026), self-healing selector protocols, synthetic data fuzzing, and Antigravity agent orchestration. |
+| 📜 **[changelog.md](docs/changelog.md)** | Semantic versioning history, release milestones (`v1.0.0` to `v2.0.0`), and complete Git commit trajectory. |
 
 ---
 
