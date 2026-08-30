@@ -1,7 +1,0 @@
-# GlycoGourmet PRD
-
-## Current Implementation State
-- **Auth**: Fully backend-enforced (no localStorage identity fallback outside VITE_ENABLE_DEMO_AUTH). Strapi register and update controllers locked down to prevent client-side privilege escalation.
-- **Tenant Scoping**: Active and verified end-to-end in live GitHub Actions CI (runs 33079017457 and 33079705050). All 4 clinical entities (ClientProfile, MetabolicTargetCalibration, PrescribedMealPlan, SmartSwapRule) use the `this.validateQuery(ctx) -> this.sanitizeQuery(ctx) -> strapi.entityService.findMany(sanitizedQuery) -> this.sanitizeOutput(entities, ctx) -> this.transformResponse(sanitizedEntities)` controller pattern. The policy `is-dietitian-owner.js` enforces role-level access; controllers enforce row-level tenant data isolation.
-- **Metabolic Engine**: Supports daily and weekly rollups with carbohydrate-weighted Glycemic Load averaging and invariant scaling. Single-recipe GI/GL display resolved in `RecipeDetails.jsx` by ensuring resolved ingredients retain full ingredient metadata (`ingredient: ing`).
-- **Test Coverage**: 271 unit tests passing locally in Vitest. 1 live end-to-end CI integration test verified green on GitHub Actions (run 33079705050), testing Dietitian B JWT authentication, HTTP 200 with zero cross-tenant records, Dietitian A record access, Admin cross-tenant visibility, and Patient route denial (403/401).
