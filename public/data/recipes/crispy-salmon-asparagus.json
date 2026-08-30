@@ -3,24 +3,143 @@
   "title": "Crispy Salmon & Asparagus",
   "isUserAuthored": false,
   "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
   "description": "Slow-seared atlantic salmon with grilled fiber-rich greens. Designed to prevent glucose spikes while satisfying gourmet cravings.",
   "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCC3o6_xMnKi_jomsnHTraFX7el-CDj6Up0-YO_B-Coun_VX1vq2BkXG46rmudWt6kJsTe7UX_tFKfZjdow2QYvWLlU9ZtepeBM7dknd_LA_2eMzUmsGmXhxQipdxqYHlCDlMPMJtNqchzy80PDS8aTZL5kdvEohLofJjrS-6YR2ib0daohnQME3orw3n_DiX-m9JlF3zIasxP5Uc84qAkeW8EDhJUwTG4JQzxE68xtjLZwNqKU1IiZ",
+  "prepTime": 10,
+  "cookTime": 15,
   "cookingTime": 25,
+  "prepTimeMinutes": 10,
+  "cookTimeMinutes": 15,
   "difficulty": "Medium",
-  "category": "Main Course",
-  "tags": ["Low GI", "Low Sugar", "High Protein", "Keto-Friendly"],
   "servings": 1,
+  "yield": "1 Fillet with Asparagus",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Low Sugar",
+    "High Protein",
+    "Keto-Friendly",
+    "Mediterranean"
+  ],
+  "allergens": ["fish"],
+  "dietaryTags": ["gluten_free", "dairy_free", "heart_healthy"],
+  "glycemicIndex": 15,
+  "glycemicLoad": 0.7,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 513,
+    "protein": 41,
+    "fat": 36.3,
+    "carbs": 8.2,
+    "fiber": 3.7,
+    "netCarbs": 4.5,
+    "glycemicIndex": 15,
+    "glycemicLoad": 0.7
+  },
   "ingredients": [
-    { "ingredientId": "atlantic-salmon", "amount": 6, "unit": "oz", "prepState": "sauteed" },
-    { "ingredientId": "asparagus", "amount": 1, "unit": "bunch", "prepState": "roasted" },
-    { "ingredientId": "olive-oil", "amount": 1, "unit": "tbsp", "prepState": "raw" },
-    { "ingredientId": "garlic", "amount": 1, "unit": "clove", "prepState": "sauteed" },
-    { "ingredientId": "lemon", "amount": 1, "unit": "tbsp", "prepState": "raw" }
+    {
+      "ingredientId": "atlantic-salmon",
+      "name": "Fresh Atlantic Salmon Fillet",
+      "amount": 170,
+      "unit": "g",
+      "prepState": "sauteed",
+      "kcal": 350,
+      "protein": 37.4,
+      "fat": 22.1,
+      "carbs": 0,
+      "fiber": 0,
+      "netCarbs": 0,
+      "glycemicIndex": null,
+      "glycemicLoad": 0,
+      "allergens": ["fish"],
+      "nutritionSource": "USDA FoodData Central"
+    },
+    {
+      "ingredientId": "asparagus",
+      "name": "Fresh Asparagus Spears",
+      "amount": 150,
+      "unit": "g",
+      "prepState": "roasted",
+      "kcal": 30,
+      "protein": 3.3,
+      "fat": 0.2,
+      "carbs": 5.8,
+      "fiber": 3.2,
+      "netCarbs": 2.6,
+      "glycemicIndex": 15,
+      "glycemicLoad": 0.4,
+      "nutritionSource": "Sydney University GI Database"
+    },
+    {
+      "ingredientId": "olive-oil",
+      "name": "Extra Virgin Olive Oil",
+      "amount": 14,
+      "unit": "g",
+      "prepState": "raw",
+      "kcal": 124,
+      "protein": 0,
+      "fat": 14,
+      "carbs": 0,
+      "fiber": 0,
+      "netCarbs": 0,
+      "glycemicIndex": null,
+      "glycemicLoad": 0,
+      "nutritionSource": "USDA FoodData Central"
+    },
+    {
+      "ingredientId": "garlic",
+      "name": "Fresh Garlic Clove, minced",
+      "amount": 3,
+      "unit": "g",
+      "prepState": "sauteed",
+      "kcal": 5,
+      "protein": 0.2,
+      "fat": 0,
+      "carbs": 1.0,
+      "fiber": 0.1,
+      "netCarbs": 0.9,
+      "glycemicIndex": 15,
+      "glycemicLoad": 0.1,
+      "nutritionSource": "Sydney University GI Database"
+    },
+    {
+      "ingredientId": "lemon",
+      "name": "Fresh Lemon Juice",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "kcal": 4,
+      "protein": 0.1,
+      "fat": 0,
+      "carbs": 1.4,
+      "fiber": 0.4,
+      "netCarbs": 1.0,
+      "glycemicIndex": 20,
+      "glycemicLoad": 0.2,
+      "nutritionSource": "Sydney University GI Database"
+    }
   ],
   "steps": [
-    { "title": "Prepare the Salmon", "description": "Pat the 6oz Salmon Fillet dry with a paper towel. Season generously with kosher salt and cracked black pepper on all sides.", "timer": 2 },
-    { "title": "Sear the Skin", "description": "Heat olive oil in a heavy skillet over medium-high heat. Place salmon skin-side down. Press firmly for 30 seconds to prevent curling.", "timer": 5 },
-    { "title": "The Flip", "description": "Carefully flip the fillet using a fish spatula. Add 1 clove garlic to the pan for basting.", "timer": 3 },
-    { "title": "Rest & Serve", "description": "Remove from pan and let it rest for 2 minutes. Drizzle with lemon juice and serve warm alongside grilled asparagus.", "timer": 2 }
+    {
+      "title": "Prepare the Salmon",
+      "description": "Pat the 6oz Salmon Fillet dry with a paper towel. Season generously with kosher salt and cracked black pepper on all sides.",
+      "timer": 2
+    },
+    {
+      "title": "Sear the Skin",
+      "description": "Heat olive oil in a heavy skillet over medium-high heat. Place salmon skin-side down. Press firmly for 30 seconds to prevent curling.",
+      "timer": 5
+    },
+    {
+      "title": "The Flip",
+      "description": "Carefully flip the fillet using a fish spatula. Add 1 clove garlic to the pan for basting.",
+      "timer": 3
+    },
+    {
+      "title": "Rest & Serve",
+      "description": "Remove from pan and let it rest for 2 minutes. Drizzle with lemon juice and serve warm alongside grilled asparagus.",
+      "timer": 2
+    }
   ]
 }
