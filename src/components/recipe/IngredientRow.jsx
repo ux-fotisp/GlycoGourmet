@@ -1,37 +1,63 @@
-import React from 'react';
-import { getPrepStateMultiplier } from '../../utils/nutritionCalculator';
+﻿import React from 'react';
 
-export const IngredientRow = ({ item, servingMultiplier = 1, breakdownData }) => {
-  const scaledAmount = (parseFloat(item?.amount) || 0) * servingMultiplier;
-  const roundedAmount = Math.round(scaledAmount);
-  
-  const prepMultiplier = getPrepStateMultiplier(item.prepState || 'raw').toFixed(2);
-  const prepLabel = (item.prepState || 'raw').charAt(0).toUpperCase() + (item.prepState || 'raw').slice(1);
+/**
+ * IngredientRow - Single ingredient matrix line item with GI indicator badge and thermal multiplier.
+ */
+export const IngredientRow = ({
+  index = 1,
+  gi = 15,
+  name = 'Broccoli Florets',
+  prepState = 'Steamed',
+  prepMultiplier = '1.02',
+  amount = '150',
+  unit = 'g',
+  netCarbs = '6',
+}) => {
+  // Preattentive GL band colors based on GI value
+  const getGIBadgeStyle = (giVal) => {
+    if (giVal <= 25) return 'bg-sage-bg text-sage-text border-sage-text/30';
+    if (giVal <= 55) return 'bg-amber-bg text-amber-text border-amber-text/30';
+    return 'bg-rose-bg text-rose-text border-rose-text/30';
+  };
 
-  const netCarbs = breakdownData?.netCarbs ?? 0;
-  const glContrib = breakdownData?.glContribution ?? 0;
-  const isHighGL = glContrib >= 5;
+  const badgeStyle = getGIBadgeStyle(Number(gi) || 15);
 
   return (
-    <div className="flex items-center justify-between py-3 border-b border-border-subtle/40 last:border-0 font-sans">
-      <div className="flex items-center gap-3">
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shadow-xs ${
-          isHighGL ? 'bg-tertiary-container text-on-tertiary-container' : 'bg-success-surface text-brand-strong border border-success-border'
-        }`}>
-          {Math.round(glContrib * 10) / 10}
+    <div className="flex items-center justify-between py-3 border-b border-stone-100 last:border-0 hover:bg-stone-50/60 px-2 rounded-xl transition-colors">
+      {/* Left: Circular GI / Index Badge */}
+      <div className="flex items-center gap-3.5 min-w-0">
+        <div 
+          title={`Glycemic Index: ${gi}`}
+          className={`w-9 h-9 rounded-full flex items-center justify-center font-display font-extrabold text-xs shrink-0 border shadow-2xs ${badgeStyle}`}
+        >
+          {gi}
         </div>
-        <div>
-          <div className="text-sm font-bold text-text-strong">{item?.name || 'Unknown'}</div>
-          <div className="text-[10px] font-semibold text-text-body mt-0.5">
-            {prepLabel} (x{prepMultiplier})
+
+        {/* Middle: Ingredient Name & Prep State Multiplier */}
+        <div className="min-w-0">
+          <div className="text-sm font-bold text-primary truncate">
+            {name}
+          </div>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <span className="text-[10px] font-extrabold text-amber-text bg-amber-bg/70 border border-amber-text/20 px-2 py-0.5 rounded-md leading-none">
+              {prepState} &times;{prepMultiplier}
+            </span>
           </div>
         </div>
       </div>
-      <div className="text-right">
-        <div className="text-sm font-bold text-text-strong">{roundedAmount} {item?.unit || 'g'}</div>
-        <div className="text-[10px] font-semibold text-text-body mt-0.5">{Math.round(netCarbs)}g NC</div>
+
+      {/* Right: Gram Weight & Net Carbs */}
+      <div className="text-right shrink-0 pl-3">
+        <div className="text-sm font-extrabold text-primary">
+          {amount} {unit}
+        </div>
+        <div className="text-[11px] font-bold text-sage-text mt-0.5">
+          {netCarbs}g NC
+        </div>
       </div>
     </div>
   );
 };
+
 export default IngredientRow;
+
