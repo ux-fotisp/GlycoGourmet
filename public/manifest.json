@@ -1,0 +1,19 @@
+{
+  "short_name": "GlycoGourmet",
+  "name": "GlycoGourmet - Accessible Diabetic Kitchen",
+  "description": "Clinical low-glycemic recipe catalog, metabolic engine, and meal planning studio",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#F6F4EE",
+  "theme_color": "#1B3B22",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "categories": ["medical", "health", "food", "lifestyle"]
+}

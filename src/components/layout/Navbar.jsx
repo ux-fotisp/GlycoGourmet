@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { usePermissions } from '../../hooks/usePermissions';
@@ -149,6 +149,7 @@ export const Navbar = () => {
             <span className="material-symbols-outlined text-[20px]">calendar_today</span>
             <span>Meal Plans</span>
           </Link>
+
           {/* Client Roster */}
           {permissions?.canManageClients && (
             <Link
@@ -164,6 +165,35 @@ export const Navbar = () => {
             </Link>
           )}
 
+          {/* Clinic Library (Standardized Collaboration) */}
+          {permissions?.canManageClients && (
+            <Link
+              to="/clinic-library"
+              className={`flex items-center gap-3 px-4 py-3 min-h-[48px] rounded-r-full font-body-md text-sm transition-all ${
+                activePath === '/clinic-library'
+                  ? 'bg-primary text-on-primary font-bold shadow-xs'
+                  : 'text-on-surface-variant hover:bg-surface-variant/50'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">local_library</span>
+              <span>Clinic Library</span>
+            </Link>
+          )}
+
+          {/* Clinic Workspace (Multi-Tenant Administration) */}
+          {permissions?.canManageClinic && (
+            <Link
+              to="/clinic-dashboard"
+              className={`flex items-center gap-3 px-4 py-3 min-h-[48px] rounded-r-full font-body-md text-sm transition-all ${
+                activePath === '/clinic-dashboard'
+                  ? 'bg-primary text-on-primary font-bold shadow-xs'
+                  : 'text-on-surface-variant hover:bg-surface-variant/50'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">domain</span>
+              <span>Clinic Workspace</span>
+            </Link>
+          )}
 
           {/* Profile Settings */}
           <Link
@@ -179,14 +209,12 @@ export const Navbar = () => {
           </Link>
         </nav>
 
-        {/* Persistent Profile Slot */}
-        <div className="px-sm mt-auto">
-          <div className="flex flex-col gap-3 p-3 border-t border-outline-variant/20">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold shrink-0">
-                {user?.name?.[0] || 'C'}
-              </div>
-              <div className="flex flex-col overflow-hidden">
+        {/* User Profile & Role Info */}
+        <div className="px-sm pt-xs border-t border-outline-variant">
+          <div className="p-sm rounded-xl bg-surface-container flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">{user?.name ? user.name.charAt(0).toUpperCase() : "C"}</div>
+              <div className="flex flex-col min-w-0">
                 <span className="text-xs font-bold text-on-surface truncate leading-tight">
                   {user?.name || 'Chef User'}
                 </span>

@@ -66,6 +66,15 @@ export const AdminEditor = () => {
   const [notification, setNotification] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Auto-sync active form to sessionStorage
+  useEffect(() => {
+    if (formData.title || (formData.ingredients && formData.ingredients.length > 0)) {
+      try {
+        sessionStorage.setItem(DRAFT_SESSION_KEY, JSON.stringify(formData));
+      } catch {}
+    }
+  }, [formData]);
+
   // Load existing recipe if editId parameter is present
   useEffect(() => {
     if (!editId) {
@@ -160,11 +169,9 @@ export const AdminEditor = () => {
       showNotification('🎉 Recipe published to Strapi CMS successfully!', 'success');
       
       // Navigate to recipe detail after 1.2s
-      setTimeout(() => {
-        navigate(`/recipe/${finalId}`);
-      }, 1200);
+      setTimeout(() => { navigate(`/recipe/${finalId}`); }, 50);
     } catch (err) {
-      console.error('[AdminEditor] Strapi publish failed:', err);
+      console.error('[AdminEditor] Strapi publish failed:', err?.name, err?.message, err?.stack);
       showNotification(`❌ Publish failed: ${err.message}`, 'error');
     } finally {
       setIsSaving(false);
@@ -198,9 +205,7 @@ export const AdminEditor = () => {
 
       sessionStorage.removeItem(DRAFT_SESSION_KEY);
       showNotification('Submitted to clinical review', 'success');
-      setTimeout(() => {
-        navigate('/recipes/mine');
-      }, 1200);
+      setTimeout(() => { navigate("/recipes/mine"); }, 50);
     } catch (err) {
       console.error('[AdminEditor] Submit for review failed:', err);
       showNotification(`❌ Submit failed: ${err.message}`, 'error');
@@ -230,8 +235,9 @@ export const AdminEditor = () => {
         publishedAt: null,
       });
 
-      sessionStorage.removeItem(DRAFT_SESSION_KEY);
-      showNotification('💾 Draft saved to Strapi CMS successfully.', 'draft');
+      sessionStorage.setItem(DRAFT_SESSION_KEY, JSON.stringify(newRecipe));
+      setFormData(prev => ({ ...prev, id: finalId }));
+      showNotification('Draft saved to Strapi CMS successfully.', 'draft');
       if (!editId) {
         navigate(`/admin-editor?edit=${finalId}`);
       }
@@ -403,23 +409,24 @@ export const AdminEditor = () => {
               {canPublishPublic ? 'Save as Draft' : 'Save Personal Draft'}
             </Button>
             
-            {editId && (
-              <Button
+            <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate(`/recipe/${editId}?preview=true`)}
+                onClick={() => {
+                  const targetId = editId || formData.id || 'my-draft-id';
+                  navigate(`/recipe/${targetId}?preview=true`);
+                }}
                 className="h-12 px-5 font-bold text-xs md:text-sm text-on-surface-variant hover:text-primary cursor-pointer border border-outline-variant/40"
               >
                 <span className="material-symbols-outlined text-[18px] mr-1">visibility</span>
                 Preview Draft
               </Button>
-            )}
 
             <div className="relative group">
               <Button
                 type="button"
                 onClick={canPublishPublic ? handlePublish : handleSubmitReview}
-                disabled={isSaving || !isPublishValid || (!canPublishPublic && !editId)}
+                disabled={isSaving || !isPublishValid}
                 className="h-12 px-6 font-bold text-xs md:text-sm shadow-md cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {isSaving ? (

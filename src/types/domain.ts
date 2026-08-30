@@ -1,6 +1,8 @@
 ﻿/**
  * GlycoGourmet OOUX Entity Multiplicity Matrix:
- * - DietitianUser : ClientProfile = 1 : N (Dietitian manages multiple client profiles)
+ * - Clinic : DietitianUser = 1 : N (Tenant manages multiple clinicians)
+ * - Clinic : ClientProfile = 1 : N (Tenant scopes client records)
+ * - DietitianUser : ClientProfile = 1 : N (Dietitian manages assigned client profiles)
  * - ClientProfile : PatientUser = 1 : 1 (Patient is the subject of the profile)
  * - ClientProfile : MetabolicTargetCalibration = 1 : 1 (Active clinical target & bolus offset)
  * - ClientProfile : PrescribedMealPlan = 1 : 1 active (One live 7-day plan; historical archived)
@@ -29,16 +31,31 @@ export type {
 // ---------------------------------------------------------------------------
 // Domain-Level Type Aliases
 // ---------------------------------------------------------------------------
-// The metabolic engine uses concrete names (MacroNutrients, IngredientPayload,
-// MetabolicProfileResult). We provide semantic aliases so domain consumers can
-// reference them by their OOUX role without coupling to engine naming.
-// ---------------------------------------------------------------------------
 
 /** Alias: the per-serving macro breakdown produced by the metabolic engine. */
 export type MacronutrientProfile = MetabolicProfileResult;
 
 /** Alias: a single ingredient payload from the metabolic engine. */
 export type Ingredient = IngredientPayload;
+
+// ---------------------------------------------------------------------------
+// 0. Multi-Tenant Clinic Administration & Collaboration
+// ---------------------------------------------------------------------------
+
+export type ClinicTier = 'INDEPENDENT' | 'CLINIC_PRO' | 'ENTERPRISE';
+
+export type SharingScope = 'PRIVATE' | 'CLINIC_SHARED';
+
+export interface Clinic {
+  id: string;
+  name: string;
+  tier: ClinicTier;
+  activeSeats: number;
+  dietitianIds?: string[];
+  clientProfileIds?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 // ---------------------------------------------------------------------------
 // Prep-State & Audit Record
@@ -114,6 +131,26 @@ export type DiabeticSubtype =
   | 'Prediabetes'
   | 'InsulinResistance';
 
+export type UserRole =
+  | 'user'
+  | 'dietitian'
+  | 'clinic_admin'
+  | 'admin'
+  | 'super_admin';
+
+export interface User {
+  id: string;
+  email: string;
+  username?: string;
+  roleType: UserRole;
+  role?: UserRole;
+  isApproved: boolean;
+  onboarded: boolean;
+  clinicId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface PatientUser {
   id: string;
   email: string;
@@ -123,6 +160,7 @@ export interface PatientUser {
   onboarded: boolean;
   dietitianId?: string;
   clientProfileId?: string;
+  clinicId?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -131,13 +169,26 @@ export interface DietitianUser {
   id: string;
   email: string;
   username?: string;
-  roleType: 'dietitian' | 'admin';
+  roleType: 'dietitian' | 'clinic_admin' | 'admin' | 'super_admin';
   isApproved: boolean;
   onboarded: boolean;
   licenseId?: string;
   credential?: 'RDN' | 'CDCES' | 'LDN' | 'MD';
   clinicName?: string;
+  clinicId?: string;
   clientIds: string[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ClinicAdminUser {
+  id: string;
+  email: string;
+  username?: string;
+  roleType: 'clinic_admin';
+  isApproved: boolean;
+  onboarded: boolean;
+  clinicId: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -146,6 +197,7 @@ export interface ClientProfile {
   id: string;
   dietitianId: string;
   patientUserId: string;
+  clinicId?: string;
   diabeticSubtype: DiabeticSubtype;
   dietaryRestrictions: string[];
   status: 'active' | 'archived';
@@ -164,6 +216,9 @@ export interface MetabolicTargetCalibration {
   netCarbCapDaily?: number;          // Optional daily net carbohydrate cap (grams)
   calorieBudgetDaily?: number;       // Optional daily calorie target
   glucoseUnit?: 'mg/dL' | 'mmol/L';
+  insulinSensitivityFactor?: number; // ISF (1 U insulin drops BG by X mg/dL)
+  carbToInsulinRatio?: number;       // CIR (1 U insulin covers X grams of net carbs)
+  targetPreMealGlucose?: number;     // Target pre-meal blood glucose (mg/dL)
   updatedAt: string;
   updatedByDietitianId: string;
 }
@@ -193,6 +248,9 @@ export interface PrescribedMealPlan {
   id: string;
   clientId: string;
   dietitianId: string;
+  clinicId?: string;
+  authorName?: string;
+  sharingScope?: SharingScope;
   weekStartDate: string; // ISO Date YYYY-MM-DD
   scheduledSlots: {
     [day in DayOfWeek]?: Partial<Record<OccasionType, string>>; // Maps to Recipe ID
@@ -208,16 +266,40 @@ export interface PrescribedMealPlan {
   updatedAt?: string;
 }
 
+export interface MealPlanTemplate {
+  id: string;
+  clinicId: string;
+  title: string;
+  description?: string;
+  authorDietitianId: string;
+  authorName: string;
+  targetSubtype?: DiabeticSubtype;
+  sharingScope: SharingScope;
+  avgDailyGL: number;
+  scheduledSlots: {
+    [day in DayOfWeek]?: Partial<Record<OccasionType, string>>;
+  };
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 // ---------------------------------------------------------------------------
 // 4. Rule-Based Smart Low-GI Substitutions
 // ---------------------------------------------------------------------------
 
 export interface SmartSwapRule {
   id: string;
-  clientId: string;
+  clientId?: string;
+  clinicId?: string;
   sourceIngredientId: string;
   targetIngredientId: string;
+  sourceIngredientName?: string;
+  targetIngredientName?: string;
   scope: 'all-plans' | string; // 'all-plans' or specific PrescribedMealPlan ID
+  sharingScope?: SharingScope; // 'PRIVATE' | 'CLINIC_SHARED'
+  authorName?: string;
+  authorDietitianId?: string;
+  deltaGL?: number;
   reason?: string;
   createdByDietitianId: string;
   createdAt?: string;

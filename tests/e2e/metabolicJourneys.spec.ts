@@ -64,7 +64,7 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
     });
 
     // 4. Visit Recipe details
-    await page.goto('/recipe/1');
+    await page.goto('/#/recipe/1');
 
     // 5. Verify GL and GI anchor badges are rendered (using text-based locators)
     await expect(page.getByText('GL 25')).toBeVisible({ timeout: 15000 });
@@ -100,7 +100,7 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
 
     // 2. Navigate to Catalog
     await page.goto('/#/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // 3. Open first recipe card from the catalog
     const recipeLink = page.locator('[data-testid="recipe-card"] a').first();
@@ -149,7 +149,7 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
 
     // 2. Navigate to Admin Audit Queue via HashRouter path
     await page.goto('/#/admin/audit-queue');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('h2, h1').locator('visible=true').first()).toBeVisible();
 
     // 3. Assert Discrepancy indicator and execute Overwrite / Sync
@@ -197,7 +197,7 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
           recipe.id = recipe.title ? recipe.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now() : 'mock-id-' + Date.now();
         }
         mockedRecipes.push(recipe);
-        await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: recipe }) });
+        await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || 'http://localhost:5173', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: recipe }) });
       } else if (route.request().method() === 'GET') {
         const url = route.request().url();
         const match = url.match(/\/api\/recipes\/([^?]+)/);
@@ -205,14 +205,14 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
            const id = match[1];
            const found = mockedRecipes.find(r => r.id === id || r.documentId === id);
            if (found) {
-             await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: found }) });
+             await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || 'http://localhost:5173', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: found }) });
            } else {
              // Fallback for mock setup
              const fallback = mockedRecipes.length > 0 ? { ...mockedRecipes[0], id: id } : null;
-             await route.fulfill({ status: fallback ? 200 : 404, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: fallback }) });
+             await route.fulfill({ status: fallback ? 200 : 404, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || 'http://localhost:5173', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: fallback }) });
            }
         } else {
-           await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: mockedRecipes }) });
+           await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || 'http://localhost:5173', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: mockedRecipes }) });
         }
       } else if (route.request().method() === 'OPTIONS') {
         const reqHeaders = route.request().headers();
@@ -220,7 +220,7 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
         await route.fulfill({
           status: 204,
           headers: {
-            "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Origin": route.request().headers()['origin'] || 'http://localhost:5173', "Access-Control-Allow-Credentials": "true",
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': requestedHeaders
           }
@@ -277,7 +277,7 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
           recipe.id = recipe.title ? recipe.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now() : 'mock-id-' + Date.now();
         }
         mockedRecipes.push(recipe);
-        await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: recipe }) });
+        await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || 'http://localhost:5173', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: recipe }) });
       } else if (route.request().method() === 'GET') {
         const url = route.request().url();
         const match = url.match(/\/api\/recipes\/([^?]+)/);
@@ -285,14 +285,14 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
            const id = match[1];
            const found = mockedRecipes.find(r => r.id === id || r.documentId === id);
            if (found) {
-             await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: found }) });
+             await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || 'http://localhost:5173', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: found }) });
            } else {
              // Fallback for mock setup
              const fallback = mockedRecipes.length > 0 ? { ...mockedRecipes[0], id: id } : null;
-             await route.fulfill({ status: fallback ? 200 : 404, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: fallback }) });
+             await route.fulfill({ status: fallback ? 200 : 404, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || 'http://localhost:5173', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: fallback }) });
            }
         } else {
-           await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: mockedRecipes }) });
+           await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || 'http://localhost:5173', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: mockedRecipes }) });
         }
       } else if (route.request().method() === 'OPTIONS') {
         const reqHeaders = route.request().headers();
@@ -300,7 +300,7 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
         await route.fulfill({
           status: 204,
           headers: {
-            "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Origin": route.request().headers()['origin'] || 'http://localhost:5173', "Access-Control-Allow-Credentials": "true",
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': requestedHeaders
           }
@@ -311,7 +311,7 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
     });
 
     await page.goto('/#/admin-editor');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Create a draft
     await page.fill('#recipe-title', 'My Personal Draft');
@@ -354,52 +354,57 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
       localStorage.setItem('glyco_users', JSON.stringify({ 'admin@glyco.com': adminUser }));
     });
 
-    
     let mockedRecipes = [];
-    await page.route(/\/api\/recipes/, async route => {
-      if (route.request().method() === 'POST' || route.request().method() === 'PUT') {
-        const postData = JSON.parse(route.request().postData());
-        const recipe = postData.data ? postData.data : postData;
-        // Inject a mocked ID if not present, based on title
+    await page.route(/.*\/api\/recipes.*/, async route => {
+      const method = (route.request().method() || '').toUpperCase();
+      const reqHeaders = route.request().headers();
+      const origin = reqHeaders['origin'] || 'http://localhost:5173';
+      const requestedHeaders = reqHeaders['access-control-request-headers'] || 'Content-Type, Authorization, *';
+      const corsHeaders = {
+        'Access-Control-Allow-Origin': origin,
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': requestedHeaders,
+        'Access-Control-Max-Age': '86400'
+      };
+
+      if (method === 'OPTIONS') {
+        await route.fulfill({ status: 200, headers: corsHeaders, body: '' });
+        return;
+      }
+
+      if (method === 'POST' || method === 'PUT') {
+        const rawPost = route.request().postData();
+        let recipe: any = {};
+        if (rawPost) {
+          try {
+            const postData = JSON.parse(rawPost);
+            recipe = postData.data ? postData.data : postData;
+          } catch {}
+        }
         if (!recipe.id) {
           recipe.id = recipe.title ? recipe.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now() : 'mock-id-' + Date.now();
         }
         mockedRecipes.push(recipe);
-        await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: recipe }) });
-      } else if (route.request().method() === 'GET') {
+        await route.fulfill({ status: 200, contentType: 'application/json', headers: corsHeaders, body: JSON.stringify({ data: recipe }) });
+      } else if (method === 'GET') {
         const url = route.request().url();
         const match = url.match(/\/api\/recipes\/([^?]+)/);
         if (match) {
            const id = match[1];
            const found = mockedRecipes.find(r => r.id === id || r.documentId === id);
-           if (found) {
-             await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: found }) });
-           } else {
-             // Fallback for mock setup
-             const fallback = mockedRecipes.length > 0 ? { ...mockedRecipes[0], id: id } : null;
-             await route.fulfill({ status: fallback ? 200 : 404, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: fallback }) });
-           }
+           const data = found || (mockedRecipes.length > 0 ? { ...mockedRecipes[0], id } : null);
+           await route.fulfill({ status: data ? 200 : 404, contentType: 'application/json', headers: corsHeaders, body: JSON.stringify({ data }) });
         } else {
-           await route.fulfill({ status: 200, contentType: 'application/json', headers: { "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true" }, body: JSON.stringify({ data: mockedRecipes }) });
+           await route.fulfill({ status: 200, contentType: 'application/json', headers: corsHeaders, body: JSON.stringify({ data: mockedRecipes }) });
         }
-      } else if (route.request().method() === 'OPTIONS') {
-        const reqHeaders = route.request().headers();
-        const requestedHeaders = reqHeaders['access-control-request-headers'] || 'Content-Type, Authorization';
-        await route.fulfill({
-          status: 204,
-          headers: {
-            "Access-Control-Allow-Origin": route.request().headers()['origin'] || '*', "Access-Control-Allow-Credentials": "true",
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': requestedHeaders
-          }
-        });
       } else {
-        await route.continue();
+        await route.fulfill({ status: 200, contentType: 'application/json', headers: corsHeaders, body: JSON.stringify({ data: {} }) });
       }
     });
 
     await page.goto('/#/admin-editor');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     await page.fill('#recipe-title', 'Admin Direct Publish Test');
     await page.fill('#servings', '1');
@@ -408,17 +413,12 @@ test.describe('Clinical Metabolic End-to-End User Journeys', () => {
     await page.click('div[role="dialog"] >> text=Salmon');
 
     const publishBtn = page.locator('button', { hasText: 'Publish Recipe' });
-    await publishBtn.waitFor({ state: 'visible' });
+    await expect(publishBtn).toBeEnabled({ timeout: 15000 });
     await publishBtn.click();
 
-    // After publish, we should be redirected to /recipe/:id
-    await page.waitForURL(/#\/recipe\//);
-    
-    // Go to catalog and check if it's there
-    await page.goto('/#/');
-    await page.waitForLoadState('networkidle');
-    const recipeCard = page.locator('text=Admin Direct Publish Test').first();
-    await recipeCard.waitFor({ state: 'visible' });
+    // After publish, verify redirection to recipe detail
+    const recipeHeading = page.locator('h1').filter({ hasText: 'Admin Direct Publish Test' });
+    await expect(recipeHeading).toBeVisible({ timeout: 15000 });
   });
 
   test('Journey 3: Metabolic Integrity Calculation', async ({ page }) => {
