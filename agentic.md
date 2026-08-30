@@ -58,26 +58,12 @@ Agents must resolve interactive targets in descending order of precedence:
 
 When a UI refactoring breaks an existing test selector, the autonomous agent must execute the **OOUX Self-Healing Sequence** prior to failing the test run:
 
-```
-+-----------------------------------------------------------------------------------+
-|                        SELF-HEALING SELECTOR DECISION FLOW                         |
-+-----------------------------------------------------------------------------------+
-|                                                                                   |
-|  [ Primary Selector Fails to Resolve Target ]                                     |
-|         |                                                                         |
-|         v                                                                         |
-|  1. Inspect Parent Container for [data-ooux-object="<DomainEntity>"]             |
-|         |                                                                         |
-|         v                                                                         |
-|  2. Query Child ARIA Roles (e.g. role="dialog", role="radio", role="switch")      |
-|         |                                                                         |
-|         v                                                                         |
-|  3. Validate Semantic Accessibility Tree matches target User Intent               |
-|         |                                                                         |
-|         v                                                                         |
-|  4. Heal Test Spec by replacing with Canonical Semantic Locator                  |
-|                                                                                   |
-+-----------------------------------------------------------------------------------+
+```mermaid
+flowchart TD
+    Fail["Primary Selector Fails to Locate Target"] --> Step1["1. Locate Parent Container: [data-ooux-object='Recipe']"]
+    Step1 --> Step2["2. Query Standard ARIA Roles (role='dialog', role='radio', role='button')"]
+    Step2 --> Step3["3. Validate Semantic Accessibility Tree matches target User Intent"]
+    Step3 --> Step4["4. Heal Test Spec by replacing with Canonical Semantic Locator"]
 ```
 
 - **Step 1:** Locate the nearest semantic parent entity container using `[data-ooux-object="Recipe"]` or `[data-ooux-object="MealPlan"]`.
@@ -149,7 +135,7 @@ The **Antigravity Orchestration Engine** coordinates multi-step development, ver
 
 ```mermaid
 flowchart TD
-    UserReq["User Intent / Objective"] --> Branch["Branch Creation (docs/consolidation from master)"]
+    UserReq["User Intent / Objective"] --> Branch["Branch Creation (docs/full-consolidation from master)"]
     Branch --> Ingest["Verbatim Ingestion & AST Inspection (Raw Docs & Tests)"]
     Ingest --> DupMap["Duplicate Content Mapping & Section Tagging"]
     DupMap --> Plan["Chunked Synthesis & Architectural Planning"]
@@ -166,9 +152,13 @@ flowchart TD
 
 ---
 
+
+### 5.1 Automated Encoding & BOM Sanitization (`scripts/strip-bom.js`)
+AI coding agents running on Windows environments may inadvertently emit UTF-8 Byte Order Marks (BOM). The orchestration suite provides `scripts/strip-bom.js` to audit and sanitize all root configuration files before staging commits.
+
 ## 6. Continuous Integration (CI/CD) Agent Behaviors & Validation Gates
 
-Every Pull Request and branch merge is automatically evaluated against the following automated CI pipeline gates:
+Every Pull Request and branch merge is automatically evaluated against the automated CI pipeline gates:
 
 ```
 +-----------------------------------------------------------------------------------+
@@ -178,7 +168,7 @@ Every Pull Request and branch merge is automatically evaluated against the follo
 +-------------------+--------------------------------+------------------------------+
 | 1. Static Lint    | npm run lint (Oxlint)          | Zero syntax/hook errors      |
 | 2. Type Check     | npm run typecheck (tsc)        | Zero TypeScript errors       |
-| 3. Unit & Invar   | npm run test (Vitest)          | 243+ tests passing (100%)    |
+| 3. Unit & Invar   | npm run test (Vitest)          | 281+ tests passing (100%)    |
 | 4. Accessibility  | npm run test:a11y (Playwright) | Zero WCAG 2.1 AA violations  |
 | 5. User Journeys  | npm run test:e2e (Playwright)  | Complete end-to-end flows    |
 | 6. DB Integrity   | npm run validate-db (Node.js)  | Nutritional invariants valid |
@@ -193,8 +183,8 @@ Every Pull Request and branch merge is automatically evaluated against the follo
 ### 7.1 Git Branching Strategy
 - **`master`**: Production-ready, deployable branch. Direct pushes are protected.
 - **`feat/<feature-name>`**: Feature development branches (e.g. `feat/extend-recipe-ingredient-schemas`).
-- **`docs/<scope>`**: Documentation architecture and consolidation branches (e.g. `docs/consolidation`).
-- **`fix/<bug-name>`**: Targeted bug fixes and security patches (e.g. `fix/remove-auth-fallback`).
+- **`docs/<scope>`**: Documentation architecture and consolidation branches (e.g. `docs/full-consolidation`).
+- **`fix/<bug-name>`**: Targeted bug fixes and security patches (e.g. `fix/tenant-scoping-middleware`).
 
 ---
 
