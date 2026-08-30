@@ -15,6 +15,28 @@
     },
     "baseGI": {
       "type": "integer"
+    },
+    "usdaFdcId": {
+      "type": "string",
+      "unique": true
+    },
+    "kcal": {
+      "type": "decimal"
+    },
+    "protein": {
+      "type": "decimal"
+    },
+    "fat": {
+      "type": "decimal"
+    },
+    "carbs": {
+      "type": "decimal"
+    },
+    "fiber": {
+      "type": "decimal"
+    },
+    "lastSyncedAt": {
+      "type": "datetime"
     }
   }
 }
