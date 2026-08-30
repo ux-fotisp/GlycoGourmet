@@ -1,170 +1,173 @@
 {
-  "recipeNumber": 15,
-  "id": "smoked-paprika-chickpea-bowl-with-spinach-feta.json",
-  "title": "Smoked Paprika Chickpea Bowl with Spinach & Feta",
-  "description": "Chickpeas supply low-glycemic amylose-rich resistant starch and prebiotic galacto-oligosaccharides (GOS) that selectively nourish Bifidobacteria. Gently wilting spinach preserves delicate folate and lutein.",
-  "imageUrl": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80",
-  "prepTime": 10,
-  "cookTime": 10,
-  "cookingTime": 20,
-  "prepTimeMinutes": 10,
-  "cookTimeMinutes": 10,
-  "difficulty": "Easy",
-  "servings": 1,
-  "yield": "1 Large Bowl",
-  "category": "Main Course",
-  "tags": [
-    "Low GI",
-    "Med GL",
-    "High Fiber",
-    "Mediterranean",
-    "Vegetarian",
-    "LOGI"
-  ],
-  "allergens": ["milk"],
-  "dietaryTags": ["vegetarian", "gluten_free", "heart_healthy"],
-  "status": "published",
-  "publishedAt": "2026-01-01T00:00:00.000Z",
-  "isUserAuthored": false,
-  "glycemicIndex": 33,
-  "glycemicLoad": 10.6,
-  "glycemicImpact": "Medium Impact",
-  "nutrition": {
-    "kcal": 380,
-    "protein": 18,
-    "fat": 17,
-    "saturatedFat": 4.8,
-    "carbs": 42,
-    "fiber": 10.2,
-    "netCarbs": 31.8,
-    "glycemicIndex": 33,
-    "glycemicLoad": 10.6
-  },
-  "diabeticNotes": "Chickpeas supply low-glycemic amylose-rich resistant starch and prebiotic galacto-oligosaccharides (GOS) that selectively nourish Bifidobacteria. Gently wilting spinach preserves delicate folate and lutein.",
-  "ingredients": [
-    {
-      "ingredientId": "chickpeas",
-      "amount": 150,
-      "unit": "g",
-      "prepState": "sauteed",
-      "name": "cooked chickpeas (rinsed and patted dry)",
-      "kcal": 246,
-      "protein": 13.3,
-      "fat": 4.0,
-      "carbs": 41.1,
-      "fiber": 11.4,
-      "netCarbs": 29.7,
-      "glycemicIndex": 48,
-      "glycemicLoad": 14.3,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "spinach",
-      "amount": 80,
-      "unit": "g",
-      "prepState": "sauteed",
-      "name": "fresh baby spinach",
-      "kcal": 18,
-      "protein": 2.3,
-      "fat": 0.3,
-      "carbs": 2.9,
-      "fiber": 1.8,
-      "netCarbs": 1.1,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.2,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "extra-virgin-olive-oil",
-      "amount": 14,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "extra virgin olive oil",
-      "kcal": 124,
-      "protein": 0,
-      "fat": 14.0,
-      "carbs": 0,
-      "fiber": 0,
-      "netCarbs": 0,
-      "glycemicIndex": null,
-      "glycemicLoad": 0,
-      "nutritionSource": "USDA FoodData Central"
-    },
-    {
-      "ingredientId": "garlic",
-      "amount": 6,
-      "unit": "g",
-      "prepState": "sauteed",
-      "name": "garlic cloves, minced",
-      "kcal": 9,
-      "protein": 0.4,
-      "fat": 0,
-      "carbs": 2.0,
-      "fiber": 0.1,
-      "netCarbs": 1.9,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.3,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "feta-cheese",
-      "amount": 30,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "authentic Greek feta, crumbled",
-      "kcal": 80,
-      "protein": 4.3,
-      "fat": 6.4,
-      "carbs": 1.2,
-      "fiber": 0,
-      "netCarbs": 1.2,
-      "glycemicIndex": null,
-      "glycemicLoad": 0,
-      "allergens": ["milk"],
-      "nutritionSource": "USDA FoodData Central"
-    },
-    {
-      "ingredientId": "lemon-juice",
-      "amount": 15,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "fresh lemon juice",
-      "kcal": 4,
-      "protein": 0.1,
-      "fat": 0,
-      "carbs": 1.4,
-      "fiber": 0.4,
-      "netCarbs": 1.0,
-      "glycemicIndex": 20,
-      "glycemicLoad": 0.2,
-      "nutritionSource": "Sydney University GI Database"
-    }
-  ],
-  "steps": [
-    {
-      "title": "Heat Olive Oil",
-      "description": "Heat olive oil in a skillet over medium-high heat.",
-      "timer": 2
-    },
-    {
-      "title": "Crisp Chickpeas with Spices",
-      "description": "Add dried chickpeas, smoked paprika, cumin, and a pinch of salt. Sauté for 6 minutes, shaking pan frequently until chickpeas are slightly crisp.",
-      "timer": 6
-    },
-    {
-      "title": "Wilt Baby Spinach",
-      "description": "Add minced garlic and fresh baby spinach; toss for 90 seconds until spinach is just wilted.",
-      "timer": 2
-    },
-    {
-      "title": "Dress with Lemon",
-      "description": "Remove skillet from heat, squeeze fresh lemon juice over the top, and transfer to a bowl.",
-      "timer": 1
-    },
-    {
-      "title": "Garnish with Greek Feta",
-      "description": "Top with crumbled feta cheese before serving.",
-      "timer": 1
-    }
-  ]
+    "recipeNumber":  15,
+    "id":  "smoked-paprika-chickpea-bowl-with-spinach-feta.json",
+    "title":  "Smoked Paprika Chickpea Bowl with Spinach \u0026 Feta",
+    "description":  "Chickpeas supply low-glycemic amylose-rich resistant starch and prebiotic galacto-oligosaccharides (GOS) that selectively nourish Bifidobacteria. Gently wilting spinach preserves delicate folate and lutein.",
+    "imageUrl":  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format\u0026fit=crop\u0026w=1200\u0026q=80",
+    "prepTime":  10,
+    "cookTime":  10,
+    "cookingTime":  20,
+    "prepTimeMinutes":  10,
+    "cookTimeMinutes":  10,
+    "difficulty":  "Easy",
+    "servings":  1,
+    "yield":  "1 Large Bowl",
+    "category":  "Main Course",
+    "tags":  [
+                 "Low GI",
+                 "Med GL",
+                 "High Fiber",
+                 "Mediterranean",
+                 "Vegetarian",
+                 "LOGI"
+             ],
+    "allergens":  [
+                      "milk"
+                  ],
+    "dietaryTags":  [
+                        "vegetarian",
+                        "gluten_free",
+                        "heart_healthy"
+                    ],
+    "status":  "published",
+    "publishedAt":  "2026-01-01T00:00:00.000Z",
+    "isUserAuthored":  false,
+    "glycemicIndex":  33,
+    "glycemicLoad":  10.6,
+    "glycemicImpact":  "Medium Impact",
+    "nutrition":  {
+                      "kcal":  380,
+                      "protein":  18,
+                      "fat":  17,
+                      "saturatedFat":  4.8,
+                      "carbs":  42,
+                      "fiber":  10.2,
+                      "netCarbs":  31.8,
+                      "glycemicIndex":  33,
+                      "glycemicLoad":  10.6
+                  },
+    "diabeticNotes":  "Chickpeas supply low-glycemic amylose-rich resistant starch and prebiotic galacto-oligosaccharides (GOS) that selectively nourish Bifidobacteria. Gently wilting spinach preserves delicate folate and lutein.",
+    "ingredients":  [
+                        {
+                            "ingredientId":  "chickpeas",
+                            "amount":  150,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "name":  "cooked chickpeas (rinsed and patted dry)",
+                            "kcal":  246,
+                            "protein":  13.3,
+                            "fat":  4.0,
+                            "carbs":  41.1,
+                            "fiber":  11.4,
+                            "netCarbs":  29.7,
+                            "glycemicIndex":  48,
+                            "glycemicLoad":  14.3,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "spinach",
+                            "amount":  80,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "name":  "fresh baby spinach",
+                            "kcal":  18,
+                            "protein":  2.3,
+                            "fat":  0.3,
+                            "carbs":  2.9,
+                            "fiber":  1.8,
+                            "netCarbs":  1.1,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.2,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "extra-virgin-olive-oil",
+                            "amount":  14,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "extra virgin olive oil",
+                            "kcal":  124,
+                            "protein":  0,
+                            "fat":  14.0,
+                            "carbs":  0,
+                            "fiber":  0,
+                            "netCarbs":  0,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "garlic",
+                            "amount":  6,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "name":  "garlic cloves, minced",
+                            "kcal":  9,
+                            "protein":  0.4,
+                            "fat":  0,
+                            "carbs":  2.0,
+                            "fiber":  0.1,
+                            "netCarbs":  1.9,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.3,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "feta-cheese",
+                            "amount":  30,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "authentic Greek feta, crumbled",
+                            "kcal":  80,
+                            "protein":  4.3,
+                            "fat":  6.4,
+                            "carbs":  1.2,
+                            "fiber":  0,
+                            "netCarbs":  1.2,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "allergens":  [
+                                              "milk"
+                                          ],
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "lemon-juice",
+                            "amount":  15,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "fresh lemon juice",
+                            "kcal":  4,
+                            "protein":  0.1,
+                            "fat":  0,
+                            "carbs":  1.4,
+                            "fiber":  0.4,
+                            "netCarbs":  1.0,
+                            "glycemicIndex":  20,
+                            "glycemicLoad":  0.2,
+                            "nutritionSource":  "Sydney University GI Database"
+                        }
+                    ],
+    "steps":  [
+                  {
+                      "title":  "Heat Olive Oil",
+                      "description":  "Heat extra virgin olive oil in a large skillet over medium-high heat."
+                  },
+                  {
+                      "title":  "Crisp Chickpeas",
+                      "description":  "Add drained chickpeas and seasonings to the skillet. Sauté for 6 minutes until slightly crispy and aromatic."
+                  },
+                  {
+                      "title":  "Wilt Baby Spinach",
+                      "description":  "Add minced garlic and fresh baby spinach to the pan. Toss for 90 seconds until spinach is tender."
+                  },
+                  {
+                      "title":  "Brighten with Lemon",
+                      "description":  "Remove skillet from heat and squeeze fresh lemon juice over the chickpeas and greens."
+                  },
+                  {
+                      "title":  "Top with Greek Feta",
+                      "description":  "Transfer warm chickpea mixture to a bowl and top with crumbled Greek feta cheese before serving."
+                  }
+              ]
 }

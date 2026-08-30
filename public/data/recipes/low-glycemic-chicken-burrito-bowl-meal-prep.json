@@ -1,185 +1,187 @@
 {
-  "recipeNumber": 19,
-  "id": "low-glycemic-chicken-burrito-bowl-meal-prep",
-  "title": "Low-Glycemic Chicken Burrito Bowl Meal Prep",
-  "description": "Using portion-controlled brown basmati rice paired with high-fiber black beans maintains a moderate GL (13.3). Greek yogurt and lean chicken breast drive a high 38g protein load, promoting GLP-1 secretion.",
-  "imageUrl": "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=1200&q=80",
-  "prepTime": 15,
-  "cookTime": 15,
-  "cookingTime": 30,
-  "prepTimeMinutes": 15,
-  "cookTimeMinutes": 15,
-  "difficulty": "Easy",
-  "servings": 1,
-  "yield": "1 Serving",
-  "category": "Main Course",
-  "tags": [
-    "Low GI",
-    "Med GL",
-    "High Protein",
-    "Meal Prep",
-    "LOGI"
-  ],
-  "allergens": ["milk"],
-  "dietaryTags": ["gluten_free", "heart_healthy"],
-  "status": "published",
-  "publishedAt": "2026-01-01T00:00:00.000Z",
-  "isUserAuthored": false,
-  "glycemicIndex": 38,
-  "glycemicLoad": 13.3,
-  "glycemicImpact": "Medium Impact",
-  "nutrition": {
-    "kcal": 420,
-    "protein": 38,
-    "fat": 13,
-    "saturatedFat": 2.8,
-    "carbs": 36,
-    "fiber": 8.5,
-    "netCarbs": 27.5,
-    "glycemicIndex": 38,
-    "glycemicLoad": 13.3
-  },
-  "diabeticNotes": "Using portion-controlled brown basmati rice paired with high-fiber black beans maintains a moderate GL (13.3). Greek yogurt and lean chicken breast drive a high 38g protein load, promoting GLP-1 secretion.",
-  "ingredients": [
-    {
-      "ingredientId": "chicken-breast",
-      "amount": 120,
-      "unit": "g",
-      "prepState": "sauteed",
-      "name": "skinless chicken breast, cubed and seasoned",
-      "kcal": 198,
-      "protein": 37.2,
-      "fat": 4.3,
-      "carbs": 0,
-      "fiber": 0,
-      "netCarbs": 0,
-      "glycemicIndex": null,
-      "glycemicLoad": 0,
-      "nutritionSource": "USDA FoodData Central"
-    },
-    {
-      "ingredientId": "brown-basmati-rice",
-      "amount": 65,
-      "unit": "g",
-      "prepState": "boiled",
-      "name": "cooked brown basmati rice",
-      "kcal": 78,
-      "protein": 1.7,
-      "fat": 0.6,
-      "carbs": 16.6,
-      "fiber": 1.2,
-      "netCarbs": 15.4,
-      "glycemicIndex": 58,
-      "glycemicLoad": 8.9,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "black-beans",
-      "amount": 90,
-      "unit": "g",
-      "prepState": "boiled",
-      "name": "cooked black beans, rinsed and drained",
-      "kcal": 119,
-      "protein": 8.0,
-      "fat": 0.5,
-      "carbs": 21.3,
-      "fiber": 7.8,
-      "netCarbs": 13.5,
-      "glycemicIndex": 30,
-      "glycemicLoad": 4.1,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "romaine-lettuce",
-      "amount": 70,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "shredded Romaine lettuce",
-      "kcal": 12,
-      "protein": 0.8,
-      "fat": 0.2,
-      "carbs": 2.3,
-      "fiber": 1.5,
-      "netCarbs": 0.8,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.1,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "cherry-tomato",
-      "amount": 45,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "fresh pico de gallo (tomato, onion, cilantro, lime)",
-      "kcal": 8,
-      "protein": 0.4,
-      "fat": 0.1,
-      "carbs": 1.8,
-      "fiber": 0.5,
-      "netCarbs": 1.3,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.2,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "avocado",
-      "amount": 40,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "ripe avocado, sliced",
-      "kcal": 64,
-      "protein": 0.8,
-      "fat": 5.9,
-      "carbs": 3.4,
-      "fiber": 2.7,
-      "netCarbs": 0.7,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.1,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "greek-yogurt",
-      "amount": 15,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "2% Greek yogurt (substituting sour cream)",
-      "kcal": 11,
-      "protein": 1.5,
-      "fat": 0.3,
-      "carbs": 0.6,
-      "fiber": 0,
-      "netCarbs": 0.6,
-      "glycemicIndex": 11,
-      "glycemicLoad": 0.1,
-      "allergens": ["milk"],
-      "nutritionSource": "Sydney University GI Database"
-    }
-  ],
-  "steps": [
-    {
-      "title": "Sear Seasoned Chicken",
-      "description": "Sear seasoned chicken breast cubes in a hot nonstick skillet lightly misted with olive oil for 6–7 minutes until fully cooked.",
-      "timer": 7
-    },
-    {
-      "title": "Create Volume Base",
-      "description": "Lay shredded Romaine lettuce across one side of a wide bowl as the low-calorie volume base.",
-      "timer": 2
-    },
-    {
-      "title": "Add Rice & Black Beans",
-      "description": "Add cooked brown rice and warm black beans side-by-side.",
-      "timer": 2
-    },
-    {
-      "title": "Top with Grilled Chicken",
-      "description": "Place grilled chicken breast over the top.",
-      "timer": 1
-    },
-    {
-      "title": "Garnish with Avocado & Crema",
-      "description": "Garnish with fresh pico de gallo, avocado slices, and a dollop of Greek yogurt.",
-      "timer": 3
-    }
-  ]
+    "recipeNumber":  19,
+    "id":  "low-glycemic-chicken-burrito-bowl-meal-prep",
+    "title":  "Low-Glycemic Chicken Burrito Bowl Meal Prep",
+    "description":  "Using portion-controlled brown basmati rice paired with high-fiber black beans maintains a moderate GL (13.3). Greek yogurt and lean chicken breast drive a high 38g protein load, promoting GLP-1 secretion.",
+    "imageUrl":  "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format\u0026fit=crop\u0026w=1200\u0026q=80",
+    "prepTime":  15,
+    "cookTime":  15,
+    "cookingTime":  30,
+    "prepTimeMinutes":  15,
+    "cookTimeMinutes":  15,
+    "difficulty":  "Easy",
+    "servings":  1,
+    "yield":  "1 Serving",
+    "category":  "Main Course",
+    "tags":  [
+                 "Low GI",
+                 "Med GL",
+                 "High Protein",
+                 "Meal Prep",
+                 "LOGI"
+             ],
+    "allergens":  [
+                      "milk"
+                  ],
+    "dietaryTags":  [
+                        "gluten_free",
+                        "heart_healthy"
+                    ],
+    "status":  "published",
+    "publishedAt":  "2026-01-01T00:00:00.000Z",
+    "isUserAuthored":  false,
+    "glycemicIndex":  38,
+    "glycemicLoad":  13.3,
+    "glycemicImpact":  "Medium Impact",
+    "nutrition":  {
+                      "kcal":  420,
+                      "protein":  38,
+                      "fat":  13,
+                      "saturatedFat":  2.8,
+                      "carbs":  36,
+                      "fiber":  8.5,
+                      "netCarbs":  27.5,
+                      "glycemicIndex":  38,
+                      "glycemicLoad":  13.3
+                  },
+    "diabeticNotes":  "Using portion-controlled brown basmati rice paired with high-fiber black beans maintains a moderate GL (13.3). Greek yogurt and lean chicken breast drive a high 38g protein load, promoting GLP-1 secretion.",
+    "ingredients":  [
+                        {
+                            "ingredientId":  "chicken-breast",
+                            "amount":  120,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "name":  "skinless chicken breast, cubed and seasoned",
+                            "kcal":  198,
+                            "protein":  37.2,
+                            "fat":  4.3,
+                            "carbs":  0,
+                            "fiber":  0,
+                            "netCarbs":  0,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "brown-basmati-rice",
+                            "amount":  65,
+                            "unit":  "g",
+                            "prepState":  "boiled",
+                            "name":  "cooked brown basmati rice",
+                            "kcal":  78,
+                            "protein":  1.7,
+                            "fat":  0.6,
+                            "carbs":  16.6,
+                            "fiber":  1.2,
+                            "netCarbs":  15.4,
+                            "glycemicIndex":  58,
+                            "glycemicLoad":  8.9,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "black-beans",
+                            "amount":  90,
+                            "unit":  "g",
+                            "prepState":  "boiled",
+                            "name":  "cooked black beans, rinsed and drained",
+                            "kcal":  119,
+                            "protein":  8.0,
+                            "fat":  0.5,
+                            "carbs":  21.3,
+                            "fiber":  7.8,
+                            "netCarbs":  13.5,
+                            "glycemicIndex":  30,
+                            "glycemicLoad":  4.1,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "romaine-lettuce",
+                            "amount":  70,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "shredded Romaine lettuce",
+                            "kcal":  12,
+                            "protein":  0.8,
+                            "fat":  0.2,
+                            "carbs":  2.3,
+                            "fiber":  1.5,
+                            "netCarbs":  0.8,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.1,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "cherry-tomato",
+                            "amount":  45,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "fresh pico de gallo (tomato, onion, cilantro, lime)",
+                            "kcal":  8,
+                            "protein":  0.4,
+                            "fat":  0.1,
+                            "carbs":  1.8,
+                            "fiber":  0.5,
+                            "netCarbs":  1.3,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.2,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "avocado",
+                            "amount":  40,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "ripe avocado, sliced",
+                            "kcal":  64,
+                            "protein":  0.8,
+                            "fat":  5.9,
+                            "carbs":  3.4,
+                            "fiber":  2.7,
+                            "netCarbs":  0.7,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.1,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "greek-yogurt",
+                            "amount":  15,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "2% Greek yogurt (substituting sour cream)",
+                            "kcal":  11,
+                            "protein":  1.5,
+                            "fat":  0.3,
+                            "carbs":  0.6,
+                            "fiber":  0,
+                            "netCarbs":  0.6,
+                            "glycemicIndex":  11,
+                            "glycemicLoad":  0.1,
+                            "allergens":  [
+                                              "milk"
+                                          ],
+                            "nutritionSource":  "Sydney University GI Database"
+                        }
+                    ],
+    "steps":  [
+                  {
+                      "title":  "Sear Chicken Breast",
+                      "description":  "Season diced chicken breast lightly. Sear in a skillet over medium heat for 6 minutes until cooked through."
+                  },
+                  {
+                      "title":  "Build Lettuce Foundation",
+                      "description":  "Place crisp shredded Romaine lettuce across the base of a meal prep bowl."
+                  },
+                  {
+                      "title":  "Add Rice \u0026 Warm Beans",
+                      "description":  "Arrange cooked brown basmati rice and rinsed black beans neatly side-by-side over lettuce."
+                  },
+                  {
+                      "title":  "Top with Protein \u0026 Veggies",
+                      "description":  "Add seared chicken breast cubes, fresh cherry tomato pico, and sliced ripe avocado."
+                  },
+                  {
+                      "title":  "Dollop Crema \u0026 Serve",
+                      "description":  "Finish with a dollop of Greek yogurt in the center. Enjoy immediately or chill for meal prep."
+                  }
+              ]
 }

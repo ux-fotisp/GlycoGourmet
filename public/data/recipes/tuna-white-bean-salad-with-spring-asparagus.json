@@ -1,180 +1,188 @@
 {
-  "recipeNumber": 12,
-  "id": "tuna-white-bean-salad-with-spring-asparagus",
-  "title": "Tuna & White Bean Salad with Spring Asparagus",
-  "description": "Asparagus contains prebiotic inulin fiber, which fuels beneficial gut microbiota to produce short-chain fatty acids (SCFAs), improving systemic insulin sensitivity and hepatic lipid handling.",
-  "imageUrl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80",
-  "prepTime": 15,
-  "cookTime": 0,
-  "cookingTime": 15,
-  "prepTimeMinutes": 15,
-  "cookTimeMinutes": 0,
-  "difficulty": "Easy",
-  "servings": 1,
-  "yield": "1 Serving",
-  "category": "Salad",
-  "tags": [
-    "Low GI",
-    "Low GL",
-    "High Protein",
-    "High Fiber",
-    "LOGI"
-  ],
-  "allergens": ["fish"],
-  "dietaryTags": ["gluten_free", "dairy_free", "heart_healthy"],
-  "status": "published",
-  "publishedAt": "2026-01-01T00:00:00.000Z",
-  "isUserAuthored": false,
-  "glycemicIndex": 30,
-  "glycemicLoad": 6.4,
-  "glycemicImpact": "Optimal Low-GI",
-  "nutrition": {
-    "kcal": 345,
-    "protein": 33,
-    "fat": 13,
-    "saturatedFat": 2.1,
-    "carbs": 22,
-    "fiber": 7.2,
-    "netCarbs": 14.8,
-    "glycemicIndex": 30,
-    "glycemicLoad": 6.4
-  },
-  "diabeticNotes": "Asparagus contains prebiotic inulin fiber, which fuels beneficial gut microbiota to produce short-chain fatty acids (SCFAs), improving systemic insulin sensitivity and hepatic lipid handling.",
-  "ingredients": [
-    {
-      "ingredientId": "tuna-light",
-      "amount": 120,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "chunk light tuna in olive oil or spring water, drained",
-      "kcal": 132,
-      "protein": 29.0,
-      "fat": 1.0,
-      "carbs": 0,
-      "fiber": 0,
-      "netCarbs": 0,
-      "glycemicIndex": null,
-      "glycemicLoad": 0,
-      "allergens": ["fish"],
-      "nutritionSource": "USDA FoodData Central"
-    },
-    {
-      "ingredientId": "cannellini-beans",
-      "amount": 135,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "cannellini white beans, rinsed and drained",
-      "kcal": 113,
-      "protein": 7.7,
-      "fat": 0.5,
-      "carbs": 20.3,
-      "fiber": 5.8,
-      "netCarbs": 14.5,
-      "glycemicIndex": 30,
-      "glycemicLoad": 4.4,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "asparagus",
-      "amount": 90,
-      "unit": "g",
-      "prepState": "steamed",
-      "name": "green asparagus spears, blanched and sliced into 1-inch pieces",
-      "kcal": 18,
-      "protein": 2.0,
-      "fat": 0.1,
-      "carbs": 3.5,
-      "fiber": 1.9,
-      "netCarbs": 1.6,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.2,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "red-onion",
-      "amount": 20,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "finely chopped red onion + fresh parsley",
-      "kcal": 8,
-      "protein": 0.2,
-      "fat": 0,
-      "carbs": 1.9,
-      "fiber": 0.3,
-      "netCarbs": 1.6,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.2,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "extra-virgin-olive-oil",
-      "amount": 14,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "extra virgin olive oil",
-      "kcal": 124,
-      "protein": 0,
-      "fat": 14.0,
-      "carbs": 0,
-      "fiber": 0,
-      "netCarbs": 0,
-      "glycemicIndex": null,
-      "glycemicLoad": 0,
-      "nutritionSource": "USDA FoodData Central"
-    },
-    {
-      "ingredientId": "lemon-juice",
-      "amount": 15,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "fresh lemon juice",
-      "kcal": 4,
-      "protein": 0.1,
-      "fat": 0,
-      "carbs": 1.4,
-      "fiber": 0.4,
-      "netCarbs": 1.0,
-      "glycemicIndex": 20,
-      "glycemicLoad": 0.2,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "dijon-mustard",
-      "amount": 3,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "Dijon mustard",
-      "kcal": 4,
-      "protein": 0.2,
-      "fat": 0.3,
-      "carbs": 0.2,
-      "fiber": 0.1,
-      "netCarbs": 0.1,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.0,
-      "nutritionSource": "USDA FoodData Central"
-    }
-  ],
-  "steps": [
-    {
-      "title": "Blanch Asparagus",
-      "description": "Blanch asparagus spears in boiling water for 2 minutes; cool in ice water and drain.",
-      "timer": 4
-    },
-    {
-      "title": "Whisk Lemon Dijon Dressing",
-      "description": "Whisk olive oil, lemon juice, Dijon mustard, salt, and pepper in a mixing bowl.",
-      "timer": 2
-    },
-    {
-      "title": "Toss Beans & Asparagus",
-      "description": "Add white beans, blanched asparagus pieces, red onion, and fresh parsley to the bowl. Toss to coat.",
-      "timer": 3
-    },
-    {
-      "title": "Fold Tuna & Serve",
-      "description": "Gently fold in flaked tuna. Serve chilled or at room temperature.",
-      "timer": 2
-    }
-  ]
+    "recipeNumber":  12,
+    "id":  "tuna-white-bean-salad-with-spring-asparagus",
+    "title":  "Tuna \u0026 White Bean Salad with Spring Asparagus",
+    "description":  "Asparagus contains prebiotic inulin fiber, which fuels beneficial gut microbiota to produce short-chain fatty acids (SCFAs), improving systemic insulin sensitivity and hepatic lipid handling.",
+    "imageUrl":  "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format\u0026fit=crop\u0026w=1200\u0026q=80",
+    "prepTime":  15,
+    "cookTime":  0,
+    "cookingTime":  15,
+    "prepTimeMinutes":  15,
+    "cookTimeMinutes":  0,
+    "difficulty":  "Easy",
+    "servings":  1,
+    "yield":  "1 Serving",
+    "category":  "Salad",
+    "tags":  [
+                 "Low GI",
+                 "Low GL",
+                 "High Protein",
+                 "High Fiber",
+                 "LOGI"
+             ],
+    "allergens":  [
+                      "fish"
+                  ],
+    "dietaryTags":  [
+                        "gluten_free",
+                        "dairy_free",
+                        "heart_healthy"
+                    ],
+    "status":  "published",
+    "publishedAt":  "2026-01-01T00:00:00.000Z",
+    "isUserAuthored":  false,
+    "glycemicIndex":  30,
+    "glycemicLoad":  6.4,
+    "glycemicImpact":  "Optimal Low-GI",
+    "nutrition":  {
+                      "kcal":  345,
+                      "protein":  33,
+                      "fat":  13,
+                      "saturatedFat":  2.1,
+                      "carbs":  22,
+                      "fiber":  7.2,
+                      "netCarbs":  14.8,
+                      "glycemicIndex":  30,
+                      "glycemicLoad":  6.4
+                  },
+    "diabeticNotes":  "Asparagus contains prebiotic inulin fiber, which fuels beneficial gut microbiota to produce short-chain fatty acids (SCFAs), improving systemic insulin sensitivity and hepatic lipid handling.",
+    "ingredients":  [
+                        {
+                            "ingredientId":  "tuna-light",
+                            "amount":  120,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "chunk light tuna in olive oil or spring water, drained",
+                            "kcal":  132,
+                            "protein":  29.0,
+                            "fat":  1.0,
+                            "carbs":  0,
+                            "fiber":  0,
+                            "netCarbs":  0,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "allergens":  [
+                                              "fish"
+                                          ],
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "cannellini-beans",
+                            "amount":  135,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "cannellini white beans, rinsed and drained",
+                            "kcal":  113,
+                            "protein":  7.7,
+                            "fat":  0.5,
+                            "carbs":  20.3,
+                            "fiber":  5.8,
+                            "netCarbs":  14.5,
+                            "glycemicIndex":  30,
+                            "glycemicLoad":  4.4,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "asparagus",
+                            "amount":  90,
+                            "unit":  "g",
+                            "prepState":  "steamed",
+                            "name":  "green asparagus spears, blanched and sliced into 1-inch pieces",
+                            "kcal":  18,
+                            "protein":  2.0,
+                            "fat":  0.1,
+                            "carbs":  3.5,
+                            "fiber":  1.9,
+                            "netCarbs":  1.6,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.2,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "red-onion",
+                            "amount":  20,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "finely chopped red onion + fresh parsley",
+                            "kcal":  8,
+                            "protein":  0.2,
+                            "fat":  0,
+                            "carbs":  1.9,
+                            "fiber":  0.3,
+                            "netCarbs":  1.6,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.2,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "extra-virgin-olive-oil",
+                            "amount":  14,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "extra virgin olive oil",
+                            "kcal":  124,
+                            "protein":  0,
+                            "fat":  14.0,
+                            "carbs":  0,
+                            "fiber":  0,
+                            "netCarbs":  0,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "lemon-juice",
+                            "amount":  15,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "fresh lemon juice",
+                            "kcal":  4,
+                            "protein":  0.1,
+                            "fat":  0,
+                            "carbs":  1.4,
+                            "fiber":  0.4,
+                            "netCarbs":  1.0,
+                            "glycemicIndex":  20,
+                            "glycemicLoad":  0.2,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "dijon-mustard",
+                            "amount":  3,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "Dijon mustard",
+                            "kcal":  4,
+                            "protein":  0.2,
+                            "fat":  0.3,
+                            "carbs":  0.2,
+                            "fiber":  0.1,
+                            "netCarbs":  0.1,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.0,
+                            "nutritionSource":  "USDA FoodData Central"
+                        }
+                    ],
+    "steps":  [
+                  {
+                      "title":  "Blanch Asparagus",
+                      "description":  "Blanch cut asparagus pieces in boiling salted water for 2 minutes, then plunge into ice water and drain."
+                  },
+                  {
+                      "title":  "Emulsify Dressing",
+                      "description":  "Whisk extra virgin olive oil, fresh lemon juice, and Dijon mustard in a salad bowl until smooth."
+                  },
+                  {
+                      "title":  "Add Beans \u0026 Vegetables",
+                      "description":  "Add drained cannellini beans, blanched asparagus, and finely diced red onion to the dressing bowl."
+                  },
+                  {
+                      "title":  "Fold Flaked Tuna",
+                      "description":  "Add drained tuna chunks and fold gently with a spoon to coat without breaking up beans."
+                  },
+                  {
+                      "title":  "Season \u0026 Plate",
+                      "description":  "Season lightly with black pepper and serve salad chilled or at room temperature."
+                  }
+              ]
 }

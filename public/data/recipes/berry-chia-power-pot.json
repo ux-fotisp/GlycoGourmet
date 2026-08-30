@@ -1,124 +1,135 @@
 {
-  "id": "berry-chia-power-pot",
-  "title": "Berry Chia Power Pot",
-  "isUserAuthored": false,
-  "status": "published",
-  "publishedAt": "2026-01-01T00:00:00.000Z",
-  "description": "Omega-3 rich pudding with wild blueberries and toasted nuts. A breakfast or snack that supports blood sugar balance and keeps you full.",
-  "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuDQm1VBLSn9IUGicA-gjUEv9oGoag75s7a300MD5lnkOyP4JAwu5RlBGn-yslExEf0mAQRgBhN1vam7p-T3Rjg_rPKFvlX798Ys40e4q9KlP8vVSq3Xnh7T7FIroPnwieLMPhpE2ntgZStbWBoqr_XLU2vIdwvfSuAgDU5U1JZVWWmQLgpnpc9DK9LPZLqo197CbzW6C877NJY_i9pVSqGN3F4WSkxLuD1lO5XIcC7FJwgBrOjKNyXn",
-  "prepTime": 10,
-  "cookTime": 0,
-  "cookingTime": 10,
-  "prepTimeMinutes": 10,
-  "cookTimeMinutes": 0,
-  "difficulty": "Easy",
-  "category": "Breakfast",
-  "tags": [
-    "Low GI",
-    "Low Sugar",
-    "High Fiber",
-    "Keto-Friendly"
-  ],
-  "allergens": ["milk", "tree_nuts"],
-  "dietaryTags": ["vegetarian", "gluten_free"],
-  "servings": 1,
-  "yield": "1 Jar / Bowl",
-  "glycemicIndex": 14,
-  "glycemicLoad": 2.1,
-  "glycemicImpact": "Optimal Low-GI",
-  "nutrition": {
-    "kcal": 437,
-    "protein": 24.4,
-    "fat": 28.0,
-    "carbs": 27.9,
-    "fiber": 13.7,
-    "netCarbs": 14.2,
-    "glycemicIndex": 14,
-    "glycemicLoad": 2.1
-  },
-  "ingredients": [
-    {
-      "ingredientId": "chia-seeds",
-      "name": "Black Chia Seeds",
-      "amount": 24,
-      "unit": "g",
-      "prepState": "raw",
-      "kcal": 117,
-      "protein": 4.0,
-      "fat": 7.4,
-      "carbs": 10.1,
-      "fiber": 8.3,
-      "netCarbs": 1.8,
-      "glycemicIndex": 1,
-      "glycemicLoad": 0.0,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "greek-yogurt",
-      "name": "Plain Unsweetened 2% Greek Yogurt",
-      "amount": 125,
-      "unit": "g",
-      "prepState": "cooled",
-      "kcal": 91,
-      "protein": 12.5,
-      "fat": 2.5,
-      "carbs": 4.6,
-      "fiber": 0,
-      "netCarbs": 4.6,
-      "glycemicIndex": 11,
-      "glycemicLoad": 0.5,
-      "allergens": ["milk"],
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "blueberries",
-      "name": "Fresh Wild Blueberries",
-      "amount": 37,
-      "unit": "g",
-      "prepState": "raw",
-      "kcal": 21,
-      "protein": 0.3,
-      "fat": 0.1,
-      "carbs": 5.4,
-      "fiber": 0.9,
-      "netCarbs": 4.5,
-      "glycemicIndex": 25,
-      "glycemicLoad": 1.1,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "almonds",
-      "name": "Toasted Sliced Almonds",
-      "amount": 36,
-      "unit": "g",
-      "prepState": "roasted",
-      "kcal": 208,
-      "protein": 7.6,
-      "fat": 18.0,
-      "carbs": 7.8,
-      "fiber": 4.5,
-      "netCarbs": 3.3,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.5,
-      "allergens": ["tree_nuts"],
-      "nutritionSource": "Sydney University GI Database"
-    }
-  ],
-  "steps": [
-    {
-      "title": "Combine Chia & Yogurt",
-      "description": "Mix the chia seeds and unsweetened Greek yogurt in a bowl or small glass jar. Stir well to prevent clumping.",
-      "timer": 2
-    },
-    {
-      "title": "Chill & Set",
-      "description": "Cover and refrigerate for at least 15 minutes (or overnight) to allow chia seeds to expand, releasing high-fiber mucilage that slows carb digestion.",
-      "timer": 15
-    },
-    {
-      "title": "Toppings",
-      "description": "Stir the mixture gently. Top with wild blueberries and sliced almonds for a perfect healthy fat crunch.",
-      "timer": 1
-    }
-  ]
+    "id":  "berry-chia-power-pot",
+    "title":  "Berry Chia Power Pot",
+    "isUserAuthored":  false,
+    "status":  "published",
+    "publishedAt":  "2026-01-01T00:00:00.000Z",
+    "description":  "Omega-3 rich pudding with wild blueberries and toasted nuts. A breakfast or snack that supports blood sugar balance and keeps you full.",
+    "imageUrl":  "https://lh3.googleusercontent.com/aida-public/AB6AXuDQm1VBLSn9IUGicA-gjUEv9oGoag75s7a300MD5lnkOyP4JAwu5RlBGn-yslExEf0mAQRgBhN1vam7p-T3Rjg_rPKFvlX798Ys40e4q9KlP8vVSq3Xnh7T7FIroPnwieLMPhpE2ntgZStbWBoqr_XLU2vIdwvfSuAgDU5U1JZVWWmQLgpnpc9DK9LPZLqo197CbzW6C877NJY_i9pVSqGN3F4WSkxLuD1lO5XIcC7FJwgBrOjKNyXn",
+    "prepTime":  10,
+    "cookTime":  0,
+    "cookingTime":  10,
+    "prepTimeMinutes":  10,
+    "cookTimeMinutes":  0,
+    "difficulty":  "Easy",
+    "category":  "Breakfast",
+    "tags":  [
+                 "Low GI",
+                 "Low Sugar",
+                 "High Fiber",
+                 "Keto-Friendly"
+             ],
+    "allergens":  [
+                      "milk",
+                      "tree_nuts"
+                  ],
+    "dietaryTags":  [
+                        "vegetarian",
+                        "gluten_free"
+                    ],
+    "servings":  1,
+    "yield":  "1 Jar / Bowl",
+    "glycemicIndex":  14,
+    "glycemicLoad":  2.1,
+    "glycemicImpact":  "Optimal Low-GI",
+    "nutrition":  {
+                      "kcal":  437,
+                      "protein":  24.4,
+                      "fat":  28.0,
+                      "carbs":  27.9,
+                      "fiber":  13.7,
+                      "netCarbs":  14.2,
+                      "glycemicIndex":  14,
+                      "glycemicLoad":  2.1
+                  },
+    "ingredients":  [
+                        {
+                            "ingredientId":  "chia-seeds",
+                            "name":  "Black Chia Seeds",
+                            "amount":  24,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "kcal":  117,
+                            "protein":  4.0,
+                            "fat":  7.4,
+                            "carbs":  10.1,
+                            "fiber":  8.3,
+                            "netCarbs":  1.8,
+                            "glycemicIndex":  1,
+                            "glycemicLoad":  0.0,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "greek-yogurt",
+                            "name":  "Plain Unsweetened 2% Greek Yogurt",
+                            "amount":  125,
+                            "unit":  "g",
+                            "prepState":  "cooled",
+                            "kcal":  91,
+                            "protein":  12.5,
+                            "fat":  2.5,
+                            "carbs":  4.6,
+                            "fiber":  0,
+                            "netCarbs":  4.6,
+                            "glycemicIndex":  11,
+                            "glycemicLoad":  0.5,
+                            "allergens":  [
+                                              "milk"
+                                          ],
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "blueberries",
+                            "name":  "Fresh Wild Blueberries",
+                            "amount":  37,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "kcal":  21,
+                            "protein":  0.3,
+                            "fat":  0.1,
+                            "carbs":  5.4,
+                            "fiber":  0.9,
+                            "netCarbs":  4.5,
+                            "glycemicIndex":  25,
+                            "glycemicLoad":  1.1,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "almonds",
+                            "name":  "Toasted Sliced Almonds",
+                            "amount":  36,
+                            "unit":  "g",
+                            "prepState":  "roasted",
+                            "kcal":  208,
+                            "protein":  7.6,
+                            "fat":  18.0,
+                            "carbs":  7.8,
+                            "fiber":  4.5,
+                            "netCarbs":  3.3,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.5,
+                            "allergens":  [
+                                              "tree_nuts"
+                                          ],
+                            "nutritionSource":  "Sydney University GI Database"
+                        }
+                    ],
+    "steps":  [
+                  {
+                      "title":  "Combine Chia \u0026 Yogurt",
+                      "description":  "In a glass jar or bowl, stir chia seeds into plain Greek yogurt until completely distributed."
+                  },
+                  {
+                      "title":  "Refrigerate to Set",
+                      "description":  "Cover and chill in refrigerator for at least 15 minutes (or overnight) until thick and gelatinous."
+                  },
+                  {
+                      "title":  "Toast Almond Slices",
+                      "description":  "Toast sliced almonds in a dry pan over low heat for 2 minutes until lightly golden."
+                  },
+                  {
+                      "title":  "Garnish \u0026 Enjoy",
+                      "description":  "Top chia pudding with fresh wild blueberries and toasted crunchy almonds before serving."
+                  }
+              ]
 }

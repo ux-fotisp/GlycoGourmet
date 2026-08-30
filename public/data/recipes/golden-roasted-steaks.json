@@ -1,123 +1,136 @@
 {
-  "id": "golden-roasted-steaks",
-  "title": "Golden Roasted Steaks",
-  "isUserAuthored": false,
-  "status": "published",
-  "publishedAt": "2026-01-01T00:00:00.000Z",
-  "description": "Anti-inflammatory turmeric roasted cauliflower steaks served with fresh garden herbs and healthy olive oil.",
-  "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAfWBkyYSIbdBPFx8kyT0mnH8-NV6GitEdhRPtfy7nEAMkCGXkHMoU4_FthHwI4oUmqaQ274LHqsvflY9df80B1jTYvb73XTYoQaxGnDfuRvW0fa0birtaubdCsmSLDB6FiM28q4QKYUIFxWLTOufXpugw75jy2Ta5xabwO8m6P0K6QXFEYDLyjyxzD-pMpxzynz0o6t-iKJ0F-gwUifk7vtdSgw8HmUM746bxwgS9A6S8nrLaS5MRh",
-  "prepTime": 10,
-  "cookTime": 20,
-  "cookingTime": 30,
-  "prepTimeMinutes": 10,
-  "cookTimeMinutes": 20,
-  "difficulty": "Easy",
-  "servings": 1,
-  "yield": "1 Plate (2 Large Steaks)",
-  "category": "Salad",
-  "tags": [
-    "Low GI",
-    "Low Sugar",
-    "High Fiber",
-    "Keto-Friendly",
-    "Anti-Inflammatory"
-  ],
-  "allergens": [],
-  "dietaryTags": ["vegan", "vegetarian", "gluten_free", "dairy_free", "heart_healthy"],
-  "glycemicIndex": 15,
-  "glycemicLoad": 1.2,
-  "glycemicImpact": "Optimal Low-GI",
-  "nutrition": {
-    "kcal": 252,
-    "protein": 5.1,
-    "fat": 21.7,
-    "carbs": 13.1,
-    "fiber": 4.8,
-    "netCarbs": 8.3,
-    "glycemicIndex": 15,
-    "glycemicLoad": 1.2
-  },
-  "ingredients": [
-    {
-      "ingredientId": "cauliflower-rice",
-      "name": "Fresh Cauliflower Florets / Steaks",
-      "amount": 200,
-      "unit": "g",
-      "prepState": "roasted",
-      "kcal": 50,
-      "protein": 3.8,
-      "fat": 0.6,
-      "carbs": 10.0,
-      "fiber": 4.0,
-      "netCarbs": 6.0,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.9,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "olive-oil",
-      "name": "Extra Virgin Olive Oil",
-      "amount": 21,
-      "unit": "g",
-      "prepState": "raw",
-      "kcal": 186,
-      "protein": 0,
-      "fat": 21,
-      "carbs": 0,
-      "fiber": 0,
-      "netCarbs": 0,
-      "glycemicIndex": null,
-      "glycemicLoad": 0,
-      "nutritionSource": "USDA FoodData Central"
-    },
-    {
-      "ingredientId": "garlic",
-      "name": "Fresh Garlic Cloves, minced",
-      "amount": 6,
-      "unit": "g",
-      "prepState": "sauteed",
-      "kcal": 9,
-      "protein": 0.4,
-      "fat": 0,
-      "carbs": 2.0,
-      "fiber": 0.1,
-      "netCarbs": 1.9,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.3,
-      "nutritionSource": "Sydney University GI Database"
-    },
-    {
-      "ingredientId": "spinach",
-      "name": "Fresh Baby Spinach",
-      "amount": 30,
-      "unit": "g",
-      "prepState": "raw",
-      "kcal": 7,
-      "protein": 0.9,
-      "fat": 0.1,
-      "carbs": 1.1,
-      "fiber": 0.7,
-      "netCarbs": 0.4,
-      "glycemicIndex": 15,
-      "glycemicLoad": 0.1,
-      "nutritionSource": "Sydney University GI Database"
-    }
-  ],
-  "steps": [
-    {
-      "title": "Slice & Brush",
-      "description": "Brush thick slices of cauliflower (or cauliflower florets) with olive oil and seasoned garlic.",
-      "timer": 5
-    },
-    {
-      "title": "Roast",
-      "description": "Roast at 400°F (200°C) until golden brown and caramelized around the edges. Cauliflower has a low GI and glycemic load.",
-      "timer": 20
-    },
-    {
-      "title": "Plate with Greens",
-      "description": "Serve warm over a bed of baby spinach, adding a squeeze of fresh lemon if desired.",
-      "timer": 2
-    }
-  ]
+    "id":  "golden-roasted-steaks",
+    "title":  "Golden Roasted Steaks",
+    "isUserAuthored":  false,
+    "status":  "published",
+    "publishedAt":  "2026-01-01T00:00:00.000Z",
+    "description":  "Anti-inflammatory turmeric roasted cauliflower steaks served with fresh garden herbs and healthy olive oil.",
+    "imageUrl":  "https://lh3.googleusercontent.com/aida-public/AB6AXuAfWBkyYSIbdBPFx8kyT0mnH8-NV6GitEdhRPtfy7nEAMkCGXkHMoU4_FthHwI4oUmqaQ274LHqsvflY9df80B1jTYvb73XTYoQaxGnDfuRvW0fa0birtaubdCsmSLDB6FiM28q4QKYUIFxWLTOufXpugw75jy2Ta5xabwO8m6P0K6QXFEYDLyjyxzD-pMpxzynz0o6t-iKJ0F-gwUifk7vtdSgw8HmUM746bxwgS9A6S8nrLaS5MRh",
+    "prepTime":  10,
+    "cookTime":  20,
+    "cookingTime":  30,
+    "prepTimeMinutes":  10,
+    "cookTimeMinutes":  20,
+    "difficulty":  "Easy",
+    "servings":  1,
+    "yield":  "1 Plate (2 Large Steaks)",
+    "category":  "Salad",
+    "tags":  [
+                 "Low GI",
+                 "Low Sugar",
+                 "High Fiber",
+                 "Keto-Friendly",
+                 "Anti-Inflammatory"
+             ],
+    "allergens":  [
+
+                  ],
+    "dietaryTags":  [
+                        "vegan",
+                        "vegetarian",
+                        "gluten_free",
+                        "dairy_free",
+                        "heart_healthy"
+                    ],
+    "glycemicIndex":  15,
+    "glycemicLoad":  1.2,
+    "glycemicImpact":  "Optimal Low-GI",
+    "nutrition":  {
+                      "kcal":  252,
+                      "protein":  5.1,
+                      "fat":  21.7,
+                      "carbs":  13.1,
+                      "fiber":  4.8,
+                      "netCarbs":  8.3,
+                      "glycemicIndex":  15,
+                      "glycemicLoad":  1.2
+                  },
+    "ingredients":  [
+                        {
+                            "ingredientId":  "cauliflower-rice",
+                            "name":  "Fresh Cauliflower Florets / Steaks",
+                            "amount":  200,
+                            "unit":  "g",
+                            "prepState":  "roasted",
+                            "kcal":  50,
+                            "protein":  3.8,
+                            "fat":  0.6,
+                            "carbs":  10.0,
+                            "fiber":  4.0,
+                            "netCarbs":  6.0,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.9,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "olive-oil",
+                            "name":  "Extra Virgin Olive Oil",
+                            "amount":  21,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "kcal":  186,
+                            "protein":  0,
+                            "fat":  21,
+                            "carbs":  0,
+                            "fiber":  0,
+                            "netCarbs":  0,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "garlic",
+                            "name":  "Fresh Garlic Cloves, minced",
+                            "amount":  6,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "kcal":  9,
+                            "protein":  0.4,
+                            "fat":  0,
+                            "carbs":  2.0,
+                            "fiber":  0.1,
+                            "netCarbs":  1.9,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.3,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "spinach",
+                            "name":  "Fresh Baby Spinach",
+                            "amount":  30,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "kcal":  7,
+                            "protein":  0.9,
+                            "fat":  0.1,
+                            "carbs":  1.1,
+                            "fiber":  0.7,
+                            "netCarbs":  0.4,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.1,
+                            "nutritionSource":  "Sydney University GI Database"
+                        }
+                    ],
+    "steps":  [
+                  {
+                      "title":  "Preheat \u0026 Prep Cauliflower",
+                      "description":  "Preheat oven to 400°F (200°C). Slice cauliflower into thick steaks or florets and arrange on a baking sheet."
+                  },
+                  {
+                      "title":  "Season with Garlic Oil",
+                      "description":  "Mix olive oil and minced garlic together. Brush generously over both sides of the cauliflower."
+                  },
+                  {
+                      "title":  "Roast Until Golden",
+                      "description":  "Roast in preheated oven for 20 minutes until cauliflower is fork-tender with crispy, caramelized golden edges."
+                  },
+                  {
+                      "title":  "Bed of Baby Spinach",
+                      "description":  "Arrange fresh baby spinach leaves across the bottom of a serving platter."
+                  },
+                  {
+                      "title":  "Plate \u0026 Serve",
+                      "description":  "Place hot roasted cauliflower steaks directly over the spinach bed to gently warm the greens."
+                  }
+              ]
 }
