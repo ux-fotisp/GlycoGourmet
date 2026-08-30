@@ -1,6 +1,6 @@
 ﻿// src/utils/clientStore.js
 /**
- * Client & Tenant Management Store - LocalStorage fallback for Multi-Tenant Clinic Administration
+ * Client & Tenant Management Store - LocalStorage fallback for Multi-Tenant Clinic Administration & Asset Collaboration
  */
 
 // Mock Clinic Tenant Record
@@ -50,7 +50,53 @@ export const mockDietitians = [
   },
 ];
 
-// Pre-seed mock data for dietitian@glyco.com
+// Mock Shared Meal Plan Templates
+export const mockSharedTemplates = [
+  {
+    id: 'template-gdm-week1',
+    clinicId: 'clinic-glycemic-wellness',
+    title: 'Standard Gestational Diabetes Week 1',
+    description: 'Carbohydrate-controlled protocol with breakfast carb moderation (<= 15g) and high fiber distribution to prevent early morning dawn phenomenon surges.',
+    authorDietitianId: 'dietitian-1',
+    authorName: 'Dr. Sarah Jenkins, RDN',
+    targetSubtype: 'GDM',
+    sharingScope: 'CLINIC_SHARED',
+    avgDailyGL: 36,
+    scheduledSlots: {
+      monday: { Breakfast: 'rec_1', Lunch: 'rec_2', Dinner: 'rec_2' },
+      tuesday: { Breakfast: 'rec_1', Lunch: 'rec_2', Dinner: 'rec_3' },
+      wednesday: { Breakfast: 'rec_1', Lunch: 'rec_3', Dinner: 'rec_2' },
+      thursday: { Breakfast: 'rec_1', Lunch: 'rec_2', Dinner: 'rec_2' },
+      friday: { Breakfast: 'rec_1', Lunch: 'rec_3', Dinner: 'rec_3' },
+      saturday: { Breakfast: 'rec_1', Lunch: 'rec_2', Dinner: 'rec_2' },
+      sunday: { Breakfast: 'rec_1', Lunch: 'rec_3', Dinner: 'rec_2' },
+    },
+    createdAt: '2026-02-10T10:00:00.000Z',
+  },
+  {
+    id: 'template-t2d-stabilization',
+    clinicId: 'clinic-glycemic-wellness',
+    title: 'T2D Glycemic Stabilization Protocol',
+    description: 'Mediterranean-style low-glycemic load template aimed at reducing insulin resistance with optimal omega-3 fatty acids and polyphenol-dense plant fibers.',
+    authorDietitianId: 'dietitian-2',
+    authorName: 'Marcus Vance, MS, LDN',
+    targetSubtype: 'T2D',
+    sharingScope: 'CLINIC_SHARED',
+    avgDailyGL: 42,
+    scheduledSlots: {
+      monday: { Breakfast: 'rec_1', Lunch: 'rec_2', Dinner: 'rec_2' },
+      tuesday: { Breakfast: 'rec_1', Lunch: 'rec_3', Dinner: 'rec_2' },
+      wednesday: { Breakfast: 'rec_1', Lunch: 'rec_2', Dinner: 'rec_3' },
+      thursday: { Breakfast: 'rec_1', Lunch: 'rec_3', Dinner: 'rec_2' },
+      friday: { Breakfast: 'rec_1', Lunch: 'rec_2', Dinner: 'rec_2' },
+      saturday: { Breakfast: 'rec_1', Lunch: 'rec_3', Dinner: 'rec_3' },
+      sunday: { Breakfast: 'rec_1', Lunch: 'rec_2', Dinner: 'rec_2' },
+    },
+    createdAt: '2026-02-18T14:30:00.000Z',
+  },
+];
+
+// Pre-seed mock data
 const preseedDemoClients = () => {
   if (typeof localStorage === 'undefined') return;
   const existing = localStorage.getItem('glyco_clients');
@@ -125,6 +171,53 @@ const preseedDemoClients = () => {
     ];
     localStorage.setItem('glyco_clients', JSON.stringify(mockClients));
   }
+
+  // Pre-seed shared rules
+  const existingRules = localStorage.getItem('glyco_rules');
+  if (!existingRules) {
+    const defaultRules = [
+      {
+        id: 'rule-shared-1',
+        clinicId: 'clinic-glycemic-wellness',
+        sourceIngredient: 'Jasmine White Rice',
+        targetIngredient: 'Cauliflower Pearl Rice',
+        scope: 'all-plans',
+        sharingScope: 'CLINIC_SHARED',
+        authorName: 'Dr. Sarah Jenkins, RDN',
+        rationale: 'Standard clinical substitute reducing Glycemic Load by ~65 GL per 100g.',
+        createdAt: '2026-01-20T09:00:00.000Z',
+      },
+      {
+        id: 'rule-shared-2',
+        clinicId: 'clinic-glycemic-wellness',
+        sourceIngredient: 'Mashed Russet Potato',
+        targetIngredient: 'Steamed Cauliflower Mash',
+        scope: 'all-plans',
+        sharingScope: 'CLINIC_SHARED',
+        authorName: 'Marcus Vance, MS, LDN',
+        rationale: 'Eliminates fast starch gelatinization spike while preserving creamy mouthfeel.',
+        createdAt: '2026-02-05T11:20:00.000Z',
+      },
+      {
+        id: 'rule-shared-3',
+        clinicId: 'clinic-glycemic-wellness',
+        sourceIngredient: 'Refined Wheat Pasta',
+        targetIngredient: 'Edamame / Konjac Noodles',
+        scope: 'all-plans',
+        sharingScope: 'CLINIC_SHARED',
+        authorName: 'Elena Rostova, RD',
+        rationale: 'Shifts macronutrient density toward complete plant protein and high soluble fiber.',
+        createdAt: '2026-02-14T15:45:00.000Z',
+      },
+    ];
+    localStorage.setItem('glyco_rules', JSON.stringify(defaultRules));
+  }
+
+  // Pre-seed shared templates
+  const existingTemplates = localStorage.getItem('glyco_templates');
+  if (!existingTemplates) {
+    localStorage.setItem('glyco_templates', JSON.stringify(mockSharedTemplates));
+  }
 };
 
 export const getClinicDetails = async (clinicId = 'clinic-glycemic-wellness') => {
@@ -160,13 +253,13 @@ export const inviteDietitian = async (dietitianData) => {
 export const getClientProfiles = async (dietitianId) => {
   preseedDemoClients();
   const clients = JSON.parse(localStorage.getItem('glyco_clients') || '[]');
-  return clients.filter(c => c.dietitianId === dietitianId);
+  return clients.filter((c) => c.dietitianId === dietitianId);
 };
 
 export const getClientById = async (clientId) => {
   preseedDemoClients();
   const clients = JSON.parse(localStorage.getItem('glyco_clients') || '[]');
-  const client = clients.find(c => c.id === clientId);
+  const client = clients.find((c) => c.id === clientId);
   if (!client) return null;
   return {
     profile: {
@@ -194,7 +287,7 @@ export const createClientProfile = async (profileData, calibrationData) => {
     diabeticSubtype: profileData.diabeticSubtype,
     dietaryRestrictions: profileData.dietaryRestrictions || [],
     calibration: calibrationData,
-    activePlan: { cumulativeDailyGL: {} }, // empty plan
+    activePlan: { cumulativeDailyGL: {} },
     lastActive: new Date().toISOString(),
   };
   clients.push(newClient);
@@ -204,7 +297,7 @@ export const createClientProfile = async (profileData, calibrationData) => {
 
 export const updateClientCalibration = async (clientId, calibrationData) => {
   const clients = JSON.parse(localStorage.getItem('glyco_clients') || '[]');
-  const index = clients.findIndex(c => c.id === clientId);
+  const index = clients.findIndex((c) => c.id === clientId);
   if (index !== -1) {
     clients[index].calibration = { 
       ...clients[index].calibration, 
@@ -218,12 +311,12 @@ export const updateClientCalibration = async (clientId, calibrationData) => {
 
 export const getPrescribedPlan = async (clientId, weekStartDate) => {
   const plans = JSON.parse(localStorage.getItem('glyco_plans') || '[]');
-  return plans.find(p => p.clientId === clientId && p.weekStartDate === weekStartDate) || null;
+  return plans.find((p) => p.clientId === clientId && p.weekStartDate === weekStartDate) || null;
 };
 
 export const savePrescribedPlan = async (planData) => {
   const plans = JSON.parse(localStorage.getItem('glyco_plans') || '[]');
-  const index = plans.findIndex(p => p.clientId === planData.clientId && p.weekStartDate === planData.weekStartDate);
+  const index = plans.findIndex((p) => p.clientId === planData.clientId && p.weekStartDate === planData.weekStartDate);
   if (index !== -1) {
     plans[index] = planData;
   } else {
@@ -231,9 +324,8 @@ export const savePrescribedPlan = async (planData) => {
   }
   localStorage.setItem('glyco_plans', JSON.stringify(plans));
   
-  // Update activePlan in client profile for dashboard sync
   const clients = JSON.parse(localStorage.getItem('glyco_clients') || '[]');
-  const clientIndex = clients.findIndex(c => c.id === planData.clientId);
+  const clientIndex = clients.findIndex((c) => c.id === planData.clientId);
   if (clientIndex !== -1) {
     clients[clientIndex].activePlan = planData;
     localStorage.setItem('glyco_clients', JSON.stringify(clients));
@@ -242,14 +334,53 @@ export const savePrescribedPlan = async (planData) => {
 };
 
 export const getSmartSwapRules = async (clientId) => {
+  preseedDemoClients();
   const rules = JSON.parse(localStorage.getItem('glyco_rules') || '[]');
-  return rules.filter(r => r.clientId === clientId || r.scope === 'all-clients');
+  return rules.filter((r) => r.clientId === clientId || r.scope === 'all-clients');
 };
 
 export const saveSmartSwapRule = async (ruleData) => {
+  preseedDemoClients();
   const rules = JSON.parse(localStorage.getItem('glyco_rules') || '[]');
-  const newRule = { id: 'rule_' + Date.now(), ...ruleData };
+  const newRule = { 
+    id: 'rule_' + Date.now(), 
+    clinicId: ruleData.clinicId || 'clinic-glycemic-wellness',
+    sharingScope: ruleData.sharingScope || 'PRIVATE',
+    authorName: ruleData.authorName || 'Current Practitioner',
+    ...ruleData 
+  };
   rules.push(newRule);
   localStorage.setItem('glyco_rules', JSON.stringify(rules));
   return newRule;
+};
+
+export const getClinicSharedRules = async (clinicId = 'clinic-glycemic-wellness') => {
+  preseedDemoClients();
+  const rules = JSON.parse(localStorage.getItem('glyco_rules') || '[]');
+  return rules.filter((r) => r.sharingScope === 'CLINIC_SHARED');
+};
+
+export const getClinicSharedTemplates = async (clinicId = 'clinic-glycemic-wellness') => {
+  preseedDemoClients();
+  const templates = JSON.parse(localStorage.getItem('glyco_templates') || '[]');
+  return templates.filter((t) => t.sharingScope === 'CLINIC_SHARED');
+};
+
+export const cloneRuleToClient = async (ruleId, targetClientId) => {
+  preseedDemoClients();
+  const rules = JSON.parse(localStorage.getItem('glyco_rules') || '[]');
+  const sourceRule = rules.find((r) => r.id === ruleId);
+  if (!sourceRule) return null;
+
+  const clonedRule = {
+    ...sourceRule,
+    id: `rule_clone_${Date.now()}`,
+    clientId: targetClientId,
+    sharingScope: 'PRIVATE',
+    createdAt: new Date().toISOString(),
+  };
+
+  rules.push(clonedRule);
+  localStorage.setItem('glyco_rules', JSON.stringify(rules));
+  return clonedRule;
 };

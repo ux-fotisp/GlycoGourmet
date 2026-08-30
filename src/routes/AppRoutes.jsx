@@ -17,6 +17,7 @@ import PendingApproval from '../pages/PendingApproval';
 import ClientRoster from '../pages/ClientRoster';
 import PlanBuilder from '../pages/PlanBuilder';
 import ClinicDashboard from '../pages/ClinicDashboard';
+import ClinicLibrary from '../pages/ClinicLibrary';
 
 /**
  * AppRoutes — React Router Navigation Hierarchy & Route Map
@@ -25,7 +26,7 @@ import ClinicDashboard from '../pages/ClinicDashboard';
  * - Public routes: /login, /register
  * - Base Protected routes: /onboarding, /pending-approval, /recipe/:id
  * - Permission-Gated routes: /recipes/mine, /meal-plans, /admin-editor, /admin, /admin/audit-queue
- * - Dietitian-Gated routes: /client-roster, /client/:id/plan-builder
+ * - Dietitian-Gated routes: /client-roster, /client/:id/plan-builder, /clinic-library
  * - Clinic Admin Workspace: /clinic-dashboard
  */
 export const AppRoutes = () => {
@@ -67,6 +68,7 @@ export const AppRoutes = () => {
           <Route element={<ProtectedRoute requiredPermission="canManageClients" />}>
             <Route path="/client-roster" element={<ClientRoster />} />
             <Route path="/client/:id/plan-builder" element={<PlanBuilder />} />
+            <Route path="/clinic-library" element={<ClinicLibrary />} />
           </Route>
 
           {/* Clinic Admin Multi-Tenant Workspace Route */}

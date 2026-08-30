@@ -39,10 +39,12 @@ export type MacronutrientProfile = MetabolicProfileResult;
 export type Ingredient = IngredientPayload;
 
 // ---------------------------------------------------------------------------
-// 0. Multi-Tenant Clinic Administration
+// 0. Multi-Tenant Clinic Administration & Collaboration
 // ---------------------------------------------------------------------------
 
 export type ClinicTier = 'INDEPENDENT' | 'CLINIC_PRO' | 'ENTERPRISE';
+
+export type SharingScope = 'PRIVATE' | 'CLINIC_SHARED';
 
 export interface Clinic {
   id: string;
@@ -247,6 +249,8 @@ export interface PrescribedMealPlan {
   clientId: string;
   dietitianId: string;
   clinicId?: string;
+  authorName?: string;
+  sharingScope?: SharingScope;
   weekStartDate: string; // ISO Date YYYY-MM-DD
   scheduledSlots: {
     [day in DayOfWeek]?: Partial<Record<OccasionType, string>>; // Maps to Recipe ID
@@ -262,17 +266,40 @@ export interface PrescribedMealPlan {
   updatedAt?: string;
 }
 
+export interface MealPlanTemplate {
+  id: string;
+  clinicId: string;
+  title: string;
+  description?: string;
+  authorDietitianId: string;
+  authorName: string;
+  targetSubtype?: DiabeticSubtype;
+  sharingScope: SharingScope;
+  avgDailyGL: number;
+  scheduledSlots: {
+    [day in DayOfWeek]?: Partial<Record<OccasionType, string>>;
+  };
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 // ---------------------------------------------------------------------------
 // 4. Rule-Based Smart Low-GI Substitutions
 // ---------------------------------------------------------------------------
 
 export interface SmartSwapRule {
   id: string;
-  clientId: string;
+  clientId?: string;
   clinicId?: string;
   sourceIngredientId: string;
   targetIngredientId: string;
+  sourceIngredientName?: string;
+  targetIngredientName?: string;
   scope: 'all-plans' | string; // 'all-plans' or specific PrescribedMealPlan ID
+  sharingScope?: SharingScope; // 'PRIVATE' | 'CLINIC_SHARED'
+  authorName?: string;
+  authorDietitianId?: string;
+  deltaGL?: number;
   reason?: string;
   createdByDietitianId: string;
   createdAt?: string;

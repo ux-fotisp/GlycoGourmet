@@ -1,19 +1,24 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { saveSmartSwapRule, getClientById } from '../../utils/clientStore';
 import { generateSmartSwapRecommendations } from '../../services/recommendationEngine';
+import { useAuth } from '../../context/AuthContext';
+import { usePermissions } from '../../hooks/usePermissions';
 import defaultIngredients from '../../data/ingredients.json';
 
 /**
  * SmartSwapRuleEditor - Slide-over modal for defining auto-substitution rules
- * with deterministic recommendation auto-suggestions.
+ * with deterministic recommendation auto-suggestions and clinic network publishing.
  */
 export const SmartSwapRuleEditor = ({ isOpen, onClose, clientId }) => {
+  const { user } = useAuth();
+  const permissions = usePermissions();
   const [client, setClient] = useState(null);
   const [formData, setFormData] = useState({
     sourceIngredient: '',
     targetIngredient: '',
     scope: 'all-plans',
     rationale: '',
+    publishToClinic: false,
   });
 
   const [recommendations, setRecommendations] = useState([]);
@@ -62,16 +67,30 @@ export const SmartSwapRuleEditor = ({ isOpen, onClose, clientId }) => {
     e.preventDefault();
     await saveSmartSwapRule({
       clientId,
-      ...formData,
+      clinicId: client?.clinicId || user?.clinicId || 'clinic-glycemic-wellness',
+      sourceIngredient: formData.sourceIngredient,
+      targetIngredient: formData.targetIngredient,
+      scope: formData.scope,
+      rationale: formData.rationale,
+      sharingScope: formData.publishToClinic ? 'CLINIC_SHARED' : 'PRIVATE',
+      authorName: user?.name || 'Clinical Practitioner',
       createdAt: new Date().toISOString(),
     });
-    setFormData({ sourceIngredient: '', targetIngredient: '', scope: 'all-plans', rationale: '' });
+    setFormData({ 
+      sourceIngredient: '', 
+      targetIngredient: '', 
+      scope: 'all-plans', 
+      rationale: '', 
+      publishToClinic: false 
+    });
     setRecommendations([]);
     setHasSearched(false);
     onClose();
   };
 
   if (!isOpen) return null;
+
+  const canShare = Boolean(permissions?.canShareTemplates);
 
   return (
     <div className="fixed inset-0 z-[100] flex justify-end" role="dialog" aria-modal="true">
@@ -224,6 +243,41 @@ export const SmartSwapRuleEditor = ({ isOpen, onClose, clientId }) => {
               onChange={(e) => setFormData((p) => ({ ...p, rationale: e.target.value }))} 
               className="w-full border border-outline rounded-xl p-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none resize-none"
             />
+          </div>
+
+          {/* Publish to Clinic Network Toggle & Feature Gate */}
+          <div className="pt-2 border-t border-stone-200/80">
+            <label className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-all ${
+              canShare 
+                ? 'bg-[#F6F4EE] border-stone-200 hover:border-primary/40 cursor-pointer' 
+                : 'bg-stone-50 border-stone-200/60 opacity-80 cursor-not-allowed'
+            }`}>
+              <input
+                type="checkbox"
+                disabled={!canShare}
+                checked={formData.publishToClinic}
+                onChange={(e) => setFormData((p) => ({ ...p, publishToClinic: e.target.checked }))}
+                className="mt-0.5 w-4 h-4 rounded text-primary focus:ring-primary accent-primary cursor-pointer disabled:cursor-not-allowed"
+              />
+              <div className="flex-1">
+                <div className="flex items-center gap-1.5 font-extrabold text-xs text-primary">
+                  <span>Publish to Clinic Network</span>
+                  {!canShare && (
+                    <span 
+                      title="Clinic Pro or Enterprise required to share assets."
+                      className="material-symbols-outlined text-[15px] text-amber-text"
+                    >
+                      lock
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-stone-500 mt-0.5 leading-tight">
+                  {canShare 
+                    ? 'Share this standardized substitution rule with all practitioners in your clinic.' 
+                    : 'Clinic Pro or Enterprise required to share assets.'}
+                </p>
+              </div>
+            </label>
           </div>
         </form>
 

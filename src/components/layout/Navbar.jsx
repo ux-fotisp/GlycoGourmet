@@ -165,6 +165,21 @@ export const Navbar = () => {
             </Link>
           )}
 
+          {/* Clinic Library (Standardized Collaboration) */}
+          {permissions?.canManageClients && (
+            <Link
+              to="/clinic-library"
+              className={`flex items-center gap-3 px-4 py-3 min-h-[48px] rounded-r-full font-body-md text-sm transition-all ${
+                activePath === '/clinic-library'
+                  ? 'bg-primary text-on-primary font-bold shadow-xs'
+                  : 'text-on-surface-variant hover:bg-surface-variant/50'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">local_library</span>
+              <span>Clinic Library</span>
+            </Link>
+          )}
+
           {/* Clinic Workspace (Multi-Tenant Administration) */}
           {permissions?.canManageClinic && (
             <Link
