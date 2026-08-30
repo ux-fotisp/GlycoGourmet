@@ -10,7 +10,7 @@ import InstructionTimeline from '../components/recipe/InstructionTimeline';
 import RelatedRecipesGrid from '../components/recipe/RelatedRecipesGrid';
 
 /**
- * RecipeDetails - Clinical recipe detail page conforming to Phase 3 MagicPath tokens and Framer Motion micro-interactions.
+ * RecipeDetails - Clinical recipe detail page conforming to Phase 3 MagicPath tokens and Ambient Cook Mode.
  */
 const RecipeDetails = () => {
   const { id } = useParams();
@@ -116,7 +116,16 @@ const RecipeDetails = () => {
           <span className="truncate max-w-xs sm:max-w-md">{recipeMeta.title}</span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Ambient Cook Mode Trigger Button */}
+          <Link
+            to={`/recipe/${recipeMeta.id}/cook`}
+            className="px-5 py-2.5 bg-primary text-white hover:bg-primary-variant rounded-2xl text-xs font-extrabold flex items-center gap-2 shadow-sm transition-all min-h-[42px] cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-[18px]">skillet</span>
+            👨🍳 Start Cooking
+          </Link>
+
           <Link 
             to={`/admin-editor?edit=${recipeMeta.id}`} 
             className="px-4 py-2 bg-white border border-stone-200 rounded-2xl text-xs font-bold text-primary hover:bg-stone-50 flex items-center gap-1.5 shadow-2xs transition-colors min-h-[40px]"
@@ -126,7 +135,7 @@ const RecipeDetails = () => {
           </Link>
           <button 
             onClick={handleAddToPlan} 
-            className="px-4 py-2 bg-primary text-white rounded-2xl text-xs font-bold hover:bg-primary-variant flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-[40px]"
+            className="px-4 py-2 bg-surface-container hover:bg-surface-container-high text-primary border border-outline-variant/40 rounded-2xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer min-h-[40px]"
           >
             <span className="material-symbols-outlined text-[16px]">calendar_add_on</span>
             Add to Meal Plan

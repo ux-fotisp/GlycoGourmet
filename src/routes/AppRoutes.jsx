@@ -7,6 +7,7 @@ import Register from '../pages/Register';
 import Onboarding from '../pages/Onboarding';
 import Dashboard from '../pages/Dashboard';
 import RecipeDetails from '../pages/RecipeDetails';
+import AmbientCookMode from '../pages/AmbientCookMode';
 import AdminEditor from '../pages/AdminEditor';
 import AdminDashboard from '../pages/AdminDashboard';
 import DraftAuditQueue from '../pages/DraftAuditQueue';
@@ -25,10 +26,8 @@ import ClinicLibrary from '../pages/ClinicLibrary';
  *
  * Configures:
  * - Public routes: /login, /register
- * - Base Protected routes: /onboarding, /pending-approval, /recipe/:id, /grocery-list
- * - Permission-Gated routes: /recipes/mine, /meal-plans, /admin-editor, /admin, /admin/audit-queue
- * - Dietitian-Gated routes: /client-roster, /client/:id/plan-builder, /clinic-library
- * - Clinic Admin Workspace: /clinic-dashboard
+ * - Base Protected routes: /onboarding, /pending-approval, /recipe/:id/cook
+ * - AppLayout Protected routes: /recipes, /recipe/:id, /grocery-list, /meal-plans, /client-roster, etc.
  */
 export const AppRoutes = () => {
   return (
@@ -41,6 +40,9 @@ export const AppRoutes = () => {
       <Route element={<ProtectedRoute />}>
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/pending-approval" element={<PendingApproval />} />
+
+        {/* Full-Screen Ambient Cook Mode (Standalone kitchen layout) */}
+        <Route path="/recipe/:id/cook" element={<AmbientCookMode />} />
 
         {/* Main Application Layout Wrapper */}
         <Route element={<AppLayout />}>

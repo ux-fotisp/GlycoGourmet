@@ -1,4 +1,5 @@
 ﻿import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 /**
  * RecipeHeaderMeta - Top-level typography, dietary badges, chef metadata, and action bar.
@@ -74,11 +75,20 @@ export const RecipeHeaderMeta = ({ recipe, onAddToPlan }) => {
       </div>
 
       {/* Action Bar */}
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex items-center gap-3 pt-2 flex-wrap">
+        {/* Prominent Start Cooking Button */}
+        <Link
+          to={`/recipe/${recipe?.id || 'rec-power-salad'}/cook`}
+          className="flex-1 sm:flex-none px-6 py-3 bg-primary hover:bg-primary-variant text-white rounded-2xl text-xs font-extrabold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer min-h-[46px]"
+        >
+          <span className="material-symbols-outlined text-[18px]">skillet</span>
+          👨🍳 Start Cooking
+        </Link>
+
         <button
           type="button"
           onClick={onAddToPlan}
-          className="flex-1 sm:flex-none px-6 py-3 bg-primary hover:bg-primary-variant text-white rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer min-h-[46px]"
+          className="flex-1 sm:flex-none px-6 py-3 bg-surface-container hover:bg-surface-container-high text-primary border border-outline-variant/40 rounded-2xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-2 cursor-pointer min-h-[46px]"
         >
           <span className="material-symbols-outlined text-[18px]">calendar_add_on</span>
           [ Add to Meal Plan ]
@@ -115,4 +125,3 @@ export const RecipeHeaderMeta = ({ recipe, onAddToPlan }) => {
 };
 
 export default RecipeHeaderMeta;
-
