@@ -164,6 +164,9 @@ export interface MetabolicTargetCalibration {
   netCarbCapDaily?: number;          // Optional daily net carbohydrate cap (grams)
   calorieBudgetDaily?: number;       // Optional daily calorie target
   glucoseUnit?: 'mg/dL' | 'mmol/L';
+  insulinSensitivityFactor?: number; // ISF (1 U insulin drops BG by X mg/dL)
+  carbToInsulinRatio?: number;       // CIR (1 U insulin covers X grams of net carbs)
+  targetPreMealGlucose?: number;     // Target pre-meal blood glucose (mg/dL)
   updatedAt: string;
   updatedByDietitianId: string;
 }

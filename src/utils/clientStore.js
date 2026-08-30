@@ -1,4 +1,4 @@
-// src/utils/clientStore.js
+﻿// src/utils/clientStore.js
 /**
  * Client Management Store - LocalStorage fallback for Dietitian Clients
  */
@@ -42,6 +42,9 @@ const preseedDemoClients = () => {
           bolusTimingOffset: 20,
           netCarbCap: 150,
           glucoseUnit: 'mmol/L',
+          insulinSensitivityFactor: 50,
+          carbToInsulinRatio: 15,
+          targetPreMealGlucose: 100,
         },
         activePlan: {
           cumulativeDailyGL: {
@@ -122,13 +125,15 @@ export const updateClientCalibration = async (clientId, calibrationData) => {
   const clients = JSON.parse(localStorage.getItem('glyco_clients') || '[]');
   const index = clients.findIndex(c => c.id === clientId);
   if (index !== -1) {
-    clients[index].calibration = { ...clients[index].calibration, ...calibrationData };
+    clients[index].calibration = { 
+      ...clients[index].calibration, 
+      ...calibrationData 
+    };
     localStorage.setItem('glyco_clients', JSON.stringify(clients));
     return clients[index];
   }
   return null;
 };
-
 
 export const getPrescribedPlan = async (clientId, weekStartDate) => {
   const plans = JSON.parse(localStorage.getItem('glyco_plans') || '[]');
