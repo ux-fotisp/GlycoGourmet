@@ -7,6 +7,8 @@
   "prepTime": 15,
   "cookTime": 0,
   "cookingTime": 15,
+  "prepTimeMinutes": 15,
+  "cookTimeMinutes": 0,
   "difficulty": "Easy",
   "servings": 1,
   "yield": "1 Serving",
@@ -18,6 +20,8 @@
     "High Fiber",
     "LOGI"
   ],
+  "allergens": ["milk"],
+  "dietaryTags": ["gluten_free", "heart_healthy"],
   "status": "published",
   "publishedAt": "2026-01-01T00:00:00.000Z",
   "isUserAuthored": false,
@@ -42,74 +46,156 @@
       "amount": 80,
       "unit": "g",
       "prepState": "sauteed",
-      "name": "grilled chicken breast, thinly sliced across the grain"
+      "name": "grilled chicken breast, thinly sliced across the grain",
+      "kcal": 132,
+      "protein": 24.8,
+      "fat": 2.9,
+      "carbs": 0,
+      "fiber": 0,
+      "netCarbs": 0,
+      "glycemicIndex": null,
+      "glycemicLoad": 0,
+      "nutritionSource": "USDA FoodData Central"
     },
     {
       "ingredientId": "kale",
       "amount": 70,
       "unit": "g",
       "prepState": "raw",
-      "name": "chopped dinosaur / lacinato kale (stems removed, massaged)"
+      "name": "Lacinato (dino) kale, stems removed, finely chopped",
+      "kcal": 25,
+      "protein": 2.0,
+      "fat": 0.5,
+      "carbs": 3.1,
+      "fiber": 2.9,
+      "netCarbs": 0.2,
+      "glycemicIndex": 15,
+      "glycemicLoad": 0.0,
+      "nutritionSource": "Sydney University GI Database"
     },
     {
       "ingredientId": "cucumber",
-      "amount": 50,
+      "amount": 60,
       "unit": "g",
       "prepState": "raw",
-      "name": "medium Persian cucumber, thinly sliced"
+      "name": "Persian cucumber, sliced into thin half-moons",
+      "kcal": 9,
+      "protein": 0.4,
+      "fat": 0.1,
+      "carbs": 2.2,
+      "fiber": 0.3,
+      "netCarbs": 1.9,
+      "glycemicIndex": 15,
+      "glycemicLoad": 0.3,
+      "nutritionSource": "Sydney University GI Database"
     },
     {
       "ingredientId": "avocado",
-      "amount": 50,
+      "amount": 40,
       "unit": "g",
       "prepState": "raw",
-      "name": "ripe avocado, diced"
+      "name": "medium ripe avocado, diced",
+      "kcal": 64,
+      "protein": 0.8,
+      "fat": 5.9,
+      "carbs": 3.4,
+      "fiber": 2.7,
+      "netCarbs": 0.7,
+      "glycemicIndex": 15,
+      "glycemicLoad": 0.1,
+      "nutritionSource": "Sydney University GI Database"
     },
     {
       "ingredientId": "pumpkin-seeds",
-      "amount": 15,
+      "amount": 10,
       "unit": "g",
       "prepState": "raw",
-      "name": "raw unsalted pumpkin seeds (pepitas)"
+      "name": "raw pumpkin seeds (pepitas)",
+      "kcal": 57,
+      "protein": 3.0,
+      "fat": 4.9,
+      "carbs": 1.1,
+      "fiber": 0.6,
+      "netCarbs": 0.5,
+      "glycemicIndex": 15,
+      "glycemicLoad": 0.1,
+      "nutritionSource": "Sydney University GI Database"
     },
     {
       "ingredientId": "greek-yogurt",
       "amount": 30,
       "unit": "g",
       "prepState": "raw",
-      "name": "Greek yogurt (dressing)"
+      "name": "Greek yogurt (dressing)",
+      "kcal": 22,
+      "protein": 3.0,
+      "fat": 0.6,
+      "carbs": 1.1,
+      "fiber": 0,
+      "netCarbs": 1.1,
+      "glycemicIndex": 11,
+      "glycemicLoad": 0.1,
+      "allergens": ["milk"],
+      "nutritionSource": "Sydney University GI Database"
     },
     {
       "ingredientId": "lemon-juice",
       "amount": 15,
       "unit": "g",
       "prepState": "raw",
-      "name": "lemon juice (dressing)"
+      "name": "lemon juice (dressing)",
+      "kcal": 4,
+      "protein": 0.1,
+      "fat": 0,
+      "carbs": 1.4,
+      "fiber": 0.4,
+      "netCarbs": 1.0,
+      "glycemicIndex": 20,
+      "glycemicLoad": 0.2,
+      "nutritionSource": "Sydney University GI Database"
     },
     {
       "ingredientId": "garlic",
       "amount": 3,
       "unit": "g",
       "prepState": "raw",
-      "name": "garlic clove (dressing)"
+      "name": "garlic clove (dressing)",
+      "kcal": 5,
+      "protein": 0.2,
+      "fat": 0,
+      "carbs": 1.0,
+      "fiber": 0.1,
+      "netCarbs": 0.9,
+      "glycemicIndex": 15,
+      "glycemicLoad": 0.1,
+      "nutritionSource": "Sydney University GI Database"
     },
     {
       "ingredientId": "olive-oil",
       "amount": 5,
       "unit": "g",
       "prepState": "raw",
-      "name": "extra virgin olive oil for massaging kale"
+      "name": "extra virgin olive oil for massaging kale",
+      "kcal": 44,
+      "protein": 0,
+      "fat": 5.0,
+      "carbs": 0,
+      "fiber": 0,
+      "netCarbs": 0,
+      "glycemicIndex": null,
+      "glycemicLoad": 0,
+      "nutritionSource": "USDA FoodData Central"
     }
   ],
   "steps": [
     {
       "title": "Blend Dressing",
-      "description": "Place dressing ingredients (1/4 avocado, 2 tbsp Greek yogurt, 1 tbsp lemon juice, 2 tbsp mixed fresh herbs, 1 clove garlic, 2 tbsp water, pinch of sea salt) into a small blender and blend until vibrant green and velvety smooth.",
+      "description": "Place dressing ingredients into a small blender and blend until vibrant green and velvety smooth.",
       "timer": 3
     },
     {
       "title": "Massage Kale",
-      "description": "Place chopped kale in a large salad bowl. Drizzle 1 teaspoon of olive oil and massage leaves with clean hands for 60 seconds until softened and dark green.",
+      "description": "Place chopped kale in a large salad bowl. Drizzle olive oil and massage leaves with clean hands for 60 seconds until softened.",
       "timer": 2
     },
     {
