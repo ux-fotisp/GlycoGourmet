@@ -21,6 +21,29 @@ export const PlanBuilder = () => {
   const [matrix, setMatrix] = useState({}); // { 'monday-Breakfast': { recipeId: 'rec_1', multiplier: 1 } }
   const [isRuleEditorOpen, setIsRuleEditorOpen] = useState(false);
   const [dailyRollups, setDailyRollups] = useState({});
+  const [isGroceryModalOpen, setIsGroceryModalOpen] = useState(false);
+  const [groceryManifest, setGroceryManifest] = useState(null);
+  const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
+  const [summaryReport, setSummaryReport] = useState(null);
+
+  const buildPrescribedPlan = () => {
+    const scheduledSlots = {};
+    DAYS.forEach(day => scheduledSlots[day] = []);
+    Object.entries(matrix).forEach(([key, slot]) => {
+      const [day, occ] = key.split('-');
+      scheduledSlots[day].push({ occasion: occ, recipeId: slot.recipeId, servingsMultiplier: slot.multiplier });
+    });
+    const cumulativeDailyGL = {};
+    DAYS.forEach(d => {
+      cumulativeDailyGL[d] = dailyRollups[d]?.cumulativeDailyGL || 0;
+    });
+    return {
+      id: `plan-${id}`,
+      weekStartDate: weekStart,
+      scheduledSlots,
+      cumulativeDailyGL
+    };
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -74,27 +97,19 @@ export const PlanBuilder = () => {
 
   
   const handleExportGrocery = () => {
-    const manifest = generateGroceryManifest(matrix, RECIPE_DB);
-    const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Grocery_Manifest_${client.profile.name}.json`;
-    a.click();
+    const manifest = generateGroceryManifest(buildPrescribedPlan(), RECIPE_DB);
+    setGroceryManifest(manifest);
+    setIsGroceryModalOpen(true);
   };
 
   const handleExportSummary = () => {
-    const report = generateClinicalSummaryReport(client.profile, client.calibration, matrix, RECIPE_DB, dailyRollups);
-    const blob = new Blob([report], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Clinical_Summary_${client.profile.name}.txt`;
-    a.click();
+    const report = generateClinicalSummaryReport(client.profile, client.calibration, buildPrescribedPlan(), RECIPE_DB);
+    setSummaryReport(report);
+    setIsSummaryModalOpen(true);
   };
 
   const handleExportFHIR = () => {
-    const bundle = exportFHIRMetabolicTelemetry(client.profile, matrix, dailyRollups);
+    const bundle = exportFHIRMetabolicTelemetry(client.profile, buildPrescribedPlan());
     const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/fhir+json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -264,6 +279,57 @@ export const PlanBuilder = () => {
         onClose={() => setIsRuleEditorOpen(false)}
         clientId={id}
       />
+
+      {isGroceryModalOpen && groceryManifest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6">
+            <h2 className="text-2xl font-bold mb-4">Grocery Manifest</h2>
+            {['produce', 'proteins', 'dairy', 'pantry', 'other'].map(cat => (
+              <div key={cat} className="mb-4">
+                <h3 className="text-lg font-bold capitalize border-b pb-1 mb-2">{cat}</h3>
+                <ul className="list-disc pl-5">
+                  {groceryManifest[cat]?.map((item, i) => (
+                    <li key={i}>{item.name} - {item.amount}{item.unit}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <div className="mt-6 flex justify-end gap-2">
+              <button onClick={() => window.print()} className="px-4 py-2 bg-surface-container rounded font-bold">Print</button>
+              <button onClick={() => setIsGroceryModalOpen(false)} className="px-4 py-2 bg-primary text-white rounded font-bold">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isSummaryModalOpen && summaryReport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6">
+            <h2 className="text-2xl font-bold mb-4">Clinical Summary Report</h2>
+            <div className="mb-4 space-y-1 text-sm">
+              <p><strong>Patient:</strong> {summaryReport.patientName}</p>
+              <p><strong>Subtype:</strong> {summaryReport.subtype}</p>
+              <p><strong>Target GL:</strong> {summaryReport.glTarget}</p>
+              <p><strong>Avg GL:</strong> {summaryReport.avgGL}</p>
+              <p><strong>Adherence Rate:</strong> {summaryReport.adherenceRate}%</p>
+            </div>
+            <h3 className="text-lg font-bold border-b pb-1 mb-2">Daily Summaries</h3>
+            <div className="space-y-2">
+              {summaryReport.daySummaries?.map(day => (
+                <div key={day.day} className="flex justify-between border-b pb-1 text-sm">
+                  <span className="font-bold">{day.day}</span>
+                  <span>GL: {day.gl} ({day.status})</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 flex justify-end gap-2">
+              <button onClick={handleExportFHIR} className="px-4 py-2 bg-brand-strong text-white rounded font-bold">Export FHIR JSON</button>
+              <button onClick={() => window.print()} className="px-4 py-2 bg-surface-container rounded font-bold">Print</button>
+              <button onClick={() => setIsSummaryModalOpen(false)} className="px-4 py-2 bg-primary text-white rounded font-bold">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

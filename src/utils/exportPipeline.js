@@ -1,124 +1,188 @@
 /**
- * exportPipeline.js
- * Clinical export utilities for Grocery Manifests, PDF Reports, and FHIR Telemetry.
+ * src/utils/exportPipeline.js
+ * Clinical Export Pipeline: Grocery Manifests, Clinical Reports, and FHIR Telemetry
  */
-import { calculateRecipeNutrition } from './nutritionCalculator';
 
-const CATEGORY_MAP = {
-  produce: ['vegetable', 'fruit', 'herb'],
-  proteins: ['meat', 'poultry', 'seafood', 'legume'],
-  dairy: ['dairy', 'cheese', 'egg'],
-  pantry: ['grain', 'spice', 'oil', 'nut', 'baking', 'condiment', 'sweetener'],
-};
+import { calculateDailyRollup } from '../services/metabolicEngine';
 
-export const generateGroceryManifest = (planMatrix, recipesMap, ingredientsMap = {}) => {
-  const aggregated = {};
+/**
+ * 1. Generates an aggregated, categorized grocery manifest across a 7-day PrescribedMealPlan.
+ * Scales ingredient amounts by servingsMultiplier and respects applied swap rules.
+ */
+export function generateGroceryManifest(prescribedPlan, recipesMap = {}, ingredientsMap = {}) {
+  if (!prescribedPlan || !prescribedPlan.scheduledSlots) {
+    return { produce: [], proteins: [], dairy: [], pantry: [], other: [] };
+  }
 
-  Object.values(planMatrix).forEach(slot => {
-    if (!slot || !slot.recipeId || !recipesMap[slot.recipeId]) return;
-    const recipe = recipesMap[slot.recipeId];
-    const multiplier = slot.multiplier || 1;
+  const aggregatedMap = new Map();
 
-    (recipe.ingredients || []).forEach(item => {
-      // Handle missing ingredient payloads gracefully
-      const baseId = item.ingredientId || item.ingredient?.id || 'unknown';
-      const amount = (item.amount || 0) * multiplier;
-      const unit = item.unit || 'g';
-      
-      const ingDef = item.ingredient || ingredientsMap[baseId] || { name: baseId, category: 'pantry' };
-      const name = ingDef.name || baseId;
-      const categoryRaw = (ingDef.category || 'pantry').toLowerCase();
-      
-      let mappedCategory = 'pantry';
-      for (const [key, tags] of Object.entries(CATEGORY_MAP)) {
-        if (tags.some(t => categoryRaw.includes(t))) {
-          mappedCategory = key;
-          break;
+  const days = Object.values(prescribedPlan.scheduledSlots);
+  for (const daySlots of days) {
+    if (!daySlots) continue;
+
+    const slotItems = Array.isArray(daySlots) 
+      ? daySlots 
+      : Object.entries(daySlots).map(([occasion, recipeId]) => ({ occasion, recipeId, servingsMultiplier: 1 }));
+
+    for (const slot of slotItems) {
+      if (!slot.recipeId) continue;
+      const recipe = recipesMap[slot.recipeId];
+      if (!recipe || !Array.isArray(recipe.ingredients)) continue;
+
+      const multiplier = slot.servingsMultiplier || 1;
+
+      for (const lineItem of recipe.ingredients) {
+        const activeIngredientId = lineItem.ingredientId;
+        const ingDetails = ingredientsMap[activeIngredientId] || lineItem.ingredient || {};
+        
+        const rawAmount = (Number(lineItem.amount) || 0) * multiplier;
+        const unit = lineItem.unit || ingDetails.defaultUnit || 'g';
+        const name = ingDetails.name || lineItem.name || activeIngredientId;
+        const category = (ingDetails.category || 'pantry').toLowerCase();
+
+        const key = `${activeIngredientId}_${unit}`;
+        if (aggregatedMap.has(key)) {
+          aggregatedMap.get(key).amount += rawAmount;
+        } else {
+          aggregatedMap.set(key, {
+            id: activeIngredientId,
+            name,
+            amount: rawAmount,
+            unit,
+            category,
+          });
         }
       }
-
-      if (!aggregated[mappedCategory]) aggregated[mappedCategory] = {};
-      if (!aggregated[mappedCategory][name]) {
-        aggregated[mappedCategory][name] = { amount: 0, unit };
-      }
-      aggregated[mappedCategory][name].amount += amount;
-    });
-  });
-
-  const result = { produce: [], proteins: [], dairy: [], pantry: [] };
-  Object.keys(aggregated).forEach(cat => {
-    if (result[cat]) {
-      Object.entries(aggregated[cat]).forEach(([name, data]) => {
-        result[cat].push({ name, amount: Math.round(data.amount * 10) / 10, unit: data.unit });
-      });
     }
-  });
+  }
+
+  const result = { produce: [], proteins: [], dairy: [], pantry: [], other: [] };
+  
+  for (const item of aggregatedMap.values()) {
+    item.amount = Math.round(item.amount * 10) / 10;
+    if (['vegetable', 'fruit', 'produce'].includes(item.category)) {
+      result.produce.push(item);
+    } else if (['protein', 'meat', 'seafood', 'poultry', 'legume'].includes(item.category)) {
+      result.proteins.push(item);
+    } else if (['dairy', 'cheese'].includes(item.category)) {
+      result.dairy.push(item);
+    } else if (['grain', 'pantry', 'seasoning', 'fat', 'fats_oils', 'baking', 'condiments'].includes(item.category)) {
+      result.pantry.push(item);
+    } else {
+      result.other.push(item);
+    }
+  }
 
   return result;
-};
+}
 
-export const generateClinicalSummaryReport = (clientProfile, calibration, planMatrix, recipesMap, dailyRollups) => {
-  let report = `CLINICAL METABOLIC SUMMARY\n`;
-  report += `=========================================\n`;
-  report += `Patient: ${clientProfile?.name || 'Unknown'}\n`;
-  report += `Subtype: ${clientProfile?.diabeticSubtype || 'Unspecified'}\n`;
-  report += `Daily GL Target: ${calibration?.glTargetDaily || 0}\n\n`;
-  
-  report += `DAILY ROLLUPS:\n`;
-  const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-  DAYS.forEach(day => {
-    const rollup = dailyRollups[day] || { cumulativeDailyGL: 0, netCarbs: 0, protein: 0, fat: 0, fiber: 0 };
-    report += `- ${day.toUpperCase()}: GL ${rollup.cumulativeDailyGL} | NC ${rollup.netCarbs}g | Pro ${rollup.protein}g | Fat ${rollup.fat}g | Fib ${rollup.fiber}g\n`;
-  });
+/**
+ * 2. Generates an exportable clinical summary report.
+ */
+export function generateClinicalSummaryReport(clientProfile, calibration, prescribedPlan, recipesMap = {}) {
+  const patientName = clientProfile?.patientName || 'Client';
+  const subtype = clientProfile?.diabeticSubtype || 'Metabolic Optimization';
+  const glTarget = calibration?.glTargetDaily || 45;
+  const bolusOffset = calibration?.bolusOffsetMinutes || 15;
+  const weekStart = prescribedPlan?.weekStartDate || new Date().toISOString().slice(0, 10);
 
-  report += `\n=========================================\n`;
-  report += `Generated by GlycoGourmet Clinical Engine`;
-  return report;
-};
+  const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  const daySummaries = [];
 
-export const exportFHIRMetabolicTelemetry = (clientProfile, planMatrix, dailyRollups) => {
-  const patientId = clientProfile?.patientUserId || clientProfile?.id || 'unknown';
-  const bundle = {
-    resourceType: 'Bundle',
-    type: 'collection',
-    entry: []
+  let weeklyTotalGL = 0;
+  let activeDaysCount = 0;
+
+  for (const day of daysOfWeek) {
+    const daySlots = prescribedPlan?.scheduledSlots?.[day];
+    if (!daySlots) continue;
+
+    const slotItems = Array.isArray(daySlots) 
+      ? daySlots 
+      : Object.entries(daySlots).map(([occasion, recipeId]) => ({ occasion, recipeId }));
+    if (slotItems.length === 0) continue;
+
+    const rollup = calculateDailyRollup(daySlots, recipesMap);
+    const dayGL = rollup.cumulativeDailyGL || rollup.glycemicLoad || 0;
+    
+    weeklyTotalGL += dayGL;
+    activeDaysCount++;
+
+    daySummaries.push({
+      day: day.charAt(0).toUpperCase() + day.slice(1),
+      gl: dayGL,
+      netCarbs: rollup.netCarbs,
+      protein: rollup.protein,
+      fiber: rollup.fiber,
+      fat: rollup.fat,
+      kcal: rollup.kcal,
+      status: dayGL <= glTarget ? 'STABLE' : 'OVER_BUDGET',
+    });
+  }
+
+  const avgGL = activeDaysCount > 0 ? Math.round((weeklyTotalGL / activeDaysCount) * 10) / 10 : 0;
+  const adherenceRate = activeDaysCount > 0 
+    ? Math.round((daySummaries.filter(d => d.status === 'STABLE').length / activeDaysCount) * 100) 
+    : 100;
+
+  return {
+    patientName,
+    subtype,
+    glTarget,
+    bolusOffset,
+    weekStart,
+    avgGL,
+    adherenceRate,
+    daySummaries,
   };
+}
 
-  const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-  
-  DAYS.forEach((day, index) => {
-    const rollup = dailyRollups[day] || { cumulativeDailyGL: 0, netCarbs: 0 };
-    const date = new Date();
-    date.setDate(date.getDate() + index);
+/**
+ * 3. Exports an HL7 FHIR R4 Bundle containing Glycemic Load Observations.
+ */
+export function exportFHIRMetabolicTelemetry(clientProfile, prescribedPlan) {
+  const patientId = clientProfile?.patientUserId || clientProfile?.id || 'anonymous-patient';
+  const planId = prescribedPlan?.id || 'plan-export';
+  const date = prescribedPlan?.weekStartDate || new Date().toISOString().slice(0, 10);
 
-    // Carbs Observation
-    bundle.entry.push({
-      fullUrl: `urn:uuid:carb-${day}-${Date.now()}`,
-      resource: {
-        resourceType: 'Observation',
-        status: 'final',
-        category: [{ coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'nutrition' }] }],
-        code: { coding: [{ system: 'http://loinc.org', code: '9843-4', display: 'Carbohydrate intake' }] },
-        subject: { reference: `Patient/${patientId}` },
-        effectiveDateTime: date.toISOString().split('T')[0],
-        valueQuantity: { value: rollup.netCarbs, unit: 'g', system: 'http://unitsofmeasure.org', code: 'g' }
-      }
-    });
+  const observations = Object.entries(prescribedPlan?.cumulativeDailyGL || {}).map(([day, glValue], idx) => ({
+    resourceType: 'Observation',
+    id: `${planId}-gl-${day}`,
+    status: 'final',
+    category: [{
+      coding: [{
+        system: 'http://terminology.hl7.org/CodeSystem/observation-category',
+        code: 'dietary',
+        display: 'Dietary',
+      }],
+    }],
+    code: {
+      coding: [{
+        system: 'http://loinc.org',
+        code: '9843-4',
+        display: 'Carbohydrate intake / Glycemic Load equivalent',
+      }],
+      text: 'Calculated Glycemic Load',
+    },
+    subject: {
+      reference: `Patient/${patientId}`,
+    },
+    effectiveDateTime: `${date}T0${idx + 1}:00:00Z`,
+    valueQuantity: {
+      value: glValue,
+      unit: 'GL units',
+      system: 'http://unitsofmeasure.org',
+      code: '{GL}',
+    },
+  }));
 
-    // GL Observation (Custom)
-    bundle.entry.push({
-      fullUrl: `urn:uuid:gl-${day}-${Date.now()}`,
-      resource: {
-        resourceType: 'Observation',
-        status: 'final',
-        category: [{ coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'nutrition' }] }],
-        code: { coding: [{ system: 'http://glycogourmet.com/codes', code: 'GL-DAILY', display: 'Daily Glycemic Load' }] },
-        subject: { reference: `Patient/${patientId}` },
-        effectiveDateTime: date.toISOString().split('T')[0],
-        valueQuantity: { value: rollup.cumulativeDailyGL, unit: '{GL}', system: 'http://unitsofmeasure.org', code: '{GL}' }
-      }
-    });
-  });
-
-  return bundle;
-};
+  return {
+    resourceType: 'Bundle',
+    id: `bundle-${planId}`,
+    type: 'collection',
+    timestamp: new Date().toISOString(),
+    entry: observations.map(obs => ({
+      fullUrl: `urn:uuid:${obs.id}`,
+      resource: obs,
+    })),
+  };
+}

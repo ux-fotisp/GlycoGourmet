@@ -9,7 +9,8 @@ import { usePermissions } from '../../hooks/usePermissions';
  */
 export const Navbar = () => {
   const { user, logout } = useAuth();
-  const { isPendingAudit } = usePermissions();
+  const permissions = usePermissions();
+  const isPendingAudit = permissions?.isPendingAudit;
   const location = useLocation();
   const navigate = useNavigate();
   const activePath = location.pathname;
@@ -148,6 +149,21 @@ export const Navbar = () => {
             <span className="material-symbols-outlined text-[20px]">calendar_today</span>
             <span>Meal Plans</span>
           </Link>
+          {/* Client Roster */}
+          {permissions?.canManageClients && (
+            <Link
+              to="/client-roster"
+              className={`flex items-center gap-3 px-4 py-3 min-h-[48px] rounded-r-full font-body-md text-sm transition-all ${
+                activePath === '/client-roster'
+                  ? 'bg-primary text-on-primary font-bold shadow-xs'
+                  : 'text-on-surface-variant hover:bg-surface-variant/50'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">groups</span>
+              <span>Client Roster</span>
+            </Link>
+          )}
+
 
           {/* Profile Settings */}
           <Link
