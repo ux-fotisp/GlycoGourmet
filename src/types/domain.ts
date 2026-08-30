@@ -1,4 +1,4 @@
-﻿/**
+/**
  * GlycoGourmet OOUX Entity Multiplicity Matrix:
  * - Clinic : DietitianUser = 1 : N (Tenant manages multiple clinicians)
  * - Clinic : ClientProfile = 1 : N (Tenant scopes client records)
@@ -14,6 +14,9 @@
  */
 
 import type {
+  Allergen,
+  DietaryTag,
+  RecipeStep,
   MacroNutrients,
   IngredientPayload,
   RecipeIngredientItem,
@@ -22,6 +25,9 @@ import type {
 
 // Re-export core metabolic interfaces for platform-wide consumption
 export type {
+  Allergen,
+  DietaryTag,
+  RecipeStep,
   MacroNutrients,
   IngredientPayload,
   RecipeIngredientItem,
@@ -102,9 +108,16 @@ export interface Recipe {
   description?: string;
   imageUrl?: string;
   servings: number;
+  prepTimeMinutes?: number;
+  cookTimeMinutes?: number;
   mealOccasion?: MealOccasion;
   ingredients: RecipeIngredientItem[];
   instructions?: string[];
+  steps?: RecipeStep[];
+  allergens?: Allergen[];
+  dietaryTags?: DietaryTag[];
+  sodiumMg?: number;
+  cholesterolMg?: number;
   metabolicProfile?: MacronutrientProfile;
   tags?: string[];
   status?: 'draft' | 'published' | 'archived';

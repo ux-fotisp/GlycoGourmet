@@ -1,7 +1,34 @@
-﻿/**
+/**
  * GlycoGourmet - Deterministic Metabolic Math Engine
  * Standardized Clinical Implementation
  */
+
+export type Allergen =
+  | 'milk'
+  | 'egg'
+  | 'fish'
+  | 'crustacean_shellfish'
+  | 'tree_nuts'
+  | 'peanuts'
+  | 'wheat'
+  | 'soybeans'
+  | 'sesame';
+
+export type DietaryTag =
+  | 'vegan'
+  | 'vegetarian'
+  | 'low_fodmap'
+  | 'renal_friendly'
+  | 'heart_healthy'
+  | 'gluten_free'
+  | 'dairy_free';
+
+export interface RecipeStep {
+  title: string;
+  description: string;
+  order?: number;
+  timer?: number;
+}
 
 export interface MacroNutrients {
   kcal?: number | null;
@@ -12,6 +39,8 @@ export interface MacroNutrients {
   netCarbs?: number | null;
   glycemicIndex?: number | null;
   glycemicLoad?: number | null;
+  sodiumMg?: number | null;
+  cholesterolMg?: number | null;
 }
 
 export interface IngredientPayload {
@@ -24,9 +53,12 @@ export interface IngredientPayload {
   fat?: number;
   carbs?: number;
   fiber?: number;
+  sodiumMg?: number;
+  cholesterolMg?: number;
   glycemicIndex?: number | null;
   nutrition?: MacroNutrients;
   defaultPrepState?: string;
+  allergens?: Allergen[];
 }
 
 export interface RecipeIngredientItem {
@@ -54,6 +86,8 @@ export interface MetabolicProfileResult {
   netCarbs: number;
   glycemicIndex: number | null;
   glycemicLoad: number;
+  sodiumMg?: number;
+  cholesterolMg?: number;
 }
 
 export const PREP_MULTIPLIERS: Record<string, number> = {
@@ -110,10 +144,10 @@ export function calculateMetabolicProfile(
   let totalFiber = 0;
   let totalNetCarbs = 0;
 
-      let weightedGISum = 0;
-    let totalCarbWeight = 0;
-  
-    const ingredientBreakdown: IngredientBreakdown[] = [];
+  let weightedGISum = 0;
+  let totalCarbWeight = 0;
+
+  const ingredientBreakdown: IngredientBreakdown[] = [];
 
   for (let i = 0; i < list.length; i++) {
     const item = list[i];
@@ -145,12 +179,11 @@ export function calculateMetabolicProfile(
     const multiplier = getPrepStateMultiplier(prepKey);
     const effectiveGI = nc <= 0 ? 0 : Math.min(100, Math.max(0, baseGI * multiplier));
 
-    
     if (nc > 0 && effectiveGI > 0) {
       weightedGISum += effectiveGI * nc;
       totalCarbWeight += nc;
     }
-    
+
     const glContribution = calculateIngredientGL(effectiveGI, nc);
     ingredientBreakdown.push({
       originalId: item.originalId || item.ingredientId || ing.id || String(i),
@@ -159,7 +192,6 @@ export function calculateMetabolicProfile(
       effectiveGI: Math.round(effectiveGI),
       glContribution: Math.round(glContribution * 10) / 10
     });
-
   }
 
   const roundedNetCarbsTotal = Math.max(0, Math.round(totalNetCarbs * 10) / 10);
@@ -188,7 +220,6 @@ export function calculateMetabolicProfile(
     glycemicLoad: recipeGLPerServing,
   };
 }
-
 
 // ---------------------------------------------------------------------------
 // 5. Plan-Level Clinical Rollup Types & Functions (Chunk 3)
@@ -431,4 +462,3 @@ export default {
   calculateWeeklyAdherence,
   applyServingScale,
 };
-
