@@ -9,6 +9,9 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       includeAssets: ['favicon.ico', 'recipe_detail_desktop.png'],
@@ -40,38 +43,8 @@ export default defineConfig({
           },
         ],
       },
-      workbox: {
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
-        runtimeCaching: [
-          {
-            // Deterministic metabolic & excursion calculations / assets
-            urlPattern: /.*(?:metabolicEngine|excursionEngine|recommendationEngine).*/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'clinical-math-engines',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
-              },
-            },
-          },
-          {
-            // Strapi API clinical records (Meal Plans, Client Profiles, Ingredients, Recipes)
-            urlPattern: /^https?:\/\/.*\/api\/(?:client-profiles|prescribed-meal-plans|recipes|ingredients|clinics).*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'strapi-clinical-data',
-              networkTimeoutSeconds: 3,
-              expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 Days
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-        ],
       },
     }),
   ],

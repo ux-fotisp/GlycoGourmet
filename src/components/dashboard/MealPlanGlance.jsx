@@ -1,16 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllRecipes } from '../../utils/recipeStore';
 import { calculateRecipeNutrition, getGlycemicLoadCategory } from '../../utils/nutritionCalculator';
+import { scheduleBolusReminder } from '../../utils/notificationEngine';
 
 /**
- * MealPlanGlance � Conditional Meal Plan summary for the Dashboard.
- *
- * Reads the active meal plan state from a local hook (useMealPlan pattern).
- * Render A: If an active plan exists, displays today's scheduled meals with
- *           macro summary badges (Total GL, Net Carbs) and a CTA to view the full schedule.
- * Render B: If no plan exists, renders a low-cognitive-load CTA card prompting
- *           the user to build today's menu.
+ * MealPlanGlance — Conditional Meal Plan summary for the Dashboard with clinical bolus reminder trigger.
  */
 
 function useMealPlan() {
@@ -30,7 +25,7 @@ function useMealPlan() {
     return () => { active = false; };
   }, []);
 
-  // Build today's plan from available recipes (sample: first 3)
+  // Build today\'s plan from available recipes (sample: first 3)
   const todayPlan = useMemo(() => {
     if (recipes.length === 0) return null;
 
@@ -53,6 +48,7 @@ function useMealPlan() {
 
 export const MealPlanGlance = () => {
   const { hasActivePlan, todayPlan, loading } = useMealPlan();
+  const [preparingSlots, setPreparingSlots] = useState({});
 
   if (loading) {
     return (
@@ -89,7 +85,7 @@ export const MealPlanGlance = () => {
           className="bg-primary hover:bg-primary-container text-on-primary px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all active:scale-95 shadow-sm shrink-0"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
-          Build Today's Menu
+          Build Today\'s Menu
         </Link>
       </div>
     );
@@ -110,6 +106,17 @@ export const MealPlanGlance = () => {
   const totalNetCarbs = mealData.reduce((sum, m) => sum + (m.nutrition.netCarbs ?? 0), 0);
   const totalGLInfo = getGlycemicLoadCategory(totalGL);
 
+  const handleMarkPreparing = (e, slot, recipe) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // 15-minute bolus offset
+    const estimatedMealTime = new Date(Date.now() + 15 * 60 * 1000);
+    scheduleBolusReminder(estimatedMealTime, 15, recipe.title, recipe.id);
+
+    setPreparingSlots((prev) => ({ ...prev, [slot]: true }));
+  };
+
   return (
     <div className="bento-card p-5 md:p-6 space-y-4">
       {/* Header row */}
@@ -118,7 +125,7 @@ export const MealPlanGlance = () => {
           <span className="material-symbols-outlined text-primary text-xl font-bold">calendar_today</span>
           <div>
             <h4 className="font-extrabold text-sm uppercase tracking-wider text-on-surface">
-              Today's Meal Plan
+              Today\'s Meal Plan
             </h4>
             <p className="text-[11px] text-on-surface-variant font-medium">
               Scheduled low-glycemic daily meals
@@ -140,29 +147,51 @@ export const MealPlanGlance = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
         {mealData.map(({ slot, recipe, gl }) => {
           const glInfo = getGlycemicLoadCategory(gl);
+          const isPreparing = Boolean(preparingSlots[slot]);
+
           return (
-            <Link
+            <div
               key={slot}
-              to={`/recipe/${recipe.id}`}
-              className="bg-surface-container-low/50 hover:bg-surface-container p-3.5 rounded-xl border border-outline-variant/20 flex items-center gap-3 transition-all group hover:border-primary/40 hover:shadow-sm"
+              className="bg-surface-container-low/50 hover:bg-surface-container p-3.5 rounded-2xl border border-outline-variant/20 flex flex-col justify-between gap-3 transition-all group hover:border-primary/40 hover:shadow-xs"
             >
-              <img
-                src={recipe.imageUrl || 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=100'}
-                alt={recipe.title}
-                className="w-12 h-12 rounded-xl object-cover border border-outline-variant/20 shrink-0 group-hover:scale-105 transition-transform"
-              />
-              <div className="flex-1 min-w-0">
-                <span className="text-[10px] font-extrabold text-primary uppercase tracking-wider block">
-                  {slot}
-                </span>
-                <h5 className="text-xs font-bold text-on-surface truncate group-hover:text-primary transition-colors">
-                  {recipe.title}
-                </h5>
-                <span className={`text-[10px] font-extrabold ${glInfo.colorClass}`}>
-                  GL: {gl}
-                </span>
+              <Link to={`/recipe/${recipe.id}`} className="flex items-center gap-3">
+                <img
+                  src={recipe.imageUrl || 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=100'}
+                  alt={recipe.title}
+                  className="w-12 h-12 rounded-xl object-cover border border-outline-variant/20 shrink-0 group-hover:scale-105 transition-transform"
+                />
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] font-extrabold text-primary uppercase tracking-wider block">
+                    {slot}
+                  </span>
+                  <h5 className="text-xs font-bold text-on-surface truncate group-hover:text-primary transition-colors">
+                    {recipe.title}
+                  </h5>
+                  <span className={`text-[10px] font-extrabold ${glInfo.colorClass}`}>
+                    GL: {gl}
+                  </span>
+                </div>
+              </Link>
+
+              {/* Mark as Preparing Bolus Trigger Action */}
+              <div className="pt-2 border-t border-outline-variant/20 flex justify-between items-center">
+                {isPreparing ? (
+                  <span className="text-[10px] font-extrabold text-sage-text bg-sage-bg px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[13px]">alarm_on</span>
+                    Bolus Timer Active (15m)
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={(e) => handleMarkPreparing(e, slot, recipe)}
+                    className="w-full py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-[11px] font-extrabold transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">skillet</span>
+                    Mark as Preparing
+                  </button>
+                )}
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>
@@ -173,7 +202,7 @@ export const MealPlanGlance = () => {
           to="/meal-plans"
           className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline group"
         >
-          View Today's Full Schedule
+          View Today\'s Full Schedule
           <span className="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
         </Link>
       </div>
