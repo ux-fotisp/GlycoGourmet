@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { calculateRecipeNutrition, getGlycemicLoadCategory } from '../../utils/nutritionCalculator';
+import { calculateRecipeNutrition } from '../../utils/nutritionCalculator';
 import { useFavorites } from '../../hooks/useFavorites';
 import { formatMediaUrl } from '../../utils/mediaUtils';
 import AddToMealPlanModal from './AddToMealPlanModal';
@@ -21,15 +21,7 @@ export const RecipeCard = ({ recipe }) => {
   };
 
   const gi = metabolics.glycemicIndex ?? nutrition.glycemicIndex;
-  let giLabel = 'Low';
-  if (gi !== null) {
-    if (gi > 69) giLabel = 'High';
-    else if (gi > 55) giLabel = 'Med';
-    else giLabel = 'Low';
-  }
-
   const gl = metabolics.glycemicLoad ?? nutrition.glycemicLoad ?? 0;
-  
 
   let glPillClasses = 'bg-success-surface text-brand-strong border border-success-border';
   if (gl >= 20) {
@@ -52,7 +44,7 @@ export const RecipeCard = ({ recipe }) => {
 
           <div className="absolute top-3 left-3 flex items-center gap-1.5">
             <span className="bg-white/95 backdrop-blur-md text-text-strong border border-border-subtle/60 px-2.5 py-1 rounded-full text-[10px] font-extrabold shadow-sm">
-              GI {gi !== null ? Math.round(gi) : '—'}
+              GI {gi !== null && gi !== undefined ? Math.round(gi) : '—'}
             </span>
             <span className={`${glPillClasses} px-2.5 py-1 rounded-full text-[10px] font-extrabold shadow-sm`}>
               GL {gl}
@@ -122,7 +114,18 @@ export const RecipeCard = ({ recipe }) => {
           </button>
         </div>
 
-        <RecipeTagFooter tags={recipe.tags} category={recipe.category} />
+        <RecipeTagFooter
+          mealOccasion={recipe.mealOccasion}
+          glycemicLoad={gl}
+          fiber={metabolics.fiber}
+          dietaryTags={recipe.dietaryTags}
+          dietaryFlags={recipe.dietaryFlags || []}
+          allergens={recipe.allergens}
+          ingredients={recipe.ingredients}
+          tags={recipe.tags}
+          category={recipe.category}
+          matchedTags={recipe._matchedTags}
+        />
       </div>
 
       <AddToMealPlanModal

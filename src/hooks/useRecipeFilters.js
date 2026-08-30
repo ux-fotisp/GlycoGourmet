@@ -1,6 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { calculateRecipeNutrition } from '../utils/nutritionCalculator';
+import { DIETARY_TAG_MAP } from '../constants/dietaryTags';
 
 export const MEAL_OCCASIONS = [
   { value: 'all', label: 'All', icon: 'restaurant' },
@@ -84,26 +85,29 @@ function generateMatchedTags(recipe, metabolics, activeOccasions, activeBands, a
   if (activeBands.length > 0) {
     const gl = metabolics.glycemicLoad;
     if (activeBands.includes('low') && gl <= 10) {
-      tags.push({ type: 'band', label: `GL ${gl} · Gentle`, icon: 'check_circle' });
+      tags.push({ type: 'band', label: `GL ${gl} • Gentle`, icon: 'check_circle' });
     } else if (activeBands.includes('medium') && gl >= 11 && gl <= 19) {
-      tags.push({ type: 'band', label: `GL ${gl} · Moderate`, icon: 'info' });
+      tags.push({ type: 'band', label: `GL ${gl} • Moderate`, icon: 'info' });
     } else if (activeBands.includes('high') && gl >= 20) {
-      tags.push({ type: 'band', label: `GL ${gl} · Spike Risk`, icon: 'warning' });
+      tags.push({ type: 'band', label: `GL ${gl} • Spike Risk`, icon: 'warning' });
     }
   }
 
   if (activeDietary.length > 0) {
-    const recipeDietary = recipe.dietaryFlags || [];
+    const recipeDietaryRaw = [
+      ...(recipe.dietaryTags || []),
+      ...(recipe.dietaryFlags || []),
+      ...(recipe.tags || []),
+    ];
+    const normalizedRecipeDietary = recipeDietaryRaw.map(t => String(t).toLowerCase().replace(/[-\s]/g, '_'));
+
     activeDietary.forEach(flag => {
-      if (recipeDietary.includes(flag)) {
-        const def = DIETARY_FLAGS.find(d => d.value === flag);
-        tags.push({ type: 'dietary', label: flag, icon: def?.icon || 'label' });
+      const normalizedFlag = String(flag).toLowerCase().replace(/[-\s]/g, '_');
+      if (normalizedRecipeDietary.includes(normalizedFlag)) {
+        const def = DIETARY_TAG_MAP[flag] || DIETARY_FLAGS.find(d => d.value === flag);
+        tags.push({ type: 'dietary', label: def?.label || flag, icon: def?.icon || 'label' });
       }
     });
-  }
-
-  if (metabolics.fiber > 5) {
-    tags.push({ type: 'nutrient', label: 'High Fiber', icon: 'grass' });
   }
 
   return tags;
@@ -128,17 +132,13 @@ export function useRecipeFilters(allRecipes = []) {
   );
 
   const maxGL = useMemo(() => {
-    const val = searchParams.get('maxGL');
-    if (val === null) return null;
-    const num = parseInt(val, 10);
-    return Number.isFinite(num) && num > 0 ? num : null;
+    const v = searchParams.get('maxGL');
+    return v !== null && v !== undefined && !isNaN(Number(v)) ? Number(v) : null;
   }, [searchParams]);
 
   const maxPrep = useMemo(() => {
-    const val = searchParams.get('maxPrep');
-    if (val === null) return null;
-    const num = parseInt(val, 10);
-    return Number.isFinite(num) && num > 0 ? num : null;
+    const v = searchParams.get('maxPrep');
+    return v !== null && v !== undefined && !isNaN(Number(v)) ? Number(v) : null;
   }, [searchParams]);
 
   const activeDietary = useMemo(
@@ -152,37 +152,37 @@ export function useRecipeFilters(allRecipes = []) {
   );
 
   const updateParams = useCallback(
-    (updates) => {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        Object.entries(updates).forEach(([key, value]) => {
-          if (value === null || value === undefined || value === '') {
-            next.delete(key);
-          } else {
-            next.set(key, String(value));
-          }
-        });
-        return next;
-      }, { replace: true });
+    (newParams) => {
+      setSearchParams(
+        prev => {
+          const next = new URLSearchParams(prev);
+          Object.entries(newParams).forEach(([key, val]) => {
+            if (val === null || val === undefined || val === '') {
+              next.delete(key);
+            } else {
+              next.set(key, String(val));
+            }
+          });
+          return next;
+        },
+        { replace: true }
+      );
     },
     [setSearchParams]
   );
 
   const setOccasions = useCallback(
-    (occasions) => {
-      const filtered = occasions.filter(o => o !== 'all');
-      updateParams({ occasion: serializeArrayParam(filtered) });
-    },
+    (occasions) => updateParams({ occasion: serializeArrayParam(occasions) }),
     [updateParams]
   );
 
   const toggleOccasion = useCallback(
     (occasion) => {
+      const current = parseArrayParam(searchParams.get('occasion'));
       if (occasion === 'all') {
         updateParams({ occasion: null });
         return;
       }
-      const current = parseArrayParam(searchParams.get('occasion'));
       const next = current.includes(occasion)
         ? current.filter(o => o !== occasion)
         : [...current, occasion];
@@ -192,7 +192,7 @@ export function useRecipeFilters(allRecipes = []) {
   );
 
   const setSort = useCallback(
-    (sort) => updateParams({ sort: sort === 'gl_asc' ? null : sort }),
+    (sortKey) => updateParams({ sort: sortKey === 'gl_asc' ? null : sortKey }),
     [updateParams]
   );
 
@@ -299,18 +299,44 @@ export function useRecipeFilters(allRecipes = []) {
 
     if (activeDietary.length > 0) {
       results = results.filter(r => {
-        const flags = r.dietaryFlags || [];
-        return activeDietary.every(flag => flags.includes(flag));
+        const recipeDietaryRaw = [
+          ...(r.dietaryTags || []),
+          ...(r.dietaryFlags || []),
+          ...(r.tags || []),
+        ];
+        const normalized = recipeDietaryRaw.map(t => String(t).toLowerCase().replace(/[-\s]/g, '_'));
+        return activeDietary.every(flag => {
+          const normalizedFlag = String(flag).toLowerCase().replace(/[-\s]/g, '_');
+          return normalized.includes(normalizedFlag);
+        });
       });
     }
 
     if (searchText.trim()) {
       const q = searchText.toLowerCase().trim();
-      results = results.filter(r =>
-        (r.title?.toLowerCase().includes(q)) ||
-        (r.description?.toLowerCase().includes(q)) ||
-        (r.tags?.some(t => t.toLowerCase().includes(q)))
-      );
+      results = results.filter(r => {
+        const titleMatch = r.title?.toLowerCase().includes(q);
+        const descMatch = r.description?.toLowerCase().includes(q);
+        const tagsMatch = r.tags?.some(t => t.toLowerCase().includes(q));
+        const dietaryMatch = (r.dietaryTags || []).some(t =>
+          t.toLowerCase().replace(/_/g, ' ').includes(q)
+        );
+        const allergenMatch = (r.allergens || []).some(a => {
+          const cleanA = a.toLowerCase().replace(/_/g, ' ');
+          return cleanA.includes(q) || `contains ${cleanA}`.includes(q);
+        });
+        const ingredientMatch = (r.ingredients || []).some(i => {
+          const nameMatch = i.name?.toLowerCase().includes(q);
+          const idMatch = i.ingredientId?.toLowerCase().includes(q);
+          const ingAllergens = (i.allergens || []).some(ia => {
+            const cleanIa = ia.toLowerCase().replace(/_/g, ' ');
+            return cleanIa.includes(q) || `contains ${cleanIa}`.includes(q);
+          });
+          return nameMatch || idMatch || ingAllergens;
+        });
+
+        return titleMatch || descMatch || tagsMatch || dietaryMatch || allergenMatch || ingredientMatch;
+      });
     }
 
     results = [...results].sort((a, b) => {
@@ -400,7 +426,7 @@ export function useRecipeFilters(allRecipes = []) {
       filters.push({
         key: `band:${b}`,
         type: 'band',
-        label: `${def?.label || b} · ${def?.sublabel || ''}`,
+        label: `${def?.label || b} • ${def?.sublabel || ''}`,
         icon: def?.icon || 'tune',
         onRemove: () => toggleBand(b),
       });
@@ -427,11 +453,11 @@ export function useRecipeFilters(allRecipes = []) {
     }
 
     activeDietary.forEach(d => {
-      const def = DIETARY_FLAGS.find(f => f.value === d);
+      const def = DIETARY_TAG_MAP[d] || DIETARY_FLAGS.find(f => f.value === d);
       filters.push({
         key: `dietary:${d}`,
         type: 'dietary',
-        label: d,
+        label: def?.label || d,
         icon: def?.icon || 'label',
         onRemove: () => toggleDietary(d),
       });

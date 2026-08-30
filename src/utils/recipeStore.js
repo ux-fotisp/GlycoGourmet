@@ -2396,6 +2396,8 @@ export function normalizeRecipe(r) {
     category: r?.category ?? '',
     mealOccasion,
     dietaryFlags,
+    dietaryTags: Array.isArray(r?.dietaryTags) ? r.dietaryTags : [],
+    allergens: Array.isArray(r?.allergens) ? r.allergens : [],
     glycemicIndex: r?.glycemicIndex ?? r?.nutrition?.glycemicIndex ?? null,
     glycemicLoad: r?.glycemicLoad ?? r?.nutrition?.glycemicLoad ?? 0,
     netCarbs: r?.netCarbs ?? r?.nutrition?.netCarbs ?? 0,

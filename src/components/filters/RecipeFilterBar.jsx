@@ -3,14 +3,7 @@ import TimeOfDaySegmenter from './TimeOfDaySegmenter';
 import MetabolicSortMenu from './MetabolicSortMenu';
 import GLRangeFilter from './GLRangeFilter';
 import ActiveFilterChips from './ActiveFilterChips';
-
-const DIETARY_FLAGS = [
-  { value: 'Vegetarian', label: 'Vegetarian', icon: 'eco' },
-  { value: 'Vegan', label: 'Vegan', icon: 'spa' },
-  { value: 'Nut-Free', label: 'Nut-Free', icon: 'block' },
-  { value: 'Dairy-Free', label: 'Dairy-Free', icon: 'water_drop' },
-  { value: 'Gluten-Free', label: 'Gluten-Free', icon: 'grain' },
-];
+import { DIETARY_TAGS } from '../../constants/dietaryTags';
 
 const QUICK_PRESETS = [
   { id: 'ultra_low_gl', label: 'Ultra-Low GL (<5)', icon: 'bolt' },
@@ -54,7 +47,7 @@ export const RecipeFilterBar = ({
             type="text"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Search recipes: low-GI breakfast, high protein..."
+            placeholder="Search recipes: low-GI breakfast, high protein, peanuts..."
             className="glyco-input pl-10 h-11 rounded-full text-sm"
             aria-label="Search recipes"
           />
@@ -102,22 +95,30 @@ export const RecipeFilterBar = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        {/* Dietary Tag Filter Chip Set (Keyboard Operable with Tab / Enter / Space) */}
+        <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Dietary tag filters">
           <span className="text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant shrink-0 flex items-center gap-1">
             <span className="material-symbols-outlined text-[15px]">restaurant_menu</span>
             Dietary:
           </span>
-          {DIETARY_FLAGS.map(({ value, label, icon }) => {
+          {DIETARY_TAGS.map(({ value, label, icon }) => {
             const isActive = activeDietary.includes(value);
             return (
               <button
                 key={value}
                 type="button"
                 role="switch"
+                tabIndex={0}
                 aria-checked={isActive}
                 aria-label={`${label} dietary filter`}
                 onClick={() => toggleDietary(value)}
-                className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold transition-all cursor-pointer select-none active:scale-95 border ${
+                onKeyDown={(e) => {
+                  if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    toggleDietary(value);
+                  }
+                }}
+                className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold transition-all cursor-pointer select-none active:scale-95 border focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
                   isActive
                     ? 'bg-primary text-on-primary border-primary shadow-sm'
                     : 'bg-surface-container-low text-on-surface-variant border-transparent hover:bg-surface-container'
@@ -140,21 +141,21 @@ export const RecipeFilterBar = ({
               key={id}
               type="button"
               onClick={() => applyPreset(id)}
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold bg-surface-container-low text-on-surface-variant border border-dashed border-outline-variant/50 hover:bg-primary/8 hover:text-primary hover:border-primary/30 transition-all cursor-pointer select-none active:scale-95"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer select-none active:scale-95 border border-outline-variant/30"
               aria-label={`Apply preset: ${label}`}
             >
-              <span className="material-symbols-outlined text-[13px]">{icon}</span>
+              <span className="material-symbols-outlined text-[13px] text-tertiary">{icon}</span>
               {label}
             </button>
           ))}
         </div>
-      </div>
 
-      <ActiveFilterChips
-        filters={activeFiltersList}
-        onResetAll={resetAll}
-        resultLabel={resultCountLabel}
-      />
+        <ActiveFilterChips
+          filters={activeFiltersList}
+          onResetAll={resetAll}
+          resultLabel={resultCountLabel}
+        />
+      </div>
     </div>
   );
 };

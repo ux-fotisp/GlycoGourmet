@@ -6,6 +6,7 @@ import RecipeCard from './RecipeCard';
 
 // Mock nutritionCalculator to avoid importing the real ingredients.json
 vi.mock('../../utils/nutritionCalculator', () => ({
+  deriveAllergensFromIngredients: vi.fn(() => []),
   calculateRecipeNutrition: vi.fn(() => ({
     kcal: 291,
     protein: 38,

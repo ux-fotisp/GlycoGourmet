@@ -58,6 +58,7 @@ vi.mock('../utils/recipeStore', () => ({
 
 // Mock nutritionCalculator
 vi.mock('../utils/nutritionCalculator', () => ({
+  deriveAllergensFromIngredients: vi.fn(() => []),
   calculateRecipeNutrition: vi.fn(() => ({
     kcal: 200,
     protein: 25,
