@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+const fs = require('fs');
+
+const recipeDetails = `import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import HeroMediaCard from '../components/recipe/HeroMediaCard';
 import GlycemicSnapshot from '../components/recipe/GlycemicSnapshot';
@@ -49,7 +51,7 @@ const RecipeDetails = () => {
           <span>{recipe.title}</span>
         </div>
         <div className="flex gap-3">
-          <Link to={`/admin-editor?edit=${recipe.id}`} className="px-4 py-2 bg-white border border-stone-200 rounded-xl text-xs font-bold text-[#1B3B22] hover:bg-stone-50 flex items-center gap-1 shadow-sm">
+          <Link to={\`/admin-editor?edit=\${recipe.id}\`} className="px-4 py-2 bg-white border border-stone-200 rounded-xl text-xs font-bold text-[#1B3B22] hover:bg-stone-50 flex items-center gap-1 shadow-sm">
             <span className="material-symbols-outlined text-[16px]">edit</span>
             Edit Recipe
           </Link>
@@ -87,3 +89,6 @@ const RecipeDetails = () => {
 };
 
 export default RecipeDetails;
+`;
+
+fs.writeFileSync('src/pages/RecipeDetails.jsx', recipeDetails);
