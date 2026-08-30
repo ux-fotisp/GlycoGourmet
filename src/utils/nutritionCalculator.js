@@ -1,4 +1,3 @@
-// Ingredient registry is managed by ingredientStore.js — do not import ingredients.json here.
 import { getIngredientById as _getIngredientById, getIngredientsRegistry, saveCustomIngredient as _saveCustomIngredient } from './ingredientStore';
 
 // Re-export for external consumers (backward-compatible API)
@@ -15,7 +14,7 @@ const getIngredientById = _getIngredientById;
 export const PREP_STATES = [
   { value: 'raw',              label: 'Raw',              giMultiplier: 1.00, icon: 'eco' },
   { value: 'steamed',          label: 'Steamed',          giMultiplier: 1.02, icon: 'air' },
-  { value: 'sauteed',          label: 'Sautéed',          giMultiplier: 1.05, icon: 'skillet' },
+  { value: 'sauteed',          label: 'Saut\u00e9ed',          giMultiplier: 1.05, icon: 'skillet' },
   { value: 'roasted',          label: 'Roasted',          giMultiplier: 1.15, icon: 'local_fire_department' },
   { value: 'boiled',           label: 'Boiled',           giMultiplier: 1.20, icon: 'water_drop' },
   { value: 'mashed_processed', label: 'Mashed/Processed', giMultiplier: 1.25, icon: 'blender' },
@@ -95,6 +94,57 @@ export function getGlycemicLoadCategory(gl) {
     colorClass: 'text-error',
     bgClass: 'bg-error-container/15',
   };
+}
+
+/**
+ * Pure function that rolls up ingredient-level allergens to the recipe level.
+ * Performs a union and deduplication across direct line-item allergens,
+ * nested ingredient payload allergens, and registered ingredient store allergens.
+ *
+ * @param {Array<object>} recipeIngredients
+ * @returns {string[]} Array of unique allergen string identifiers
+ */
+export function deriveAllergensFromIngredients(recipeIngredients = []) {
+  if (!Array.isArray(recipeIngredients)) return [];
+
+  const allergenSet = new Set();
+
+  recipeIngredients.forEach((item) => {
+    if (!item || typeof item !== 'object') return;
+
+    // 1. Direct line-item allergens array
+    if (Array.isArray(item.allergens)) {
+      item.allergens.forEach((a) => {
+        if (typeof a === 'string' && a.trim()) {
+          allergenSet.add(a.trim());
+        }
+      });
+    }
+
+    // 2. Nested ingredient payload allergens
+    if (Array.isArray(item.ingredient?.allergens)) {
+      item.ingredient.allergens.forEach((a) => {
+        if (typeof a === 'string' && a.trim()) {
+          allergenSet.add(a.trim());
+        }
+      });
+    }
+
+    // 3. Resolve from ingredient store via ingredientId / id
+    const rawId = item.ingredientId || item.ingredient?.id || item.ingredient?.documentId || item.id;
+    if (rawId) {
+      const ing = getIngredientById(String(rawId));
+      if (ing && Array.isArray(ing.allergens)) {
+        ing.allergens.forEach((a) => {
+          if (typeof a === 'string' && a.trim()) {
+            allergenSet.add(a.trim());
+          }
+        });
+      }
+    }
+  });
+
+  return Array.from(allergenSet);
 }
 
 /**
