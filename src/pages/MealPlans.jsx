@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { getAllRecipes } from '../utils/recipeStore';
 import { calculateRecipeNutrition, getGlycemicLoadCategory } from '../utils/nutritionCalculator';
 import { usePreferences } from '../context/UserPreferences';
+import { generateGroceryManifest } from '../utils/exportPipeline';
+import GroceryListModal from '../components/recipe/GroceryListModal';
 import { Link } from 'react-router-dom';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -22,6 +24,7 @@ export const MealPlans = () => {
 
   const [activeDuplicateModal, setActiveDuplicateModal] = useState(null); // sourceDay string
   const [duplicateSuccessMsg, setDuplicateSuccessMsg] = useState('');
+  const [isGroceryModalOpen, setIsGroceryModalOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -61,7 +64,7 @@ export const MealPlans = () => {
     if (!scheduleState || !scheduleState[sourceDay]) return;
 
     const sourceRecipeIds = scheduleState[sourceDay];
-    setScheduleState(prev => ({
+    setScheduleState((prev) => ({
       ...prev,
       [targetDay]: [...sourceRecipeIds],
     }));
@@ -80,9 +83,9 @@ export const MealPlans = () => {
     ] : []);
 
     const dayMeals = mealIds
-      .map(id => recipes.find(r => r.id === id))
+      .map((id) => recipes.find((r) => r.id === id))
       .filter(Boolean)
-      .map(r => {
+      .map((r) => {
         const nutrition = calculateRecipeNutrition(r.ingredients);
         return {
           ...r,
@@ -91,162 +94,176 @@ export const MealPlans = () => {
         };
       });
 
-    const dailyTotalGL = dayMeals.reduce((sum, r) => sum + r.gl, 0);
-    const dailyGLCategory = getGlycemicLoadCategory(dailyTotalGL);
-
-    // US-1.2 Safe Day Condition: Total Planned GL is >= 50% AND <= 100% of target budget
-    const targetCeiling = dailyGlTarget || 45;
-    const isSafeDay = dailyTotalGL >= (0.50 * targetCeiling) && dailyTotalGL <= (1.00 * targetCeiling);
+    const dayGL = dayMeals.reduce((sum, m) => sum + m.gl, 0);
+    const dayNetCarbs = dayMeals.reduce((sum, m) => sum + (m.nutrition.netCarbs || 0), 0);
+    const glInfo = getGlycemicLoadCategory(dayGL);
+    const isBalanced = dayGL >= dailyGlTarget * 0.5 && dayGL <= dailyGlTarget;
+    const isOverBudget = dayGL > dailyGlTarget;
 
     return {
       day,
       meals: dayMeals,
-      dailyTotalGL,
-      dailyGLCategory,
-      isSafeDay,
-      targetCeiling,
+      totalGL: dayGL,
+      totalNetCarbs: Math.round(dayNetCarbs * 10) / 10,
+      glInfo,
+      isBalanced,
+      isOverBudget,
     };
   });
 
+  // Calculate grocery manifest across current 7-day schedule
+  const recipesMap = recipes.reduce((acc, r) => {
+    acc[r.id] = r;
+    return acc;
+  }, {});
+
+  const prescribedPlanShape = {
+    scheduledSlots: scheduleState || {},
+  };
+
+  const groceryManifest = generateGroceryManifest(prescribedPlanShape, recipesMap);
+
   return (
-    <main className="flex-grow w-full max-w-container-max mx-auto px-edge-margin md:px-lg py-sm md:py-lg flex flex-col gap-md md:gap-lg mb-24 md:mb-0 font-sans">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <main className="max-w-7xl mx-auto px-4 md:px-8 py-8 space-y-8 font-sans">
+      {/* Header & Controls */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl border border-stone-200 shadow-xs">
         <div>
-          <h2 className="font-display text-2xl font-bold text-primary">
-            Weekly Glycemic Meal Planning Suite
-          </h2>
-          <p className="text-xs text-on-surface-variant font-medium mt-0.5">
-            Positive reinforcement budgeting & 1-click safe day duplication.
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-[#1B3B22] text-2xl">calendar_month</span>
+            <h1 className="text-2xl font-extrabold text-[#1B3B22] tracking-tight">
+              7-Day Glycemic Meal Plan
+            </h1>
+          </div>
+          <p className="text-xs font-semibold text-[#2D5A34] mt-1">
+            Tracking against your calibrated daily target of <strong>{dailyGlTarget} GL</strong>
           </p>
         </div>
 
-        {/* Daily Recommended Ceiling Badge */}
-        <div className="flex items-center gap-2 bg-primary-container/15 px-4 py-2 rounded-full border border-primary/20 text-xs font-bold shadow-2xs">
-          <span className="material-symbols-outlined text-primary text-sm">health_and_safety</span>
-          <span className="text-on-surface">Target Daily GL Ceiling: <strong className="text-primary">&le; {dailyGlTarget} GL</strong></span>
-        </div>
-      </header>
-
-      {/* Success Toast Notification */}
-      {duplicateSuccessMsg && (
-        <div className="p-3.5 rounded-xl bg-primary-container text-on-primary-container border border-primary/30 flex items-center justify-between text-xs font-bold animate-fade-in shadow-xs">
-          <span className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[18px]">verified</span>
-            {duplicateSuccessMsg}
-          </span>
+        <div className="flex items-center gap-3 w-full md:w-auto">
           <button
-            onClick={() => setDuplicateSuccessMsg('')}
-            className="material-symbols-outlined text-sm cursor-pointer opacity-70 hover:opacity-100"
+            type="button"
+            onClick={() => setIsGroceryModalOpen(true)}
+            className="flex-1 md:flex-none px-4 py-2.5 bg-[#1B3B22] text-white hover:bg-[#2D5A34] rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 min-h-[44px] cursor-pointer"
           >
-            close
+            <span className="material-symbols-outlined text-[18px]">shopping_cart</span>
+            Grocery Shopping List
+          </button>
+        </div>
+      </div>
+
+      {/* Duplicate Success Message Alert */}
+      {duplicateSuccessMsg && (
+        <div className="bg-[#D8E8CB] border border-[#386A20]/40 text-[#1B3B22] p-4 rounded-2xl text-xs font-bold flex items-center justify-between shadow-xs animate-fade-in">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-[18px]">check_circle</span>
+            <span>{duplicateSuccessMsg}</span>
+          </div>
+          <button onClick={() => setDuplicateSuccessMsg('')} className="text-stone-500 hover:text-stone-800">
+            <span className="material-symbols-outlined text-sm">close</span>
           </button>
         </div>
       )}
 
+      {/* Schedule 7-Day Grid */}
       {loading ? (
-        <div className="flex justify-center py-20">
-          <span className="material-symbols-outlined text-4xl text-primary animate-spin">
-            progress_activity
-          </span>
+        <div className="flex items-center justify-center py-20">
+          <span className="material-symbols-outlined text-4xl animate-spin text-[#1B3B22]">progress_activity</span>
         </div>
       ) : (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
-          {computedSchedule.map(({ day, meals, dailyTotalGL, dailyGLCategory, isSafeDay, targetCeiling }) => {
-            const dailyPercent = Math.min(Math.round((dailyTotalGL / targetCeiling) * 100), 100);
+          {computedSchedule.map(({ day, meals, totalGL, totalNetCarbs, isBalanced, isOverBudget }) => {
+            const fillWidth = Math.min(100, Math.round((totalGL / dailyGlTarget) * 100));
 
             return (
               <div
                 key={day}
-                className={`bg-white rounded-xl p-3 flex flex-col gap-3 transition-all relative ${
-                  isSafeDay
-                    ? 'border-2 border-primary ring-2 ring-primary/20 shadow-md bg-gradient-to-b from-primary-container/10 to-white'
-                    : 'border border-outline-variant/40 shadow-xs'
+                className={`bg-white rounded-2xl border p-4 flex flex-col justify-between space-y-4 shadow-xs transition-shadow hover:shadow-md ${
+                  isBalanced
+                    ? 'border-[#386A20] ring-1 ring-[#386A20]/30'
+                    : isOverBudget
+                    ? 'border-amber-300 ring-1 ring-amber-300'
+                    : 'border-stone-200'
                 }`}
               >
-                {/* Column Header with Positive Reinforcement Gold Star */}
-                <div className="border-b border-outline-variant/20 pb-2 flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-1">
-                      <h3 className="font-display text-sm font-bold text-primary">{day}</h3>
-                      {isSafeDay && (
-                        <span className="material-symbols-outlined text-amber-500 text-[18px] fill-amber-500" title="Perfect GL Balanced Day!">
+                {/* Day Header */}
+                <div>
+                  <div className="flex justify-between items-center pb-2 border-b border-stone-100">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-extrabold text-sm text-[#1B3B22]">{day}</span>
+                      {isBalanced && (
+                        <span
+                          title="Perfect GL Balanced Day!"
+                          className="material-symbols-outlined text-amber-500 text-[16px] leading-none"
+                        >
                           star
                         </span>
                       )}
                     </div>
+                    <button
+                      type="button"
+                      aria-label="Duplicate Day"
+                      title={`Duplicate ${day}'s meals to another day`}
+                      onClick={() => setActiveDuplicateModal(day)}
+                      className="p-1 rounded-lg text-stone-400 hover:text-[#1B3B22] hover:bg-stone-100 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">content_copy</span>
+                    </button>
+                  </div>
 
-                    {isSafeDay ? (
-                      <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-0.5 shadow-2xs">
-                        Balanced Day
+                  {/* GL Gauge & Balanced Day Badge */}
+                  <div className="mt-3 space-y-1.5 bg-[#F6F4EE] p-2.5 rounded-xl border border-stone-200/60">
+                    <div className="flex justify-between items-center text-[11px] font-bold text-[#1B3B22]">
+                      <span className="flex items-center gap-1">
+                        Daily GL
+                        {isBalanced && (
+                          <span className="bg-[#D8E8CB] text-[#1B3B22] text-[9px] px-1.5 py-0.5 rounded font-extrabold">
+                            Balanced Day
+                          </span>
+                        )}
                       </span>
-                    ) : (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">
-                        {meals.length} Meals
+                      <span className={isOverBudget ? 'text-amber-700 font-extrabold' : 'text-[#386A20]'}>
+                        {totalGL} / {dailyGlTarget}
                       </span>
-                    )}
-                  </div>
-
-                  {/* US-1.2 Frictionless Duplication Button */}
-                  <button
-                    type="button"
-                    onClick={() => setActiveDuplicateModal(day)}
-                    className={`w-full py-1.5 px-2 rounded-lg text-[10px] font-bold transition-all cursor-pointer flex items-center justify-center gap-1 shadow-2xs ${
-                      isSafeDay
-                        ? 'bg-primary text-on-primary hover:bg-primary/90'
-                        : 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest'
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-[14px]">content_copy</span>
-                    <span>Duplicate Day</span>
-                  </button>
-                </div>
-
-                {/* Daily Total GL Aggregate Bar */}
-                <div className="bg-surface-container-low p-2.5 rounded-lg space-y-1.5 border border-outline-variant/20">
-                  <div className="flex justify-between items-center text-[11px] font-bold">
-                    <span className="text-on-surface-variant">Daily GL</span>
-                    <span className={dailyGLCategory.colorClass}>
-                      {dailyTotalGL} GL <small className="font-normal">({dailyGLCategory.label})</small>
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
-                    <div
-                      className={`h-full transition-all duration-300 ${
-                        dailyTotalGL > targetCeiling ? 'bg-error' : isSafeDay ? 'bg-primary' : 'bg-tertiary'
-                      }`}
-                      style={{ width: `${dailyPercent}%` }}
-                    />
-                  </div>
-                  <div className="text-[9px] text-on-surface-variant text-right font-medium">
-                    {dailyPercent}% of {targetCeiling} GL ceiling
+                    </div>
+                    <div className="w-full h-1.5 bg-stone-200 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          isOverBudget ? 'bg-amber-600' : 'bg-[#1B3B22]'
+                        }`}
+                        style={{ width: `${fillWidth}%` }}
+                      />
+                    </div>
+                    <div className="text-[10px] text-stone-500 font-medium text-right">
+                      {totalNetCarbs}g Net Carbs
+                    </div>
                   </div>
                 </div>
 
-                {/* Meal Cards List */}
-                <div className="flex flex-col gap-2 flex-grow">
-                  {meals.map((meal, idx) => {
-                    const mealType = idx === 0 ? 'Breakfast' : idx === 1 ? 'Lunch' : 'Dinner';
+                {/* Meals in Day */}
+                <div className="space-y-2 flex-grow">
+                  {meals.map((meal, mIdx) => {
+                    const mealType = mIdx === 0 ? 'Breakfast' : mIdx === 1 ? 'Lunch' : 'Dinner';
                     const mealGLInfo = getGlycemicLoadCategory(meal.gl);
 
                     return (
                       <Link
-                        key={meal.id + idx}
+                        key={mIdx}
                         to={`/recipe/${meal.id}`}
-                        className="bg-surface-container-lowest hover:bg-surface-container-low/60 rounded-lg p-2.5 border border-outline-variant/30 transition-all flex flex-col gap-1.5 group"
+                        className="block bg-[#F6F4EE] hover:bg-stone-100 p-2.5 rounded-xl border border-stone-200/80 transition-all group shadow-2xs"
                       >
                         <div className="flex justify-between items-center">
-                          <span className="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider">
+                          <span className="text-[9px] font-bold text-[#2D5A34] uppercase tracking-wider">
                             {mealType}
                           </span>
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${mealGLInfo.bgClass} ${mealGLInfo.colorClass}`}>
                             GL: {meal.gl}
                           </span>
                         </div>
-                        <h4 className="font-bold text-xs text-on-surface group-hover:text-primary transition-colors line-clamp-1">
+                        <h4 className="font-bold text-xs text-[#1B3B22] group-hover:text-[#386A20] transition-colors line-clamp-1 mt-1">
                           {meal.title}
                         </h4>
-                        <div className="flex items-center justify-between text-[10px] text-on-surface-variant pt-1 border-t border-outline-variant/10">
-                          <span>GI: {meal.nutrition.glycemicIndex ?? '—'}</span>
+                        <div className="flex items-center justify-between text-[10px] text-stone-500 pt-1 mt-1 border-t border-stone-200/50">
+                          <span>GI: {meal.nutrition.glycemicIndex ?? '--'}</span>
                           <span>{meal.nutrition.netCarbs}g carbs</span>
                         </div>
                       </Link>
@@ -259,36 +276,43 @@ export const MealPlans = () => {
         </section>
       )}
 
+      {/* Grocery Shopping Checklist Modal */}
+      <GroceryListModal
+        isOpen={isGroceryModalOpen}
+        onClose={() => setIsGroceryModalOpen(false)}
+        manifest={groceryManifest}
+      />
+
       {/* Mini Duplication Calendar Modal Popover */}
       {activeDuplicateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm border border-outline-variant shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-outline-variant/20 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-sm border border-stone-200 shadow-2xl space-y-4 font-sans text-[#1A2118]">
+            <div className="flex items-center justify-between border-b border-stone-200 pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">content_copy</span>
-                <h3 className="font-bold text-sm text-on-surface">
+                <span className="material-symbols-outlined text-[#1B3B22]">content_copy</span>
+                <h3 className="font-bold text-sm text-[#1B3B22]">
                   Duplicate {activeDuplicateModal}'s Meals
                 </h3>
               </div>
               <button
                 onClick={() => setActiveDuplicateModal(null)}
-                className="w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant cursor-pointer"
+                className="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-600 cursor-pointer"
               >
                 <span className="material-symbols-outlined text-base">close</span>
               </button>
             </div>
 
-            <p className="text-xs text-on-surface-variant">
+            <p className="text-xs text-stone-600">
               Select a target day to paste the exact 3-meal configuration from <strong>{activeDuplicateModal}</strong>:
             </p>
 
             <div className="grid grid-cols-2 gap-2">
-              {DAYS.filter(d => d !== activeDuplicateModal).map(targetDay => (
+              {DAYS.filter((d) => d !== activeDuplicateModal).map((targetDay) => (
                 <button
                   key={targetDay}
                   type="button"
                   onClick={() => handleDuplicateDay(activeDuplicateModal, targetDay)}
-                  className="p-3 rounded-xl border border-outline-variant/40 bg-surface-container-low hover:bg-primary hover:text-on-primary font-bold text-xs transition-all cursor-pointer text-left flex items-center justify-between group"
+                  className="p-3 rounded-xl border border-stone-200 bg-[#F6F4EE] hover:bg-[#1B3B22] hover:text-white font-bold text-xs transition-all cursor-pointer text-left flex items-center justify-between group"
                 >
                   <span>{targetDay}</span>
                   <span className="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">arrow_forward</span>
@@ -300,7 +324,7 @@ export const MealPlans = () => {
               <button
                 type="button"
                 onClick={() => setActiveDuplicateModal(null)}
-                className="px-4 py-2 rounded-xl border border-outline-variant text-xs font-bold hover:bg-surface-container cursor-pointer"
+                className="px-4 py-2 rounded-xl border border-stone-200 text-xs font-bold hover:bg-stone-100 cursor-pointer text-stone-700"
               >
                 Cancel
               </button>

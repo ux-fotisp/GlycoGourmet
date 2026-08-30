@@ -21,26 +21,26 @@ export function generateGroceryManifest(prescribedPlan, recipesMap = {}, ingredi
     if (!daySlots) continue;
 
     const slotItems = Array.isArray(daySlots) 
-      ? daySlots 
+      ? daySlots.map((item) => (typeof item === 'string' ? { recipeId: item, servingsMultiplier: 1 } : item))
       : Object.entries(daySlots).map(([occasion, recipeId]) => ({ occasion, recipeId, servingsMultiplier: 1 }));
 
     for (const slot of slotItems) {
-      if (!slot.recipeId) continue;
+      if (!slot || !slot.recipeId) continue;
       const recipe = recipesMap[slot.recipeId];
       if (!recipe || !Array.isArray(recipe.ingredients)) continue;
 
       const multiplier = slot.servingsMultiplier || 1;
 
       for (const lineItem of recipe.ingredients) {
-        const activeIngredientId = lineItem.ingredientId;
+        const activeIngredientId = lineItem.ingredientId || lineItem.id || lineItem.name;
         const ingDetails = ingredientsMap[activeIngredientId] || lineItem.ingredient || {};
         
         const rawAmount = (Number(lineItem.amount) || 0) * multiplier;
         const unit = lineItem.unit || ingDetails.defaultUnit || 'g';
-        const name = ingDetails.name || lineItem.name || activeIngredientId;
-        const category = (ingDetails.category || 'pantry').toLowerCase();
+        const name = ingDetails.name || lineItem.name || activeIngredientId || 'Ingredient';
+        const category = (ingDetails.category || lineItem.category || 'pantry').toLowerCase();
 
-        const key = `${activeIngredientId}_${unit}`;
+        const key = `${name.toLowerCase()}_${unit}`;
         if (aggregatedMap.has(key)) {
           aggregatedMap.get(key).amount += rawAmount;
         } else {
@@ -60,13 +60,13 @@ export function generateGroceryManifest(prescribedPlan, recipesMap = {}, ingredi
   
   for (const item of aggregatedMap.values()) {
     item.amount = Math.round(item.amount * 10) / 10;
-    if (['vegetable', 'fruit', 'produce'].includes(item.category)) {
+    if (['vegetable', 'fruit', 'produce', 'greens', 'fresh'].includes(item.category)) {
       result.produce.push(item);
-    } else if (['protein', 'meat', 'seafood', 'poultry', 'legume'].includes(item.category)) {
+    } else if (['protein', 'meat', 'seafood', 'poultry', 'legume', 'fish', 'eggs'].includes(item.category)) {
       result.proteins.push(item);
-    } else if (['dairy', 'cheese'].includes(item.category)) {
+    } else if (['dairy', 'cheese', 'yogurt', 'milk'].includes(item.category)) {
       result.dairy.push(item);
-    } else if (['grain', 'pantry', 'seasoning', 'fat', 'fats_oils', 'baking', 'condiments'].includes(item.category)) {
+    } else if (['grain', 'pantry', 'seasoning', 'fat', 'fats_oils', 'baking', 'condiments', 'oil', 'spice', 'nuts', 'seeds'].includes(item.category)) {
       result.pantry.push(item);
     } else {
       result.other.push(item);
@@ -80,7 +80,7 @@ export function generateGroceryManifest(prescribedPlan, recipesMap = {}, ingredi
  * 2. Generates an exportable clinical summary report.
  */
 export function generateClinicalSummaryReport(clientProfile, calibration, prescribedPlan, recipesMap = {}) {
-  const patientName = clientProfile?.patientName || 'Client';
+  const patientName = clientProfile?.patientName || clientProfile?.name || 'Client';
   const subtype = clientProfile?.diabeticSubtype || 'Metabolic Optimization';
   const glTarget = calibration?.glTargetDaily || 45;
   const bolusOffset = calibration?.bolusOffsetMinutes || 15;
@@ -97,11 +97,16 @@ export function generateClinicalSummaryReport(clientProfile, calibration, prescr
     if (!daySlots) continue;
 
     const slotItems = Array.isArray(daySlots) 
-      ? daySlots 
+      ? daySlots.map((item) => (typeof item === 'string' ? { recipeId: item } : item))
       : Object.entries(daySlots).map(([occasion, recipeId]) => ({ occasion, recipeId }));
     if (slotItems.length === 0) continue;
 
-    const rollup = calculateDailyRollup(daySlots, recipesMap);
+    const rollup = calculateDailyRollup(
+      Array.isArray(daySlots) 
+        ? daySlots.reduce((acc, id, idx) => ({ ...acc, [`meal_${idx}`]: typeof id === 'string' ? id : id.recipeId }), {})
+        : daySlots, 
+      recipesMap
+    );
     const dayGL = rollup.cumulativeDailyGL || rollup.glycemicLoad || 0;
     
     weeklyTotalGL += dayGL;
@@ -180,7 +185,7 @@ export function exportFHIRMetabolicTelemetry(clientProfile, prescribedPlan) {
     id: `bundle-${planId}`,
     type: 'collection',
     timestamp: new Date().toISOString(),
-    entry: observations.map(obs => ({
+    entry: observations.map((obs) => ({
       fullUrl: `urn:uuid:${obs.id}`,
       resource: obs,
     })),
