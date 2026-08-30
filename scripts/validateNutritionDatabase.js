@@ -1,7 +1,7 @@
 /**
  * validateNutritionDatabase.js — Automated Strapi Database & Nutrition Audit Script
  *
- * Executable via: `npm run validate-db`
+ * Executable via: `npm run validate-db` / `npm run validate:content`
  *
  * Script Tasks:
  *   1. Fetches all entries from Strapi `/api/ingredients`.
@@ -10,9 +10,16 @@
  *   4. Assigns exact glycemicIndex and glycemicLoad per 100g base via Academic GI Map & Zero-Carb Rule.
  *   5. Updates invalid or out-of-bounds records directly in Strapi via `PUT /api/ingredients/:id`.
  *   6. Fetches all `/api/recipes?populate=*`, recalculates aggregate recipe GL based on scaled ingredient amounts, and patches recipe records with verified totals.
+ *   7. Content Completeness CI Gate: Validates that all recipes in `public/data/recipes/` contain non-empty steps[], ingredients[], non-negative glycemicLoad, and allergens[].
  */
 
-import { getAcademicGI, normalizeSlug } from '../server/src/utils/giLookup.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { getAcademicGI } from '../server/src/utils/giLookup.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const STRAPI_URL = process.env.VITE_STRAPI_API_URL || process.env.STRAPI_API_URL || 'https://api.glycogourmet.com';
 const STRAPI_TOKEN = process.env.VITE_STRAPI_TOKEN || process.env.STRAPI_TOKEN || '';
@@ -26,17 +33,9 @@ function getHeaders() {
   return headers;
 }
 
-/** Fallback sample system ingredients for standalone audit validation if API server is offline */
-// Load full fallback datasets from data files
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const ingredientsDataPath = path.resolve(__dirname, '../src/data/ingredients.json');
 const recipesDataPath = path.resolve(__dirname, '../src/data/recipes.json');
+const publicRecipesDir = path.resolve(__dirname, '../public/data/recipes');
 
 const FALLBACK_INGREDIENTS = fs.existsSync(ingredientsDataPath)
   ? JSON.parse(fs.readFileSync(ingredientsDataPath, 'utf8'))
@@ -55,9 +54,76 @@ const FALLBACK_RECIPES = fs.existsSync(recipesDataPath)
       },
     ];
 
+/**
+ * Validates content completeness across all JSON files in public/data/recipes/
+ * Acts as a strict CI gate against missing metadata/clinical fields.
+ */
+function validatePublicRecipesCompleteness() {
+  console.log('\n--- 3. PUBLIC RECIPES CONTENT COMPLETENESS CI GATE ---');
+  if (!fs.existsSync(publicRecipesDir)) {
+    console.error(`❌ Public recipes directory not found: ${publicRecipesDir}`);
+    process.exit(1);
+  }
+
+  const recipeFiles = fs.readdirSync(publicRecipesDir).filter(file => file.endsWith('.json'));
+  if (recipeFiles.length === 0) {
+    console.error(`❌ No recipe JSON files found in ${publicRecipesDir}`);
+    process.exit(1);
+  }
+
+  const failures = [];
+
+  for (const file of recipeFiles) {
+    const filePath = path.join(publicRecipesDir, file);
+    try {
+      const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      const missingFields = [];
+
+      // 1. steps[] must be a non-empty array
+      if (!Array.isArray(content.steps) || content.steps.length === 0) {
+        missingFields.push('steps[] (must be a non-empty array)');
+      }
+
+      // 2. ingredients[] must be a non-empty array
+      if (!Array.isArray(content.ingredients) || content.ingredients.length === 0) {
+        missingFields.push('ingredients[] (must be a non-empty array)');
+      }
+
+      // 3. glycemicLoad must exist and be >= 0
+      const gl = content.glycemicLoad ?? content.nutrition?.glycemicLoad;
+      if (typeof gl !== 'number' || isNaN(gl) || gl < 0) {
+        missingFields.push('glycemicLoad (must be a non-negative number)');
+      }
+
+      // 4. allergens[] must be an array
+      if (!Array.isArray(content.allergens)) {
+        missingFields.push('allergens[] (must be an array)');
+      }
+
+      if (missingFields.length > 0) {
+        failures.push({ file, missingFields });
+      } else {
+        console.log(`  ✓ [${file}] Complete (steps: ${content.steps.length}, ingredients: ${content.ingredients.length}, GL: ${gl}, allergens: ${content.allergens.length})`);
+      }
+    } catch (err) {
+      failures.push({ file, missingFields: [`JSON parse error: ${err.message}`] });
+    }
+  }
+
+  if (failures.length > 0) {
+    console.error('\n❌ CONTENT COMPLETENESS AUDIT FAILED for the following recipe(s):');
+    for (const fail of failures) {
+      console.error(`  • ${fail.file}: Missing or invalid -> ${fail.missingFields.join(', ')}`);
+    }
+    process.exit(1);
+  }
+
+  console.log(`\n✓ All ${recipeFiles.length} public recipes verified complete (steps, ingredients, glycemicLoad, allergens).`);
+}
+
 async function runDatabaseAudit() {
   console.log('\n=============================================================');
-  console.log('🩺 GlycoGourmet — Automated Strapi Database & Nutrition Audit');
+  console.log('🥗 GlycoGourmet — Automated Strapi Database & Nutrition Audit');
   console.log('=============================================================\n');
   console.log(`Target Strapi Endpoint: ${STRAPI_URL}`);
 
@@ -78,7 +144,7 @@ async function runDatabaseAudit() {
           return { id: item.id || attrs.id, ...attrs };
         });
         isLiveStrapi = true;
-        console.log(`✅ Successfully fetched ${ingredients.length} ingredients from Strapi REST API.`);
+        console.log(`✓ Successfully fetched ${ingredients.length} ingredients from Strapi REST API.`);
       }
     }
   } catch {
@@ -86,7 +152,7 @@ async function runDatabaseAudit() {
   }
 
   if (!isLiveStrapi || ingredients.length === 0) {
-    console.log(`ℹ️ Strapi API offline or unpopulated. Running verification on standard database registry (${FALLBACK_INGREDIENTS.length} base entries).`);
+    console.log(`⚠️ Strapi API offline or unpopulated. Running verification on standard database registry (${FALLBACK_INGREDIENTS.length} base entries).`);
     ingredients = [...FALLBACK_INGREDIENTS];
   }
 
@@ -242,6 +308,9 @@ async function runDatabaseAudit() {
       }
     }
   }
+
+  // Step 7: Content Completeness CI Gate
+  validatePublicRecipesCompleteness();
 
   console.log(`\n=============================================================`);
   console.log(`✨ DATABASE AUDIT COMPLETE`);

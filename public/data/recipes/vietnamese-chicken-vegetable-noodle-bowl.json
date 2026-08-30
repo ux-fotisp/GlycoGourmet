@@ -113,5 +113,13 @@
       "description": "Pour dressing evenly over bowl and scatter crushed roasted peanuts over top. Toss before eating.",
       "timer": 1
     }
+  ],
+  "allergens": [
+    "peanuts"
+  ],
+  "dietaryTags": [
+    "gluten_free",
+    "dairy_free",
+    "heart_healthy"
   ]
 }

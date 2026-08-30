@@ -106,5 +106,13 @@
       "description": "Remove from heat, scatter crumbled feta and fresh basil over top, and finish with a squeeze of fresh lemon juice.",
       "timer": 1
     }
+  ],
+  "allergens": [
+    "milk"
+  ],
+  "dietaryTags": [
+    "vegetarian",
+    "gluten_free",
+    "heart_healthy"
   ]
 }

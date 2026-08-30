@@ -120,5 +120,14 @@
       "description": "Drizzle vinaigrette evenly over the salad right before serving.",
       "timer": 1
     }
+  ],
+  "allergens": [
+    "fish",
+    "egg"
+  ],
+  "dietaryTags": [
+    "gluten_free",
+    "dairy_free",
+    "heart_healthy"
   ]
 }

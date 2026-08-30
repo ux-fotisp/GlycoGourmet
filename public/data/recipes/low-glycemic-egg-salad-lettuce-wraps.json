@@ -109,5 +109,14 @@
       "description": "Spoon equal portions of the egg salad mixture down the center rib of each lettuce boat. Serve immediately or pack chilled for lunch.",
       "timer": 5
     }
+  ],
+  "allergens": [
+    "egg",
+    "milk"
+  ],
+  "dietaryTags": [
+    "vegetarian",
+    "gluten_free",
+    "heart_healthy"
   ]
 }

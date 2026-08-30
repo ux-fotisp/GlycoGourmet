@@ -108,5 +108,16 @@
       "description": "Remove from heat, fold in fresh Thai basil, and serve hot.",
       "timer": 1
     }
+  ],
+  "allergens": [
+    "soybeans",
+    "peanuts",
+    "sesame"
+  ],
+  "dietaryTags": [
+    "vegan",
+    "vegetarian",
+    "dairy_free",
+    "heart_healthy"
   ]
 }

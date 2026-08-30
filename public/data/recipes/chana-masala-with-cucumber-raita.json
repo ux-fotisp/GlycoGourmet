@@ -125,5 +125,13 @@
       "description": "Serve warm Chana Masala topped with a generous dollop of cooling Cucumber Raita.",
       "timer": 1
     }
+  ],
+  "allergens": [
+    "milk"
+  ],
+  "dietaryTags": [
+    "vegetarian",
+    "gluten_free",
+    "heart_healthy"
   ]
 }
