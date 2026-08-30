@@ -1,9 +1,12 @@
-import React from 'react';
+﻿import React from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 /**
- * GlycemicSnapshot - 3-metric glycemic profile with dynamic daily budget gauge.
+ * GlycemicSnapshot - 3-metric glycemic profile with fluid Framer Motion daily budget gauge.
  */
 export const GlycemicSnapshot = ({ dailyGlTarget = 45, profile, servingMultiplier = 1 }) => {
+  const shouldReduceMotion = useReducedMotion();
+
   const gl = Math.round(profile?.glycemicLoad ?? 4);
   const gi = profile?.glycemicIndex ?? 22;
   const netCarbs = profile?.netCarbs !== undefined ? Math.round(profile.netCarbs * 10) / 10 : 18;
@@ -24,37 +27,70 @@ export const GlycemicSnapshot = ({ dailyGlTarget = 45, profile, servingMultiplie
         </span>
       </div>
 
-      {/* 3-Column Metric Display */}
+      {/* 3-Column Metric Display with Number Transitions */}
       <div className="grid grid-cols-3 divide-x divide-stone-200">
         <div className="flex flex-col items-center justify-center text-center px-2">
-          <span className="text-4xl font-display font-extrabold text-sage-text leading-none">
-            {gl}
-          </span>
+          <div className="h-10 flex items-center justify-center overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={gl}
+                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: 'easeOut' }}
+                className="text-4xl font-display font-extrabold text-sage-text leading-none"
+              >
+                {gl}
+              </motion.span>
+            </AnimatePresence>
+          </div>
           <span className="text-[10px] uppercase font-extrabold text-stone-500 mt-2 tracking-wider">
             GL / Serving
           </span>
         </div>
 
         <div className="flex flex-col items-center justify-center text-center px-2">
-          <span className="text-4xl font-display font-extrabold text-primary leading-none">
-            {Math.round(gi)}
-          </span>
+          <div className="h-10 flex items-center justify-center overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={Math.round(gi)}
+                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: 'easeOut' }}
+                className="text-4xl font-display font-extrabold text-primary leading-none"
+              >
+                {Math.round(gi)}
+              </motion.span>
+            </AnimatePresence>
+          </div>
           <span className="text-[10px] uppercase font-extrabold text-stone-500 mt-2 tracking-wider">
             Composite GI
           </span>
         </div>
 
         <div className="flex flex-col items-center justify-center text-center px-2">
-          <span className="text-4xl font-display font-extrabold text-primary leading-none">
-            {netCarbs}g
-          </span>
+          <div className="h-10 flex items-center justify-center overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={netCarbs}
+                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: 'easeOut' }}
+                className="text-4xl font-display font-extrabold text-primary leading-none"
+              >
+                {netCarbs}g
+              </motion.span>
+            </AnimatePresence>
+          </div>
           <span className="text-[10px] uppercase font-extrabold text-stone-500 mt-2 tracking-wider">
             Net Carbs
           </span>
         </div>
       </div>
 
-      {/* Daily Budget Gauge */}
+      {/* Daily Budget Gauge with Fluid Fill Animation */}
       <div className="pt-2 border-t border-stone-100 space-y-2.5">
         <div className="flex justify-between items-center text-xs font-bold text-primary">
           <span className="flex items-center gap-1.5">
@@ -72,9 +108,14 @@ export const GlycemicSnapshot = ({ dailyGlTarget = 45, profile, servingMultiplie
           aria-valuemax={dailyGlTarget} 
           aria-label="Daily GL Budget Progress"
         >
-          <div 
-            className="h-full bg-primary rounded-full transition-all duration-500" 
-            style={{ width: `${fillWidth}%` }} 
+          <motion.div 
+            className="h-full bg-primary rounded-full" 
+            initial={{ width: 0 }}
+            animate={{ width: `${fillWidth}%` }}
+            transition={{
+              duration: shouldReduceMotion ? 0 : 0.8,
+              ease: [0.16, 1, 0.3, 1], // fluid easeOut cubic
+            }}
           />
         </div>
 

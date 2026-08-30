@@ -1,7 +1,8 @@
 ﻿import React from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 /**
- * IngredientRow - Single ingredient matrix line item with GI indicator badge and thermal multiplier.
+ * IngredientRow - Single ingredient matrix line item with GI indicator badge and animated value crossfade.
  */
 export const IngredientRow = ({
   index = 1,
@@ -13,7 +14,8 @@ export const IngredientRow = ({
   unit = 'g',
   netCarbs = '6',
 }) => {
-  // Preattentive GL band colors based on GI value
+  const shouldReduceMotion = useReducedMotion();
+
   const getGIBadgeStyle = (giVal) => {
     if (giVal <= 25) return 'bg-sage-bg text-sage-text border-sage-text/30';
     if (giVal <= 55) return 'bg-amber-bg text-amber-text border-amber-text/30';
@@ -46,13 +48,36 @@ export const IngredientRow = ({
         </div>
       </div>
 
-      {/* Right: Gram Weight & Net Carbs */}
+      {/* Right: Scaled Gram Weight & Net Carbs with Motion Crossfade */}
       <div className="text-right shrink-0 pl-3">
-        <div className="text-sm font-extrabold text-primary">
-          {amount} {unit}
+        <div className="text-sm font-extrabold text-primary flex items-center justify-end">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={amount}
+              initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.15, ease: 'easeOut' }}
+            >
+              {amount}
+            </motion.span>
+          </AnimatePresence>
+          <span className="ml-1">{unit}</span>
         </div>
-        <div className="text-[11px] font-bold text-sage-text mt-0.5">
-          {netCarbs}g NC
+
+        <div className="text-[11px] font-bold text-sage-text mt-0.5 flex items-center justify-end">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={netCarbs}
+              initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.15, ease: 'easeOut' }}
+            >
+              {netCarbs}
+            </motion.span>
+          </AnimatePresence>
+          <span>g NC</span>
         </div>
       </div>
     </div>
@@ -60,4 +85,3 @@ export const IngredientRow = ({
 };
 
 export default IngredientRow;
-
