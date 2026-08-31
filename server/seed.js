@@ -9,11 +9,7 @@ async function seed() {
   });
   const authRole = roles[0];
 
-
   // Grant find and findOne permissions to Authenticated Role for client-profile
-  
-  // Create permissions manually because they don't exist by default until generated
-  // Or we can just find them if they exist
   const permissions = await strapi.entityService.findMany('plugin::users-permissions.permission', {
     filters: {
       role: authRole.id,
@@ -71,6 +67,17 @@ async function seed() {
     provider: 'local'
   });
 
+  // Create Clinic Admin User
+  const clinicAdminA = await userService.add({
+    username: 'clinicAdminA_' + Date.now(),
+    email: 'clinicadmina' + Date.now() + '@glyco.com',
+    password: 'Password123!',
+    roleType: 'clinic_admin',
+    role: authRole.id,
+    confirmed: true,
+    provider: 'local'
+  });
+
   // Create Admin User
   const adminA = await userService.add({
     username: 'adminA_' + Date.now(),
@@ -92,7 +99,7 @@ async function seed() {
     }
   });
   
-  // Write Dietitian B & A credentials to a file so the test can use them
+  // Write credentials to file so the test can use them
   const fs = require('fs');
   fs.writeFileSync('../tests/integration/.seed_data.json', JSON.stringify({
     dietitianAEmail: dietitianA.email,
@@ -104,6 +111,9 @@ async function seed() {
     patientAEmail: patientA.email,
     patientAPassword: 'Password123!',
     profileAId: profileA.id,
+    clinicAdminAEmail: clinicAdminA.email,
+    clinicAdminAPassword: 'Password123!',
+    clinicAdminAId: clinicAdminA.id,
     adminAEmail: adminA.email,
     adminAPassword: 'Password123!',
   }));
