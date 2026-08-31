@@ -69,7 +69,9 @@
       "enum": [
         "user",
         "dietitian",
-        "admin"
+        "clinic_admin",
+        "admin",
+        "super_admin"
       ],
       "default": "user",
       "configurable": true,
