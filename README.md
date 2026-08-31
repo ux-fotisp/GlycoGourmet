@@ -13,7 +13,7 @@
 
 ## 🎯 Clinical Overview
 
-**GlycoGourmet** is an open-source clinical digital health platform engineered for individuals managing **Type 1 Diabetes, Type 2 Diabetes, Gestational Diabetes, Prediabetes, or Severe Insulin Resistance**. Rather than relying solely on total carbohydrate counts, GlycoGourmet centers on **Glycemic Load ($GL$)**, **Composite Glycemic Index ($GI$)**, and **Thermal Starch Kinetics ($M_{\text{prep}}$)** to empower proactive glycemic stability.
+**GlycoGourmet** is a clinical digital health platform engineered for individuals managing **Type 1 Diabetes, Type 2 Diabetes, Gestational Diabetes, Prediabetes, or Severe Insulin Resistance**. Rather than relying solely on total carbohydrate counts, GlycoGourmet centers on **Glycemic Load ($GL$)**, **Composite Glycemic Index ($GI$)**, and **Thermal Starch Kinetics ($M_{\text{prep}}$)** to empower proactive glycemic stability.
 
 ---
 
