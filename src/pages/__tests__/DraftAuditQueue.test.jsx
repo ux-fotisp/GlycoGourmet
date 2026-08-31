@@ -16,6 +16,7 @@ vi.mock('../../context/AuthContext', () => ({
 }));
 
 vi.mock('../../utils/nutritionCalculator', () => ({
+  deriveAllergensFromIngredients: vi.fn(() => []),
   calculateRecipeNutrition: vi.fn(() => ({
     kcal: 310, protein: 14.5, fat: 8.2, carbs: 28.0,
     fiber: 3.2, netCarbs: 24.8, glycemicIndex: 55, glycemicLoad: 13.6,

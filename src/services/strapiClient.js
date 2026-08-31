@@ -1,5 +1,6 @@
 /**
- * strapiClient.js � Central Strapi v4/v5 Headless CMS REST API Client Wrapper
+ * strapiClient.js — Central Strapi v4/v5 Headless CMS REST API Client Wrapper
+
  *
  * Environment Setup:
  *   - VITE_STRAPI_API_URL: Strapi backend base URL (default: 'https://api.glycogourmet.com')
@@ -15,7 +16,7 @@
  *     or Strapi v5 flat responses into simple JavaScript objects.
  */
 
-// --- Environment Configuration ------------------------------------------------
+    // --- Environment Configuration ------------------------------------------------
 
 export const STRAPI_URL = import.meta.env.VITE_STRAPI_API_URL || 'https://api.glycogourmet.com';
 
@@ -35,11 +36,12 @@ function buildUrl(path = '', params = {}) {
 }
 export const READ_TOKEN = import.meta.env.VITE_STRAPI_TOKEN || '';
 
-/** SWR Cache TTL in milliseconds � 10 minutes */
+/** SWR Cache TTL in milliseconds — 10 minutes */
+
 const CACHE_TTL_MS = 10 * 60 * 1000;
 const CACHE_PREFIX = 'strapi_swr_';
 
-// --- JWT & Auth Token Management ---------------------------------------------
+    // --- JWT & Auth Token Management ---------------------------------------------
 
 /**
  * Retrieves the current user's JWT from localStorage.
@@ -90,7 +92,7 @@ function buildAuthHeaders(method = 'GET') {
   return headers;
 }
 
-// --- Strapi Response Normalizer -----------------------------------------------
+    // --- Strapi Response Normalizer -----------------------------------------------
 
 /**
  * Recursively unwraps Strapi's nested REST API data structures.
@@ -98,8 +100,9 @@ function buildAuthHeaders(method = 'GET') {
  * Strapi v4: `{ data: { id: 1, attributes: { title: '...', author: { data: ... } } } }`
  * Strapi v5 / Flat: `{ data: [{ id: 1, title: '...' }] }`
  *
- * @param {*} input � raw Strapi response payload
- * @returns {*} � normalized flat object or array
+ * @param {*} input — raw Strapi response payload
+ * @returns {*} — normalized flat object or array
+
  */
 export function unravelStrapiData(input) {
   if (input === null || input === undefined) return null;
@@ -126,7 +129,8 @@ export function unravelStrapiData(input) {
       return { id: id ?? attributes?.id, ...unwrappedAttrs };
     }
 
-    // Flat object � recursively unravel child relations
+    // Flat object — recursively unravel child relations
+
     const result = {};
     for (const [key, val] of Object.entries(input)) {
       result[key] = unravelStrapiData(val);
@@ -138,7 +142,7 @@ export function unravelStrapiData(input) {
   return input;
 }
 
-// --- SWR Cache Helpers --------------------------------------------------------
+    // --- SWR Cache Helpers --------------------------------------------------------
 
 function readCache(cacheKey) {
   try {
@@ -160,7 +164,8 @@ function writeCache(cacheKey, data) {
       JSON.stringify({ data, ts: Date.now() })
     );
   } catch {
-    // Storage full � silently degrade
+    // Storage full — silently degrade
+
   }
 }
 
@@ -179,15 +184,16 @@ export function invalidateCache(collectionHint) {
   }
 }
 
-// --- Core HTTP Request Wrappers -----------------------------------------------
+    // --- Core HTTP Request Wrappers -----------------------------------------------
 
 /**
  * Performs a GET request to Strapi.
  * Automatically unwraps Strapi `{ data: ... }` response payloads via `unravelStrapiData()`.
  *
- * @param {string} path � endpoint path e.g. '/api/recipes'
- * @param {Record<string, string>} [params] � URL query parameters
- * @returns {Promise<*>} � unwrapped JavaScript objects
+ * @param {string} path — endpoint path e.g. '/api/recipes'
+ * @param {Record<string, string>} [params] — URL query parameters
+ * @returns {Promise<*>} — unwrapped JavaScript objects
+
  */
 export async function strapiGet(path, params = {}) {
   const url = buildUrl(path, params);
@@ -219,9 +225,10 @@ export async function strapiGet(path, params = {}) {
 
 /**
  * Performs a POST request to Strapi.
- * @param {string} path � e.g. '/api/recipes' or '/api/ingredients'
- * @param {object} body � JSON payload (wrapped in `{ data: ... }` if Strapi expects it)
- * @returns {Promise<*>} � unwrapped response
+ * @param {string} path — e.g. '/api/recipes' or '/api/ingredients'
+ * @param {object} body — JSON payload (wrapped in `{ data: ... }` if Strapi expects it)
+ * @returns {Promise<*>} — unwrapped response
+
  */
 export async function strapiPost(path, body) {
   const url = buildUrl(path);
@@ -249,9 +256,10 @@ export async function strapiPost(path, body) {
 
 /**
  * Performs a PUT request to Strapi.
- * @param {string} path � e.g. '/api/recipes/123'
- * @param {object} body � updated fields
- * @returns {Promise<*>} � unwrapped updated record
+ * @param {string} path — e.g. '/api/recipes/123'
+ * @param {object} body — updated fields
+ * @returns {Promise<*>} — unwrapped updated record
+
  */
 export async function strapiPut(path, body) {
   const url = buildUrl(path);
@@ -277,7 +285,8 @@ export async function strapiPut(path, body) {
 
 /**
  * Performs a DELETE request to Strapi.
- * @param {string} path � e.g. '/api/recipes/123'
+ * @param {string} path — e.g. '/api/recipes/123'
+
  * @returns {Promise<boolean>}
  */
 export async function strapiDelete(path) {
@@ -300,9 +309,10 @@ export async function strapiDelete(path) {
 
 /**
  * Performs a media upload (multipart/form-data) to Strapi's `/api/upload` endpoint.
- * @param {string} [path] � default '/api/upload'
- * @param {FormData} formData � multipart form data with file
- * @returns {Promise<*>} � uploaded media record(s)
+ * @param {string} [path] — default '/api/upload'
+ * @param {FormData} formData — multipart form data with file
+ * @returns {Promise<*>} — uploaded media record(s)
+
  */
 export async function strapiUpload(path = '/api/upload', formData) {
   const url = buildUrl(path);

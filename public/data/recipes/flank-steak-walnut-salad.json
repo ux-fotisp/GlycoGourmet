@@ -1,25 +1,151 @@
 {
-  "id": "flank-steak-walnut-salad",
-  "title": "Flank Steak & Walnut Salad",
-  "isUserAuthored": false,
-  "status": "published",
-  "description": "Bitter greens, healthy fats from toasted walnuts, and tender flank steak. A restaurant-quality meal with near-zero blood sugar impact.",
-  "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCEmKXM0pnaL4jBHHqXyD_unp46KeafiRByNeCze8u30g69NLN62utCOCgxZ7R8yPFe_CROsbAFMIoZ7pM9dVwUQaRc3ULbIyqr6tjqibQlKE0I68lJPvFSm6Kshof4_MukFpXHU7VSZ5R_sNF9hQeHR0mzfMe0FmiAM7OAbiDn6rYDgpVT4SjBxXzTjcMK3pyjknMEeb1poyU0ebV7SVfxawnI-2MWSnCVaZj7vzJQtBxchRRW7bEF",
-  "cookingTime": 20,
-  "difficulty": "Medium",
-  "category": "Salad",
-  "tags": ["Low GI", "Low Sugar", "High Protein", "Keto-Friendly"],
-  "servings": 1,
-  "ingredients": [
-    { "ingredientId": "flank-steak", "amount": 4, "unit": "oz", "prepState": "sauteed" },
-    { "ingredientId": "walnuts", "amount": 0.25, "unit": "cup", "prepState": "roasted" },
-    { "ingredientId": "spinach", "amount": 2, "unit": "cup", "prepState": "raw" },
-    { "ingredientId": "olive-oil", "amount": 1, "unit": "tbsp", "prepState": "raw" },
-    { "ingredientId": "lemon", "amount": 1, "unit": "tbsp", "prepState": "raw" }
-  ],
-  "steps": [
-    { "title": "Sear Steak", "description": "Sear the flank steak in a hot skillet for 3-4 minutes per side. Let it rest, then slice thinly against the grain.", "timer": 8 },
-    { "title": "Dress Greens", "description": "Toss fresh baby spinach with olive oil and fresh lemon juice. Lemon acidity helps blunt the glycemic curve of the entire meal.", "timer": 3 },
-    { "title": "Assemble", "description": "Top dressed greens with sliced steak and toasted walnuts for healthy fats and high contrast texture.", "timer": 2 }
-  ]
+    "id":  "flank-steak-walnut-salad",
+    "title":  "Flank Steak \u0026 Walnut Salad",
+    "isUserAuthored":  false,
+    "status":  "published",
+    "publishedAt":  "2026-01-01T00:00:00.000Z",
+    "description":  "Bitter greens, healthy fats from toasted walnuts, and tender flank steak. A restaurant-quality meal with near-zero blood sugar impact.",
+    "imageUrl":  "https://lh3.googleusercontent.com/aida-public/AB6AXuCEmKXM0pnaL4jBHHqXyD_unp46KeafiRByNeCze8u30g69NLN62utCOCgxZ7R8yPFe_CROsbAFMIoZ7pM9dVwUQaRc3ULbIyqr6tjqibQlKE0I68lJPvFSm6Kshof4_MukFpXHU7VSZ5R_sNF9hQeHR0mzfMe0FmiAM7OAbiDn6rYDgpVT4SjBxXzTjcMK3pyjknMEeb1poyU0ebV7SVfxawnI-2MWSnCVaZj7vzJQtBxchRRW7bEF",
+    "prepTime":  10,
+    "cookTime":  10,
+    "cookingTime":  20,
+    "prepTimeMinutes":  10,
+    "cookTimeMinutes":  10,
+    "difficulty":  "Medium",
+    "servings":  1,
+    "yield":  "1 Large Salad Plate",
+    "category":  "Salad",
+    "tags":  [
+                 "Low GI",
+                 "Low Sugar",
+                 "High Protein",
+                 "Keto-Friendly"
+             ],
+    "allergens":  [
+                      "tree_nuts"
+                  ],
+    "dietaryTags":  [
+                        "gluten_free",
+                        "dairy_free"
+                    ],
+    "glycemicIndex":  16,
+    "glycemicLoad":  0.6,
+    "glycemicImpact":  "Optimal Low-GI",
+    "nutrition":  {
+                      "kcal":  555,
+                      "protein":  36.5,
+                      "fat":  43.6,
+                      "carbs":  7.7,
+                      "fiber":  3.7,
+                      "netCarbs":  4.0,
+                      "glycemicIndex":  16,
+                      "glycemicLoad":  0.6
+                  },
+    "ingredients":  [
+                        {
+                            "ingredientId":  "flank-steak",
+                            "name":  "Lean Flank Steak",
+                            "amount":  113,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "kcal":  217,
+                            "protein":  30.1,
+                            "fat":  9.8,
+                            "carbs":  0,
+                            "fiber":  0,
+                            "netCarbs":  0,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "walnuts",
+                            "name":  "Raw Walnut Halves, toasted",
+                            "amount":  30,
+                            "unit":  "g",
+                            "prepState":  "roasted",
+                            "kcal":  196,
+                            "protein":  4.6,
+                            "fat":  19.6,
+                            "carbs":  4.1,
+                            "fiber":  2.0,
+                            "netCarbs":  2.1,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.3,
+                            "allergens":  [
+                                              "tree_nuts"
+                                          ],
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "spinach",
+                            "name":  "Fresh Baby Spinach Leaves",
+                            "amount":  60,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "kcal":  14,
+                            "protein":  1.7,
+                            "fat":  0.2,
+                            "carbs":  2.2,
+                            "fiber":  1.3,
+                            "netCarbs":  0.9,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.1,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "olive-oil",
+                            "name":  "Extra Virgin Olive Oil",
+                            "amount":  14,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "kcal":  124,
+                            "protein":  0,
+                            "fat":  14,
+                            "carbs":  0,
+                            "fiber":  0,
+                            "netCarbs":  0,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "lemon",
+                            "name":  "Fresh Lemon Juice",
+                            "amount":  15,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "kcal":  4,
+                            "protein":  0.1,
+                            "fat":  0,
+                            "carbs":  1.4,
+                            "fiber":  0.4,
+                            "netCarbs":  1.0,
+                            "glycemicIndex":  20,
+                            "glycemicLoad":  0.2,
+                            "nutritionSource":  "Sydney University GI Database"
+                        }
+                    ],
+    "steps":  [
+                  {
+                      "title":  "Toast Walnuts",
+                      "description":  "Toast raw walnut halves in a dry skillet over medium heat for 3 minutes until fragrant and golden. Set aside."
+                  },
+                  {
+                      "title":  "Sear Flank Steak",
+                      "description":  "Season flank steak lightly. Sear in a hot skillet for 3 to 4 minutes per side to desired doneness."
+                  },
+                  {
+                      "title":  "Rest \u0026 Slice Beef",
+                      "description":  "Transfer cooked flank steak to a cutting board and let rest for 5 minutes. Slice thinly against the grain."
+                  },
+                  {
+                      "title":  "Dress Spinach",
+                      "description":  "Place baby spinach leaves in a salad bowl. Drizzle with extra virgin olive oil and freshly squeezed lemon juice."
+                  },
+                  {
+                      "title":  "Assemble Salad",
+                      "description":  "Toss dressed spinach gently. Top with warm sliced flank steak and toasted crunchy walnuts before serving."
+                  }
+              ]
 }

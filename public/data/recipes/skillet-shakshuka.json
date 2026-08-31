@@ -1,25 +1,153 @@
 {
-  "id": "skillet-shakshuka",
-  "title": "Skillet Shakshuka",
-  "isUserAuthored": false,
-  "status": "published",
-  "description": "Slow-absorbed carbs with fiber-rich peppers, tomatoes, and poached eggs. Hearty, spicy, and perfectly low-glycemic.",
-  "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBiA1iKI7dmZGOSKxAq4Va2cbTmZ6U4-BOPbcvAcl-nWijeHt5LMZ6f4iiQlb2CjVD7-71YaOSxn-_hLteiUSIDhSEvfz3n2CwEp5bGgTYeT5wkQ41zgdcTFtXHPfye-VUFg3d8jYtt3uSwN2oY645PdZCYN09CZIToTizAHFs7h7piKBQXNpepap5n0sb1bUFTVE8uIQ7LRJzxBOhHsDxXUARf45ooqnLyYFSaXv9kwswF6d8S81W3",
-  "cookingTime": 25,
-  "difficulty": "Medium",
-  "category": "Breakfast",
-  "tags": ["Low GI", "Low Sugar", "High Protein", "Keto-Friendly"],
-  "servings": 2,
-  "ingredients": [
-    { "ingredientId": "eggs", "amount": 4, "unit": "piece", "prepState": "boiled" },
-    { "ingredientId": "bell-pepper", "amount": 1, "unit": "piece", "prepState": "raw" },
-    { "ingredientId": "cherry-tomato", "amount": 1.5, "unit": "cup", "prepState": "sauteed" },
-    { "ingredientId": "olive-oil", "amount": 1, "unit": "tbsp", "prepState": "raw" },
-    { "ingredientId": "garlic", "amount": 2, "unit": "clove", "prepState": "sauteed" }
-  ],
-  "steps": [
-    { "title": "Sauté Veggies", "description": "Heat olive oil in a skillet. Sauté chopped bell peppers and garlic until soft. Add cherry tomatoes and simmer until they break down into a thick sauce.", "timer": 10 },
-    { "title": "Create Wells", "description": "Use a spoon to create small wells in the sauce. Crack an egg directly into each well.", "timer": 3 },
-    { "title": "Poach Eggs", "description": "Cover the skillet and simmer over low heat until egg whites are set but yolks remain runny. The fats and protein in eggs delay gastric emptying.", "timer": 6 }
-  ]
+    "id":  "skillet-shakshuka",
+    "title":  "Skillet Shakshuka",
+    "isUserAuthored":  false,
+    "status":  "published",
+    "publishedAt":  "2026-01-01T00:00:00.000Z",
+    "description":  "Slow-absorbed carbs with fiber-rich peppers, tomatoes, and poached eggs. Hearty, spicy, and perfectly low-glycemic.",
+    "imageUrl":  "https://lh3.googleusercontent.com/aida-public/AB6AXuBiA1iKI7dmZGOSKxAq4Va2cbTmZ6U4-BOPbcvAcl-nWijeHt5LMZ6f4iiQlb2CjVD7-71YaOSxn-_hLteiUSIDhSEvfz3n2CwEp5bGgTYeT5wkQ41zgdcTFtXHPfye-VUFg3d8jYtt3uSwN2oY645PdZCYN09CZIToTizAHFs7h7piKBQXNpepap5n0sb1bUFTVE8uIQ7LRJzxBOhHsDxXUARf45ooqnLyYFSaXv9kwswF6d8S81W3",
+    "prepTime":  5,
+    "cookTime":  20,
+    "cookingTime":  25,
+    "prepTimeMinutes":  5,
+    "cookTimeMinutes":  20,
+    "difficulty":  "Medium",
+    "servings":  2,
+    "yield":  "2 Portions",
+    "category":  "Breakfast",
+    "tags":  [
+                 "Low GI",
+                 "Low Sugar",
+                 "High Protein",
+                 "Keto-Friendly",
+                 "Mediterranean"
+             ],
+    "allergens":  [
+                      "egg"
+                  ],
+    "dietaryTags":  [
+                        "vegetarian",
+                        "gluten_free",
+                        "dairy_free"
+                    ],
+    "glycemicIndex":  15,
+    "glycemicLoad":  1.1,
+    "glycemicImpact":  "Optimal Low-GI",
+    "nutrition":  {
+                      "kcal":  248,
+                      "protein":  14.4,
+                      "fat":  17.2,
+                      "carbs":  9.7,
+                      "fiber":  2.7,
+                      "netCarbs":  7.0,
+                      "glycemicIndex":  15,
+                      "glycemicLoad":  1.1
+                  },
+    "ingredients":  [
+                        {
+                            "ingredientId":  "eggs",
+                            "name":  "Pasture-Raised Eggs",
+                            "amount":  4,
+                            "unit":  "piece",
+                            "prepState":  "boiled",
+                            "kcal":  286,
+                            "protein":  25.2,
+                            "fat":  19.4,
+                            "carbs":  1.4,
+                            "fiber":  0,
+                            "netCarbs":  1.4,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "allergens":  [
+                                              "egg"
+                                          ],
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "bell-pepper",
+                            "name":  "Red Bell Pepper, diced",
+                            "amount":  120,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "kcal":  37,
+                            "protein":  1.2,
+                            "fat":  0.4,
+                            "carbs":  7.2,
+                            "fiber":  2.5,
+                            "netCarbs":  4.7,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.7,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "cherry-tomato",
+                            "name":  "Ripe Cherry Tomatoes",
+                            "amount":  225,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "kcal":  40,
+                            "protein":  2.0,
+                            "fat":  0.5,
+                            "carbs":  8.8,
+                            "fiber":  2.7,
+                            "netCarbs":  6.1,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.9,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "olive-oil",
+                            "name":  "Extra Virgin Olive Oil",
+                            "amount":  14,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "kcal":  124,
+                            "protein":  0,
+                            "fat":  14.0,
+                            "carbs":  0,
+                            "fiber":  0,
+                            "netCarbs":  0,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "garlic",
+                            "name":  "Fresh Garlic Cloves, minced",
+                            "amount":  6,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "kcal":  9,
+                            "protein":  0.4,
+                            "fat":  0,
+                            "carbs":  2.0,
+                            "fiber":  0.1,
+                            "netCarbs":  1.9,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.3,
+                            "nutritionSource":  "Sydney University GI Database"
+                        }
+                    ],
+    "steps":  [
+                  {
+                      "title":  "Sauté Garlic \u0026 Pepper",
+                      "description":  "Heat olive oil in a wide skillet over medium heat. Sauté diced bell pepper and minced garlic until softened."
+                  },
+                  {
+                      "title":  "Simmer Tomato Sauce",
+                      "description":  "Add halved cherry tomatoes. Simmer gently for 8 minutes, crushing tomatoes with a wooden spoon into a thick sauce."
+                  },
+                  {
+                      "title":  "Create Egg Wells",
+                      "description":  "Use a spoon to create small hollow wells in the bubbling tomato sauce."
+                  },
+                  {
+                      "title":  "Crack Eggs into Wells",
+                      "description":  "Crack fresh eggs directly into each well in the sauce."
+                  },
+                  {
+                      "title":  "Cover \u0026 Poach",
+                      "description":  "Cover skillet and cook on low heat for 5 minutes until egg whites set and yolks remain runny."
+                  }
+              ]
 }

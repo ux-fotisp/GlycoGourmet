@@ -35,6 +35,21 @@
     "fiber": {
       "type": "decimal"
     },
+    "allergens": {
+      "type": "enumeration",
+      "enum": [
+        "milk",
+        "egg",
+        "fish",
+        "crustacean_shellfish",
+        "tree_nuts",
+        "peanuts",
+        "wheat",
+        "soybeans",
+        "sesame"
+      ],
+      "multiple": true
+    },
     "lastSyncedAt": {
       "type": "datetime"
     }

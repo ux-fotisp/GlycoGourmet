@@ -1,117 +1,186 @@
 {
-  "recipeNumber": 14,
-  "id": "low-gi-chili-con-carne-with-two-bean-base",
-  "title": "Low-GI Chili con Carne with Two-Bean Base",
-  "description": "Omitting white rice and utilizing a two-bean foundation provides 10.5g of dietary fiber. The high proportion of resistant starch creates a low glycemic excursion and fuels colonic SCFA production.",
-  "imageUrl": "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=1200&q=80",
-  "prepTime": 10,
-  "cookTime": 25,
-  "cookingTime": 35,
-  "difficulty": "Easy",
-  "servings": 1,
-  "yield": "1 Large Serving",
-  "category": "Main Course",
-  "tags": [
-    "Low GI",
-    "Med GL",
-    "High Protein",
-    "High Fiber",
-    "LOGI"
-  ],
-  "status": "published",
-  "publishedAt": "2026-01-01T00:00:00.000Z",
-  "isUserAuthored": false,
-  "glycemicIndex": 35,
-  "glycemicLoad": 10.5,
-  "glycemicImpact": "Medium Impact",
-  "nutrition": {
-    "kcal": 410,
-    "protein": 36,
-    "fat": 14.5,
-    "saturatedFat": 4.8,
-    "carbs": 30,
-    "fiber": 10.5,
-    "netCarbs": 19.5,
-    "glycemicIndex": 35,
-    "glycemicLoad": 10.5
-  },
-  "diabeticNotes": "Omitting white rice and utilizing a two-bean foundation provides 10.5g of dietary fiber. The high proportion of resistant starch creates a low glycemic excursion and fuels colonic SCFA production.",
-  "ingredients": [
-    {
-      "ingredientId": "ground-beef-lean",
-      "amount": 120,
-      "unit": "g",
-      "prepState": "sauteed",
-      "name": "extra-lean ground beef (5% fat)"
-    },
-    {
-      "ingredientId": "black-beans",
-      "amount": 90,
-      "unit": "g",
-      "prepState": "boiled",
-      "name": "canned black beans, rinsed and drained"
-    },
-    {
-      "ingredientId": "red-kidney-beans",
-      "amount": 90,
-      "unit": "g",
-      "prepState": "boiled",
-      "name": "canned red kidney beans, rinsed and drained"
-    },
-    {
-      "ingredientId": "canned-tomatoes",
-      "amount": 180,
-      "unit": "g",
-      "prepState": "sauteed",
-      "name": "crushed Italian canned tomatoes"
-    },
-    {
-      "ingredientId": "bell-pepper",
-      "amount": 60,
-      "unit": "g",
-      "prepState": "sauteed",
-      "name": "green bell pepper, diced"
-    },
-    {
-      "ingredientId": "yellow-onion",
-      "amount": 40,
-      "unit": "g",
-      "prepState": "sauteed",
-      "name": "diced onion"
-    },
-    {
-      "ingredientId": "garlic",
-      "amount": 3,
-      "unit": "g",
-      "prepState": "sauteed",
-      "name": "clove garlic, minced"
-    }
-  ],
-  "steps": [
-    {
-      "title": "Brown Ground Beef",
-      "description": "In a medium saucepan, brown the lean ground beef over medium heat for 5 minutes, breaking into crumbles. Drain any excess fat.",
-      "timer": 5
-    },
-    {
-      "title": "Sauté Veggies",
-      "description": "Add diced onion, bell pepper, and garlic; sauté for 3 minutes until softened.",
-      "timer": 3
-    },
-    {
-      "title": "Toast Aromatics",
-      "description": "Stir in chili powder, cumin, and smoked paprika for 30 seconds until fragrant.",
-      "timer": 1
-    },
-    {
-      "title": "Add Beans & Tomatoes",
-      "description": "Add crushed tomatoes, black beans, and red kidney beans with 1/4 cup water.",
-      "timer": 2
-    },
-    {
-      "title": "Simmer & Thicken",
-      "description": "Simmer gently uncovered for 15–18 minutes until rich and thickened. Garnish with fresh cilantro.",
-      "timer": 18
-    }
-  ]
+    "recipeNumber":  14,
+    "id":  "low-gi-chili-con-carne-with-two-bean-base",
+    "title":  "Low-GI Chili con Carne with Two-Bean Base",
+    "description":  "Black beans and red kidney beans deliver resistant starch and fermentable fiber that promote colonic propionate production, enhancing whole-body insulin sensitivity on subsequent meals.",
+    "imageUrl":  "https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format\u0026fit=crop\u0026w=1200\u0026q=80",
+    "prepTime":  15,
+    "cookTime":  35,
+    "cookingTime":  50,
+    "prepTimeMinutes":  15,
+    "cookTimeMinutes":  35,
+    "difficulty":  "Easy",
+    "servings":  1,
+    "yield":  "1 Large Bowl",
+    "category":  "Main Course",
+    "tags":  [
+                 "Low GI",
+                 "Med GL",
+                 "High Fiber",
+                 "High Protein",
+                 "Tex-Mex",
+                 "LOGI"
+             ],
+    "allergens":  [
+
+                  ],
+    "dietaryTags":  [
+                        "gluten_free",
+                        "dairy_free",
+                        "heart_healthy"
+                    ],
+    "status":  "published",
+    "publishedAt":  "2026-01-01T00:00:00.000Z",
+    "isUserAuthored":  false,
+    "glycemicIndex":  35,
+    "glycemicLoad":  10.5,
+    "glycemicImpact":  "Medium Impact",
+    "nutrition":  {
+                      "kcal":  410,
+                      "protein":  36,
+                      "fat":  13,
+                      "saturatedFat":  3.8,
+                      "carbs":  42,
+                      "fiber":  12,
+                      "netCarbs":  30,
+                      "glycemicIndex":  35,
+                      "glycemicLoad":  10.5
+                  },
+    "diabeticNotes":  "Black beans and red kidney beans deliver resistant starch and fermentable fiber that promote colonic propionate production, enhancing whole-body insulin sensitivity on subsequent meals.",
+    "ingredients":  [
+                        {
+                            "ingredientId":  "ground-beef-lean",
+                            "amount":  120,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "name":  "extra-lean ground beef (5% fat)",
+                            "kcal":  180,
+                            "protein":  26.4,
+                            "fat":  7.2,
+                            "carbs":  0,
+                            "fiber":  0,
+                            "netCarbs":  0,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "black-beans",
+                            "amount":  75,
+                            "unit":  "g",
+                            "prepState":  "boiled",
+                            "name":  "canned black beans (cooked, rinsed)",
+                            "kcal":  99,
+                            "protein":  6.7,
+                            "fat":  0.4,
+                            "carbs":  17.8,
+                            "fiber":  6.5,
+                            "netCarbs":  11.3,
+                            "glycemicIndex":  30,
+                            "glycemicLoad":  3.4,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "kidney-beans",
+                            "amount":  75,
+                            "unit":  "g",
+                            "prepState":  "boiled",
+                            "name":  "canned red kidney beans (rinsed)",
+                            "kcal":  95,
+                            "protein":  6.5,
+                            "fat":  0.4,
+                            "carbs":  17.1,
+                            "fiber":  4.8,
+                            "netCarbs":  12.3,
+                            "glycemicIndex":  24,
+                            "glycemicLoad":  3.0,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "canned-tomatoes",
+                            "amount":  100,
+                            "unit":  "g",
+                            "prepState":  "boiled",
+                            "name":  "crushed Italian canned tomatoes",
+                            "kcal":  24,
+                            "protein":  1.2,
+                            "fat":  0.2,
+                            "carbs":  5.4,
+                            "fiber":  1.4,
+                            "netCarbs":  4.0,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.6,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "yellow-onion",
+                            "amount":  40,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "name":  "yellow onion, diced",
+                            "kcal":  16,
+                            "protein":  0.4,
+                            "fat":  0.1,
+                            "carbs":  3.7,
+                            "fiber":  0.7,
+                            "netCarbs":  3.0,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.5,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "garlic",
+                            "amount":  6,
+                            "unit":  "g",
+                            "prepState":  "sauteed",
+                            "name":  "garlic cloves, minced",
+                            "kcal":  9,
+                            "protein":  0.4,
+                            "fat":  0,
+                            "carbs":  2.0,
+                            "fiber":  0.1,
+                            "netCarbs":  1.9,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.3,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "olive-oil",
+                            "amount":  5,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "extra virgin olive oil",
+                            "kcal":  44,
+                            "protein":  0,
+                            "fat":  5,
+                            "carbs":  0,
+                            "fiber":  0,
+                            "netCarbs":  0,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "nutritionSource":  "USDA FoodData Central"
+                        }
+                    ],
+    "steps":  [
+                  {
+                      "title":  "Sauté Aromatics",
+                      "description":  "Heat olive oil in a heavy pot over medium heat. Sauté diced yellow onion and minced garlic until translucent."
+                  },
+                  {
+                      "title":  "Brown Lean Beef",
+                      "description":  "Add extra-lean ground beef to the pot, breaking up with a spoon until thoroughly browned."
+                  },
+                  {
+                      "title":  "Add Beans \u0026 Tomatoes",
+                      "description":  "Stir in rinsed black beans, red kidney beans, and crushed canned tomatoes."
+                  },
+                  {
+                      "title":  "Simmer Chili",
+                      "description":  "Reduce heat to low, cover pot, and simmer gently for 25 minutes to develop rich, complex flavors."
+                  },
+                  {
+                      "title":  "Rest \u0026 Serve",
+                      "description":  "Uncover and let chili rest for 2 minutes off heat. Ladle into a bowl and serve hot."
+                  }
+              ]
 }

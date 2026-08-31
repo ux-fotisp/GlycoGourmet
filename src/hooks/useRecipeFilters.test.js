@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { useRecipeFilters, MEAL_OCCASIONS, SORT_OPTIONS, GL_BANDS } from './useRecipeFilters';
 
 vi.mock('../utils/nutritionCalculator', () => ({
+  deriveAllergensFromIngredients: vi.fn(() => []),
   calculateRecipeNutrition: vi.fn(() => ({
     kcal: 0, protein: 0, fat: 0, carbs: 0, netCarbs: 0, fiber: 0,
     glycemicIndex: null, glycemicLoad: 0,

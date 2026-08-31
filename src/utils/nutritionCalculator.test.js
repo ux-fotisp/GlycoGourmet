@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { calculateRecipeNutrition, scaleNutrition } from './nutritionCalculator';
+import {
+  calculateRecipeNutrition,
+  scaleNutrition,
+  deriveAllergensFromIngredients,
+} from './nutritionCalculator';
 
 // Mock ingredientStore registry lookup instead of legacy json
 vi.mock('./ingredientStore', () => {
@@ -18,6 +22,7 @@ vi.mock('./ingredientStore', () => {
       netCarbs: 0,
       glycemicIndex: null,
       glycemicLoad: null,
+      allergens: ['fish'],
       nutrition: {
         kcal: 180,
         protein: 34,
@@ -43,6 +48,7 @@ vi.mock('./ingredientStore', () => {
       netCarbs: 17.5,
       glycemicIndex: 53,
       glycemicLoad: 9.3,
+      allergens: [],
       nutrition: {
         kcal: 111,
         protein: 4,
@@ -162,5 +168,78 @@ describe('nutritionCalculator dynamic aggregation tests', () => {
     const result = calculateRecipeNutrition(highFiberItem);
     expect(result.netCarbs).toBeGreaterThanOrEqual(0);
     expect(Number.isNaN(result.netCarbs)).toBe(false);
+  });
+});
+
+describe('deriveAllergensFromIngredients rollup tests', () => {
+  it('returns empty array when given empty ingredients or items with zero allergens', () => {
+    expect(deriveAllergensFromIngredients([])).toEqual([]);
+    expect(deriveAllergensFromIngredients([{ ingredientId: 'quinoa', amount: 1 }])).toEqual([]);
+  });
+
+  it('derives a single allergen from an ingredient correctly', () => {
+    const ingredients = [
+      {
+        ingredient: {
+          id: 'milk-skim',
+          name: 'Skim Milk',
+          allergens: ['milk'],
+        },
+        amount: 200,
+      },
+    ];
+    const result = deriveAllergensFromIngredients(ingredients);
+    expect(result).toEqual(['milk']);
+  });
+
+  it('derives union and deduplicates multiple overlapping allergens across ingredients', () => {
+    const ingredients = [
+      {
+        ingredient: {
+          id: 'custard',
+          allergens: ['milk', 'egg'],
+        },
+      },
+      {
+        ingredient: {
+          id: 'whole-wheat-bread',
+          allergens: ['wheat', 'egg'],
+        },
+      },
+      {
+        allergens: ['milk', 'peanuts'],
+      },
+    ];
+
+    const result = deriveAllergensFromIngredients(ingredients);
+    expect(result.sort()).toEqual(['egg', 'milk', 'peanuts', 'wheat'].sort());
+  });
+
+  it('handles ingredients with missing or undefined allergens field without throwing', () => {
+    const mixedItems = [
+      { ingredientId: 'unknown-item', amount: 50 },
+      { ingredient: { name: 'Plain Item' } },
+      null,
+      undefined,
+      {},
+    ];
+
+    expect(() => deriveAllergensFromIngredients(mixedItems)).not.toThrow();
+    expect(deriveAllergensFromIngredients(mixedItems)).toEqual([]);
+  });
+
+  it('handles non-array inputs defensively', () => {
+    expect(deriveAllergensFromIngredients(null)).toEqual([]);
+    expect(deriveAllergensFromIngredients(undefined)).toEqual([]);
+    expect(deriveAllergensFromIngredients('invalid')).toEqual([]);
+    expect(deriveAllergensFromIngredients(123)).toEqual([]);
+  });
+
+  it('resolves allergens from the registered ingredientStore lookup', () => {
+    const ingredients = [
+      { ingredientId: 'atlantic-salmon', amount: 6, unit: 'oz' }
+    ];
+    const result = deriveAllergensFromIngredients(ingredients);
+    expect(result).toEqual(['fish']);
   });
 });

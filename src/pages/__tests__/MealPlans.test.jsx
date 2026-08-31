@@ -16,6 +16,7 @@ vi.mock('../../utils/recipeStore', () => ({
 }));
 
 vi.mock('../../utils/nutritionCalculator', () => ({
+  deriveAllergensFromIngredients: vi.fn(() => []),
   calculateRecipeNutrition: vi.fn(),
   getGlycemicLoadCategory: vi.fn((gl) => {
     if (gl <= 10) return { label: 'Gentle Impact', colorClass: 'text-primary', bgClass: 'bg-primary/10' };

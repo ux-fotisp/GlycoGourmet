@@ -1,98 +1,160 @@
 {
-  "recipeNumber": 17,
-  "id": "italian-farro-salad-with-cherry-tomatoes-basil-feta",
-  "title": "Italian Farro Salad with Cherry Tomatoes, Basil & Feta",
-  "description": "Farro is an ancient wheat grain with an intact bran coat and low GI (~40). Its dense amylose starch matrix requires prolonged enzymatic breakdown, sustaining satiety without sharp glucose spikes.",
-  "imageUrl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80",
-  "prepTime": 15,
-  "cookTime": 20,
-  "cookingTime": 35,
-  "difficulty": "Easy",
-  "servings": 1,
-  "yield": "1 Serving",
-  "category": "Salad",
-  "tags": [
-    "Low GI",
-    "Med GL",
-    "Ancient Grain",
-    "High Fiber",
-    "LOGI"
-  ],
-  "status": "published",
-  "publishedAt": "2026-01-01T00:00:00.000Z",
-  "isUserAuthored": false,
-  "glycemicIndex": 40,
-  "glycemicLoad": 11.4,
-  "glycemicImpact": "Medium Impact",
-  "nutrition": {
-    "kcal": 350,
-    "protein": 14,
-    "fat": 16.5,
-    "saturatedFat": 4.5,
-    "carbs": 35,
-    "fiber": 7,
-    "netCarbs": 28,
-    "glycemicIndex": 40,
-    "glycemicLoad": 11.4
-  },
-  "diabeticNotes": "Farro is an ancient wheat grain with an intact bran coat and low GI (~40). Its dense amylose starch matrix requires prolonged enzymatic breakdown, sustaining satiety without sharp glucose spikes.",
-  "ingredients": [
-    {
-      "ingredientId": "whole-grain-farro",
-      "amount": 100,
-      "unit": "g",
-      "prepState": "boiled",
-      "name": "cooked whole-grain farro (al dente)"
-    },
-    {
-      "ingredientId": "cherry-tomato",
-      "amount": 110,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "ripe cherry tomatoes, halved"
-    },
-    {
-      "ingredientId": "cucumber",
-      "amount": 60,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "English cucumber, diced"
-    },
-    {
-      "ingredientId": "feta-cheese",
-      "amount": 30,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "authentic Greek feta, crumbled"
-    },
-    {
-      "ingredientId": "extra-virgin-olive-oil",
-      "amount": 14,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "extra virgin olive oil"
-    }
-  ],
-  "steps": [
-    {
-      "title": "Cook Farro Al Dente",
-      "description": "Cook farro in boiling salted water until pleasantly chewy (al dente, approx. 20 min). Drain and cool completely.",
-      "timer": 20
-    },
-    {
-      "title": "Combine Base & Veggies",
-      "description": "In a bowl, combine cooled farro, halved cherry tomatoes, diced cucumber, and chopped basil.",
-      "timer": 3
-    },
-    {
-      "title": "Whisk EVOO & Vinegar",
-      "description": "Whisk extra virgin olive oil, red wine vinegar, salt, and black pepper; pour over salad.",
-      "timer": 2
-    },
-    {
-      "title": "Fold & Finish with Feta",
-      "description": "Toss gently to distribute dressing. Top with crumbled feta cheese before serving.",
-      "timer": 2
-    }
-  ]
+    "recipeNumber":  17,
+    "id":  "italian-farro-salad-with-cherry-tomatoes-basil-feta",
+    "title":  "Italian Farro Salad with Cherry Tomatoes, Basil \u0026 Feta",
+    "description":  "Ancient grain whole farro retains its intact bran and germ layers, yielding a low-GI carbohydrate release. Genuine Greek sheep milk feta adds conjugated linoleic acid (CLA) and protein that blunts the glycemic response.",
+    "imageUrl":  "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format\u0026fit=crop\u0026w=1200\u0026q=80",
+    "prepTime":  10,
+    "cookTime":  25,
+    "cookingTime":  35,
+    "prepTimeMinutes":  10,
+    "cookTimeMinutes":  25,
+    "difficulty":  "Easy",
+    "servings":  1,
+    "yield":  "1 Serving",
+    "category":  "Salad",
+    "tags":  [
+                 "Low GI",
+                 "Med GL",
+                 "High Fiber",
+                 "Mediterranean",
+                 "Vegetarian",
+                 "LOGI"
+             ],
+    "allergens":  [
+                      "wheat",
+                      "milk"
+                  ],
+    "dietaryTags":  [
+                        "vegetarian",
+                        "heart_healthy"
+                    ],
+    "status":  "published",
+    "publishedAt":  "2026-01-01T00:00:00.000Z",
+    "isUserAuthored":  false,
+    "glycemicIndex":  40,
+    "glycemicLoad":  11.4,
+    "glycemicImpact":  "Medium Impact",
+    "nutrition":  {
+                      "kcal":  360,
+                      "protein":  14,
+                      "fat":  16,
+                      "saturatedFat":  5.2,
+                      "carbs":  39,
+                      "fiber":  6.8,
+                      "netCarbs":  32.2,
+                      "glycemicIndex":  40,
+                      "glycemicLoad":  11.4
+                  },
+    "diabeticNotes":  "Ancient grain whole farro retains its intact bran and germ layers, yielding a low-GI carbohydrate release. Genuine Greek sheep milk feta adds conjugated linoleic acid (CLA) and protein that blunts the glycemic response.",
+    "ingredients":  [
+                        {
+                            "ingredientId":  "farro",
+                            "amount":  90,
+                            "unit":  "g",
+                            "prepState":  "boiled",
+                            "name":  "whole farro (cooked)",
+                            "kcal":  153,
+                            "protein":  5.4,
+                            "fat":  1.4,
+                            "carbs":  29.0,
+                            "fiber":  4.5,
+                            "netCarbs":  24.5,
+                            "glycemicIndex":  45,
+                            "glycemicLoad":  11.0,
+                            "allergens":  [
+                                              "wheat"
+                                          ],
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "cherry-tomato",
+                            "amount":  80,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "cherry tomatoes, halved",
+                            "kcal":  14,
+                            "protein":  0.7,
+                            "fat":  0.2,
+                            "carbs":  3.1,
+                            "fiber":  1.0,
+                            "netCarbs":  2.1,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.3,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "cucumber",
+                            "amount":  60,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "English cucumber, diced",
+                            "kcal":  9,
+                            "protein":  0.4,
+                            "fat":  0.1,
+                            "carbs":  2.2,
+                            "fiber":  0.3,
+                            "netCarbs":  1.9,
+                            "glycemicIndex":  15,
+                            "glycemicLoad":  0.3,
+                            "nutritionSource":  "Sydney University GI Database"
+                        },
+                        {
+                            "ingredientId":  "feta-cheese",
+                            "amount":  35,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "Greek feta cheese, crumbled",
+                            "kcal":  93,
+                            "protein":  5.0,
+                            "fat":  7.5,
+                            "carbs":  1.4,
+                            "fiber":  0,
+                            "netCarbs":  1.4,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "allergens":  [
+                                              "milk"
+                                          ],
+                            "nutritionSource":  "USDA FoodData Central"
+                        },
+                        {
+                            "ingredientId":  "extra-virgin-olive-oil",
+                            "amount":  10,
+                            "unit":  "g",
+                            "prepState":  "raw",
+                            "name":  "extra virgin olive oil",
+                            "kcal":  88,
+                            "protein":  0,
+                            "fat":  10,
+                            "carbs":  0,
+                            "fiber":  0,
+                            "netCarbs":  0,
+                            "glycemicIndex":  null,
+                            "glycemicLoad":  0,
+                            "nutritionSource":  "USDA FoodData Central"
+                        }
+                    ],
+    "steps":  [
+                  {
+                      "title":  "Simmer Whole Farro",
+                      "description":  "Rinse whole farro. Simmer in salted boiling water for 25 minutes until al dente, drain, and cool."
+                  },
+                  {
+                      "title":  "Chop Fresh Vegetables",
+                      "description":  "Halve cherry tomatoes and dice crisp English cucumber into bite-sized pieces."
+                  },
+                  {
+                      "title":  "Combine Farro \u0026 Veggies",
+                      "description":  "In a large mixing bowl, combine cooled farro, halved cherry tomatoes, and diced cucumber."
+                  },
+                  {
+                      "title":  "Dress with Olive Oil",
+                      "description":  "Drizzle extra virgin olive oil over the farro mixture and toss gently until evenly coated."
+                  },
+                  {
+                      "title":  "Fold Feta \u0026 Serve",
+                      "description":  "Crumble Greek feta cheese over the salad and gently fold to combine without breaking up cheese."
+                  }
+              ]
 }

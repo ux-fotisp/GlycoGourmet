@@ -20,6 +20,55 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "steps": {
+      "type": "component",
+      "repeatable": true,
+      "component": "recipe.step"
+    },
+    "allergens": {
+      "type": "enumeration",
+      "enum": [
+        "milk",
+        "egg",
+        "fish",
+        "crustacean_shellfish",
+        "tree_nuts",
+        "peanuts",
+        "wheat",
+        "soybeans",
+        "sesame"
+      ],
+      "multiple": true
+    },
+    "dietaryTags": {
+      "type": "enumeration",
+      "enum": [
+        "vegan",
+        "vegetarian",
+        "low_fodmap",
+        "renal_friendly",
+        "heart_healthy",
+        "gluten_free",
+        "dairy_free"
+      ],
+      "multiple": true
+    },
+    "servings": {
+      "type": "integer",
+      "required": true
+    },
+    "prepTimeMinutes": {
+      "type": "integer"
+    },
+    "cookTimeMinutes": {
+      "type": "integer"
+    },
+    "sodiumMg": {
+      "type": "decimal"
+    },
+    "cholesterolMg": {
+      "type": "decimal"
     }
   }
 }
