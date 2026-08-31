@@ -207,8 +207,62 @@ All commit messages must follow the [Conventional Commits](https://www.conventio
 
 ---
 
-## 8. Document Metadata & Attribution
+## 8. Agentic Balance Protocol: QA, UX & Technical Precedence (BALANCE-DIRECTIVE-2026)
 
-- **Document Version:** `2.0.0`
+### 8.1 Purpose
+
+Sections 2–4 above establish strict QA determinism and clinical safety rules. This section adds the missing cross-functional layer: a binding rule for what autonomous agents must do when **QA rigor**, **UX trust integrity**, and **technical/architectural constraints** pull in different directions. Without this, agents default to whichever instruction was phrased most recently in a prompt, which is not an acceptable resolution strategy for a clinical-grade platform.
+
+### 8.2 The Three Lenses
+
+| Lens | Owns | Fails when |
+|---|---|---|
+| **QA** | Determinism, selector resilience, invariant gates, WCAG conformance (Sections 2–4) | A feature ships that is technically correct but flaky, inaccessible, or unverifiable |
+| **UX** | Patient and Clinic-Admin trust, agency, explainability, non-punitive framing | A feature is robust and fully tested but erodes trust, feels punitive, or hides its own logic |
+| **Technical** | Architecture boundaries, schema isolation, performance, maintainability | A feature satisfies QA and UX but leaks PHI across a role boundary, or violates the FHIR export isolation rule |
+
+### 8.3 Binding Precedence Rule
+
+When the three lenses conflict, agents must resolve in this fixed order — **Clinical/Technical Safety > UX Trust Integrity > QA Convenience**:
+
+1. **Never violate a hard technical/clinical boundary** to satisfy QA or UX convenience. Example: an agent may not simplify a PHI-boundary check to make a Playwright test pass faster.
+2. **Never sacrifice UX trust integrity to satisfy QA speed or technical elegance.** Example: an agent may not replace an explainability panel with a silent automated action just because it is fewer lines of code or fewer test cases to write.
+3. **QA rigor is never optional, but its implementation must serve the above two, not override them.** Example: an agent may not add a hard block/gate in the name of "deterministic testability" when the UX spec calls for a soft, reversible, non-punitive nudge — instead the agent must find a deterministic way to test the soft version (e.g., asserting the nudge is dismissible and non-blocking, not asserting a hard stop exists).
+
+### 8.4 Escalation Instead of Silent Override
+
+Agents must never silently resolve a three-way conflict by picking one lens and discarding the others. When a conflict is detected, the agent must:
+
+1. Flag the conflict explicitly in its output or commit message, not just fix it silently.
+2. Propose the resolution that satisfies the Section 8.3 precedence order.
+3. Log the decision as a Key Decisions Log entry rather than letting it disappear into an unremarked code diff.
+
+### 8.5 Persona-Specific Guardrails for Agents
+
+- **Patient-facing flows:** verify the change is reversible, explainable, and non-punitive before writing code — not just accessible (WCAG) and tested (Vitest/Playwright).
+- **Clinic Admin-facing flows:** verify no clinical field is reachable from that component tree, and that any assignment/promotion/tier mutation produces an immutable audit log entry.
+- **Dietitian-facing flows:** verify existing tenant isolation is preserved and that clinical export logic remains FHIR/LOINC compliant per the Section 3 fuzzing vectors.
+
+### 8.6 CI Gate Addition
+
+Extend the Section 6 CI/CD gate table with one new row, positioned after Accessibility and before User Journeys:
+
+```
+| Gate Stage           | Command Execution              | Enforcement Standard          |
+|-----------------------|--------------------------------|--------------------------------|
+| 4. Accessibility      | npm run test:a11y (Playwright) | Zero WCAG 2.1 AA violations   |
+| 4.5 Trust Boundary    | npm run test:trust (Playwright)| PHI wall + consent-gate intact |
+| 5. User Journeys      | npm run test:e2e (Playwright)  | Complete end-to-end flows      |
+```
+
+### 8.7 Orchestration Placement
+
+This balance check runs at the **Plan** stage of the Section 5 Antigravity Orchestration workflow — mandatory before **Gen** (atomic file generation), not retroactively during **Gate** (validation). This preserves the existing "Verbatim Ingestion First, Chunked Consolidation" principles rather than introducing a competing workflow.
+
+---
+
+## 9. Document Metadata & Attribution
+
+- **Document Version:** `2.1.0`
 - **Lead Systems Architect & QA Lead:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
-- **Execution Standard:** QA-DIRECTIVE-2026, WCAG 2.1 Level AA, Conventional Commits 1.0
+- **Execution Standard:** QA-DIRECTIVE-2026, BALANCE-DIRECTIVE-2026, WCAG 2.1 Level AA, Conventional Commits 1.0
