@@ -3,6 +3,18 @@ import { useAuth } from './AuthContext';
 
 const UserPreferencesContext = createContext(null);
 
+export const DEFAULT_NOTIFICATION_PREFERENCES = {
+  careReminders: {
+    enabled: true,
+    quietHoursStart: '22:00',
+    quietHoursEnd: '07:00',
+  },
+  promotedDietitians: {
+    enabled: false,
+    frequencyCap: 'weekly',
+  },
+};
+
 export const UserPreferencesProvider = ({ children }) => {
   const { user, setSettings } = useAuth();
 
@@ -13,8 +25,9 @@ export const UserPreferencesProvider = ({ children }) => {
   const [dailyGlTarget, setDailyGlTargetState] = useState(45);
   const [maxNetCarbsPerMeal, setMaxNetCarbsPerMealState] = useState(30);
   const [targetDailyCalories, setTargetDailyCaloriesState] = useState(2000);
-  const [diabeticProfiles, setDiabeticProfilesState] = useState(['Type 2']);
+  const [diabeticProfiles, setDiabeticProfilesState] = useState(['T2D']);
   const [dietaryRestrictions, setDietaryRestrictionsState] = useState(['Gluten-Free']);
+  const [notificationPreferences, setNotificationPreferencesState] = useState(DEFAULT_NOTIFICATION_PREFERENCES);
 
   // Synchronize state with current active session or localStorage
   useEffect(() => {
@@ -30,6 +43,20 @@ export const UserPreferencesProvider = ({ children }) => {
         if (parsed.targetDailyCalories) setTargetDailyCaloriesState(parsed.targetDailyCalories);
         if (parsed.diabeticProfiles) setDiabeticProfilesState(parsed.diabeticProfiles);
         if (parsed.dietaryRestrictions) setDietaryRestrictionsState(parsed.dietaryRestrictions);
+        if (parsed.notificationPreferences) {
+          setNotificationPreferencesState({
+            ...DEFAULT_NOTIFICATION_PREFERENCES,
+            ...parsed.notificationPreferences,
+            careReminders: {
+              ...DEFAULT_NOTIFICATION_PREFERENCES.careReminders,
+              ...(parsed.notificationPreferences.careReminders || {}),
+            },
+            promotedDietitians: {
+              ...DEFAULT_NOTIFICATION_PREFERENCES.promotedDietitians,
+              ...(parsed.notificationPreferences.promotedDietitians || {}),
+            },
+          });
+        }
       }
     } catch (_e) {
       // ignore JSON parse fallback
@@ -56,26 +83,26 @@ export const UserPreferencesProvider = ({ children }) => {
   const setUnitSystem = (val) => {
     setUnitSystemState(val);
     saveToStorage({ unitSystem: val });
-    if (user) setSettings({ unitSystem: val });
+    if (user && setSettings) setSettings({ unitSystem: val });
   };
 
   const setGlucoseUnit = (val) => {
     setGlucoseUnitState(val);
     saveToStorage({ glucoseUnit: val });
-    if (user) setSettings({ glucoseUnit: val });
+    if (user && setSettings) setSettings({ glucoseUnit: val });
   };
 
   const setVisualDensity = (val) => {
     setVisualDensityState(val);
     saveToStorage({ visualDensity: val });
-    if (user) setSettings({ visualDensity: val });
+    if (user && setSettings) setSettings({ visualDensity: val });
   };
 
   const setDailyGlTarget = (val) => {
     const num = Math.max(1, Number(val) || 45);
     setDailyGlTargetState(num);
     saveToStorage({ dailyGlTarget: num });
-    if (user) setSettings({ dailyGlTarget: num });
+    if (user && setSettings) setSettings({ dailyGlTarget: num });
   };
 
   const setMaxNetCarbsPerMeal = (val) => {
@@ -100,6 +127,16 @@ export const UserPreferencesProvider = ({ children }) => {
     saveToStorage({ dietaryRestrictions: restrictions });
   };
 
+  const setNotificationPreferences = (prefs) => {
+    const updated = typeof prefs === 'function' ? prefs(notificationPreferences) : prefs;
+    const merged = {
+      ...notificationPreferences,
+      ...updated,
+    };
+    setNotificationPreferencesState(merged);
+    saveToStorage({ notificationPreferences: merged });
+  };
+
   const updateAllSettings = (settings) => {
     if (settings.unitSystem !== undefined) setUnitSystemState(settings.unitSystem);
     if (settings.glucoseUnit !== undefined) setGlucoseUnitState(settings.glucoseUnit);
@@ -109,9 +146,10 @@ export const UserPreferencesProvider = ({ children }) => {
     if (settings.targetDailyCalories !== undefined) setTargetDailyCaloriesState(settings.targetDailyCalories);
     if (settings.diabeticProfiles !== undefined) setDiabeticProfilesState(settings.diabeticProfiles);
     if (settings.dietaryRestrictions !== undefined) setDietaryRestrictionsState(settings.dietaryRestrictions);
+    if (settings.notificationPreferences !== undefined) setNotificationPreferencesState(settings.notificationPreferences);
 
     saveToStorage(settings);
-    if (user) setSettings(settings);
+    if (user && setSettings) setSettings(settings);
   };
 
   return (
@@ -125,6 +163,7 @@ export const UserPreferencesProvider = ({ children }) => {
         targetDailyCalories,
         diabeticProfiles,
         dietaryRestrictions,
+        notificationPreferences,
         setUnitSystem,
         setGlucoseUnit,
         setVisualDensity,
@@ -133,7 +172,8 @@ export const UserPreferencesProvider = ({ children }) => {
         setTargetDailyCalories,
         setDiabeticProfiles,
         setDietaryRestrictions,
-        setSettings: updateAllSettings
+        setNotificationPreferences,
+        setSettings: updateAllSettings,
       }}
     >
       {children}
@@ -151,8 +191,9 @@ export const usePreferences = () => {
       dailyGlTarget: 45,
       maxNetCarbsPerMeal: 30,
       targetDailyCalories: 2000,
-      diabeticProfiles: ['Type 2'],
+      diabeticProfiles: ['T2D'],
       dietaryRestrictions: ['Gluten-Free'],
+      notificationPreferences: DEFAULT_NOTIFICATION_PREFERENCES,
       setUnitSystem: () => {},
       setGlucoseUnit: () => {},
       setVisualDensity: () => {},
@@ -161,7 +202,8 @@ export const usePreferences = () => {
       setTargetDailyCalories: () => {},
       setDiabeticProfiles: () => {},
       setDietaryRestrictions: () => {},
-      setSettings: () => {}
+      setNotificationPreferences: () => {},
+      setSettings: () => {},
     };
   }
   return context;

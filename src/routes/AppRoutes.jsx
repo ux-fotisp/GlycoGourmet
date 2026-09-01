@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import AppLayout from '../components/layout/AppLayout';
@@ -22,12 +22,12 @@ import ClinicDashboard from '../pages/ClinicDashboard';
 import ClinicLibrary from '../pages/ClinicLibrary';
 
 /**
- * AppRoutes — React Router Navigation Hierarchy & Route Map
+ * AppRoutes - React Router Navigation Hierarchy & Route Map
  *
  * Configures:
  * - Public routes: /login, /register
  * - Base Protected routes: /onboarding, /pending-approval, /recipe/:id/cook
- * - AppLayout Protected routes: /recipes, /recipe/:id, /grocery-list, /meal-plans, /client-roster, etc.
+ * - AppLayout Protected routes: /recipes, /recipe/:id, /grocery-list, /meal-plans, /client-roster, /settings/*, etc.
  */
 export const AppRoutes = () => {
   return (
@@ -50,6 +50,8 @@ export const AppRoutes = () => {
           <Route path="/recipes" element={<Dashboard />} />
           <Route path="/recipes/all" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/consent" element={<Settings initialTab="consent" />} />
+          <Route path="/settings/notifications" element={<Settings initialTab="notifications" />} />
           <Route path="/grocery-list" element={<GroceryList />} />
 
           {/* Recipe Details */}
