@@ -66,7 +66,7 @@ export const NotificationGovernancePanel = () => {
         enabled: updated,
       },
     }));
-    showSaveConfirmation(`Promoted Dietitian spotlights ${updated ? 'enabled' : 'disabled'}`);
+    showSaveConfirmation(`Dietitian discoveries ${updated ? 'enabled' : 'disabled'}`);
   };
 
   const handleFrequencyCapChange = (e) => {
@@ -78,7 +78,7 @@ export const NotificationGovernancePanel = () => {
         frequencyCap: val,
       },
     }));
-    showSaveConfirmation(`Frequency cap set to ${val}`);
+    showSaveConfirmation(`Delivery frequency set to ${val}`);
   };
 
   return (
@@ -87,10 +87,10 @@ export const NotificationGovernancePanel = () => {
       <div className="bento-cell bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-xs space-y-2">
         <h3 className="font-display text-lg font-bold text-primary flex items-center gap-2">
           <span className="material-symbols-outlined text-primary text-xl">notifications_active</span>
-          Notification & Alert Governance
+          Notification & Focus Preferences
         </h3>
         <p className="text-xs text-on-surface-variant leading-relaxed">
-          Configure clinical care reminders independently from promotional dietitian spotlights. Set quiet hours and frequency caps to protect your focus.
+          Customize timely clinical care reminders and optional dietitian spotlights. Set quiet hours to keep nocturnal rest uninterrupted.
         </p>
 
         {saveStatus && (
@@ -101,21 +101,21 @@ export const NotificationGovernancePanel = () => {
         )}
       </div>
 
-      {/* Channel 1: Clinical Care Reminders */}
+      {/* Metabolic Care Reminders */}
       <div className="bento-cell bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-xs space-y-5">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-outline-variant/15 pb-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h4 className="font-bold text-sm text-on-surface flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-primary text-base">alarm</span>
-                Channel A: Metabolic Care Reminders
+                Metabolic Care Reminders
               </h4>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
                 Clinical Priority
               </span>
             </div>
             <p className="text-xs text-on-surface-variant leading-relaxed">
-              Circadian meal-timing schedule notifications and pre-meal insulin bolus offset countdowns.
+              Circadian meal-timing prompts and pre-meal insulin bolus offset countdowns.
             </p>
           </div>
 
@@ -138,7 +138,7 @@ export const NotificationGovernancePanel = () => {
           </button>
         </div>
 
-        {/* Channel 1 Sub-Settings: Quiet Hours */}
+        {/* Quiet Hours */}
         {care.enabled && (
           <div className="space-y-3 pt-1 animate-fade-in">
             <h5 className="text-xs font-bold text-on-surface flex items-center gap-1.5">
@@ -146,7 +146,7 @@ export const NotificationGovernancePanel = () => {
               Daily Quiet Hours (No Sound / Vibrations)
             </h5>
             <p className="text-[11px] text-on-surface-variant leading-relaxed">
-              Care reminders will be silenced during this nocturnal period to prevent dawn-time sleep disruption.
+              Reminders will be silenced during this nocturnal period to prevent dawn-time sleep disruption.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
@@ -178,21 +178,21 @@ export const NotificationGovernancePanel = () => {
         )}
       </div>
 
-      {/* Channel 2: Promoted Dietitian & Clinic Spotlights */}
+      {/* Promoted Dietitian & Clinic Discoveries */}
       <div className="bento-cell bg-white border border-outline-variant/30 rounded-2xl p-6 shadow-xs space-y-5">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-outline-variant/15 pb-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h4 className="font-bold text-sm text-on-surface flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-primary text-base">recommend</span>
-                Channel B: Promoted Dietitian & Clinic Spotlights
+                Dietitian & Clinic Discoveries
               </h4>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-surface-container-high text-on-surface-variant border border-outline-variant/30">
                 Optional Discovery
               </span>
             </div>
             <p className="text-xs text-on-surface-variant leading-relaxed">
-              Transparently labeled ("Clinic-recommended") spotlights of certified dietitians and low-GI recipes.
+              Transparently labeled spotlights of certified clinical dietitians and low-GI recipes.
             </p>
           </div>
 
@@ -205,7 +205,7 @@ export const NotificationGovernancePanel = () => {
             className={`relative inline-flex h-8 w-14 min-w-[56px] min-h-[32px] items-center rounded-full transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40 ${
               promo.enabled ? 'bg-primary' : 'bg-surface-container-high border border-outline-variant'
             }`}
-            aria-label="Toggle Promoted Dietitian Spotlights"
+            aria-label="Toggle Dietitian and Clinic Discoveries"
           >
             <span
               className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform shadow-sm ${
@@ -215,15 +215,15 @@ export const NotificationGovernancePanel = () => {
           </button>
         </div>
 
-        {/* Channel 2 Sub-Settings: Frequency Cap */}
+        {/* Frequency Cap */}
         {promo.enabled && (
           <div className="space-y-3 pt-1 animate-fade-in">
             <h5 className="text-xs font-bold text-on-surface flex items-center gap-1.5">
               <span className="material-symbols-outlined text-base text-on-surface-variant">tune</span>
-              Maximum Delivery Frequency Cap
+              Maximum Delivery Frequency
             </h5>
             <p className="text-[11px] text-on-surface-variant leading-relaxed">
-              Strictly caps how often discovery nudges may appear.
+              Caps how often discovery spotlights may be delivered.
             </p>
 
             <div className="max-w-xs">
@@ -233,9 +233,9 @@ export const NotificationGovernancePanel = () => {
                 className="w-full bg-surface-container-low border border-outline-variant rounded-xl p-2.5 text-xs font-bold text-on-surface outline-none focus:border-primary cursor-pointer"
                 aria-label="Select promotion frequency cap"
               >
-                <option value="daily">Max 1 Notification per Day</option>
-                <option value="weekly">Max 1 Notification per Week (Recommended)</option>
-                <option value="biweekly">Max 1 Notification every 2 Weeks</option>
+                <option value="daily">At most 1 per Day</option>
+                <option value="weekly">At most 1 per Week (Recommended)</option>
+                <option value="biweekly">At most 1 every 2 Weeks</option>
               </select>
             </div>
           </div>

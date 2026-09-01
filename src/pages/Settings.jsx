@@ -46,18 +46,18 @@ export const Settings = ({ initialTab = null }) => {
         <div>
           <div className="flex items-center gap-2">
             <h2 className="font-display text-2xl font-bold text-primary">
-              Metabolic & Profile Control Center
+              Profile & Clinical Preferences
             </h2>
             <span
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-700 text-xs font-bold"
               title={`Clinical Role: ${role ? role.charAt(0).toUpperCase() + role.slice(1) : 'User'}`}
             >
               <span className="material-symbols-outlined text-[16px]">verified</span>
-              <span>Clinical Role: <span className="capitalize">{role || 'user'}</span></span>
+              <span>Role: <span className="capitalize">{role || 'user'}</span></span>
             </span>
           </div>
           <p className="text-xs text-on-surface-variant font-medium mt-0.5">
-            Configure glycemic targets, measurement formats, privacy consents, notifications, and clinical exports.
+            Manage your daily metabolic targets, measurement units, privacy consents, and care notifications.
           </p>
         </div>
 
@@ -87,8 +87,8 @@ export const Settings = ({ initialTab = null }) => {
         </div>
       </header>
 
-      {/* Tab Controls (6 Accessible Sections) */}
-      <div className="flex flex-wrap border-b border-outline-variant/30 gap-1" role="tablist">
+      {/* Tab Controls (Clean, accessible navigation) */}
+      <div className="flex flex-wrap border-b border-outline-variant/30 gap-1" role="tablist" aria-label="Profile and Settings Navigation">
         <button
           type="button"
           role="tab"
@@ -101,7 +101,7 @@ export const Settings = ({ initialTab = null }) => {
           }`}
         >
           <span className="material-symbols-outlined text-[18px]">monitoring</span>
-          Section A: Targets
+          Metabolic Targets
         </button>
 
         <button
@@ -116,7 +116,7 @@ export const Settings = ({ initialTab = null }) => {
           }`}
         >
           <span className="material-symbols-outlined text-[18px]">tune</span>
-          Section B: Preferences & Density
+          Display & Units
         </button>
 
         <button
@@ -131,7 +131,7 @@ export const Settings = ({ initialTab = null }) => {
           }`}
         >
           <span className="material-symbols-outlined text-[18px]">medical_services</span>
-          Section C: Diabetic & Dietary Rules
+          Diet & Conditions
         </button>
 
         <button
@@ -146,7 +146,7 @@ export const Settings = ({ initialTab = null }) => {
           }`}
         >
           <span className="material-symbols-outlined text-[18px]">shield_lock</span>
-          Section D: Permissions & Consent
+          Privacy & Consent
         </button>
 
         <button
@@ -161,7 +161,7 @@ export const Settings = ({ initialTab = null }) => {
           }`}
         >
           <span className="material-symbols-outlined text-[18px]">notifications_active</span>
-          Section E: Notifications
+          Notifications & Focus
         </button>
 
         <button
@@ -176,7 +176,7 @@ export const Settings = ({ initialTab = null }) => {
           }`}
         >
           <span className="material-symbols-outlined text-[18px]">manage_accounts</span>
-          Section F: Export & Account
+          Account & Clinical Export
         </button>
       </div>
 

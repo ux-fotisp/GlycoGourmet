@@ -23,8 +23,8 @@ describe('NotificationGovernancePanel Component', () => {
   it('renders dual channels: Care Reminders and Promoted Dietitian Spotlights', () => {
     renderPanel();
 
-    expect(screen.getByText(/Channel A: Metabolic Care Reminders/i)).toBeInTheDocument();
-    expect(screen.getByText(/Channel B: Promoted Dietitian & Clinic Spotlights/i)).toBeInTheDocument();
+    expect(screen.getByText(/Metabolic Care Reminders/i)).toBeInTheDocument();
+    expect(screen.getByText(/Dietitian & Clinic Discoveries/i)).toBeInTheDocument();
   });
 
   it('toggles Care Reminders switch independently and persists to storage', () => {
@@ -43,7 +43,7 @@ describe('NotificationGovernancePanel Component', () => {
   it('toggles Promoted Dietitian spotlights and updates frequency cap', () => {
     renderPanel();
 
-    const promoSwitch = screen.getByRole('switch', { name: /Toggle Promoted Dietitian Spotlights/i });
+    const promoSwitch = screen.getByRole('switch', { name: /Toggle Dietitian and Clinic Discoveries/i });
     expect(promoSwitch).toHaveAttribute('aria-checked', 'false');
 
     fireEvent.click(promoSwitch);
