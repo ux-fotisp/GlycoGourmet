@@ -4,6 +4,7 @@
  * Implements non-clinical trust and audit models for:
  * 1. Layered, versioned, and revocable consent records (ConsentRecord)
  * 2. Immutable, append-only administrative audit log entries (AuditLogEntry)
+ * 3. Split-channel patient notification preferences (NotificationPreference)
  *
  * FHIR / LOINC Boundary Note:
  * These objects are strictly non-clinical governance entities and must NEVER
@@ -50,4 +51,15 @@ export interface AuditLogEntry {
   finalValue: unknown;
   note?: string;
   timestamp: string; // ISO 8601 timestamp
+}
+
+export type NotificationChannelCategory = 'care_reminders' | 'promoted_dietitians';
+
+export interface NotificationPreference {
+  userId?: string;
+  category: NotificationChannelCategory;
+  enabled: boolean;
+  quietHoursStart?: string; // e.g. '22:00'
+  quietHoursEnd?: string; // e.g. '07:00'
+  frequencyCap?: 'daily' | 'weekly' | 'biweekly';
 }
