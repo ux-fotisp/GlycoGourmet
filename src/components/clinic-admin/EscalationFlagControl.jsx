@@ -139,7 +139,7 @@ export const EscalationFlagControl = ({
                   <span>Flag Operational Suggestion</span>
                 </h3>
                 <p id="escalation-flag-dialog-desc" className="text-[11px] text-on-surface-variant mt-0.5">
-                  Escalate this system suggestion for administrative review. This action does not penalize conversion telemetry.
+                  Flagging this suggestion will not change it automatically. It records your concern for human review.
                 </p>
               </div>
 

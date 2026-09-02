@@ -94,10 +94,12 @@ describe('Dashboard page', () => {
       user: {
         name: 'Chef Julian',
         email: 'demo@glyco.com',
+        roleType: 'user',
         preferences: [],
         visualDensity: 'comfortable',
         favorites: [],
       },
+      isAuthenticated: true,
       addFavorite: vi.fn(),
       removeFavorite: vi.fn(),
     });
@@ -140,5 +142,48 @@ describe('Dashboard page', () => {
   it('renders recommendation section heading', () => {
     renderDashboard();
     expect(screen.getByText(/Recommended/i)).toBeDefined();
+  });
+
+  describe('Role-Based Gating of RedirectNudgeCard', () => {
+    it('renders RedirectNudgeCard for patient / self-service user', () => {
+      useAuth.mockReturnValue({
+        user: { name: 'Fotis', email: 'fotis@glyco.com', roleType: 'user' },
+        isAuthenticated: true,
+      });
+
+      renderDashboard();
+      expect(screen.getByRole('region', { name: /Optional Dietitian Support Opportunity/i })).toBeInTheDocument();
+      expect(screen.getByText(/Optional Dietitian Support/i)).toBeInTheDocument();
+    });
+
+    it('does NOT render RedirectNudgeCard for clinical dietitian', () => {
+      useAuth.mockReturnValue({
+        user: { name: 'Dr. Sarah', email: 'sarah@clinic.com', roleType: 'dietitian' },
+        isAuthenticated: true,
+      });
+
+      renderDashboard();
+      expect(screen.queryByRole('region', { name: /Optional Dietitian Support Opportunity/i })).not.toBeInTheDocument();
+    });
+
+    it('does NOT render RedirectNudgeCard for clinic administrator', () => {
+      useAuth.mockReturnValue({
+        user: { name: 'Konstantina', email: 'admin@clinic.com', roleType: 'clinic_admin' },
+        isAuthenticated: true,
+      });
+
+      renderDashboard();
+      expect(screen.queryByRole('region', { name: /Optional Dietitian Support Opportunity/i })).not.toBeInTheDocument();
+    });
+
+    it('does NOT render RedirectNudgeCard for platform admin or super_admin', () => {
+      useAuth.mockReturnValue({
+        user: { name: 'Super Admin', email: 'super@glyco.com', roleType: 'super_admin' },
+        isAuthenticated: true,
+      });
+
+      renderDashboard();
+      expect(screen.queryByRole('region', { name: /Optional Dietitian Support Opportunity/i })).not.toBeInTheDocument();
+    });
   });
 });

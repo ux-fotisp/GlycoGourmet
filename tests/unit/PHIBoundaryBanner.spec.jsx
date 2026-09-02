@@ -20,6 +20,20 @@ describe('PHIBoundaryBanner Component', () => {
     expect(screen.getByText(/Clinical records, metabolic targets, meal plans, and recipe-swap rules are unavailable in this workspace/i)).toBeInTheDocument();
   });
 
+  it('renders for super_admin in a valid operational context', () => {
+    vi.spyOn(permissionsHook, 'usePermissions').mockReturnValue({
+      role: 'super_admin',
+      canManageClinic: true,
+      canManageIntakePipeline: true,
+      canManageClinicalRecords: true,
+    });
+
+    render(<PHIBoundaryBanner />);
+
+    expect(screen.getByLabelText(/Clinic Administration Data Boundary Notice/i)).toBeInTheDocument();
+    expect(screen.getByText(/Operational Administration Workspace/i)).toBeInTheDocument();
+  });
+
   it('does NOT render for patient context', () => {
     vi.spyOn(permissionsHook, 'usePermissions').mockReturnValue({
       role: 'user',

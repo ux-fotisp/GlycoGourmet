@@ -1,23 +1,29 @@
-import RedirectNudgeCard from '../components/patient/RedirectNudgeCard';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { usePermissions } from '../hooks/usePermissions';
 import { usePreferences } from '../context/UserPreferences';
 import { useRecipes } from '../hooks/useRecipes';
 import { useRecipeFilters } from '../hooks/useRecipeFilters';
 import { HealthHeader } from '../components/dashboard/HealthHeader';
 import { MealPlanGlance } from '../components/dashboard/MealPlanGlance';
 import NotificationOptIn from '../components/patient/NotificationOptIn';
+import RedirectNudgeCard from '../components/patient/RedirectNudgeCard';
 import RecipeFilterBar from '../components/filters/RecipeFilterBar';
 import RecipeCard from '../components/recipe/RecipeCard';
 
 export const Dashboard = () => {
   const { /* user */ } = useAuth();
+  const { role } = usePermissions();
   const {
     allRecipes,
     isLoading,
   } = useRecipes();
   const { visualDensity } = usePreferences();
+
+  // Role gate: RedirectNudgeCard is strictly patient/self-service only.
+  // Never renders for dietitians, clinic admins, admins, or super admins.
+  const normalizedRole = (role || 'user').toLowerCase();
+  const isPatient = !['dietitian', 'clinic_admin', 'admin', 'super_admin'].includes(normalizedRole);
 
   const {
     recipes: filteredRecipes,
@@ -49,8 +55,8 @@ export const Dashboard = () => {
       {/* Clinical Pre-Meal Bolus Nudge Opt-In */}
       <NotificationOptIn />
 
-      {/* Voluntary Dietitian Support Bridge */}
-      <RedirectNudgeCard />
+      {/* Voluntary Dietitian Support Bridge (Patient/Self-Service context only) */}
+      {isPatient && <RedirectNudgeCard />}
 
       {/* Today's Meal Plan Summary */}
       <MealPlanGlance />

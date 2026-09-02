@@ -1,6 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const CATEGORY_MAP = {
+  care_reminder: 'Care reminder',
+  self_service_nudge: 'Optional support notice',
+  promoted_dietitian: 'Clinic editorial spotlight',
+};
+
 /**
  * WhyAmISeeingThisPanel - Patient Explainability & Transparency Panel
  *
@@ -20,7 +26,7 @@ export const WhyAmISeeingThisPanel = ({
   dataUsed = 'General meal planning occasions and active dietary preference tags.',
   consentRequired = false,
   consentStatus = 'active',
-  shownBecause: _shownBecause = 'self_service_nudge',
+  shownBecause = 'self_service_nudge',
   isPromotedDietitian = false,
   onManagePreferences = null,
   onManageConsent = null,
@@ -28,6 +34,8 @@ export const WhyAmISeeingThisPanel = ({
 }) => {
   const navigate = useNavigate();
   const closeButtonRef = useRef(null);
+
+  const categoryLabel = CATEGORY_MAP[shownBecause] || CATEGORY_MAP.self_service_nudge;
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -81,10 +89,15 @@ export const WhyAmISeeingThisPanel = ({
               <span className="material-symbols-outlined text-lg">info</span>
             </div>
             <div>
-              <h3 id="why-am-i-seeing-this-title" className="font-display text-base font-bold text-primary">
-                {title}
-              </h3>
-              <p id="why-am-i-seeing-this-desc" className="text-[11px] text-on-surface-variant">
+              <div className="flex items-center gap-2">
+                <h3 id="why-am-i-seeing-this-title" className="font-display text-base font-bold text-primary">
+                  {title}
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
+                  {categoryLabel}
+                </span>
+              </div>
+              <p id="why-am-i-seeing-this-desc" className="text-[11px] text-on-surface-variant mt-0.5">
                 Transparent explanation of system suggestions and notices.
               </p>
             </div>
