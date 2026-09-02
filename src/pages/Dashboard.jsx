@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
 import { usePermissions } from '../hooks/usePermissions';
 import { usePreferences } from '../context/UserPreferences';
 import { useRecipes } from '../hooks/useRecipes';
@@ -11,8 +10,9 @@ import RedirectNudgeCard from '../components/patient/RedirectNudgeCard';
 import RecipeFilterBar from '../components/filters/RecipeFilterBar';
 import RecipeCard from '../components/recipe/RecipeCard';
 
+const PATIENT_ROLES = new Set(['user', 'patient']);
+
 export const Dashboard = () => {
-  const { /* user */ } = useAuth();
   const { role } = usePermissions();
   const {
     allRecipes,
@@ -20,10 +20,9 @@ export const Dashboard = () => {
   } = useRecipes();
   const { visualDensity } = usePreferences();
 
-  // Role gate: RedirectNudgeCard is strictly patient/self-service only.
-  // Never renders for dietitians, clinic admins, admins, or super admins.
-  const normalizedRole = (role || 'user').toLowerCase();
-  const isPatient = !['dietitian', 'clinic_admin', 'admin', 'super_admin'].includes(normalizedRole);
+  // Strict Patient Allow-List: RedirectNudgeCard renders strictly for confirmed patient roles.
+  // Defaults to false if role is missing, null, undefined, unknown, or administrative.
+  const isPatient = Boolean(role && PATIENT_ROLES.has(role.toLowerCase()));
 
   const {
     recipes: filteredRecipes,
@@ -55,7 +54,7 @@ export const Dashboard = () => {
       {/* Clinical Pre-Meal Bolus Nudge Opt-In */}
       <NotificationOptIn />
 
-      {/* Voluntary Dietitian Support Bridge (Patient/Self-Service context only) */}
+      {/* Voluntary Dietitian Support Bridge (Strict Patient Allow-List context only) */}
       {isPatient && <RedirectNudgeCard />}
 
       {/* Today's Meal Plan Summary */}
