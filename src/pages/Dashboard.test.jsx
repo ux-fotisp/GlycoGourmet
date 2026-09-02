@@ -94,10 +94,12 @@ describe('Dashboard page', () => {
       user: {
         name: 'Chef Julian',
         email: 'demo@glyco.com',
+        roleType: 'user',
         preferences: [],
         visualDensity: 'comfortable',
         favorites: [],
       },
+      isAuthenticated: true,
       addFavorite: vi.fn(),
       removeFavorite: vi.fn(),
     });
@@ -140,5 +142,88 @@ describe('Dashboard page', () => {
   it('renders recommendation section heading', () => {
     renderDashboard();
     expect(screen.getByText(/Recommended/i)).toBeDefined();
+  });
+
+  describe('Strict Patient Allow-List Gating of RedirectNudgeCard', () => {
+    it('renders RedirectNudgeCard for canonical "user" patient role', () => {
+      useAuth.mockReturnValue({
+        user: { name: 'Fotis', email: 'fotis@glyco.com', roleType: 'user' },
+        isAuthenticated: true,
+      });
+
+      renderDashboard();
+      expect(screen.getByRole('region', { name: /Optional Dietitian Support Opportunity/i })).toBeInTheDocument();
+      expect(screen.getByText(/Optional Dietitian Support/i)).toBeInTheDocument();
+    });
+
+    it('renders RedirectNudgeCard for "patient" role alias', () => {
+      useAuth.mockReturnValue({
+        user: { name: 'Alex Rivera', email: 'alex@glyco.com', roleType: 'patient' },
+        isAuthenticated: true,
+      });
+
+      renderDashboard();
+      expect(screen.getByRole('region', { name: /Optional Dietitian Support Opportunity/i })).toBeInTheDocument();
+    });
+
+    it('does NOT render RedirectNudgeCard when role is missing / undefined / unauthenticated', () => {
+      useAuth.mockReturnValue({
+        user: null,
+        isAuthenticated: false,
+      });
+
+      renderDashboard();
+      expect(screen.queryByRole('region', { name: /Optional Dietitian Support Opportunity/i })).not.toBeInTheDocument();
+    });
+
+    it('does NOT render RedirectNudgeCard for unknown / unrecognized role "clinic_support"', () => {
+      useAuth.mockReturnValue({
+        user: { name: 'Support Staff', email: 'support@clinic.com', roleType: 'clinic_support' },
+        isAuthenticated: true,
+      });
+
+      renderDashboard();
+      expect(screen.queryByRole('region', { name: /Optional Dietitian Support Opportunity/i })).not.toBeInTheDocument();
+    });
+
+    it('does NOT render RedirectNudgeCard for unrecognized future role "analytics_auditor"', () => {
+      useAuth.mockReturnValue({
+        user: { name: 'Auditor', email: 'audit@glyco.com', roleType: 'analytics_auditor' },
+        isAuthenticated: true,
+      });
+
+      renderDashboard();
+      expect(screen.queryByRole('region', { name: /Optional Dietitian Support Opportunity/i })).not.toBeInTheDocument();
+    });
+
+    it('does NOT render RedirectNudgeCard for clinical dietitian', () => {
+      useAuth.mockReturnValue({
+        user: { name: 'Dr. Sarah', email: 'sarah@clinic.com', roleType: 'dietitian' },
+        isAuthenticated: true,
+      });
+
+      renderDashboard();
+      expect(screen.queryByRole('region', { name: /Optional Dietitian Support Opportunity/i })).not.toBeInTheDocument();
+    });
+
+    it('does NOT render RedirectNudgeCard for clinic administrator', () => {
+      useAuth.mockReturnValue({
+        user: { name: 'Konstantina', email: 'admin@clinic.com', roleType: 'clinic_admin' },
+        isAuthenticated: true,
+      });
+
+      renderDashboard();
+      expect(screen.queryByRole('region', { name: /Optional Dietitian Support Opportunity/i })).not.toBeInTheDocument();
+    });
+
+    it('does NOT render RedirectNudgeCard for platform admin or super_admin', () => {
+      useAuth.mockReturnValue({
+        user: { name: 'Super Admin', email: 'super@glyco.com', roleType: 'super_admin' },
+        isAuthenticated: true,
+      });
+
+      renderDashboard();
+      expect(screen.queryByRole('region', { name: /Optional Dietitian Support Opportunity/i })).not.toBeInTheDocument();
+    });
   });
 });
