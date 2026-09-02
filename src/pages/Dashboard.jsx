@@ -1,4 +1,5 @@
-﻿import React from 'react';
+import RedirectNudgeCard from '../components/patient/RedirectNudgeCard';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePreferences } from '../context/UserPreferences';
@@ -47,6 +48,9 @@ export const Dashboard = () => {
       
       {/* Clinical Pre-Meal Bolus Nudge Opt-In */}
       <NotificationOptIn />
+
+      {/* Voluntary Dietitian Support Bridge */}
+      <RedirectNudgeCard />
 
       {/* Today's Meal Plan Summary */}
       <MealPlanGlance />

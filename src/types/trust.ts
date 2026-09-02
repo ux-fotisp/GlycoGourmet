@@ -38,7 +38,8 @@ export type AdminActionType =
   | 'dietitian_assigned'
   | 'tier_promoted'
   | 'promotion_configured'
-  | 'suggestion_flagged_wrong';
+  | 'suggestion_flagged_wrong'
+  | 'operational_suggestion_escalated';
 
 export interface AuditLogEntry {
   id: string;
@@ -46,7 +47,7 @@ export interface AuditLogEntry {
   actorRole: 'clinic_admin' | 'admin' | 'super_admin' | 'system';
   action: AdminActionType | string;
   entityId: string;
-  entityType: 'referral_lead' | 'client_profile' | 'dietitian_profile' | 'promotion_config';
+  entityType: 'referral_lead' | 'client_profile' | 'dietitian_profile' | 'promotion_config' | 'operational_suggestion';
   suggestedValue?: unknown;
   finalValue: unknown;
   note?: string;

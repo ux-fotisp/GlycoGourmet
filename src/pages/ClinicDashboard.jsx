@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import PHIBoundaryBanner from '../components/clinic-admin/PHIBoundaryBanner';
+import React, { useState, useEffect } from 'react';
 import { getClinicDetails, getClinicDietitians, inviteDietitian } from '../utils/clientStore';
 
 /**
@@ -49,6 +50,9 @@ export const ClinicDashboard = () => {
   return (
     <div className="min-h-screen bg-[#F6F4EE] text-[#1A2118] p-4 sm:p-6 lg:p-10 font-sans">
       <div className="max-w-7xl mx-auto space-y-8">
+        {/* Persistent Non-Dismissible PHI Boundary Safeguard Banner */}
+        <PHIBoundaryBanner />
+
         
         {/* Top Header Card */}
         <header className="bg-white rounded-3xl p-6 lg:p-8 border border-stone-200 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
