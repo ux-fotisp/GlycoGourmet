@@ -23,6 +23,16 @@ const BLANK_FORM = {
   steps: [{ id: 1, title: '', description: '', timer: '' }],
 };
 
+function serializeRecipeIngredients(ingredients = []) {
+  return (ingredients || []).map((line) => ({
+    ...line,
+    ingredientId: line.ingredientId || undefined,
+    amount: line.quantity ?? line.amount ?? 100,
+    unit: line.unit || 'g',
+    prepState: line.prepState || 'raw',
+  }));
+}
+
 const generateRecipeId = (title) => {
   const slug = (title || 'recipe')
     .toLowerCase()
@@ -155,17 +165,12 @@ export const AdminEditor = () => {
     try {
       const finalId = editId || formData.id || generateRecipeId(formData.title);
       const nowIso = new Date().toISOString();
-      const serializedIngredients = (formData.ingredients || []).map((line) => ({
-        ...line,
-        ingredientId: line.ingredientId || (line.id?.startsWith('line_internal_') ? line.id.replace('line_internal_', '') : undefined),
-        amount: line.quantity ?? line.amount ?? 100,
-        unit: line.unit || 'g',
-        prepState: line.prepState || 'raw',
-      }));
+      const serializedIngredients = serializeRecipeIngredients(formData.ingredients);
 
       const newRecipe = {
         ...formData,
         id: finalId,
+        ingredients: serializedIngredients,
         authorId: user?.email || 'admin@glycogourmet.com',
         isUserAuthored: true,
         status: 'published',
@@ -179,13 +184,13 @@ export const AdminEditor = () => {
 
       sessionStorage.removeItem(DRAFT_SESSION_KEY);
       if (addFavorite) addFavorite(finalId);
-      showNotification('🎉 Recipe published to Strapi CMS successfully!', 'success');
+      showNotification('✅ Recipe published to Strapi CMS successfully!', 'success');
       
       // Navigate to recipe detail after 1.2s
       setTimeout(() => { navigate(`/recipe/${finalId}`); }, 50);
     } catch (err) {
       console.error('[AdminEditor] Strapi publish failed:', err?.name, err?.message, err?.stack);
-      showNotification(`❌ Publish failed: ${err.message}`, 'error');
+      showNotification(`⚠️ Publish failed: ${err.message}`, 'error');
     } finally {
       setIsSaving(false);
     }
@@ -201,9 +206,11 @@ export const AdminEditor = () => {
 
     try {
       const finalId = editId || formData.id || generateRecipeId(formData.title);
+      const serializedIngredients = serializeRecipeIngredients(formData.ingredients);
       const newRecipe = {
         ...formData,
         id: finalId,
+        ingredients: serializedIngredients,
         title: formData.title || 'Untitled Draft',
         authorId: user?.email || 'user@glycogourmet.com',
         isUserAuthored: true,
@@ -221,7 +228,7 @@ export const AdminEditor = () => {
       setTimeout(() => { navigate("/recipes/mine"); }, 50);
     } catch (err) {
       console.error('[AdminEditor] Submit for review failed:', err);
-      showNotification(`❌ Submit failed: ${err.message}`, 'error');
+      showNotification(`⚠️ Submit failed: ${err.message}`, 'error');
     } finally {
       setIsSaving(false);
     }
@@ -233,9 +240,11 @@ export const AdminEditor = () => {
 
     try {
       const finalId = editId || formData.id || generateRecipeId(formData.title);
+      const serializedIngredients = serializeRecipeIngredients(formData.ingredients);
       const newRecipe = {
         ...formData,
         id: finalId,
+        ingredients: serializedIngredients,
         title: formData.title || 'Untitled Draft',
         authorId: user?.email || 'admin@glycogourmet.com',
         isUserAuthored: true,
@@ -256,7 +265,7 @@ export const AdminEditor = () => {
       }
     } catch (err) {
       console.error('[AdminEditor] Strapi draft save failed:', err);
-      showNotification(`❌ Save failed: ${err.message}`, 'error');
+      showNotification(`⚠️ Save failed: ${err.message}`, 'error');
     } finally {
       setIsSaving(false);
     }
