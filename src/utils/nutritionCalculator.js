@@ -178,7 +178,41 @@ export function calculateRecipeNutrition(recipeIngredients = []) {
   ingredientsArray.forEach(item => {
     if (!item) return;
 
-    // Resolve ingredient ID across relational structures (flat ID, component ingredientId, or Strapi relation)
+    // Case A: Provenance-Ready line item with inline nutritionPer100g and normalizedGrams
+    if (item.nutritionPer100g && typeof item.nutritionPer100g === 'object' && typeof item.normalizedGrams === 'number' && item.normalizedGrams > 0) {
+      const ratio = item.normalizedGrams / 100;
+      const n = item.nutritionPer100g;
+
+      const itemKcal = safeNum(n.energyKcal);
+      const itemProtein = safeNum(n.proteinG);
+      const itemFat = safeNum(n.fatG);
+      const itemCarbs = safeNum(n.carbohydrateG);
+      const itemFiber = safeNum(n.fiberG);
+      const itemNetCarbs = Math.max(0, itemCarbs - itemFiber);
+
+      kcal += itemKcal * ratio;
+      protein += itemProtein * ratio;
+      fat += itemFat * ratio;
+      carbs += itemCarbs * ratio;
+      fiber += itemFiber * ratio;
+      netCarbs += itemNetCarbs * ratio;
+
+      // Glycemic Index calculation with thermal prepState multiplier
+      let gi = safeNullableNum(item.glycemicIndex);
+      const prepMultiplier = getPrepStateMultiplier(item.prepState || DEFAULT_PREP_STATE);
+      if (gi !== null) {
+        gi = gi * prepMultiplier;
+      }
+
+      const ingCarbs = itemCarbs * ratio;
+      if (gi !== null && gi !== undefined && ingCarbs > 0) {
+        weightedGISum += gi * ingCarbs;
+        totalCarbWeight += ingCarbs;
+      }
+      return;
+    }
+
+    // Case B: Legacy / relational ingredient resolution via getIngredientById
     const rawId = item.ingredientId || item.ingredient?.id || item.ingredient?.documentId || item.id;
     if (!rawId) return;
 
