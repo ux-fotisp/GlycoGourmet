@@ -374,6 +374,8 @@ export interface ProvenanceReadyRecipeIngredientLine {
   glycemicIndex?: number | null;
   giEvidenceStatus: GiEvidenceStatus;
 
+  isFallbackId?: boolean;
+
   validation: {
     status: LineValidationStatus;
     reasons: string[];

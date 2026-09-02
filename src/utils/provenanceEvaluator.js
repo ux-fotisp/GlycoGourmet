@@ -6,7 +6,11 @@
  *      or unit normalization failure halt nutrition calculation (status: "incomplete").
  *   2. "No false precision": Missing Glycemic Index on carbohydrate-contributing ingredients
  *      is never coerced to 0; it keeps nutrition calculable but flags GL as unavailable (status: "estimated").
- *   3. Pure function invariant: Zero side effects, no storage/API calls, non-mutating.
+ *   3. "GI Not Applicable": Non-carbohydrate ingredients (carbs <= 0.5g/100g) have glycemicIndex: null
+ *      with giEvidenceStatus: "not_applicable" and do NOT block GL calculation.
+ *   4. Line Identity vs Food Identity: Lines with fallback IDs surface a persistence warning without
+ *      making nutrition calculations unavailable.
+ *   5. Pure function invariant: Zero side effects, no storage/API calls, non-mutating.
  */
 
 export const REQUIRED_CORE_NUTRIENTS = [
@@ -50,11 +54,13 @@ export function validateIngredientLine(line) {
   }
 
   const reasons = [];
+  let isIncomplete = false;
 
   // 1. Quantity validation
   const quantity = line.quantity;
   if (typeof quantity !== 'number' || !isFinite(quantity) || quantity <= 0) {
     reasons.push('Invalid or non-positive quantity');
+    isIncomplete = true;
   }
 
   // 2. Gram normalization validation
@@ -68,30 +74,41 @@ export function validateIngredientLine(line) {
     } else {
       reasons.push('Cannot normalize unit to grams');
     }
+    isIncomplete = true;
   }
 
   // 3. Core macronutrient presence
   const nutrition = line.nutritionPer100g;
   if (!nutrition || typeof nutrition !== 'object') {
     reasons.push('Missing nutrition profile per 100g');
+    isIncomplete = true;
   } else {
     for (const nutrient of REQUIRED_CORE_NUTRIENTS) {
       const val = nutrition[nutrient.key];
       if (val === null || val === undefined || typeof val !== 'number' || !isFinite(val) || val < 0) {
         reasons.push('Missing required nutrient: ' + nutrient.key);
+        isIncomplete = true;
       }
     }
   }
 
-  if (reasons.length > 0) {
+  // 4. Persistence Identity Warning (identity/persistence warning, not nutrition incompleteness)
+  if (line.isFallbackId) {
+    reasons.push('Recipe line requires a persistent unique line ID before editing or saving.');
+  }
+
+  if (isIncomplete) {
     return { status: 'incomplete', reasons };
   }
 
   if (line.source === 'needs_review' || line.giEvidenceStatus === 'needs_review') {
-    return { status: 'needs_review', reasons: ['Ingredient requires manual provenance review'] };
+    if (!reasons.includes('Ingredient requires manual provenance review')) {
+      reasons.push('Ingredient requires manual provenance review');
+    }
+    return { status: 'needs_review', reasons };
   }
 
-  return { status: 'complete', reasons: [] };
+  return { status: 'complete', reasons };
 }
 
 /**
@@ -139,6 +156,13 @@ export function evaluateRecipeNutritionCompleteness(lines = []) {
       warnings.push('[' + (line?.displayName || lineId) + ']: Marked for review (' + line.source + ')');
     }
 
+    // Surface non-blocking validation warnings (e.g. persistent line ID warning)
+    validation.reasons.forEach((reason) => {
+      if (reason.includes('requires a persistent unique line ID')) {
+        warnings.push('[' + (line?.displayName || lineId) + ']: ' + reason);
+      }
+    });
+
     // Check Glycemic Index evidence for carbohydrate contributors
     const carbs = line.nutritionPer100g?.carbohydrateG ?? 0;
     const isCarbContributor = carbs > 0.5;
@@ -157,7 +181,7 @@ export function evaluateRecipeNutritionCompleteness(lines = []) {
         );
       }
     } else {
-      // Non-carb contributor: giEvidenceStatus can be 'not_applicable' or 'available'
+      // Non-carb contributor: glycemicIndex is null, giEvidenceStatus can be 'not_applicable' or 'available'
       if (line.giEvidenceStatus === 'needs_review') {
         warnings.push('[' + (line?.displayName || lineId) + ']: Non-carb ingredient GI flagged for review');
       }

@@ -39,7 +39,7 @@ describe('provenanceEvaluator — Pure Deterministic Completeness Engine', () =>
       proteinG: 22,
       fatG: 13,
     },
-    glycemicIndex: 0,
+    glycemicIndex: null, // Non-carb ingredients have GI: null and giEvidenceStatus: "not_applicable"
     giEvidenceStatus: 'not_applicable',
     validation: { status: 'complete', reasons: [] },
   });
@@ -80,13 +80,13 @@ describe('provenanceEvaluator — Pure Deterministic Completeness Engine', () =>
     expect(result.warnings.some((w) => w.includes('Glycemic Index unavailable'))).toBe(true);
   });
 
-  it('Rule 3: Genuinely zero-carb ingredient with giEvidenceStatus "not_applicable" does not block GL calculation', () => {
+  it('Rule 3: Genuinely zero-carb ingredient with glycemicIndex null and giEvidenceStatus "not_applicable" does not block GL calculation', () => {
     const oliveOilLine = {
       id: 'line-oil',
       displayName: 'Extra Virgin Olive Oil',
       quantity: 15,
       unit: 'ml',
-      normalizedGrams: 15,
+      normalizedGrams: 13.8,
       source: 'internal_verified',
       nutritionPer100g: {
         energyKcal: 884,

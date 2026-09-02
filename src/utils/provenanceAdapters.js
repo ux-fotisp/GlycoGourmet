@@ -4,10 +4,20 @@
  * Transforms legacy, internal, USDA, and custom user ingredients into
  * standardized `ProvenanceReadyRecipeIngredientLine` data shapes.
  *
+ * Provenance & Line Identity Architecture:
+ * - `ingredientId` / `fdcId` identify the underlying biological food source / composition catalog entity.
+ * - `line.id` identifies a specific recipe occurrence / line-item instance in a recipe.
+ * - Precedence: `lineDetails.id` is the canonical recipe-line ID when supplied.
+ * - Fallback: When no line ID is passed, adapters assign a deterministic, time-independent
+ *   fallback ID (e.g. `line_internal_${ingredient.id}`) for read-only / preview adaptation, and
+ *   attach an explicit identity warning (`Recipe line requires a persistent unique line ID before editing or saving.`).
+ * - Future workflow: Recipe editor and draft persistence code will generate unique per-line IDs at user action time.
+ *
  * Invariants:
  * - Anti-Upgrade Rule: User-authored ingredients strictly map to "user_entered".
  * - Verification Rule: Internal ingredients require all 5 core nutrients to be "internal_verified".
  * - Missing Data is not Zero: Missing nutrient fields are preserved as null/undefined.
+ * - GI Not Applicable: Non-carbohydrate lines (carbs <= 0.5g) receive glycemicIndex: null and giEvidenceStatus: "not_applicable".
  * - No False GI: Missing GI is never coerced to 0 on carbohydrate contributors.
  * - Non-fabrication of mass: Volume units require explicit densityGPerMl; count units require explicit pieceWeightG.
  * - Determinism: Pure transformations with no Date.now(), new Date(), random values, or global state.
@@ -142,7 +152,7 @@ export function adaptInternalIngredient(ingredient = {}, lineDetails = {}) {
 
   if (!isCarbContributor) {
     giEvidenceStatus = 'not_applicable';
-    glycemicIndex = typeof ingredient.glycemicIndex === 'number' ? ingredient.glycemicIndex : 0;
+    glycemicIndex = null; // Non-carb ingredients have no GI basis; sentinel 0 is never used
   } else if (typeof ingredient.glycemicIndex === 'number' && isFinite(ingredient.glycemicIndex) && ingredient.glycemicIndex >= 0) {
     giEvidenceStatus = 'available';
     glycemicIndex = ingredient.glycemicIndex;
@@ -161,7 +171,11 @@ export function adaptInternalIngredient(ingredient = {}, lineDetails = {}) {
     sodiumMg: mapNutrientVal(ingredient.sodiumMg) ?? undefined,
   };
 
-  const lineId = lineDetails.id || (ingredient.id ? 'line_internal_' + ingredient.id : 'line_unidentified_internal');
+  // Recipe-line identity vs Food source identity
+  const hasExplicitLineId = Boolean(lineDetails.id && typeof lineDetails.id === 'string' && lineDetails.id.trim().length > 0);
+  const lineId = hasExplicitLineId ? lineDetails.id : (ingredient.id ? 'line_internal_' + ingredient.id : 'line_unidentified_internal');
+  const isFallbackId = !hasExplicitLineId;
+
   const sourceRetrievedAt = lineDetails.sourceRetrievedAt || ingredient.sourceRetrievedAt || ingredient.updatedAt || undefined;
 
   const line = {
@@ -178,6 +192,7 @@ export function adaptInternalIngredient(ingredient = {}, lineDetails = {}) {
     nutritionPer100g,
     glycemicIndex,
     giEvidenceStatus,
+    isFallbackId,
     validation: { status: 'complete', reasons: [] },
   };
 
@@ -215,7 +230,7 @@ export function adaptUsdaFood(usdaFood = {}, lineDetails = {}, explicitGi = null
 
   if (!isCarbContributor) {
     giEvidenceStatus = 'not_applicable';
-    glycemicIndex = 0;
+    glycemicIndex = null; // Non-carb ingredients have no GI basis; sentinel 0 is never used
   } else if (typeof explicitGi === 'number' && isFinite(explicitGi) && explicitGi >= 0) {
     giEvidenceStatus = 'available';
     glycemicIndex = explicitGi;
@@ -231,7 +246,11 @@ export function adaptUsdaFood(usdaFood = {}, lineDetails = {}, explicitGi = null
     sodiumMg: mapNutrientVal(usdaFood.sodiumMg) ?? undefined,
   };
 
-  const lineId = lineDetails.id || (usdaFood.fdcId ? 'line_usda_' + usdaFood.fdcId : 'line_unidentified_usda');
+  // Recipe-line identity vs Food source identity
+  const hasExplicitLineId = Boolean(lineDetails.id && typeof lineDetails.id === 'string' && lineDetails.id.trim().length > 0);
+  const lineId = hasExplicitLineId ? lineDetails.id : (usdaFood.fdcId ? 'line_usda_' + usdaFood.fdcId : 'line_unidentified_usda');
+  const isFallbackId = !hasExplicitLineId;
+
   const sourceRetrievedAt = lineDetails.sourceRetrievedAt || usdaFood.sourceRetrievedAt || usdaFood.retrievedAt || undefined;
 
   const line = {
@@ -248,6 +267,7 @@ export function adaptUsdaFood(usdaFood = {}, lineDetails = {}, explicitGi = null
     nutritionPer100g,
     glycemicIndex,
     giEvidenceStatus,
+    isFallbackId,
     validation: { status: 'complete', reasons: [] },
   };
 
@@ -287,6 +307,7 @@ export function adaptLegacyRecipeLine(rawLine = {}, resolveIngredient = null) {
       normalizedGrams: null,
       source: 'needs_review',
       giEvidenceStatus: 'unavailable',
+      isFallbackId: true,
       validation: {
         status: 'incomplete',
         reasons: ['Line item is not an object'],
@@ -315,7 +336,9 @@ export function adaptLegacyRecipeLine(rawLine = {}, resolveIngredient = null) {
   const pieceWeight = typeof rawLine.pieceWeightG === 'number' && rawLine.pieceWeightG > 0 ? rawLine.pieceWeightG : undefined;
   const normalizedGrams = normalizeUnitToGrams(quantity, unit, density, pieceWeight);
 
-  const fallbackLineId = rawLine.id || (ingredientId ? 'line_unresolved_' + ingredientId : 'line_unresolved_unknown');
+  const hasExplicitLineId = Boolean(rawLine.id && typeof rawLine.id === 'string' && rawLine.id !== rawLine.ingredientId);
+  const fallbackLineId = hasExplicitLineId ? rawLine.id : (ingredientId ? 'line_unresolved_' + ingredientId : 'line_unresolved_unknown');
+  const isFallbackId = !hasExplicitLineId;
 
   const fallbackLine = {
     id: fallbackLineId,
@@ -326,11 +349,16 @@ export function adaptLegacyRecipeLine(rawLine = {}, resolveIngredient = null) {
     normalizedGrams,
     source: 'needs_review',
     giEvidenceStatus: 'needs_review',
+    isFallbackId,
     validation: {
       status: 'incomplete',
       reasons: ['Ingredient data could not be resolved from catalog'],
     },
   };
+
+  if (isFallbackId) {
+    fallbackLine.validation.reasons.push('Recipe line requires a persistent unique line ID before editing or saving.');
+  }
 
   return fallbackLine;
 }
