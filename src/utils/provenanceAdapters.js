@@ -291,6 +291,12 @@ export function adaptLegacyRecipeLine(rawLine = {}, resolveIngredient = null) {
   return fallbackLine;
 }
 
+
+export const adaptInternalIngredientToProvenanceLine = adaptInternalIngredient;
+export const adaptUsdaResultToProvenanceLine = adaptUsdaFood;
+export const adaptCustomIngredientToProvenanceLine = adaptCustomIngredient;
+export const adaptLegacyRecipeIngredientLine = adaptLegacyRecipeLine;
+
 export default {
   normalizeUnitToGrams,
   adaptInternalIngredient,

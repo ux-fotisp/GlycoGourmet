@@ -388,3 +388,11 @@ export interface RecipeNutritionCompletenessResult {
   canCalculateNutrition: boolean;
   canCalculateGl: boolean;
 }
+// Aliases for Phase 7 Chunk 1 Contract Consistency
+export type IngredientSource = IngredientProvenanceSource;
+export type CoreNutritionPer100g = IngredientNutritionPer100g;
+export type LineValidation = {
+  status: LineValidationStatus;
+  reasons: string[];
+};
+export type RecipeCompletenessEvaluation = RecipeNutritionCompletenessResult;
