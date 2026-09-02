@@ -317,3 +317,74 @@ export interface SmartSwapRule {
   createdByDietitianId: string;
   createdAt?: string;
 }
+
+
+// ---------------------------------------------------------------------------
+// 5. Recipe Ingredient Provenance & Completeness Foundation (Phase 7)
+// ---------------------------------------------------------------------------
+
+export type IngredientProvenanceSource =
+  | 'internal_verified'
+  | 'usda_fooddata_central'
+  | 'user_entered'
+  | 'needs_review';
+
+export type GiEvidenceStatus =
+  | 'available'
+  | 'unavailable'
+  | 'not_applicable'
+  | 'needs_review';
+
+export type LineValidationStatus =
+  | 'complete'
+  | 'incomplete'
+  | 'needs_review';
+
+export type RecipeCompletenessStatus =
+  | 'complete'
+  | 'estimated'
+  | 'incomplete';
+
+export interface IngredientNutritionPer100g {
+  energyKcal: number;
+  carbohydrateG: number;
+  fiberG: number;
+  proteinG: number;
+  fatG: number;
+  sugarsG?: number;
+  sodiumMg?: number;
+}
+
+export interface ProvenanceReadyRecipeIngredientLine {
+  id: string;
+  ingredientId?: string;
+  fdcId?: number | string;
+  displayName: string;
+
+  quantity: number;
+  unit: string;
+  normalizedGrams: number | null;
+
+  source: IngredientProvenanceSource;
+  sourceRetrievedAt?: string;
+  sourceVersion?: string;
+
+  nutritionPer100g?: IngredientNutritionPer100g;
+
+  glycemicIndex?: number | null;
+  giEvidenceStatus: GiEvidenceStatus;
+
+  validation: {
+    status: LineValidationStatus;
+    reasons: string[];
+  };
+}
+
+export interface RecipeNutritionCompletenessResult {
+  status: RecipeCompletenessStatus;
+  missingNutritionLines: string[];
+  missingGiLines: string[];
+  warnings: string[];
+  canCalculateNutrition: boolean;
+  canCalculateGl: boolean;
+}
