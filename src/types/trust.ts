@@ -35,7 +35,9 @@ export interface ConsentRecord {
 
 export type AdminActionType =
   | 'intake_stage_change'
+  | 'intake_stage_changed'
   | 'dietitian_assigned'
+  | 'intake_service_tier_changed'
   | 'tier_promoted'
   | 'promotion_configured'
   | 'suggestion_flagged_wrong'
