@@ -6,6 +6,8 @@ import Button from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
 import { usePermissions } from '../hooks/usePermissions';
 import { saveRecipe, getRecipeById } from '../utils/recipeStore';
+import { adaptLegacyRecipeLine } from '../utils/provenanceAdapters';
+import { getIngredientById } from '../utils/ingredientStore';
 
 const DRAFT_SESSION_KEY = 'glyco_editor_draft_session';
 
@@ -20,6 +22,16 @@ const BLANK_FORM = {
   ingredients: [],
   steps: [{ id: 1, title: '', description: '', timer: '' }],
 };
+
+function serializeRecipeIngredients(ingredients = []) {
+  return (ingredients || []).map((line) => ({
+    ...line,
+    ingredientId: line.ingredientId || undefined,
+    amount: line.quantity ?? line.amount ?? 100,
+    unit: line.unit || 'g',
+    prepState: line.prepState || 'raw',
+  }));
+}
 
 const generateRecipeId = (title) => {
   const slug = (title || 'recipe')
@@ -94,7 +106,10 @@ export const AdminEditor = () => {
         servings: existing.servings || 1,
         imageUrl: existing.imageUrl || '',
         tags: existing.tags ?? [],
-        ingredients: existing.ingredients ?? [],
+        ingredients: (existing.ingredients ?? []).map((line) => {
+            if (line && line.source && line.validation) return line;
+            return adaptLegacyRecipeLine(line, (id) => getIngredientById(id));
+          }),
         steps: existing.steps && existing.steps.length > 0
           ? existing.steps
           : [{ id: 1, title: '', description: '', timer: '' }],
@@ -150,9 +165,12 @@ export const AdminEditor = () => {
     try {
       const finalId = editId || formData.id || generateRecipeId(formData.title);
       const nowIso = new Date().toISOString();
+      const serializedIngredients = serializeRecipeIngredients(formData.ingredients);
+
       const newRecipe = {
         ...formData,
         id: finalId,
+        ingredients: serializedIngredients,
         authorId: user?.email || 'admin@glycogourmet.com',
         isUserAuthored: true,
         status: 'published',
@@ -166,13 +184,13 @@ export const AdminEditor = () => {
 
       sessionStorage.removeItem(DRAFT_SESSION_KEY);
       if (addFavorite) addFavorite(finalId);
-      showNotification('🎉 Recipe published to Strapi CMS successfully!', 'success');
+      showNotification('✅ Recipe published to Strapi CMS successfully!', 'success');
       
       // Navigate to recipe detail after 1.2s
       setTimeout(() => { navigate(`/recipe/${finalId}`); }, 50);
     } catch (err) {
       console.error('[AdminEditor] Strapi publish failed:', err?.name, err?.message, err?.stack);
-      showNotification(`❌ Publish failed: ${err.message}`, 'error');
+      showNotification(`⚠️ Publish failed: ${err.message}`, 'error');
     } finally {
       setIsSaving(false);
     }
@@ -188,9 +206,11 @@ export const AdminEditor = () => {
 
     try {
       const finalId = editId || formData.id || generateRecipeId(formData.title);
+      const serializedIngredients = serializeRecipeIngredients(formData.ingredients);
       const newRecipe = {
         ...formData,
         id: finalId,
+        ingredients: serializedIngredients,
         title: formData.title || 'Untitled Draft',
         authorId: user?.email || 'user@glycogourmet.com',
         isUserAuthored: true,
@@ -208,7 +228,7 @@ export const AdminEditor = () => {
       setTimeout(() => { navigate("/recipes/mine"); }, 50);
     } catch (err) {
       console.error('[AdminEditor] Submit for review failed:', err);
-      showNotification(`❌ Submit failed: ${err.message}`, 'error');
+      showNotification(`⚠️ Submit failed: ${err.message}`, 'error');
     } finally {
       setIsSaving(false);
     }
@@ -220,9 +240,11 @@ export const AdminEditor = () => {
 
     try {
       const finalId = editId || formData.id || generateRecipeId(formData.title);
+      const serializedIngredients = serializeRecipeIngredients(formData.ingredients);
       const newRecipe = {
         ...formData,
         id: finalId,
+        ingredients: serializedIngredients,
         title: formData.title || 'Untitled Draft',
         authorId: user?.email || 'admin@glycogourmet.com',
         isUserAuthored: true,
@@ -243,7 +265,7 @@ export const AdminEditor = () => {
       }
     } catch (err) {
       console.error('[AdminEditor] Strapi draft save failed:', err);
-      showNotification(`❌ Save failed: ${err.message}`, 'error');
+      showNotification(`⚠️ Save failed: ${err.message}`, 'error');
     } finally {
       setIsSaving(false);
     }

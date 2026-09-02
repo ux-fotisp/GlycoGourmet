@@ -178,8 +178,11 @@ export function adaptInternalIngredient(ingredient = {}, lineDetails = {}) {
 
   const sourceRetrievedAt = lineDetails.sourceRetrievedAt || ingredient.sourceRetrievedAt || ingredient.updatedAt || undefined;
 
+  const prepState = lineDetails.prepState || ingredient.defaultPrepState || 'raw';
+
   const line = {
     id: lineId,
+    prepState,
     ingredientId: ingredient.id ? String(ingredient.id) : undefined,
     fdcId: ingredient.fdcId || undefined,
     displayName: ingredient.name || lineDetails.name || 'Unnamed Ingredient',
@@ -253,8 +256,11 @@ export function adaptUsdaFood(usdaFood = {}, lineDetails = {}, explicitGi = null
 
   const sourceRetrievedAt = lineDetails.sourceRetrievedAt || usdaFood.sourceRetrievedAt || usdaFood.retrievedAt || undefined;
 
+  const prepState = lineDetails.prepState || 'raw';
+
   const line = {
     id: lineId,
+    prepState,
     ingredientId: undefined,
     fdcId: usdaFood.fdcId || undefined,
     displayName: usdaFood.description || lineDetails.name || 'USDA Ingredient',
@@ -340,8 +346,11 @@ export function adaptLegacyRecipeLine(rawLine = {}, resolveIngredient = null) {
   const fallbackLineId = hasExplicitLineId ? rawLine.id : (ingredientId ? 'line_unresolved_' + ingredientId : 'line_unresolved_unknown');
   const isFallbackId = !hasExplicitLineId;
 
+  const prepState = rawLine.prepState || 'raw';
+
   const fallbackLine = {
     id: fallbackLineId,
+    prepState,
     ingredientId: ingredientId ? String(ingredientId) : undefined,
     displayName: rawLine.name || rawLine.displayName || 'Unresolved Ingredient',
     quantity: isNaN(quantity) ? 0 : quantity,

@@ -364,6 +364,7 @@ export interface ProvenanceReadyRecipeIngredientLine {
   quantity: number;
   unit: string;
   normalizedGrams: number | null;
+  prepState?: string;
 
   source: IngredientProvenanceSource;
   sourceRetrievedAt?: string;
