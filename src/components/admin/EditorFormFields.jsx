@@ -1,7 +1,7 @@
 import React from 'react';
 import Input from '../ui/Input';
 import TagChip from '../ui/TagChip';
-import IngredientSelector from './IngredientSelector';
+import RecipeIngredientCanvas from '../recipe-builder/RecipeIngredientCanvas';
 import ImageUploader from './ImageUploader';
 
 /**
@@ -189,11 +189,9 @@ export const EditorFormFields = ({
         <div className="flex justify-between items-center px-1">
           <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Step 3 of 4</span>
         </div>
-        <IngredientSelector
-          ingredients={formData.ingredients || []}
+        <RecipeIngredientCanvas
+          lines={formData.ingredients || []}
           onChange={handleIngredientsChange}
-          onAdd={handleAddIngredientPlaceholder}
-          onRemove={handleRemoveIngredient}
         />
       </div>
 

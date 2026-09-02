@@ -6,6 +6,8 @@ import Button from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
 import { usePermissions } from '../hooks/usePermissions';
 import { saveRecipe, getRecipeById } from '../utils/recipeStore';
+import { adaptLegacyRecipeLine } from '../utils/provenanceAdapters';
+import { getIngredientById } from '../utils/ingredientStore';
 
 const DRAFT_SESSION_KEY = 'glyco_editor_draft_session';
 
@@ -94,7 +96,10 @@ export const AdminEditor = () => {
         servings: existing.servings || 1,
         imageUrl: existing.imageUrl || '',
         tags: existing.tags ?? [],
-        ingredients: existing.ingredients ?? [],
+        ingredients: (existing.ingredients ?? []).map((line) => {
+            if (line && line.source && line.validation) return line;
+            return adaptLegacyRecipeLine(line, (id) => getIngredientById(id));
+          }),
         steps: existing.steps && existing.steps.length > 0
           ? existing.steps
           : [{ id: 1, title: '', description: '', timer: '' }],
@@ -150,6 +155,14 @@ export const AdminEditor = () => {
     try {
       const finalId = editId || formData.id || generateRecipeId(formData.title);
       const nowIso = new Date().toISOString();
+      const serializedIngredients = (formData.ingredients || []).map((line) => ({
+        ...line,
+        ingredientId: line.ingredientId || (line.id?.startsWith('line_internal_') ? line.id.replace('line_internal_', '') : undefined),
+        amount: line.quantity ?? line.amount ?? 100,
+        unit: line.unit || 'g',
+        prepState: line.prepState || 'raw',
+      }));
+
       const newRecipe = {
         ...formData,
         id: finalId,
