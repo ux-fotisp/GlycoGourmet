@@ -17,6 +17,24 @@ export const REQUIRED_CORE_NUTRIENTS = [
   { key: 'fatG', label: 'Total Fat (g)' },
 ];
 
+const VOLUME_UNITS = [
+  'ml', 'milliliter', 'milliliters',
+  'l', 'liter', 'liters',
+  'cup', 'cups',
+  'tbsp', 'tablespoon', 'tablespoons',
+  'tsp', 'teaspoon', 'teaspoons',
+  'fl oz', 'floz',
+];
+
+const COUNT_UNITS = [
+  'piece', 'pieces',
+  'item', 'items',
+  'serving', 'servings',
+  'slice', 'slices',
+  'clove', 'cloves',
+  'bunch', 'bunches',
+];
+
 /**
  * Validates a single provenance-ready ingredient line item.
  *
@@ -42,7 +60,14 @@ export function validateIngredientLine(line) {
   // 2. Gram normalization validation
   const normalizedGrams = line.normalizedGrams;
   if (typeof normalizedGrams !== 'number' || !isFinite(normalizedGrams) || normalizedGrams <= 0) {
-    reasons.push('Cannot normalize unit to grams');
+    const u = String(line.unit || '').toLowerCase().trim();
+    if (VOLUME_UNITS.includes(u)) {
+      reasons.push('Volume unit requires ingredient-specific density');
+    } else if (COUNT_UNITS.includes(u)) {
+      reasons.push('Count unit requires ingredient-specific gram weight');
+    } else {
+      reasons.push('Cannot normalize unit to grams');
+    }
   }
 
   // 3. Core macronutrient presence
@@ -53,7 +78,7 @@ export function validateIngredientLine(line) {
     for (const nutrient of REQUIRED_CORE_NUTRIENTS) {
       const val = nutrition[nutrient.key];
       if (val === null || val === undefined || typeof val !== 'number' || !isFinite(val) || val < 0) {
-        reasons.push(`Missing required nutrient: ${nutrient.key}`);
+        reasons.push('Missing required nutrient: ' + nutrient.key);
       }
     }
   }
@@ -105,13 +130,13 @@ export function evaluateRecipeNutritionCompleteness(lines = []) {
     if (validation.status === 'incomplete') {
       missingNutritionLines.push(lineId);
       validation.reasons.forEach((reason) => {
-        warnings.push(`[${line?.displayName || lineId}]: ${reason}`);
+        warnings.push('[' + (line?.displayName || lineId) + ']: ' + reason);
       });
       continue;
     }
 
     if (validation.status === 'needs_review') {
-      warnings.push(`[${line?.displayName || lineId}]: Marked for review (${line.source})`);
+      warnings.push('[' + (line?.displayName || lineId) + ']: Marked for review (' + line.source + ')');
     }
 
     // Check Glycemic Index evidence for carbohydrate contributors
@@ -128,13 +153,13 @@ export function evaluateRecipeNutritionCompleteness(lines = []) {
       if (!hasValidGi) {
         missingGiLines.push(lineId);
         warnings.push(
-          `[${line?.displayName || lineId}]: Glycemic Index unavailable for carbohydrate-contributing ingredient (${carbs}g carbs/100g)`
+          '[' + (line?.displayName || lineId) + ']: Glycemic Index unavailable for carbohydrate-contributing ingredient (' + carbs + 'g carbs/100g)'
         );
       }
     } else {
       // Non-carb contributor: giEvidenceStatus can be 'not_applicable' or 'available'
       if (line.giEvidenceStatus === 'needs_review') {
-        warnings.push(`[${line?.displayName || lineId}]: Non-carb ingredient GI flagged for review`);
+        warnings.push('[' + (line?.displayName || lineId) + ']: Non-carb ingredient GI flagged for review');
       }
     }
   }

@@ -9,6 +9,8 @@
  * - Verification Rule: Internal ingredients require all 5 core nutrients to be "internal_verified".
  * - Missing Data is not Zero: Missing nutrient fields are preserved as null/undefined.
  * - No False GI: Missing GI is never coerced to 0 on carbohydrate contributors.
+ * - Non-fabrication of mass: Volume units require explicit densityGPerMl; count units require explicit pieceWeightG.
+ * - Determinism: Pure transformations with no Date.now(), new Date(), random values, or global state.
  * - Non-mutating: All transformation functions return fresh immutable objects.
  */
 
@@ -24,13 +26,19 @@ const FL_OZ_TO_ML = 29.5735;
 /**
  * Normalizes culinary amounts and units to grams.
  *
+ * Rules:
+ * 1. Mass units (g, mg, kg, oz, lb) normalize directly and deterministically.
+ * 2. Volume units (ml, l, cup, tbsp, tsp, fl oz) normalize ONLY when a valid densityGPerMl (> 0) is supplied.
+ * 3. Count units (piece, item, serving, slice, clove, bunch, etc.) normalize ONLY when a valid pieceWeightG (> 0) is supplied.
+ * 4. In all other cases (missing/invalid conversion metadata or unrecognized unit), returns null.
+ *
  * @param {number} quantity - Culinary amount
  * @param {string} unit - Measurement unit (g, oz, cup, tbsp, tsp, piece, etc.)
- * @param {number} [densityGPerMl=1.0] - Optional liquid/bulk density
- * @param {number} [pieceWeightG=100] - Optional weight per discrete piece/unit
+ * @param {number} [densityGPerMl] - Optional ingredient-specific liquid/bulk density in g/ml
+ * @param {number} [pieceWeightG] - Optional ingredient-specific weight per discrete unit in grams
  * @returns {number|null} - Normalized grams or null if unconvertible
  */
-export function normalizeUnitToGrams(quantity, unit, densityGPerMl = 1.0, pieceWeightG = 100) {
+export function normalizeUnitToGrams(quantity, unit, densityGPerMl, pieceWeightG) {
   const q = parseFloat(quantity);
   if (isNaN(q) || !isFinite(q) || q <= 0) {
     return null;
@@ -38,30 +46,39 @@ export function normalizeUnitToGrams(quantity, unit, densityGPerMl = 1.0, pieceW
 
   const u = String(unit || '').toLowerCase().trim();
 
-  // Metric mass
+  // 1. Metric mass (direct conversion)
   if (u === 'g' || u === 'gram' || u === 'grams') return q;
   if (u === 'mg' || u === 'milligram' || u === 'milligrams') return q / 1000;
   if (u === 'kg' || u === 'kilogram' || u === 'kilograms') return q * 1000;
 
-  // Imperial mass
+  // 2. Imperial mass (direct conversion)
   if (u === 'oz' || u === 'ounce' || u === 'ounces') return q * OZ_TO_G;
   if (u === 'lb' || u === 'lbs' || u === 'pound' || u === 'pounds') return q * LB_TO_G;
 
-  // Volume conversions (scaled by density)
-  const density = typeof densityGPerMl === 'number' && densityGPerMl > 0 ? densityGPerMl : 1.0;
-  if (u === 'ml' || u === 'milliliter' || u === 'milliliters') return q * density;
-  if (u === 'l' || u === 'liter' || u === 'liters') return q * 1000 * density;
-  if (u === 'cup' || u === 'cups') return q * CUP_TO_ML * density;
-  if (u === 'tbsp' || u === 'tablespoon' || u === 'tablespoons') return q * TBSP_TO_ML * density;
-  if (u === 'tsp' || u === 'teaspoon' || u === 'teaspoons') return q * TSP_TO_ML * density;
-  if (u === 'fl oz' || u === 'floz') return q * FL_OZ_TO_ML * density;
+  // 3. Volume conversions (requires explicit valid densityGPerMl)
+  const hasValidDensity = typeof densityGPerMl === 'number' && isFinite(densityGPerMl) && densityGPerMl > 0;
+  if (hasValidDensity) {
+    if (u === 'ml' || u === 'milliliter' || u === 'milliliters') return q * densityGPerMl;
+    if (u === 'l' || u === 'liter' || u === 'liters') return q * 1000 * densityGPerMl;
+    if (u === 'cup' || u === 'cups') return q * CUP_TO_ML * densityGPerMl;
+    if (u === 'tbsp' || u === 'tablespoon' || u === 'tablespoons') return q * TBSP_TO_ML * densityGPerMl;
+    if (u === 'tsp' || u === 'teaspoon' || u === 'teaspoons') return q * TSP_TO_ML * densityGPerMl;
+    if (u === 'fl oz' || u === 'floz') return q * FL_OZ_TO_ML * densityGPerMl;
+  }
 
-  // Discrete culinary counts with reference weights
-  if (u === 'clove' || u === 'cloves') return q * 3;
-  if (u === 'bunch' || u === 'bunches') return q * 30;
-  if (u === 'slice' || u === 'slices') return q * 30;
-  if (u === 'piece' || u === 'pieces' || u === 'item' || u === 'items' || u === 'serving' || u === 'servings') {
-    return q * (pieceWeightG > 0 ? pieceWeightG : 100);
+  // 4. Discrete culinary counts (requires explicit valid pieceWeightG)
+  const hasValidPieceWeight = typeof pieceWeightG === 'number' && isFinite(pieceWeightG) && pieceWeightG > 0;
+  if (hasValidPieceWeight) {
+    if (
+      u === 'piece' || u === 'pieces' ||
+      u === 'item' || u === 'items' ||
+      u === 'serving' || u === 'servings' ||
+      u === 'slice' || u === 'slices' ||
+      u === 'clove' || u === 'cloves' ||
+      u === 'bunch' || u === 'bunches'
+    ) {
+      return q * pieceWeightG;
+    }
   }
 
   return null;
@@ -95,8 +112,16 @@ function hasCompleteCoreNutrition(ing) {
 export function adaptInternalIngredient(ingredient = {}, lineDetails = {}) {
   const quantity = parseFloat(lineDetails.quantity ?? lineDetails.amount ?? ingredient.defaultAmount ?? 100);
   const unit = lineDetails.unit || ingredient.defaultUnit || 'g';
-  const pieceWeight = ingredient.defaultAmount && ingredient.defaultAmount > 0 ? ingredient.defaultAmount : 100;
-  const normalizedGrams = normalizeUnitToGrams(quantity, unit, 1.0, pieceWeight);
+
+  const density = typeof lineDetails.densityGPerMl === 'number' && lineDetails.densityGPerMl > 0
+    ? lineDetails.densityGPerMl
+    : (typeof ingredient.densityGPerMl === 'number' && ingredient.densityGPerMl > 0 ? ingredient.densityGPerMl : undefined);
+
+  const pieceWeight = typeof lineDetails.pieceWeightG === 'number' && lineDetails.pieceWeightG > 0
+    ? lineDetails.pieceWeightG
+    : (typeof ingredient.pieceWeightG === 'number' && ingredient.pieceWeightG > 0 ? ingredient.pieceWeightG : undefined);
+
+  const normalizedGrams = normalizeUnitToGrams(quantity, unit, density, pieceWeight);
 
   const isUserAuthored = Boolean(ingredient.isUserAuthored);
   const isCoreComplete = hasCompleteCoreNutrition(ingredient);
@@ -136,8 +161,11 @@ export function adaptInternalIngredient(ingredient = {}, lineDetails = {}) {
     sodiumMg: mapNutrientVal(ingredient.sodiumMg) ?? undefined,
   };
 
+  const lineId = lineDetails.id || (ingredient.id ? 'line_internal_' + ingredient.id : 'line_unidentified_internal');
+  const sourceRetrievedAt = lineDetails.sourceRetrievedAt || ingredient.sourceRetrievedAt || ingredient.updatedAt || undefined;
+
   const line = {
-    id: lineDetails.id || `line_${ingredient.id || 'ing'}_${Date.now()}`,
+    id: lineId,
     ingredientId: ingredient.id ? String(ingredient.id) : undefined,
     fdcId: ingredient.fdcId || undefined,
     displayName: ingredient.name || lineDetails.name || 'Unnamed Ingredient',
@@ -145,7 +173,7 @@ export function adaptInternalIngredient(ingredient = {}, lineDetails = {}) {
     unit,
     normalizedGrams,
     source,
-    sourceRetrievedAt: ingredient.updatedAt || undefined,
+    sourceRetrievedAt,
     sourceVersion: ingredient.version || '1.0',
     nutritionPer100g,
     glycemicIndex,
@@ -168,7 +196,16 @@ export function adaptInternalIngredient(ingredient = {}, lineDetails = {}) {
 export function adaptUsdaFood(usdaFood = {}, lineDetails = {}, explicitGi = null) {
   const quantity = parseFloat(lineDetails.quantity ?? lineDetails.amount ?? 100);
   const unit = lineDetails.unit || 'g';
-  const normalizedGrams = normalizeUnitToGrams(quantity, unit, 1.0, 100);
+
+  const density = typeof lineDetails.densityGPerMl === 'number' && lineDetails.densityGPerMl > 0
+    ? lineDetails.densityGPerMl
+    : (typeof usdaFood.densityGPerMl === 'number' && usdaFood.densityGPerMl > 0 ? usdaFood.densityGPerMl : undefined);
+
+  const pieceWeight = typeof lineDetails.pieceWeightG === 'number' && lineDetails.pieceWeightG > 0
+    ? lineDetails.pieceWeightG
+    : (typeof usdaFood.pieceWeightG === 'number' && usdaFood.pieceWeightG > 0 ? usdaFood.pieceWeightG : undefined);
+
+  const normalizedGrams = normalizeUnitToGrams(quantity, unit, density, pieceWeight);
 
   const carbs = typeof usdaFood.carbs === 'number' ? usdaFood.carbs : 0;
   const isCarbContributor = carbs > 0.5;
@@ -194,8 +231,11 @@ export function adaptUsdaFood(usdaFood = {}, lineDetails = {}, explicitGi = null
     sodiumMg: mapNutrientVal(usdaFood.sodiumMg) ?? undefined,
   };
 
+  const lineId = lineDetails.id || (usdaFood.fdcId ? 'line_usda_' + usdaFood.fdcId : 'line_unidentified_usda');
+  const sourceRetrievedAt = lineDetails.sourceRetrievedAt || usdaFood.sourceRetrievedAt || usdaFood.retrievedAt || undefined;
+
   const line = {
-    id: lineDetails.id || `line_usda_${usdaFood.fdcId || Date.now()}`,
+    id: lineId,
     ingredientId: undefined,
     fdcId: usdaFood.fdcId || undefined,
     displayName: usdaFood.description || lineDetails.name || 'USDA Ingredient',
@@ -203,7 +243,7 @@ export function adaptUsdaFood(usdaFood = {}, lineDetails = {}, explicitGi = null
     unit,
     normalizedGrams,
     source: 'usda_fooddata_central',
-    sourceRetrievedAt: new Date().toISOString(),
+    sourceRetrievedAt,
     sourceVersion: usdaFood.brandOwner || 'USDA FoodData Central',
     nutritionPer100g,
     glycemicIndex,
@@ -240,7 +280,7 @@ export function adaptCustomIngredient(customIngredient = {}, lineDetails = {}) {
 export function adaptLegacyRecipeLine(rawLine = {}, resolveIngredient = null) {
   if (!rawLine || typeof rawLine !== 'object') {
     return {
-      id: 'invalid-line',
+      id: 'line_unresolved_invalid',
       displayName: 'Invalid Line',
       quantity: 0,
       unit: 'g',
@@ -271,10 +311,14 @@ export function adaptLegacyRecipeLine(rawLine = {}, resolveIngredient = null) {
   // Fallback: unresolvable legacy line
   const quantity = parseFloat(rawLine.amount ?? rawLine.quantity ?? 0);
   const unit = rawLine.unit || 'g';
-  const normalizedGrams = normalizeUnitToGrams(quantity, unit);
+  const density = typeof rawLine.densityGPerMl === 'number' && rawLine.densityGPerMl > 0 ? rawLine.densityGPerMl : undefined;
+  const pieceWeight = typeof rawLine.pieceWeightG === 'number' && rawLine.pieceWeightG > 0 ? rawLine.pieceWeightG : undefined;
+  const normalizedGrams = normalizeUnitToGrams(quantity, unit, density, pieceWeight);
+
+  const fallbackLineId = rawLine.id || (ingredientId ? 'line_unresolved_' + ingredientId : 'line_unresolved_unknown');
 
   const fallbackLine = {
-    id: rawLine.id || `line_unresolved_${Date.now()}`,
+    id: fallbackLineId,
     ingredientId: ingredientId ? String(ingredientId) : undefined,
     displayName: rawLine.name || rawLine.displayName || 'Unresolved Ingredient',
     quantity: isNaN(quantity) ? 0 : quantity,
@@ -291,7 +335,6 @@ export function adaptLegacyRecipeLine(rawLine = {}, resolveIngredient = null) {
   return fallbackLine;
 }
 
-
 export const adaptInternalIngredientToProvenanceLine = adaptInternalIngredient;
 export const adaptUsdaResultToProvenanceLine = adaptUsdaFood;
 export const adaptCustomIngredientToProvenanceLine = adaptCustomIngredient;
@@ -303,4 +346,8 @@ export default {
   adaptUsdaFood,
   adaptCustomIngredient,
   adaptLegacyRecipeLine,
+  adaptInternalIngredientToProvenanceLine,
+  adaptUsdaResultToProvenanceLine,
+  adaptCustomIngredientToProvenanceLine,
+  adaptLegacyRecipeIngredientLine,
 };
