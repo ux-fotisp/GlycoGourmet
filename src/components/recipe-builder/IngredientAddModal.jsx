@@ -1,3 +1,4 @@
+import { useAuth } from '../../context/AuthContext';
 import React, { useState, useEffect, useRef } from 'react';
 import { getIngredientsRegistry, getCustomIngredients } from '../../utils/ingredientStore';
 import { searchUSDAFoods } from '../../services/usdaClient';
@@ -22,6 +23,7 @@ function generateLineId() {
  * IngredientAddModal — Accessible Multi-Source Ingredient Selection Dialog
  */
 export const IngredientAddModal = ({ isOpen, onClose, onSelect, triggerRef }) => {
+  const { user } = useAuth() || {};
   const [activeTab, setActiveTab] = useState('catalog'); // 'catalog' | 'usda' | 'custom'
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -84,7 +86,7 @@ export const IngredientAddModal = ({ isOpen, onClose, onSelect, triggerRef }) =>
   if (!isOpen) return null;
 
   const catalogIngredients = getIngredientsRegistry();
-  const customIngredients = getCustomIngredients();
+  const customIngredients = getCustomIngredients(user?.id);
 
   const filteredCatalog = catalogIngredients.filter((ing) => {
     const q = searchQuery.toLowerCase().trim();

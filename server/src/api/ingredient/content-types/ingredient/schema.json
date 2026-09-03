@@ -52,6 +52,35 @@
     },
     "lastSyncedAt": {
       "type": "datetime"
+    },
+    "isUserAuthored": {
+      "type": "boolean",
+      "default": false
+    },
+    "owner": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "category": {
+      "type": "string"
+    },
+    "defaultUnit": {
+      "type": "string",
+      "default": "g"
+    },
+    "defaultAmount": {
+      "type": "decimal",
+      "default": 100
+    },
+    "glycemicIndex": {
+      "type": "decimal"
+    },
+    "glycemicLoad": {
+      "type": "decimal"
+    },
+    "netCarbs": {
+      "type": "decimal"
     }
   }
 }

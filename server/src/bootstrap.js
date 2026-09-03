@@ -174,8 +174,25 @@ module.exports = async ({ strapi }) => {
       }
     } catch (_notifErr) {}
 
+    // 6. Backfill existing ingredients without isUserAuthored flag
+    try {
+      const ingredientsToBackfill = await strapi.entityService.findMany('api::ingredient.ingredient', {
+        filters: { isUserAuthored: { $null: true } },
+      });
+
+      if (Array.isArray(ingredientsToBackfill) && ingredientsToBackfill.length > 0) {
+        for (const ing of ingredientsToBackfill) {
+          await strapi.entityService.update('api::ingredient.ingredient', ing.id, {
+            data: { isUserAuthored: false, owner: null },
+          });
+        }
+        strapi.log?.info?.(`[Bootstrap] Backfilled ${ingredientsToBackfill.length} catalog ingredients as verified/system.`);
+      }
+    } catch (_ingErr) {}
+
     return defaultClinic;
   } catch (err) {
     strapi.log?.warn?.('[Bootstrap] Tenant backfill encountered non-critical error:', err);
   }
 };
+

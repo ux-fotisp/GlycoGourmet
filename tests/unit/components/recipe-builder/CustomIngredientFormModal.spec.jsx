@@ -37,7 +37,7 @@ describe('CustomIngredientFormModal — Patient-Safe Custom Ingredient Creation'
 
     // Disclaimer
     expect(
-      screen.getByText(/may be visible to other users of this catalog/i)
+      screen.getByText(/saved privately to your account and is only visible to you/i)
     ).toBeInTheDocument();
   });
 
@@ -495,7 +495,7 @@ describe('CustomIngredientFormModal — Patient-Safe Custom Ingredient Creation'
     expect(selectedLine.source).toBe('user_entered');
   });
 
-  it('13. Proves disclaimer text matches real unscoped catalog behavior with no false device-privacy claim', () => {
+  it('13. Proves disclaimer text matches real private user-scoped catalog behavior with truthful account privacy statement', () => {
     const { container } = render(
       <CustomIngredientFormModal
         isOpen={true}
@@ -508,7 +508,7 @@ describe('CustomIngredientFormModal — Patient-Safe Custom Ingredient Creation'
 
     // Truthful statement present
     expect(fullText).toContain(
-      "Note: This ingredient's nutrition values were entered by a user and have not been independently verified. It may be visible to other users of this catalog."
+      "Note: This custom ingredient is saved privately to your account and is only visible to you. Its nutrition values have not been independently verified."
     );
 
     // False claims absent

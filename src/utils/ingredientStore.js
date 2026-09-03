@@ -1336,8 +1336,15 @@ export function getIngredientById(id) {
   ) || null;
 }
 
-export function getCustomIngredients() {
-  return (getIngredientsRegistry() || []).filter(i => i.isUserAuthored);
+export function getCustomIngredients(userId = null) {
+  const registry = getIngredientsRegistry() || [];
+  return registry.filter((i) => {
+    if (!i.isUserAuthored) return false;
+    const itemOwner = i.owner?.id ?? i.owner ?? i.userId ?? i.ownerId ?? null;
+    if (!itemOwner) return true;
+    if (!userId) return false;
+    return String(itemOwner) === String(userId);
+  });
 }
 
 function normalizeIngredient(raw) {
@@ -1359,6 +1366,7 @@ function normalizeIngredient(raw) {
     defaultUnit: raw?.defaultUnit ?? 'g',
     defaultAmount: parseFloat(raw?.defaultAmount) || 100,
     isUserAuthored: raw?.isUserAuthored ?? true,
+    owner: raw?.owner?.id ?? raw?.owner ?? raw?.userId ?? raw?.ownerId ?? null,
     createdAt: raw?.createdAt ?? null,
     updatedAt: raw?.updatedAt ?? null,
     defaultPrepState: raw?.defaultPrepState ?? 'raw',
@@ -1458,7 +1466,7 @@ export function validateCustomIngredient(input) {
  * @param {object} rawInput
  * @returns {Promise<{ ok: boolean, ingredient: object|null, errors: string[]|null, warning: string|null }>}
  */
-export async function saveCustomIngredient(rawInput) {
+export async function saveCustomIngredient(rawInput, ownerId = null) {
   const validation = validateCustomIngredient(rawInput);
   if (!validation.valid) {
     return { ok: false, ingredient: null, errors: validation.errors, warning: null };
@@ -1479,12 +1487,15 @@ export async function saveCustomIngredient(rawInput) {
     warning = 'similar_to_system';
   }
 
+  const resolvedOwner = ownerId ?? rawInput.ownerId ?? rawInput.owner ?? null;
+
   const payload = {
     name: rawInput.name.trim().replace(/\s+/g, ' '),
     category: rawInput.category,
     defaultUnit: rawInput.defaultUnit,
     defaultAmount: parseFloat(rawInput.defaultAmount),
     isUserAuthored: true,
+    owner: resolvedOwner,
     kcal: parseFloat(rawInput.nutrition.kcal) || 0,
     protein: parseFloat(rawInput.nutrition.protein) || 0,
     fat: parseFloat(rawInput.nutrition.fat) || 0,
@@ -1497,11 +1508,14 @@ export async function saveCustomIngredient(rawInput) {
 
   try {
     const response = await strapiPost(COLLECTION, payload);
-    const normalized = normalizeIngredient(response);
+    const normalized = normalizeIngredient({ ...response, owner: resolvedOwner });
 
-    invalidateIngredientCache();
-    if (_registryCache) {
-      _registryCache.push(normalized);
+    const registry = getIngredientsRegistry();
+    const existingIdx = registry.findIndex((i) => String(i.id) === String(normalized.id));
+    if (existingIdx >= 0) {
+      registry[existingIdx] = normalized;
+    } else {
+      registry.push(normalized);
     }
 
     return { ok: true, ingredient: normalized, errors: null, warning };
@@ -1514,6 +1528,10 @@ export async function saveCustomIngredient(rawInput) {
 export function deleteCustomIngredient(id) {
   invalidateIngredientCache();
   return { ok: true };
+}
+
+export function setRegistryCache(items) {
+  _registryCache = items;
 }
 
 export function invalidateIngredientCache() {
