@@ -35,12 +35,18 @@ module.exports = async (policyContext, config, { strapi }) => {
   }
 
   // 3. Reject any non-clinic_admin role (dietitians, standard patients, etc. use their own policies)
-  if (user.roleType !== 'clinic_admin') {
+  // For api::clinic.clinic read queries, allow authenticated dietitians who belong to a clinic to read
+  const modelUid = config?.uid;
+  const isDietitianReadingClinic =
+    modelUid === 'api::clinic.clinic' &&
+    policyContext.request.method === 'GET' &&
+    user.roleType === 'dietitian';
+
+  if (user.roleType !== 'clinic_admin' && !isDietitianReadingClinic) {
     return false;
   }
 
   // 4. Hard PHI / Clinical Data Wall Check
-  const modelUid = config?.uid;
   if (modelUid && FORBIDDEN_CLINICAL_UIDS.includes(modelUid)) {
     // Zero access to clinical telemetry, calibration, or prescription tables
     return false;
@@ -95,7 +101,9 @@ module.exports = async (policyContext, config, { strapi }) => {
 
       // Check if the record belongs to the user's clinic tenant
       const recordClinicId =
-        existingRecord.clinic?.id || existingRecord.clinic || existingRecord.clinicId;
+        modelUid === 'api::clinic.clinic'
+          ? (existingRecord.id || existingRecord.slug)
+          : (existingRecord.clinic?.id || existingRecord.clinic || existingRecord.clinicId);
 
       if (String(recordClinicId) !== String(userClinicId)) {
         return false; // 403 Forbidden - Cross-tenant breach attempt

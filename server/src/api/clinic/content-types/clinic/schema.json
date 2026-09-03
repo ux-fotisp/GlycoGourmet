@@ -1,0 +1,59 @@
+{
+  "kind": "collectionType",
+  "collectionName": "clinics",
+  "info": {
+    "singularName": "clinic",
+    "pluralName": "clinics",
+    "displayName": "Clinic",
+    "description": "Tenant organization representing a clinical group practice or healthcare network"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true,
+      "unique": true
+    },
+    "tier": {
+      "type": "enumeration",
+      "enum": [
+        "INDEPENDENT",
+        "CLINIC_PRO",
+        "ENTERPRISE"
+      ],
+      "default": "INDEPENDENT",
+      "required": true
+    },
+    "totalSeats": {
+      "type": "integer",
+      "default": 5,
+      "required": true
+    },
+    "activeSeats": {
+      "type": "integer",
+      "default": 1,
+      "required": true
+    },
+    "dietitians": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "clinic"
+    },
+    "clients": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::client-profile.client-profile",
+      "mappedBy": "clinic"
+    }
+  }
+}
