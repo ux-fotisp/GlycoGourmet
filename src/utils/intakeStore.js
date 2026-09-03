@@ -163,6 +163,41 @@ const initStore = () => {
  * Retrieve all intake lead records for a given clinic.
  */
 export const getIntakeLeads = async (clinicId = 'clinic-glycemic-wellness') => {
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+    const res = await fetch('/api/intake-leads?populate=*', {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const rawLeads = data?.data;
+      if (Array.isArray(rawLeads) && rawLeads.length > 0) {
+        return rawLeads.map((item) => {
+          const attrs = item.attributes || item;
+          const assignedD = attrs.assignedDietitian?.data?.attributes || attrs.assignedDietitian;
+          return {
+            id: String(item.id || attrs.id),
+            clinicId: String(attrs.clinic?.data?.id || attrs.clinic?.id || attrs.clinic || clinicId),
+            referenceCode: attrs.referenceCode,
+            referralSource: attrs.referralSource,
+            serviceTier: attrs.serviceTier,
+            stage: attrs.stage,
+            stageReason: attrs.stageReason || '',
+            assignedDietitianId: assignedD ? String(assignedD.id || '') : null,
+            assignedDietitianName: attrs.assignedDietitianName || assignedD?.name || null,
+            createdAt: attrs.createdAt,
+            updatedAt: attrs.updatedAt,
+          };
+        });
+      }
+    }
+  } catch (_e) {
+    // Graceful offline fallback
+  }
+
   const leads = initStore();
   return leads.filter((l) => !clinicId || l.clinicId === clinicId);
 };

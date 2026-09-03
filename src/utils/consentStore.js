@@ -32,6 +32,51 @@ export const getAllConsents = () => {
 /**
  * Persists consent records to storage and emits change event
  */
+
+/**
+ * Asynchronously fetches live consent records from Strapi /api/consent-records
+ * and updates in-memory and local storage.
+ */
+export const fetchConsentsFromStrapi = async () => {
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+    const res = await fetch('/api/consent-records?populate=*', {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const rawRecords = data?.data;
+      if (Array.isArray(rawRecords)) {
+        const mapped = rawRecords.map((item) => {
+          const attrs = item.attributes || item;
+          return {
+            id: String(item.id || attrs.id),
+            grantorId: String(attrs.grantor?.data?.id || attrs.grantor?.id || attrs.grantorId || ''),
+            granteeId: attrs.granteeId || 'system',
+            clinicId: attrs.clinic?.data?.id || attrs.clinic?.id || attrs.clinicId || null,
+            purpose: attrs.purpose || '',
+            scope: Array.isArray(attrs.scope) ? attrs.scope : [],
+            version: attrs.version || '2.1',
+            status: attrs.status || 'active',
+            grantedAt: attrs.grantedAt || new Date().toISOString(),
+            expiresAt: attrs.expiresAt || null,
+            revokedAt: attrs.revokedAt || null,
+            metadata: attrs.metadata || {},
+          };
+        });
+        saveConsents(mapped);
+        return mapped;
+      }
+    }
+  } catch (_e) {
+    // Graceful offline fallback
+  }
+  return getAllConsents();
+};
+
 const saveConsents = (records) => {
   inMemoryStore = [...records];
   if (typeof localStorage !== 'undefined') {

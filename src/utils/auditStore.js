@@ -19,6 +19,54 @@ let inMemoryLogs = [];
 /**
  * Reads all audit log entries from storage.
  */
+
+/**
+ * Asynchronously fetches live audit logs from Strapi /api/audit-log-entries
+ * and updates in-memory and local storage.
+ */
+export const fetchAuditLogsFromStrapi = async () => {
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+    const res = await fetch('/api/audit-log-entries?populate=*', {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const rawRecords = data?.data;
+      if (Array.isArray(rawRecords)) {
+        const mapped = rawRecords.map((item) => {
+          const attrs = item.attributes || item;
+          return Object.freeze({
+            id: String(item.id || attrs.id),
+            actorId: attrs.actorId,
+            actorRole: attrs.actorRole || 'clinic_admin',
+            action: attrs.action,
+            entityId: attrs.entityId,
+            entityType: attrs.entityType || 'referral_lead',
+            suggestedValue: attrs.suggestedValue,
+            finalValue: attrs.finalValue,
+            note: attrs.note || '',
+            timestamp: attrs.timestamp || new Date().toISOString(),
+          });
+        });
+        inMemoryLogs = mapped;
+        if (typeof localStorage !== 'undefined') {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped));
+          } catch {}
+        }
+        return mapped;
+      }
+    }
+  } catch (_e) {
+    // Graceful offline fallback
+  }
+  return getAllAuditLogs();
+};
+
 export const getAllAuditLogs = () => {
   if (typeof localStorage === 'undefined') {
     return inMemoryLogs.map((entry) => Object.freeze({ ...entry }));

@@ -1,8 +1,9 @@
 'use strict';
 
 /**
- * Bootstrap migration script for Multi-Tenant Clinic Backend Foundation.
- * Ensures default clinic exists and backfills legacy dietitian users and client profiles.
+ * Bootstrap migration script for Multi-Tenant Clinic & Trust/Governance Backend.
+ * Ensures default clinic exists, backfills legacy dietitian users/client profiles,
+ * and seeds initial operational intake leads and default notification preferences.
  */
 module.exports = async ({ strapi }) => {
   if (!strapi || !strapi.entityService) return;
@@ -47,9 +48,7 @@ module.exports = async ({ strapi }) => {
         }
         strapi.log?.info?.(`[Bootstrap] Backfilled ${usersToBackfill.length} clinical users to default clinic.`);
       }
-    } catch (_userErr) {
-      // Gracefully continue if user table query fails
-    }
+    } catch (_userErr) {}
 
     // 3. Backfill existing client profiles without clinic relation
     try {
@@ -67,9 +66,113 @@ module.exports = async ({ strapi }) => {
         }
         strapi.log?.info?.(`[Bootstrap] Backfilled ${profilesToBackfill.length} client profiles to default clinic.`);
       }
-    } catch (_profileErr) {
-      // Gracefully continue if client-profile query fails
-    }
+    } catch (_profileErr) {}
+
+    // 4. Seed initial de-identified intake leads attached to default clinic if empty
+    try {
+      const existingLeads = await strapi.entityService.findMany('api::intake-lead.intake-lead', {
+        filters: { clinic: defaultClinic.id },
+      });
+
+      if (!existingLeads || existingLeads.length === 0) {
+        const INITIAL_LEADS = [
+          {
+            referenceCode: 'INT-1011',
+            referralSource: 'self_service_redirect',
+            serviceTier: 'FULL_CARE',
+            stage: 'Inquiry',
+            stageReason: 'Attempted contact',
+          },
+          {
+            referenceCode: 'INT-1012',
+            referralSource: 'gp_referral',
+            serviceTier: 'FULL_CARE',
+            stage: 'Contacted',
+            stageReason: 'Attempted contact',
+          },
+          {
+            referenceCode: 'INT-1013',
+            referralSource: 'campaign',
+            serviceTier: 'ONLINE_SESSION_ONLY',
+            stage: 'Intake Sent',
+            stageReason: 'Intake materials sent',
+          },
+          {
+            referenceCode: 'INT-1014',
+            referralSource: 'walk_in',
+            serviceTier: 'FULL_CARE',
+            stage: 'Scheduled',
+            stageReason: 'Appointment coordination',
+          },
+          {
+            referenceCode: 'INT-1015',
+            referralSource: 'patient_referral',
+            serviceTier: 'FULL_CARE',
+            stage: 'Active',
+            stageReason: 'Administrative follow-up',
+          },
+          {
+            referenceCode: 'INT-1016',
+            referralSource: 'self_service_redirect',
+            serviceTier: 'ONLINE_SESSION_ONLY',
+            stage: 'Lapsed',
+            stageReason: 'No response',
+          },
+          {
+            referenceCode: 'INT-1017',
+            referralSource: 'gp_referral',
+            serviceTier: 'FULL_CARE',
+            stage: 'Inquiry',
+            stageReason: 'Attempted contact',
+          },
+        ];
+
+        for (const lead of INITIAL_LEADS) {
+          await strapi.entityService.create('api::intake-lead.intake-lead', {
+            data: {
+              ...lead,
+              clinic: defaultClinic.id,
+            },
+          });
+        }
+        strapi.log?.info?.(`[Bootstrap] Seeded ${INITIAL_LEADS.length} initial operational intake leads.`);
+      }
+    } catch (_leadErr) {}
+
+    // 5. Seed default notification preferences for existing users without preferences
+    try {
+      const allUsers = await strapi.entityService.findMany('plugin::users-permissions.user', {});
+      if (Array.isArray(allUsers) && allUsers.length > 0) {
+        for (const u of allUsers) {
+          const userPrefs = await strapi.entityService.findMany('api::notification-preference.notification-preference', {
+            filters: { user: u.id },
+          });
+
+          if (!userPrefs || userPrefs.length === 0) {
+            await strapi.entityService.create('api::notification-preference.notification-preference', {
+              data: {
+                user: u.id,
+                category: 'care_reminders',
+                enabled: true,
+                quietHoursStart: '22:00',
+                quietHoursEnd: '07:00',
+                frequencyCap: 'weekly',
+              },
+            });
+            await strapi.entityService.create('api::notification-preference.notification-preference', {
+              data: {
+                user: u.id,
+                category: 'promoted_dietitians',
+                enabled: false,
+                quietHoursStart: '22:00',
+                quietHoursEnd: '07:00',
+                frequencyCap: 'weekly',
+              },
+            });
+          }
+        }
+      }
+    } catch (_notifErr) {}
 
     return defaultClinic;
   } catch (err) {
