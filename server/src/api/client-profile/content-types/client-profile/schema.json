@@ -1,4 +1,4 @@
-﻿{
+{
   "kind": "collectionType",
   "collectionName": "client_profiles",
   "info": {
@@ -26,7 +26,13 @@
     },
     "diabeticSubtype": {
       "type": "enumeration",
-      "enum": ["T1D", "T2D", "GDM", "Prediabetes", "InsulinResistance"],
+      "enum": [
+        "T1D",
+        "T2D",
+        "GDM",
+        "Prediabetes",
+        "InsulinResistance"
+      ],
       "required": true,
       "description": "Clinical diabetic classification for glycemic target calibration"
     },
@@ -36,10 +42,19 @@
     },
     "status": {
       "type": "enumeration",
-      "enum": ["active", "archived"],
+      "enum": [
+        "active",
+        "archived"
+      ],
       "default": "active",
       "required": true,
       "description": "Profile lifecycle status — archived profiles are read-only"
+    },
+    "clinic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::clinic.clinic",
+      "inversedBy": "clients"
     }
   }
 }

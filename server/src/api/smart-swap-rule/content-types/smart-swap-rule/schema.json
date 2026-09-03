@@ -1,4 +1,4 @@
-﻿{
+{
   "kind": "collectionType",
   "collectionName": "smart_swap_rules",
   "info": {
@@ -43,6 +43,21 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "description": "The dietitian who defined this swap rule"
+    },
+    "clinic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::clinic.clinic"
+    },
+    "sharingScope": {
+      "type": "enumeration",
+      "enum": [
+        "PRIVATE",
+        "CLINIC_SHARED"
+      ],
+      "default": "PRIVATE",
+      "required": true,
+      "description": "Asset visibility: PRIVATE to client or CLINIC_SHARED across practice dietitians"
     }
   }
 }

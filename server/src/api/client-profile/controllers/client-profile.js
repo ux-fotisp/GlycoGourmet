@@ -17,9 +17,15 @@ module.exports = createCoreController("api::client-profile.client-profile", ({ s
 
     // 2. Inject tenant isolation AFTER client-side sanitization (server enforced)
     if (user && user.roleType === "dietitian") {
+      const userClinicId =
+        user.clinicId ||
+        user.clinic?.id ||
+        (typeof user.clinic === "number" || typeof user.clinic === "string" ? user.clinic : null);
+
       sanitizedQuery.filters = {
         ...(sanitizedQuery.filters || {}),
         dietitian: user.id,
+        ...(userClinicId ? { clinic: userClinicId } : {}),
       };
     }
 
