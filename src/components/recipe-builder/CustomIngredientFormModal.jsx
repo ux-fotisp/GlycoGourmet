@@ -1,3 +1,4 @@
+import { useAuth } from '../../context/AuthContext';
 import React, { useState, useRef, useEffect, useId } from 'react';
 import {
   VALID_CATEGORIES,
@@ -52,6 +53,7 @@ export const CustomIngredientFormModal = ({
   onCreated,
   triggerRef,
 }) => {
+  const { user } = useAuth() || {};
   const baseId = useId();
   const modalRef = useRef(null);
   const nameInputRef = useRef(null);
@@ -228,7 +230,7 @@ export const CustomIngredientFormModal = ({
         },
       };
 
-      const result = await saveCustomIngredient(rawInput);
+      const result = await saveCustomIngredient(rawInput, user?.id);
       if (!result.ok || !result.ingredient) {
         setGlobalError(
           result.errors?.join(', ') || 'Failed to save custom ingredient.'
@@ -626,7 +628,7 @@ export const CustomIngredientFormModal = ({
               Data Scope & Provenance Note
             </span>
             <p>
-              Note: This ingredient's nutrition values were entered by a user and have not been independently verified. It may be visible to other users of this catalog.
+              Note: This custom ingredient is saved privately to your account and is only visible to you. Its nutrition values have not been independently verified.
             </p>
           </div>
 
