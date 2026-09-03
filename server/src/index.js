@@ -1,5 +1,7 @@
 'use strict';
 
+const bootstrapClinicTenant = require('./bootstrap');
+
 module.exports = {
   /**
    * An asynchronous register function that runs before
@@ -11,5 +13,9 @@ module.exports = {
    * An asynchronous bootstrap function that runs before
    * your application gets started.
    */
-  bootstrap(/*{ strapi }*/) {},
+  async bootstrap({ strapi }) {
+    if (bootstrapClinicTenant) {
+      await bootstrapClinicTenant({ strapi });
+    }
+  },
 };
