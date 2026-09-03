@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getIngredientsRegistry, getCustomIngredients } from '../../utils/ingredientStore';
 import { searchUSDAFoods } from '../../services/usdaClient';
+import CustomIngredientFormModal from './CustomIngredientFormModal';
 import {
   adaptInternalIngredient,
   adaptUsdaFood,
@@ -23,6 +24,8 @@ function generateLineId() {
 export const IngredientAddModal = ({ isOpen, onClose, onSelect, triggerRef }) => {
   const [activeTab, setActiveTab] = useState('catalog'); // 'catalog' | 'usda' | 'custom'
   const [searchQuery, setSearchQuery] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const createCustomBtnRef = useRef(null);
 
   // USDA search state
   const [usdaResults, setUsdaResults] = useState([]);
@@ -330,19 +333,36 @@ export const IngredientAddModal = ({ isOpen, onClose, onSelect, triggerRef }) =>
           </div>
         )}
 
-        {/* Tab 3: User-Entered Custom (Read-Only Selection from Existing) */}
+        {/* Tab 3: User-Entered Custom */}
         {activeTab === 'custom' && (
           <div className="px-6 space-y-3 flex-1 overflow-y-auto">
+            {/* Action header to create new custom ingredient */}
+            <div className="flex flex-wrap justify-between items-center bg-surface-container-low/60 p-3 rounded-xl border border-outline-variant/20 gap-2">
+              <div>
+                <p className="text-xs font-bold text-on-surface">Custom User Ingredients</p>
+                <p className="text-[11px] text-on-surface-variant">Create and select user-entered ingredients with complete nutrition.</p>
+              </div>
+              <button
+                ref={createCustomBtnRef}
+                type="button"
+                onClick={() => setIsCreateModalOpen(true)}
+                className="px-3.5 py-1.5 rounded-xl bg-primary text-on-primary font-bold text-xs hover:bg-primary-container transition-all cursor-pointer flex items-center gap-1.5 shadow-xs shrink-0"
+              >
+                <span className="material-symbols-outlined text-[16px]">add_circle</span>
+                Create New Custom Ingredient
+              </button>
+            </div>
+
             {customIngredients.length === 0 ? (
-              <div data-testid="custom-empty-state" className="py-12 text-center text-on-surface-variant space-y-2">
+              <div data-testid="custom-empty-state" className="py-10 text-center text-on-surface-variant space-y-2">
                 <span className="material-symbols-outlined text-[36px] opacity-40">assignment_late</span>
                 <p className="text-xs font-semibold">You haven't added any custom ingredients yet.</p>
-                <p className="text-[11px] text-on-surface-variant/80">
-                  Custom ingredients previously saved to your local storage will appear here for easy private recipe formulation.
+                <p className="text-[11px] text-on-surface-variant/80 max-w-sm mx-auto">
+                  Click "Create New Custom Ingredient" above to enter nutrition facts from your package label.
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[45vh] overflow-y-auto pr-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[40vh] overflow-y-auto pr-1">
                 {customIngredients.map((ing) => (
                   <div
                     key={ing.id}
@@ -380,6 +400,17 @@ export const IngredientAddModal = ({ isOpen, onClose, onSelect, triggerRef }) =>
           </button>
         </div>
       </div>
+
+      {/* Patient-Safe Custom Ingredient Creation Modal */}
+      <CustomIngredientFormModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreated={(adaptedLine) => {
+          setIsCreateModalOpen(false);
+          onSelect(adaptedLine);
+        }}
+        triggerRef={createCustomBtnRef}
+      />
     </div>
   );
 };
