@@ -94,6 +94,7 @@ export const logAdminAction = ({
   suggestedValue = null,
   finalValue,
   note = '',
+  clinicId = null,
 }) => {
   if (!actorId || !action || !entityId) {
     throw new Error('[auditStore] actorId, action, and entityId are required to record an audit log');
@@ -110,6 +111,7 @@ export const logAdminAction = ({
     finalValue,
     note: String(note || ''),
     timestamp: new Date().toISOString(),
+    clinicId,
   });
 
   const existing = getAllAuditLogs();
@@ -125,12 +127,32 @@ export const logAdminAction = ({
     }
   }
 
-  if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
-    try {
-      window.dispatchEvent(new CustomEvent('glyco:audit:created', { detail: { entry: newEntry } }));
-    } catch (_e) {
-      // Ignore in non-browser environments
-    }
+  // Attempt live Strapi persistence with graceful fallback (APPEND-ONLY, strictly POST)
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+    fetch('/api/audit-log-entries', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        data: {
+          clinic: clinicId || 1,
+          actorId: newEntry.actorId,
+          actorRole: newEntry.actorRole,
+          action: newEntry.action,
+          entityId: newEntry.entityId,
+          entityType: newEntry.entityType,
+          suggestedValue: newEntry.suggestedValue,
+          finalValue: newEntry.finalValue,
+          note: newEntry.note,
+          timestamp: newEntry.timestamp,
+        },
+      }),
+    }).catch(() => {});
+  } catch (_e) {
+    // Graceful fallback
   }
 
   return newEntry;

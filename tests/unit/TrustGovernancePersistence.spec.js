@@ -1,3 +1,6 @@
+import { grantConsent } from '../../src/utils/consentStore.js';
+import { logAdminAction } from '../../src/utils/auditStore.js';
+import { updateLeadStage } from '../../src/utils/intakeStore.js';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
@@ -426,6 +429,148 @@ describe('Trust & Governance Backend Persistence — Gap-Closure Chunk 2', () =>
       expect(Array.isArray(leads)).toBe(true);
       expect(leads.length).toBeGreaterThanOrEqual(1);
       expect(leads[0].clinicId).toBe('clinic-glycemic-wellness');
+    });
+  });
+
+  describe('8. Write-Path Persistence & Silent-Revert Regression Closure', () => {
+    beforeEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('updateLeadStage attempts a network PUT call with correct endpoint and payload when fetch succeeds', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ data: { id: 1011 } }),
+      });
+
+      const updated = await updateLeadStage('intake_1011', 'Contacted', 'Attempted contact', 'admin_konstantina');
+      expect(updated.stage).toBe('Contacted');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/intake-leads/intake_1011',
+        expect.objectContaining({
+          method: 'PUT',
+          headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
+          body: expect.stringContaining('"stage":"Contacted"'),
+        })
+      );
+    });
+
+    it('updateLeadStage still succeeds with local-only behavior when network fails', async () => {
+      global.fetch = vi.fn().mockRejectedValue(new Error('Network offline'));
+
+      const updated = await updateLeadStage('intake_1012', 'Scheduled', 'Appointment coordination', 'admin_konstantina');
+      expect(updated.stage).toBe('Scheduled');
+      expect(updated.stageReason).toBe('Appointment coordination');
+    });
+
+    it('grantConsent attempts a network POST to /api/consent-records when available', () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ data: { id: 77 } }),
+      });
+
+      const record = grantConsent({
+        grantorId: 'patient_99',
+        granteeId: 'clinic_wellness',
+        purpose: 'Care Coordination',
+        scope: ['intake_redirect'],
+      });
+
+      expect(record.grantorId).toBe('patient_99');
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/consent-records',
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
+          body: expect.stringContaining('"purpose":"Care Coordination"'),
+        })
+      );
+    });
+
+    it('logAdminAction attempts a network POST to /api/audit-log-entries and never attempts PUT/DELETE', () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ data: { id: 88 } }),
+      });
+
+      const entry = logAdminAction({
+        actorId: 'admin_konstantina',
+        action: 'intake_stage_changed',
+        entityId: 'INT-1011',
+        entityType: 'referral_lead',
+        finalValue: 'Contacted',
+      });
+
+      expect(entry.action).toBe('intake_stage_changed');
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/audit-log-entries',
+        expect.objectContaining({
+          method: 'POST',
+          body: expect.stringContaining('"action":"intake_stage_changed"'),
+        })
+      );
+
+      // Verify no PUT or DELETE call was made
+      const calls = global.fetch.mock.calls;
+      const invalidMethods = calls.filter((c) => c[1]?.method === 'PUT' || c[1]?.method === 'DELETE');
+      expect(invalidMethods).toHaveLength(0);
+    });
+
+    it('reproduces and proves closure of silent-revert bug: updateLeadStage followed by getIntakeLeads reflects mutation from Strapi', async () => {
+      // Mock Strapi state storing lead records
+      const strapiLeadStore = {
+        'intake_1013': {
+          id: 'intake_1013',
+          referenceCode: 'INT-1013',
+          referralSource: 'campaign',
+          serviceTier: 'ONLINE_SESSION_ONLY',
+          stage: 'Intake Sent',
+          stageReason: 'Intake materials sent',
+          assignedDietitian: null,
+          clinic: { id: 'clinic-glycemic-wellness' },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      };
+
+      global.fetch = vi.fn().mockImplementation(async (url, options) => {
+        if (options?.method === 'PUT' && url.includes('/api/intake-leads/intake_1013')) {
+          const body = JSON.parse(options.body);
+          strapiLeadStore['intake_1013'].stage = body.data.stage;
+          strapiLeadStore['intake_1013'].stageReason = body.data.stageReason;
+          strapiLeadStore['intake_1013'].updatedAt = new Date().toISOString();
+          return {
+            ok: true,
+            json: async () => ({ data: { id: 'intake_1013', attributes: strapiLeadStore['intake_1013'] } }),
+          };
+        }
+        if (!options?.method || options?.method === 'GET') {
+          return {
+            ok: true,
+            json: async () => ({
+              data: Object.values(strapiLeadStore).map((l) => ({
+                id: l.id,
+                attributes: l,
+              })),
+            }),
+          };
+        }
+        return { ok: true, json: async () => ({}) };
+      });
+
+      // 1. Clinic Admin executes updateLeadStage from 'Intake Sent' to 'Scheduled'
+      const updated = await updateLeadStage('intake_1013', 'Scheduled', 'Appointment coordination', 'admin_konstantina');
+      expect(updated.stage).toBe('Scheduled');
+
+      // 2. Next board reload / refresh queries getIntakeLeads()
+      const refreshedLeads = await getIntakeLeads('clinic-glycemic-wellness');
+      const targetLead = refreshedLeads.find((l) => l.referenceCode === 'INT-1013' || l.id === 'intake_1013');
+
+      // 3. Proves silent-revert bug is CLOSED: stage remains 'Scheduled' (not reverted to 'Intake Sent')
+      expect(targetLead).toBeDefined();
+      expect(targetLead.stage).toBe('Scheduled');
+      expect(targetLead.stageReason).toBe('Appointment coordination');
     });
   });
 });
