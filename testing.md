@@ -164,7 +164,11 @@ Test suites must rigorously validate the metabolic math engine against five phys
 | **Unit: Tenant Scoping - Permits Admin Cross-Tenant Access** | `unit` | `tests/unit/TenantScoping.spec.js` | ✅ Passed |
 | **Unit: Tenant Scoping - Controller Override Injects Dietitian Filter** | `unit` | `tests/unit/TenantScopingController.spec.js` | ✅ Passed |
 | **Unit: Tenant Scoping - Returns 404 on Cross-Tenant Entity Access** | `unit` | `tests/unit/TenantScopingController.spec.js` | ✅ Passed |
-| **Component & Store Suites in `src/` (35 test suites)** | `unit` | `src/**/*.test.{js,jsx}` | ✅ 225 Passed |
+| **Unit: Clinic Admin Permissions - Non-Clinical Role & PHI Gating** | `unit` | `tests/unit/ClinicAdminPermissions.spec.js` | ✅ 8 Passed |
+| **Unit: Clinic Multi-Tenant Scoping - Isolation & Roster Boundaries** | `unit` | `tests/unit/ClinicTenantScoping.spec.js` | ✅ 18 Passed |
+| **Unit: Trust & Governance - Two-Tier Persistence & Append-Only Audit** | `unit` | `tests/unit/TrustGovernancePersistence.spec.js` | ✅ 21 Passed |
+| **Unit: Custom Ingredient Ownership - Default-Deny Scoping & 404 Concealment** | `unit` | `tests/unit/CustomIngredientOwnership.spec.js` | ✅ 16 Passed |
+| **Full Vitest Verification Suite (68 test files)** | `unit / integ` | `src/**/*.test.{js,jsx}`, `tests/**/*.spec.{js,ts,jsx}` | ✅ 690 Passed |
 
 ---
 

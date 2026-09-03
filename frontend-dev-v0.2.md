@@ -21,6 +21,17 @@
 | `usePermissions.js` | — | Resolves `roleType`, `clinicId`, `clinicTier` | RBAC hook |
 | `is-dietitian-owner.js` | backend policy | Tenant isolation — dietitians see only their own clients | Server-side enforcement |
 | `exportPipeline.js` | — | `generateGroceryManifest`, `generateClinicalSummaryReport`, `exportFHIRMetabolicTelemetry` | Fully wired to UI |
+| `IntakePipelineBoard` | `src/components/clinic-admin/` | 6-stage operational intake pipeline board | De-identified, non-clinical |
+| `PHIBoundaryBanner` | `src/components/clinic-admin/` | Persistent non-dismissible operational boundary indicator | Enforces non-clinical wall |
+| `EscalationFlagControl` | `src/components/clinic-admin/` | Contests system suggestions with immutable audit logging | Human-in-command |
+| `ConsentStatusBadge` | `src/components/clinic-admin/` | Read-only consent status badge (e.g. "Consented v2.1") | Zero clinical content exposed |
+| `WhyAmISeeingThisPanel` | `src/components/patient/` | Plain-language explainability disclosure for suggestions | Non-algorithmic disclosure |
+| `ConsentPermissionsDashboard` | `src/components/patient/` | Lists active consents with one-click revocation | Patient-controlled |
+| `RedirectNudgeCard` | `src/components/patient/` | Non-punitive dietitian consultation nudge | Patient role allow-list gated |
+| `NotificationGovernancePanel` | `src/components/patient/` | Independent toggles for care reminders vs promotions | Quiet hours & frequency caps |
+| `RecipeIngredientCanvas` | `src/components/recipe-builder/` | Multi-source ingredient builder canvas | Accessible move/remove controls |
+| `CustomIngredientFormModal` | `src/components/recipe-builder/` | Patient-safe custom ingredient creation form | Private account-scoped (PR #22) |
+| `RecipeNutritionSummary` | `src/components/recipe-builder/` | Live composite GL and macronutrient rollup | Honest completeness states |
 
 ## 2. Testing Conventions (Built)
 
@@ -36,36 +47,21 @@
 
 ---
 
-## 4. Dream — New Components Required for UXartifact_v0.2
+## 4. Remaining Backlog & Future Components
 
 | Component | Proposed path | Purpose | Persona |
 |---|---|---|---|
-| `ReferralSourceTracker` | `src/components/clinic-admin/` | Logs lead source (GP referral, ad, walk-in, patient referral) | Konstantina |
-| `IntakePipelineBoard` | `src/components/clinic-admin/` | Kanban: Inquiry → Contacted → Intake Sent → Scheduled → Active → Lapsed | Konstantina |
-| `SessionRequestQueue` | `src/components/clinic-admin/` | Tier B (online-session-only) request management, separate from full roster | Konstantina |
-| `DietitianDirectory` | `src/components/clinic-admin/` | Filterable/sortable listing by specialty + capacity — explicitly list UI, not swipe/card | Konstantina, Patient |
+| `ReferralSourceTracker` | `src/components/clinic-admin/` | Attribution reporting over de-identified intake lead records | Konstantina |
+| `SessionRequestQueue` | `src/components/clinic-admin/` | Dedicated UI queue for ad-hoc consultation triage | Konstantina |
+| `DietitianDirectory` | `src/components/clinic-admin/` | Filterable/sortable directory by specialty + capacity (non-algorithmic) | Konstantina, Patient |
 | `PromotionConfigPanel` | `src/components/clinic-admin/` | Configures promoted-dietitian notifications, logs criteria used | Konstantina |
-| `PHIBoundaryBanner` | `src/components/clinic-admin/` | Persistent banner on `ClinicDashboard.jsx`: "You are viewing intake/assignment data only" | Konstantina |
-| `EscalationFlagControl` | `src/components/clinic-admin/` | Lets Konstantina flag a system suggestion as wrong, feeds review queue, no penalty | Konstantina |
-| `ConsentStatusBadge` | `src/components/clinic-admin/` | Read-only badge ("Consented v2.1, 08/30/2026") visible to Konstantina, no clinical content | Konstantina |
-| `WhyAmISeeingThisPanel` | `src/components/patient/` | Explainability panel for redirect nudges — plain-language signal disclosure | Fotis |
-| `ConsentPermissionsDashboard` | `src/components/patient/` | Lists every active consent grant, last-accessed date, destination; one-click revoke | Fotis |
-| `RedirectNudgeCard` | `src/components/patient/` | Non-punitive, augmentation-framed suggestion to consult a dietitian | Fotis |
-| `NotificationGovernancePanel` | `src/components/patient/` | Split toggles: care reminders vs. promoted-dietitian nudges, quiet hours, frequency caps | Fotis |
 
-### 4.1 Extensions to Existing Components
+### 4.1 Completed Extensions (Delivered in PR #11–#14, #20–#22)
 
-- `NotificationOptIn.jsx` → must branch into two independently toggleable categories instead of one binary opt-in.
-- `notificationEngine.ts` → add `scheduleMealTimingReminder` alongside existing `scheduleBolusReminder`; add `sendPromotedDietitianNotification` with criteria-logging hook.
-- `ClinicDashboard.jsx` → embed `PHIBoundaryBanner` and new funnel-analytics widget (inquiries → intake completed → converted → churned).
-- `clientStore.js` → add `specialties[]` array to dietitian records; add `serviceTier` field to client records.
-- `usePermissions.js` → add `canManageIntakePipeline`, `canAssignDietitian`, `canConfigurePromotions` flags scoped to `clinic_admin`/`admin` only — never granted `canViewClinicalRecords`.
-
-### 4.2 New State/Data Objects
-
-- `ConsentRecord` — `{ grantorId, granteeId, purpose, scope[], version, expiresAt, revokedAt }`
-- `AuditLogEntry` — `{ actorId, actorRole, action, suggestedValue, finalValue, note, timestamp }`
-- `NotificationPreference` — `{ userId, category: 'care_reminder' | 'promoted_dietitian', enabled, quietHours, frequencyCap }`
+- `usePermissions.js`: Added `canManageIntakePipeline`, `canAssignDietitian`, `canConfigurePromotions`, and `canManageClinic` flags scoped to `clinic_admin` and administrative roles; strictly excluded `clinic_admin` from clinical PHI.
+- `NotificationOptIn.jsx`: Clinical pre-meal bolus reminder opt-in; deep links to `/#/settings/notifications` for category governance.
+- `ClinicDashboard.jsx`: Embeds persistent `PHIBoundaryBanner` and intake lead pipeline management.
+- State objects `ConsentRecord`, `AuditLogEntry`, `NotificationPreference`, and `IntakeLead` fully backed by Strapi collections with offline-resilient local sync.
 
 ### 4.3 New Test Coverage Required
 

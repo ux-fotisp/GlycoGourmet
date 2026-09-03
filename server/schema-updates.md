@@ -148,10 +148,30 @@ To support multi-tenant clinic administration and hospital network deployments, 
 
 ---
 
-## 7. Migration & Scoping Middleware Policy
+## 7. Migration & Scoping Middleware Policy (Updated in Gap-Closure Chunk 1)
 
-1. **Automatic Tenant Ingestion**: On `find` / `findOne` / `create` / `update` requests for clinical endpoints (`/api/client-profiles`, `/api/prescribed-meal-plans`, `/api/smart-swap-rules`), Strapi policy middleware checks `ctx.state.user.clinic.id`.
-2. **Cross-Roster Scoping**:
-   - `dietitian`: Filter `where: { dietitian: ctx.state.user.id, clinic: ctx.state.user.clinic.id }`
-   - `clinic_admin`: Filter `where: { clinic: ctx.state.user.clinic.id }`
-   - `super_admin`: Bypass tenant filter.
+1. **Automatic Tenant Ingestion**: On `find` / `findOne` / `create` / `update` requests, Strapi policy middleware resolves `ctx.state.user.clinic.id` for tenant filtering.
+2. **Strict Clinical PHI Boundary (`is-clinic-admin.js`)**:
+   - `clinic_admin`: **Strictly blocked** from clinical endpoints (`client-profile`, `prescribed-meal-plan`, `metabolic-target-calibration`, `smart-swap-rule`) via `FORBIDDEN_CLINICAL_UIDS`. Yields `403 Forbidden`. `clinic_admin` has zero clinical telemetry access.
+   - `dietitian`: Scoped to assigned clients via `is-dietitian-owner.js`: `where: { dietitian: ctx.state.user.id, clinic: ctx.state.user.clinic.id }`.
+   - `super_admin`: Bypasses tenant filters.
+3. **Non-Clinical Operational Scoping**:
+   - For non-clinical collections (`api::intake-lead`, `api::audit-log-entry`, `api::consent-record`, `api::clinic`), `clinic_admin` is filtered strictly to their own tenant (`where: { clinic: ctx.state.user.clinic.id }`).
+
+---
+
+## 8. Gap-Closure Chunk 2: Trust & Governance Persistence Collections
+
+- **`api::consent-record`**: Layered patient consent tracking (`grantor` rel user, `clinic` rel clinic, `purpose`, `scope` json, `version`, `status`, `grantedAt`, `expiresAt`, `revokedAt`, `metadata` json). Controller enforces consent scope allow-list (`intake_redirect`).
+- **`api::audit-log-entry`**: Append-only operational audit log (`clinic` rel clinic, `actor` rel user, `actorId`, `actorRole`, `action`, `entityId`, `entityType`, `suggestedValue`, `finalValue`, `note`, `timestamp`). Update and delete handlers return `405 Method Not Allowed`.
+- **`api::notification-preference`**: Split-channel notification preferences (`user` rel user, `category`, `enabled`, `quietHoursStart`, `quietHoursEnd`, `frequencyCap`).
+- **`api::intake-lead`**: De-identified intake leads (`clinic` rel clinic, `referenceCode` unique, `referralSource`, `serviceTier`, `stage`, `stageReason`, `assignedDietitian`, `assignedDietitianName`).
+
+---
+
+## 9. Gap-Closure Chunk 3: Custom Ingredient Ownership Scoping
+
+- **`api::ingredient` Ownership Attributes**:
+  - `isUserAuthored` (`boolean`, default `false`)
+  - `owner` (`relation`, `manyToOne` → `plugin::users-permissions.user`)
+- **Scoping Invariant**: Controller enforces default-deny visibility on user-authored items (`isUserAuthored === true`). Non-owner queries on private custom ingredients yield `404 Not Found` (existence concealment).
