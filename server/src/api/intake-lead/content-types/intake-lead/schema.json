@@ -1,0 +1,74 @@
+{
+  "kind": "collectionType",
+  "collectionName": "intake_leads",
+  "info": {
+    "singularName": "intake-lead",
+    "pluralName": "intake-leads",
+    "displayName": "Intake Lead",
+    "description": "De-identified operational intake and referral tracking record for Clinic Administrators"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "clinic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::clinic.clinic",
+      "required": true,
+      "description": "Tenant clinic boundary"
+    },
+    "referenceCode": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "description": "De-identified reference code (e.g. INT-1011)"
+    },
+    "referralSource": {
+      "type": "enumeration",
+      "enum": [
+        "gp_referral",
+        "self_service_redirect",
+        "campaign",
+        "walk_in",
+        "patient_referral"
+      ],
+      "required": true
+    },
+    "serviceTier": {
+      "type": "enumeration",
+      "enum": [
+        "FULL_CARE",
+        "ONLINE_SESSION_ONLY"
+      ],
+      "default": "FULL_CARE",
+      "required": true
+    },
+    "stage": {
+      "type": "enumeration",
+      "enum": [
+        "Inquiry",
+        "Contacted",
+        "Intake Sent",
+        "Scheduled",
+        "Active",
+        "Lapsed"
+      ],
+      "default": "Inquiry",
+      "required": true
+    },
+    "stageReason": {
+      "type": "string"
+    },
+    "assignedDietitian": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "description": "Assigned dietitian from practice roster"
+    },
+    "assignedDietitianName": {
+      "type": "string"
+    }
+  }
+}
