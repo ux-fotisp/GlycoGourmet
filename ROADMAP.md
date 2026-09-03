@@ -32,7 +32,7 @@ Adapts platform capabilities to real-world private clinic workflows (e.g., Greek
   - `PHIBoundaryBanner`: persistent, non-dismissible Clinic Admin operational boundary notice.
   - `EscalationFlagControl`: human-in-command escalation of operational suggestions with immutable audit logging, no auto-changes.
   - `WhyAmISeeingThisPanel`: patient-facing, non-algorithmic explainability panel with controlled non-clinical category labels (`care_reminder`, `self_service_nudge`, `promoted_dietitian`).
-  - `RedirectNudgeCard`: non-punitive, dismissible dietitian-support nudge, gated by a **strict patient-role allow-list** (`user`, `patient`); unknown/missing/administrative/clinical roles fail closed.
+  - `RedirectNudgeCard`: non-punitive, dismissible dietitian-support nudge, gated by a **strict patient-role allow-list** (`user`, `patient`); unknown/missing/administrative/clinical roles fail closed. Extended in Phase 7 / Chunk 5 with a backwards-compatible `actionLabel` prop for context-specific call-to-action copy.
 * **Clinic Intake Pipeline Board** `[PR #14 | Merged to master]`
   - `IntakePipelineBoard` and `IntakeLeadCard`: 6-stage lifecycle (`Inquiry` → `Contacted` → `Intake Sent` → `Scheduled` → `Active` → `Lapsed`) with explicit, keyboard-accessible stage controls (no drag-and-drop, no auto-advance).
   - De-identified operational data model (`intakeStore.js`) using neutral reference codes (e.g. `INT-1011`); zero patient identifiers or clinical telemetry in store, UI, or audit logs.
@@ -52,27 +52,43 @@ Adapts platform capabilities to real-world private clinic workflows (e.g., Greek
 * **Trust & Governance Data Architecture (Backend Persistence)** `[Konstantina / Fotis | Dep: Strapi CMS]`
   - Migrate the currently local/browser-store trust and operational domains (`ConsentRecord`, `AuditLogEntry`, `NotificationPreference`, `ReferralLead`/intake records) into isolated Strapi content types and policies, physically separated from clinical telemetry tables.
   - Policy enforcement via `is-clinic-admin-owner.js` and strict exclusion from the HL7 FHIR export pipeline (`exportFHIRMetabolicTelemetry`).
+  - **Known limitation surfaced during Phase 7 / Chunk 4:** the existing `ingredientStore.js` custom-ingredient collection (`saveCustomIngredient` / `getCustomIngredients`) has no per-user ownership scoping — custom ingredients are visible catalog-wide to all users, not private to their creator. Any future ownership-scoping work on `ingredientStore.js` should be evaluated alongside this backend persistence effort.
 * **Trust Verification Suite & CI Quality Gate** `[QA / Systems | Dep: Playwright Matrix]`
   - Automated test classes covering audit log immutability, consent gating E2E, PHI wall isolation, notification governance, escalation flows, and non-punitive UI copy linting.
   - **CI Gate 4.5 (`npm run test:trust`):** Automated verification asserting PHI isolation walls and consent gates prior to E2E execution.
 * **Documentation Consolidation** `[Systems | Dep: none]`
   - Merge `-v0.2` artifacts (`IA-v0.2.md`, `PRD-v0.2.md`, `frontend-dev-v0.2.md`, `testing-standards-v0.2.md`, `architecture-v0.2.md`) into the canonical docs (`information_architecture.md`, `frontend_dev.md`, `testing.md`, `backend_dev.md`) and append a Section 9 precedence protocol to `agentic.md`.
 
-## Phase 7: Self-Service Recipe Authoring & Nutrition Provenance (NEW)
-Gives patients (Fotis) a traceable, deterministic recipe-authoring workflow grounded in verified ingredient data, explicitly distinguishing calculated nutrition estimates from clinical advice. Builds on the existing USDA FoodData Central integration and ingredient registry rather than replacing them.
+## Phase 7: Self-Service Recipe Authoring & Nutrition Provenance — ✅ COMPLETE
+Gives patients (Fotis) a traceable, deterministic recipe-authoring workflow grounded in verified ingredient data, explicitly distinguishing calculated nutrition estimates from clinical advice. Built on the existing USDA FoodData Central integration and ingredient registry rather than replacing them. All five chunks are merged to `master`.
 
-* **Ingredient Provenance & Nutrition Completeness Foundation** `[Fotis | Dep: Ingredient Registry, USDA Client]`
-  - Domain model distinguishing ingredient source state: `internal_verified`, `usda_fooddata_central`, `user_entered`, `needs_review`.
-  - Deterministic completeness evaluator (`canCalculateNutrition`, `canCalculateGl`) — never coerces missing nutrition or GI values to zero.
-  - Adapters mapping existing master ingredients and USDA import results into the provenance-aware shape without disrupting current recipe rendering.
-* **Recipe Builder Ingredient Canvas** `[Fotis | Dep: Provenance Foundation]`
-  - Search, add, edit, remove, and reorder ingredients with normalized-unit conversion and visible source/validation badges (Verified database, USDA-sourced, User-entered, Needs review).
-* **Deterministic Recipe Nutrition Summary** `[Fotis | Dep: Provenance Foundation]`
-  - Per-recipe and per-serving carbohydrate, fiber, net carbohydrate, protein, fat, energy, and carbohydrate-weighted Glycemic Load, with explicit "complete / partial estimate / needs ingredient data" states.
-* **Patient-Safe Custom Ingredient Workflow** `[Fotis | Dep: Provenance Foundation]`
-  - USDA FoodData Central import path plus a constrained custom-ingredient entry flow; user-entered ingredients are never silently upgraded to "verified."
-* **Private Recipe Draft Lifecycle** `[Fotis | Dep: Ingredient Canvas, Nutrition Summary]`
-  - Save/resume private drafts with recalculation metadata; optional, non-blocking submission for dietitian review reusing the delivered `RedirectNudgeCard` / `WhyAmISeeingThisPanel` patterns.
+#### ✅ Delivered
+* **Chunk 1 — Ingredient Provenance & Nutrition Completeness Foundation** `[Fotis | PR #15 | Merged]`
+  - Centralized provenance vocabulary: `internal_verified`, `usda_fooddata_central`, `user_entered`, `needs_review`.
+  - Centralized GI evidence states: `available`, `unavailable`, `not_applicable`, `needs_review`.
+  - Pure deterministic completeness evaluator (`provenanceEvaluator.js`): missing nutrition never coerced to zero; missing GI on carbohydrate contributors never coerced to zero — status is `estimated`, not fabricated as `complete`.
+  - Adapters (`provenanceAdapters.js`) mapping internal, USDA, custom, and legacy ingredient shapes into `ProvenanceReadyRecipeIngredientLine` without disrupting existing recipe rendering.
+  - Volume/count unit conversion requires explicit ingredient-specific `densityGPerMl`/`pieceWeightG`; never defaults to a guessed density or piece weight.
+  - Deterministic, non-time-based line identity; no `Date.now()`/`Math.random()` inside adapters.
+* **Chunk 2 — Recipe Builder Ingredient Canvas** `[Fotis | PR #16 | Merged]`
+  - `RecipeIngredientCanvas.jsx`, `IngredientCanvasRow.jsx`, `IngredientAddModal.jsx`: add/edit/remove/reorder recipe ingredient lines with explicit, accessible "Move up"/"Move down"/"Remove" controls (no drag-and-drop).
+  - Truthful per-line provenance badges ("Verified database", "USDA-sourced", "User-entered", "Needs review") and incomplete-conversion warnings — zero fabricated grams.
+  - Multi-source Add Ingredient modal: verified catalog search, live USDA FoodData Central search, and a strictly **read-only** existing-custom-ingredients tab (creation deferred to Chunk 4).
+  - Dual-format serialization in `AdminEditor.jsx` save handlers preserves full backwards compatibility with the legacy `ingredientId`/`amount`/`unit`/`prepState` recipe-line shape.
+* **Chunk 3 — Recipe Nutrition Summary** `[Fotis | PR #17 | Merged]`
+  - `RecipeNutritionSummary.jsx`: truthful per-recipe and per-serving nutrition and Glycemic Load summary with three honest completeness states — `complete`, `estimated` (GL unavailable, never fabricated as 0), and `incomplete` (macros show `--`, never a fabricated number).
+  - Dual-scope scaling (Per Serving / Full Recipe Total) and carbohydrate-weighted GI reused from the existing `getGlycemicLoadCategory()` categorization — no invented category labels.
+  - Thermal `prepState` multipliers (`PREP_STATES` from `nutritionCalculator.js`) correctly applied to aggregate GI/GL.
+* **Chunk 4 — Patient-Safe Custom Ingredient Creation** `[Fotis | PR #18 | Merged]`
+  - `CustomIngredientFormModal.jsx`: accessible creation form for the required core macronutrients (energy, carbohydrate, fiber, protein, fat); Glycemic Index is optional and never coerced to 0 when omitted.
+  - Mass-only default units (`g`, `oz`, `kg`, `lb`) at creation time — avoids the volume/count density-fabrication problem entirely for new custom ingredients.
+  - Anti-upgrade invariant enforced: `isUserAuthored: true` permanently yields `source: 'user_entered'`, never `'internal_verified'`.
+  - Honest data-scope disclaimer reflecting the confirmed real behavior of `ingredientStore.js` (custom ingredients are shared catalog-wide, not private to the creating user — see the known limitation noted under §5.2 backend persistence).
+* **Chunk 5 — Private Recipe Draft Lifecycle** `[Fotis | PR #19 | Merged]`
+  - Voluntary, non-punitive dietitian-review nudge in `AdminEditor.jsx` reusing the delivered `RedirectNudgeCard`/`WhyAmISeeingThisPanel` components, surfaced only when a recipe contains user-entered ingredients or estimated glycemic values.
+  - Dismissing the nudge ("Keep managing my plan") never disables or gates Save Draft, Submit for Review, or Publish controls.
+  - Client-side `RecipeRecalculationMetadata` snapshot (`evaluatedAt`, `completenessStatus`, `canCalculateGl`, `canCalculateNutrition`, missing-line counts) attached on save — no Strapi schema change; completeness is always freshly recalculated on load regardless of whether the historical snapshot persists.
+  - Draft persistence (Strapi `status: 'draft'`), browser-session auto-save/restore (`sessionStorage`), and voluntary submission to `status: 'pending_review'` were confirmed to already exist and were hardened/integrated rather than rebuilt.
 
 ## Phase 6: Mobile-First Execution & Offline Resilience
 * **PWA Foundation:** Service worker implementation caching Active Plans and the offline deterministic engine.
