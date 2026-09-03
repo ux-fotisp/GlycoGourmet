@@ -163,6 +163,41 @@ const initStore = () => {
  * Retrieve all intake lead records for a given clinic.
  */
 export const getIntakeLeads = async (clinicId = 'clinic-glycemic-wellness') => {
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+    const res = await fetch('/api/intake-leads?populate=*', {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const rawLeads = data?.data;
+      if (Array.isArray(rawLeads) && rawLeads.length > 0) {
+        return rawLeads.map((item) => {
+          const attrs = item.attributes || item;
+          const assignedD = attrs.assignedDietitian?.data?.attributes || attrs.assignedDietitian;
+          return {
+            id: String(item.id || attrs.id),
+            clinicId: String(attrs.clinic?.data?.id || attrs.clinic?.id || attrs.clinic || clinicId),
+            referenceCode: attrs.referenceCode,
+            referralSource: attrs.referralSource,
+            serviceTier: attrs.serviceTier,
+            stage: attrs.stage,
+            stageReason: attrs.stageReason || '',
+            assignedDietitianId: assignedD ? String(assignedD.id || '') : null,
+            assignedDietitianName: attrs.assignedDietitianName || assignedD?.name || null,
+            createdAt: attrs.createdAt,
+            updatedAt: attrs.updatedAt,
+          };
+        });
+      }
+    }
+  } catch (_e) {
+    // Graceful offline fallback
+  }
+
   const leads = initStore();
   return leads.filter((l) => !clinicId || l.clinicId === clinicId);
 };
@@ -196,15 +231,54 @@ export const createIntakeLead = async (
     assignedDietitianName: null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    stageReason: CONTROLLED_STAGE_REASONS.includes(stageReason) ? stageReason : 'Attempted contact',
+    stageReason,
   };
 
   leads.unshift(newLead);
+
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
   }
 
-  // Immutable audit log entry
+  // Attempt live Strapi persistence with graceful fallback
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+    const res = await fetch('/api/intake-leads', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        data: {
+          clinic: clinicId,
+          referenceCode: newLead.referenceCode,
+          referralSource: newLead.referralSource,
+          serviceTier: newLead.serviceTier,
+          stage: newLead.stage,
+          stageReason: newLead.stageReason,
+        },
+      }),
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.data?.id) {
+        newLead.id = String(json.data.id);
+        const currentLeads = initStore();
+        const idx = currentLeads.findIndex((l) => l.referenceCode === newLead.referenceCode);
+        if (idx !== -1) {
+          currentLeads[idx].id = String(json.data.id);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(currentLeads));
+          }
+        }
+      }
+    }
+  } catch (_e) {
+    // Graceful local fallback
+  }
+
+  // Record administrative action in immutable audit log
   logAdminAction({
     actorId,
     actorRole: 'clinic_admin',
@@ -260,6 +334,26 @@ export const updateLeadStage = async (
     localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
   }
 
+  // Attempt live Strapi persistence with graceful fallback
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+    await fetch(`/api/intake-leads/${leadId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        data: {
+          stage: newStage,
+          stageReason: validatedReason,
+        },
+      }),
+    });
+  } catch (_e) {
+    // Graceful local fallback
+  }
+
   // Immutable audit log entry
   logAdminAction({
     actorId,
@@ -309,6 +403,25 @@ export const updateLeadServiceTier = async (
     localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
   }
 
+  // Attempt live Strapi persistence with graceful fallback
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+    await fetch(`/api/intake-leads/${leadId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        data: {
+          serviceTier,
+        },
+      }),
+    });
+  } catch (_e) {
+    // Graceful local fallback
+  }
+
   // Immutable audit log entry
   logAdminAction({
     actorId,
@@ -322,6 +435,7 @@ export const updateLeadServiceTier = async (
       newTier: serviceTier,
       stage: leads[index].stage,
     },
+    note: `Service tier changed from ${prevTier} to ${serviceTier}`,
   });
 
   return leads[index];
@@ -353,6 +467,26 @@ export const assignDietitianToLead = async (
     localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
   }
 
+  // Attempt live Strapi persistence with graceful fallback
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+    await fetch(`/api/intake-leads/${leadId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        data: {
+          assignedDietitian: dietitianId,
+          assignedDietitianName: dietitianName,
+        },
+      }),
+    });
+  } catch (_e) {
+    // Graceful local fallback
+  }
+
   // Immutable audit log entry
   logAdminAction({
     actorId,
@@ -367,6 +501,7 @@ export const assignDietitianToLead = async (
       stage: leads[index].stage,
       serviceTier: leads[index].serviceTier,
     },
+    note: dietitianName ? `Assigned to ${dietitianName}` : 'Reverted to unassigned pool',
   });
 
   return leads[index];

@@ -1,0 +1,72 @@
+{
+  "kind": "collectionType",
+  "collectionName": "consent_records",
+  "info": {
+    "singularName": "consent-record",
+    "pluralName": "consent-records",
+    "displayName": "Consent Record",
+    "description": "Layered, versioned, and revocable patient consent records"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "grantor": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "description": "Patient user granting consent"
+    },
+    "granteeId": {
+      "type": "string",
+      "required": true,
+      "description": "Target Clinic ID, Dietitian ID, or 'system'"
+    },
+    "clinic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::clinic.clinic",
+      "description": "Tenant clinic context"
+    },
+    "purpose": {
+      "type": "string",
+      "required": true,
+      "description": "Clinical or operational purpose for consent"
+    },
+    "scope": {
+      "type": "json",
+      "required": true,
+      "description": "Array of consent scopes (e.g. ['intake_redirect', 'dietitian_share'])"
+    },
+    "version": {
+      "type": "string",
+      "default": "2.1",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "granted",
+        "active",
+        "revoked",
+        "expired"
+      ],
+      "default": "active",
+      "required": true
+    },
+    "grantedAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "expiresAt": {
+      "type": "datetime"
+    },
+    "revokedAt": {
+      "type": "datetime"
+    },
+    "metadata": {
+      "type": "json"
+    }
+  }
+}

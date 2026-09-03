@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "notification_preferences",
+  "info": {
+    "singularName": "notification-preference",
+    "pluralName": "notification-preferences",
+    "displayName": "Notification Preference",
+    "description": "Per-user split-channel notification frequency and quiet hour preferences"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true,
+      "description": "Owner user of this preference"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "care_reminders",
+        "promoted_dietitians"
+      ],
+      "required": true
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "quietHoursStart": {
+      "type": "string",
+      "default": "22:00"
+    },
+    "quietHoursEnd": {
+      "type": "string",
+      "default": "07:00"
+    },
+    "frequencyCap": {
+      "type": "enumeration",
+      "enum": [
+        "daily",
+        "weekly",
+        "biweekly"
+      ],
+      "default": "weekly"
+    }
+  }
+}

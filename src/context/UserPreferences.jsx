@@ -135,6 +135,46 @@ export const UserPreferencesProvider = ({ children }) => {
     };
     setNotificationPreferencesState(merged);
     saveToStorage({ notificationPreferences: merged });
+
+    // Live Strapi persistence attempt with graceful local fallback
+    try {
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+      if (merged.careReminders) {
+        fetch('/api/notification-preferences', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            data: {
+              category: 'care_reminders',
+              enabled: merged.careReminders.enabled !== false,
+              quietHoursStart: merged.careReminders.quietHoursStart || '22:00',
+              quietHoursEnd: merged.careReminders.quietHoursEnd || '07:00',
+            },
+          }),
+        }).catch(() => {});
+      }
+      if (merged.promotedDietitians) {
+        fetch('/api/notification-preferences', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            data: {
+              category: 'promoted_dietitians',
+              enabled: !!merged.promotedDietitians.enabled,
+              frequencyCap: merged.promotedDietitians.frequencyCap || 'weekly',
+            },
+          }),
+        }).catch(() => {});
+      }
+    } catch (_e) {
+      // Graceful fallback
+    }
   };
 
   const updateAllSettings = (settings) => {

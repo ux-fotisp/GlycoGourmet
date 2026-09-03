@@ -1,0 +1,79 @@
+{
+  "kind": "collectionType",
+  "collectionName": "audit_log_entries",
+  "info": {
+    "singularName": "audit-log-entry",
+    "pluralName": "audit-log-entries",
+    "displayName": "Audit Log Entry",
+    "description": "Immutable, append-only operational audit log for administrative mutations"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "clinic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::clinic.clinic",
+      "required": true,
+      "description": "Tenant clinic boundary"
+    },
+    "actor": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "description": "Authenticated actor"
+    },
+    "actorId": {
+      "type": "string",
+      "required": true,
+      "description": "Identifier of user or system component that performed the action"
+    },
+    "actorRole": {
+      "type": "enumeration",
+      "enum": [
+        "clinic_admin",
+        "admin",
+        "super_admin",
+        "system"
+      ],
+      "required": true
+    },
+    "action": {
+      "type": "string",
+      "required": true,
+      "description": "Administrative action code (e.g. intake_stage_changed, dietitian_assigned)"
+    },
+    "entityId": {
+      "type": "string",
+      "required": true,
+      "description": "De-identified target entity identifier"
+    },
+    "entityType": {
+      "type": "enumeration",
+      "enum": [
+        "referral_lead",
+        "client_profile",
+        "dietitian_profile",
+        "promotion_config",
+        "operational_suggestion"
+      ],
+      "required": true
+    },
+    "suggestedValue": {
+      "type": "json"
+    },
+    "finalValue": {
+      "type": "json",
+      "required": true
+    },
+    "note": {
+      "type": "text"
+    },
+    "timestamp": {
+      "type": "datetime",
+      "required": true
+    }
+  }
+}
