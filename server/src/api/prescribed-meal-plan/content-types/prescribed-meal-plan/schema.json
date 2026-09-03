@@ -1,4 +1,4 @@
-﻿{
+{
   "kind": "collectionType",
   "collectionName": "prescribed_meal_plans",
   "info": {
@@ -44,10 +44,29 @@
     },
     "status": {
       "type": "enumeration",
-      "enum": ["draft", "active", "archived"],
+      "enum": [
+        "draft",
+        "active",
+        "archived"
+      ],
       "default": "active",
       "required": true,
       "description": "Plan lifecycle: only one 'active' plan per client at a time"
+    },
+    "clinic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::clinic.clinic"
+    },
+    "sharingScope": {
+      "type": "enumeration",
+      "enum": [
+        "PRIVATE",
+        "CLINIC_SHARED"
+      ],
+      "default": "PRIVATE",
+      "required": true,
+      "description": "Asset visibility: PRIVATE to client or CLINIC_SHARED across practice dietitians"
     }
   }
 }

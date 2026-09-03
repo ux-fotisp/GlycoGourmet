@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { usePermissions } from '../../hooks/usePermissions';
 import {
   PIPELINE_STAGES,
   REFERRAL_SOURCES,
@@ -28,8 +29,15 @@ import NewLeadModal from './NewLeadModal';
  * - Neutral operational metrics only (no conversion rates or growth pressure).
  * - Manual practitioner selection only (no matching scores or ranking).
  */
-export const IntakePipelineBoard = ({ clinicId = 'clinic-glycemic-wellness' }) => {
+export const IntakePipelineBoard = ({ clinicId: propClinicId }) => {
   const { user } = useAuth();
+  const permissions = usePermissions();
+  const effectiveClinicId =
+    propClinicId ||
+    permissions?.clinicId ||
+    user?.clinicId ||
+    user?.clinic?.id ||
+    'clinic-glycemic-wellness';
   const [leads, setLeads] = useState([]);
   const [dietitians, setDietitians] = useState([]);
   const [tierFilter, setTierFilter] = useState('ALL');
@@ -39,15 +47,15 @@ export const IntakePipelineBoard = ({ clinicId = 'clinic-glycemic-wellness' }) =
   const [notification, setNotification] = useState(null);
 
   const loadData = async () => {
-    const leadData = await getIntakeLeads(clinicId);
-    const practitioners = await getClinicDietitians();
+    const leadData = await getIntakeLeads(effectiveClinicId);
+    const practitioners = await getClinicDietitians(effectiveClinicId);
     setLeads(leadData);
     setDietitians(practitioners);
   };
 
   useEffect(() => {
     loadData();
-  }, [clinicId]);
+  }, [effectiveClinicId]);
 
   const actorId = user?.id || user?.email || 'admin_konstantina';
 
@@ -57,7 +65,7 @@ export const IntakePipelineBoard = ({ clinicId = 'clinic-glycemic-wellness' }) =
   };
 
   const handleCreateLead = async (leadInput) => {
-    const created = await createIntakeLead({ ...leadInput, clinicId }, actorId);
+    const created = await createIntakeLead({ ...leadInput, clinicId: effectiveClinicId }, actorId);
     await loadData();
     showNotification(`Created intake record ${created.referenceCode}`);
   };

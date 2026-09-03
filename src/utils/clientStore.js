@@ -221,10 +221,72 @@ const preseedDemoClients = () => {
 };
 
 export const getClinicDetails = async (clinicId = 'clinic-glycemic-wellness') => {
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+    const res = await fetch(`/api/clinics/${clinicId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const attrs = data?.data?.attributes || data?.data || data;
+      if (attrs && (attrs.name || attrs.id)) {
+        return {
+          id: String(data?.data?.id || attrs.id || clinicId),
+          name: attrs.name || mockClinic.name,
+          tier: attrs.tier || mockClinic.tier,
+          activeSeats: attrs.activeSeats ?? mockClinic.activeSeats,
+          totalSeats: attrs.totalSeats ?? mockClinic.totalSeats,
+          totalPatients: attrs.totalPatients ?? mockClinic.totalPatients,
+          globalAdherence: attrs.globalAdherence ?? mockClinic.globalAdherence,
+          pendingAudits: attrs.pendingAudits ?? mockClinic.pendingAudits,
+          createdAt: attrs.createdAt || mockClinic.createdAt,
+        };
+      }
+    }
+  } catch (_e) {
+    // Graceful offline/demo fallback
+  }
   return { ...mockClinic };
 };
 
 export const getClinicDietitians = async (clinicId = 'clinic-glycemic-wellness') => {
+  try {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+    const res = await fetch(`/api/clinics/${clinicId}?populate=dietitians`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const rawDietitians =
+        data?.data?.attributes?.dietitians?.data ||
+        data?.data?.dietitians ||
+        data?.dietitians;
+
+      if (Array.isArray(rawDietitians) && rawDietitians.length > 0) {
+        return rawDietitians.map((d) => {
+          const attrs = d.attributes || d;
+          return {
+            id: String(d.id || attrs.id),
+            name: attrs.name || attrs.username || 'Practitioner',
+            email: attrs.email || '',
+            credentials: attrs.credential || attrs.credentials || 'RDN',
+            role: attrs.roleTitle || attrs.role || 'Clinical Dietitian',
+            activePatients: Array.isArray(attrs.clientIds) ? attrs.clientIds.length : (attrs.activePatients || 0),
+            lastActive: attrs.lastActive || 'Active',
+            status: attrs.status || 'Active',
+          };
+        });
+      }
+    }
+  } catch (_e) {
+    // Graceful offline/demo fallback
+  }
   const stored = JSON.parse(localStorage.getItem('glyco_clinic_dietitians') || '[]');
   if (stored.length === 0) {
     localStorage.setItem('glyco_clinic_dietitians', JSON.stringify(mockDietitians));
