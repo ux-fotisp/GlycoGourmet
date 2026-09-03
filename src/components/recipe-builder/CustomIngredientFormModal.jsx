@@ -383,7 +383,7 @@ export const CustomIngredientFormModal = ({
                 >
                   {PREP_STATES.map((prep) => (
                     <option key={prep.value} value={prep.value}>
-                      {prep.label} ({prep.multiplier}x GI)
+                      {prep.label} ({prep.giMultiplier}x GI)
                     </option>
                   ))}
                 </select>

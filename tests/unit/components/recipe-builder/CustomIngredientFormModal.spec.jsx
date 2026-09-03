@@ -515,4 +515,29 @@ describe('CustomIngredientFormModal — Patient-Safe Custom Ingredient Creation'
     expect(fullText.toLowerCase()).not.toContain('private to your local device');
     expect(fullText.toLowerCase()).not.toContain('private to your session');
   });
+  it('14. Renders Default Preparation options with correct real giMultiplier values (e.g. Boiled (1.2x GI), Raw (1x GI))', () => {
+    render(
+      <CustomIngredientFormModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onCreated={vi.fn()}
+      />
+    );
+
+    const prepSelect = screen.getByLabelText(/default preparation/i);
+    expect(prepSelect).toBeInTheDocument();
+
+    const options = Array.from(prepSelect.querySelectorAll('option')).map((opt) => opt.textContent);
+    
+    // Assert real multiplier strings
+    expect(options).toContain('Raw (1x GI)');
+    expect(options).toContain('Boiled (1.2x GI)');
+    expect(options).toContain('Roasted (1.15x GI)');
+    expect(options).toContain('Cooled (0.85x GI)');
+
+    // Ensure "undefined" never appears
+    options.forEach((optText) => {
+      expect(optText).not.toContain('undefined');
+    });
+  });
 });
