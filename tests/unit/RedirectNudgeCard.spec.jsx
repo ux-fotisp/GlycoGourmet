@@ -67,4 +67,25 @@ describe('RedirectNudgeCard Component', () => {
     expect(text).not.toMatch(/best match/i);
     expect(text).not.toMatch(/compatibility score/i);
   });
+  it('defaults actionLabel to "Explore Dietitian Consultations" when no actionLabel prop is provided', () => {
+    renderCard();
+    const btn = screen.getByRole('button', { name: /Explore Dietitian Consultations/i });
+    expect(btn).toBeInTheDocument();
+    expect(btn.textContent).toContain('Explore Dietitian Consultations');
+  });
+
+  it('renders custom actionLabel when provided without altering consultation callback dispatch', () => {
+    const onExplore = vi.fn();
+    renderCard({
+      actionLabel: 'Submit for Dietitian Review',
+      onExploreDietitians: onExplore,
+    });
+
+    const customBtn = screen.getByRole('button', { name: /Submit for Dietitian Review/i });
+    expect(customBtn).toBeInTheDocument();
+    expect(customBtn.textContent).toContain('Submit for Dietitian Review');
+
+    fireEvent.click(customBtn);
+    expect(onExplore).toHaveBeenCalledTimes(1);
+  });
 });

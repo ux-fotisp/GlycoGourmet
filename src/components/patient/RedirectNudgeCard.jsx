@@ -22,6 +22,7 @@ export const RedirectNudgeCard = ({
   onRequestSession = null,
   onWhyAmISeeingThis = null,
   explanationData = null,
+  actionLabel = 'Explore Dietitian Consultations',
 }) => {
   const [isDismissed, setIsDismissed] = useState(false);
   const [isExplanationOpen, setIsExplanationOpen] = useState(false);
@@ -122,7 +123,7 @@ export const RedirectNudgeCard = ({
             <span className="material-symbols-outlined text-base" aria-hidden="true">
               calendar_month
             </span>
-            <span>Explore Dietitian Consultations</span>
+            <span>{actionLabel}</span>
           </button>
         </div>
       </aside>
