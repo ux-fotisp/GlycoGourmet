@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import RedirectNudgeCard from '../components/patient/RedirectNudgeCard';
+import { evaluateRecipeNutritionCompleteness } from '../utils/provenanceEvaluator';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import EditorFormFields from '../components/admin/EditorFormFields';
 import EditorPreviewCard from '../components/admin/EditorPreviewCard';
@@ -75,17 +77,29 @@ export const AdminEditor = () => {
     return false;
   });
 
+  const [lastSavedTime, setLastSavedTime] = useState(null);
+  const [showReviewNudge, setShowReviewNudge] = useState(true);
+
   const [notification, setNotification] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Auto-sync active form to sessionStorage
-  useEffect(() => {
-    if (formData.title || (formData.ingredients && formData.ingredients.length > 0)) {
-      try {
-        sessionStorage.setItem(DRAFT_SESSION_KEY, JSON.stringify(formData));
-      } catch {}
-    }
-  }, [formData]);
+  const completeness = useMemo(() => {
+    return evaluateRecipeNutritionCompleteness(formData.ingredients || []);
+  }, [formData.ingredients]);
+
+  const hasCustomOrEstimated = useMemo(() => {
+    const lines = formData.ingredients || [];
+    const hasCustomLines = lines.some(
+      (line) =>
+        line?.source === 'user_entered' ||
+        line?.isUserAuthored === true ||
+        line?.giEvidenceStatus === 'unavailable' ||
+        line?.status === 'estimated'
+    );
+    return hasCustomLines || completeness.status === 'estimated';
+  }, [formData.ingredients, completeness]);
+
+
 
   // Load existing recipe if editId parameter is present
   useEffect(() => {
@@ -123,7 +137,7 @@ export const AdminEditor = () => {
 
   // Save active form state to sessionStorage to guard against accidental refresh
   useEffect(() => {
-    if (!editId && formData) {
+    if (!editId && (formData?.title || (formData?.ingredients && formData.ingredients.length > 0))) {
       try {
         sessionStorage.setItem(DRAFT_SESSION_KEY, JSON.stringify(formData));
       } catch (err) {
@@ -141,6 +155,7 @@ export const AdminEditor = () => {
     sessionStorage.removeItem(DRAFT_SESSION_KEY);
     setFormData(BLANK_FORM);
     setHasRestoredDraft(false);
+    setLastSavedTime(null);
     showNotification('Cleared draft session. Editor initialized to blank state.', 'draft');
   };
 
@@ -207,6 +222,17 @@ export const AdminEditor = () => {
     try {
       const finalId = editId || formData.id || generateRecipeId(formData.title);
       const serializedIngredients = serializeRecipeIngredients(formData.ingredients);
+      const evalResult = evaluateRecipeNutritionCompleteness(formData.ingredients || []);
+      const recalculationMetadata = {
+        evaluatedAt: new Date().toISOString(),
+        completenessStatus: evalResult.status,
+        canCalculateGl: evalResult.canCalculateGl,
+        canCalculateNutrition: evalResult.canCalculateNutrition,
+        missingNutritionLinesCount: evalResult.missingNutritionLines.length,
+        missingGiLinesCount: evalResult.missingGiLines.length,
+        warningsCount: evalResult.warnings.length,
+      };
+
       const newRecipe = {
         ...formData,
         id: finalId,
@@ -216,6 +242,7 @@ export const AdminEditor = () => {
         isUserAuthored: true,
         status: 'pending_review',
         publishedAt: null,
+        recalculationMetadata,
       };
 
       await saveRecipe(newRecipe, {
@@ -241,6 +268,17 @@ export const AdminEditor = () => {
     try {
       const finalId = editId || formData.id || generateRecipeId(formData.title);
       const serializedIngredients = serializeRecipeIngredients(formData.ingredients);
+      const evalResult = evaluateRecipeNutritionCompleteness(formData.ingredients || []);
+      const recalculationMetadata = {
+        evaluatedAt: new Date().toISOString(),
+        completenessStatus: evalResult.status,
+        canCalculateGl: evalResult.canCalculateGl,
+        canCalculateNutrition: evalResult.canCalculateNutrition,
+        missingNutritionLinesCount: evalResult.missingNutritionLines.length,
+        missingGiLinesCount: evalResult.missingGiLines.length,
+        warningsCount: evalResult.warnings.length,
+      };
+
       const newRecipe = {
         ...formData,
         id: finalId,
@@ -250,6 +288,7 @@ export const AdminEditor = () => {
         isUserAuthored: true,
         status: 'draft',
         publishedAt: null,
+        recalculationMetadata,
       };
 
       await saveRecipe(newRecipe, {
@@ -258,7 +297,9 @@ export const AdminEditor = () => {
       });
 
       sessionStorage.setItem(DRAFT_SESSION_KEY, JSON.stringify(newRecipe));
-      setFormData(prev => ({ ...prev, id: finalId }));
+      setFormData(prev => ({ ...prev, id: finalId, recalculationMetadata }));
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      setLastSavedTime(timeStr);
       showNotification('Draft saved to Strapi CMS successfully.', 'draft');
       if (!editId) {
         navigate(`/admin-editor?edit=${finalId}`);
@@ -341,10 +382,14 @@ export const AdminEditor = () => {
 
       {/* Restored draft notification banner */}
       {hasRestoredDraft && (
-        <div className="bg-tertiary-container/20 border-b border-tertiary/30 px-4 py-2 flex items-center justify-between text-xs text-on-surface">
+        <div
+          role="status"
+          aria-live="polite"
+          className="bg-tertiary-container/20 border-b border-tertiary/30 px-4 py-2 flex items-center justify-between text-xs text-on-surface"
+        >
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-tertiary text-[18px]">history</span>
-            <span>Restored unsaved draft session from browser memory.</span>
+            <span>Restored draft session from your browser. Continue editing or clear draft.</span>
           </div>
           <button
             type="button"
@@ -352,8 +397,22 @@ export const AdminEditor = () => {
             className="text-[11px] font-bold text-tertiary hover:underline cursor-pointer flex items-center gap-1"
           >
             <span className="material-symbols-outlined text-[14px]">clear</span>
-            Discard & Start Blank
+            Clear draft session
           </button>
+        </div>
+      )}
+
+      {/* Cloud saved draft notification banner */}
+      {lastSavedTime && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="bg-primary/10 border-b border-primary/20 px-4 py-2 flex items-center justify-between text-xs text-on-surface"
+        >
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary text-[18px]">cloud_done</span>
+            <span>Draft saved to Strapi CMS successfully at {lastSavedTime}.</span>
+          </div>
         </div>
       )}
 
@@ -373,6 +432,25 @@ export const AdminEditor = () => {
               formData={formData}
               setFormData={setFormData}
             />
+
+            {/* Optional Dietitian Review Nudge */}
+            {showReviewNudge && hasCustomOrEstimated && (formData.ingredients || []).length > 0 && (
+              <div className="pt-2">
+                <RedirectNudgeCard
+                  title="Optional Dietitian Review"
+                  description="Your recipe is private to your account. If you would like expert guidance, a certified dietitian can collaborate with you to review ingredient choices and glycemic balance."
+                  triggerReason="Suggested as an optional resource because your recipe contains user-entered ingredients or estimated glycemic values."
+                  explanationData={{
+                    title: 'Why am I seeing this review option?',
+                    reason: 'Offered as an optional resource because your recipe contains custom ingredients or estimated glycemic values.',
+                    dataUsed: 'Recipe ingredient lines and glycemic completeness evaluation.',
+                  }}
+                  onKeepManaging={() => setShowReviewNudge(false)}
+                  onRequestSession={handleSubmitReview}
+                  actionLabel="Submit for Dietitian Review"
+                />
+              </div>
+            )}
           </section>
 
           {/* Right Live Preview Pane (lg:col-span-5 sticky top-20 h-fit) */}
