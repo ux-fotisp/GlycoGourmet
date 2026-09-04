@@ -17,6 +17,7 @@
 7. [Testing Strategy, Token Economy & QA Protocols](#7-testing-strategy-token-economy--qa-protocols)
 8. [Production Deployment, Lifecycle Hooks & Runbooks](#8-production-deployment-lifecycle-hooks--runbooks)
 9. [Roadmap Synthesis & Architectural North Star](#9-roadmap-synthesis--architectural-north-star)
+10. [Gap-Closure Chunks 1–3 Synthesis (Multi-Tenancy, Trust Persistence, Ingredient Ownership)](#10-gap-closure-chunks-13-synthesis-multi-tenancy-trust-persistence-ingredient-ownership)
 
 ---
 
@@ -118,6 +119,11 @@ GlycoGourmet operates as a dual-sided ecosystem connecting healthcare providers 
 | `Ingredient` | `Ingredient` (Swap) | Substitutes | $1 : N$ | Lower-GI alternatives for clinical swaps. |
 | `Recipe` | `AuditRecord` | Audited By | $1 : 0..1$ | Ground-truth verification record against USDA data. |
 | `ClientProfile` | `SmartSwapRule` | Governed By | $1 : N$ | Practitioner-defined auto-substitution rules. |
+| `Clinic` | `IntakeLead` | Scopes | $1 : N$ | Non-clinical operational referral and intake records. |
+| `Clinic` | `AuditLogEntry` | Scopes | $1 : N$ | Immutable append-only administrative mutation logs. |
+| `User` (Patient) | `ConsentRecord` | Grants | $1 : N$ | Layered, versioned, revocable consent for sharing/redirects. |
+| `User` (Patient) | `NotificationPreference` | Configures | $1 : N$ | Split-channel frequency caps and quiet hours. |
+| `User` (Patient) | `Ingredient` (Custom) | Authors | $1 : N$ | User-authored private ingredients scoped to owner user ID. |
 
 ### 2.2 TypeScript Domain Definitions (`src/types/domain.ts`)
 
@@ -300,9 +306,12 @@ The platform supports a multi-tenant hierarchy designed for group practices, hos
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **`user`** (Patient) | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **`dietitian`** | ✅ | ✅ | ✅ | ❌ | ❌ |
-| **`clinic_admin`** | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **`admin`** | ✅ | ✅ | ✅ | ❌ | ❌ |
+| **`clinic_admin`** | ✅ | ✅ | ❌ (PHI Protected)¹ | ✅ | ✅ |
+| **`admin`** | ✅ | ✅ | ✅ | ❌² | ❌² |
 | **`super_admin`** | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+¹ *Note: `clinic_admin` is strictly non-clinical. In `src/hooks/usePermissions.js` (lines 67–69), `canManageClients` mirrors `canManageClinicalRecords` (`['dietitian', 'admin', 'super_admin'].includes(role)`), evaluating to `false`. Server-side, `server/src/policies/is-clinic-admin.js` enforces this with `FORBIDDEN_CLINICAL_UIDS`.*  
+² *Note: In `src/hooks/usePermissions.js` (lines 78–79), `canManageClinic` and `canViewCrossRoster` are scoped strictly to `['clinic_admin', 'super_admin']`. Global platform `admin` manages users via `canManageUsers` (`['admin', 'super_admin']`), but tenant clinic management is delegated to `clinic_admin` and `super_admin`.*
 
 ### 5.2 Subscription Tier Feature Gating
 
@@ -403,6 +412,10 @@ npm run test:unit
 | [COMPLETED] Phase 4: Predictive Metabolic Analytics (Excursion Modeling)    |
 | [COMPLETED] Phase 5: Multi-Tenant Clinic Administration & Feature Gating    |
 | [COMPLETED] Phase 6: Mobile-First PWA, Offline Resilience & Ambient Cooking |
+| [COMPLETED] Phase 7: Self-Service Recipe Authoring & Nutrition Provenance   |
+| [COMPLETED] Gap-Closure Chunk 1: Multi-Tenant Clinic Foundation (PR #20)   |
+| [COMPLETED] Gap-Closure Chunk 2: Trust & Governance Persistence (PR #21)   |
+| [COMPLETED] Gap-Closure Chunk 3: Ingredient Ownership Scoping (PR #22)     |
 +-----------------------------------------------------------------------------+
 ```
 
@@ -413,3 +426,32 @@ npm run test:unit
 
 ---
 *End of Documentation Suite. GlycoGourmet is ready for enterprise clinical deployment.*
+
+
+---
+
+## 10. Gap-Closure Chunks 1–3 Synthesis (Multi-Tenancy, Trust Persistence, Ingredient Ownership)
+
+Between August 31 and September 3, 2026, three gap-closure chunks were implemented, verified, and merged to `master`, resolving all architectural deferrals and security gaps from earlier milestones:
+
+### 10.1 Gap-Closure Chunk 1: Multi-Tenant Clinic Foundation (PR #20, Merge `3f285fc`)
+- **`api::clinic` Content Type**: Tenant organization partitioning practitioners and client records (`name`, `slug`, `tier`, `totalSeats`, `activeSeats`).
+- **Tenant Scoping Controller**: Enforces strict clinic tenant boundaries across `find`, `findOne`, and `update` handlers.
+- **Relational Tenancy**: Bound `clinic` relations to `user`, `client-profile`, `smart-swap-rule`, and `prescribed-meal-plan`, accompanied by `sharingScope` (`PRIVATE` / `CLINIC_SHARED`).
+- **Strict PHI Wall (`is-clinic-admin.js`)**: Enforced non-clinical role boundary with byte-for-byte verified `FORBIDDEN_CLINICAL_UIDS`, preventing `clinic_admin` from accessing patient clinical telemetry and health records.
+- **Bootstrap Auto-Seeding**: Automatic backfill of orphaned records into a verified default clinic on startup.
+
+### 10.2 Gap-Closure Chunk 2: Trust & Governance Backend Persistence (PR #21, Merge `2f40a3b`)
+- **Dedicated Content Types**: `api::consent-record`, `api::audit-log-entry`, `api::notification-preference`, `api::intake-lead`.
+- **Two-Tier Persistence**: Full read/write Strapi persistence across all four operational domains with graceful, offline-resilient local fallback.
+- **Append-Only Audit Enforcement**: Hardened controller rejecting update/delete operations (`405 Method Not Allowed`), ensuring defensible tamper-proof audit trails.
+- **Consent Scope Allow-List Defense-in-Depth**: Controller enforces strict consent scope filtering (`intake_redirect`), concealing clinical telemetry and dietetic sharing from administrative callers.
+- **Dietitian Field Projection**: Strips sensitive credentials, clinical notes, and telemetry from intake assignment payloads.
+- **FHIR Boundary Maintained**: Complete exclusion of operational entities from the `exportFHIRMetabolicTelemetry` pipeline.
+
+### 10.3 Gap-Closure Chunk 3: Custom Ingredient Ownership Scoping (PR #22, Merge `5043b4e`)
+- **`api::ingredient` Ownership Attributes**: Added `isUserAuthored` (boolean) and `owner` (manyToOne relation to user).
+- **Default-Deny Client Scoping**: `getCustomIngredients(userId = null)` enforces strict default-deny filtering, ensuring guest sessions and other patients never receive user-authored custom ingredients.
+- **Controller-Level 404 Concealment**: Cross-patient `findOne` queries on custom ingredients return 404 Not Found rather than 403, preventing ingredient ID enumeration.
+- **Automatic Owner Assignment**: `create` controller automatically forces `owner = user.id` for patient callers, ignoring client-spoofed IDs.
+- **Truthful Privacy Statement**: Component disclaimer in `CustomIngredientFormModal.jsx` updated to guarantee private account storage.
