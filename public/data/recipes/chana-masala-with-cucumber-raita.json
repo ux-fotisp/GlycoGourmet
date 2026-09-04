@@ -22,8 +22,8 @@
   "publishedAt": "2026-01-01T00:00:00.000Z",
   "isUserAuthored": false,
   "glycemicIndex": 35,
-  "glycemicLoad": 15.3,
-  "glycemicImpact": "Medium Impact",
+  "glycemicLoad": 11.8,
+  "glycemicImpact": "Moderate Impact",
   "nutrition": {
     "kcal": 370,
     "protein": 16,
@@ -33,7 +33,7 @@
     "fiber": 11.2,
     "netCarbs": 33.8,
     "glycemicIndex": 35,
-    "glycemicLoad": 15.3
+    "glycemicLoad": 11.8
   },
   "diabeticNotes": "The substantial 11.2g fiber content creates a slow, sustained digestive breakdown. The lactic acid and protein from the yogurt raita further blunt postprandial glycemic excursions.",
   "ingredients": [
@@ -133,5 +133,9 @@
     "vegetarian",
     "gluten_free",
     "heart_healthy"
+  ],
+  "dietaryFlags": [
+    "Vegetarian",
+    "High Fiber"
   ]
 }

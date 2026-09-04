@@ -24,6 +24,23 @@ export const VALID_UNITS = [
 
 const DEFAULT_SEED_INGREDIENTS = [
   {
+    "id": "beef-short-ribs",
+    "name": "Braised Beef Short Ribs",
+    "category": "protein",
+    "defaultAmount": 100,
+    "defaultUnit": "g",
+    "defaultPrepState": "boiled",
+    "kcal": 295,
+    "protein": 24.5,
+    "fat": 21.8,
+    "carbs": 0,
+    "fiber": 0,
+    "netCarbs": 0,
+    "glycemicIndex": 0,
+    "glycemicLoad": 0,
+    "isUserAuthored": false
+  },
+  {
     "id": "atlantic-salmon",
     "name": "Atlantic Salmon",
     "category": "protein",

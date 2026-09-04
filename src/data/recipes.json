@@ -29,7 +29,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 10,
-    "glycemicLoad": 1.5,
+    "glycemicLoad": 0.2,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 290,
@@ -40,7 +40,7 @@
       "fiber": 1.8,
       "netCarbs": 1.7,
       "glycemicIndex": 10,
-      "glycemicLoad": 1.5
+      "glycemicLoad": 0.2
     },
     "ingredients": [
       {
@@ -105,7 +105,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 20,
-    "glycemicLoad": 3.2,
+    "glycemicLoad": 1.2,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 265,
@@ -116,7 +116,7 @@
       "fiber": 12,
       "netCarbs": 6,
       "glycemicIndex": 20,
-      "glycemicLoad": 3.2
+      "glycemicLoad": 1.2
     },
     "ingredients": [
       {
@@ -180,7 +180,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 12,
-    "glycemicLoad": 2.1,
+    "glycemicLoad": 0.3,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 340,
@@ -191,7 +191,7 @@
       "fiber": 2.2,
       "netCarbs": 2.6,
       "glycemicIndex": 12,
-      "glycemicLoad": 2.1
+      "glycemicLoad": 0.3
     },
     "ingredients": [
       {
@@ -246,7 +246,7 @@
     "category": "Brunch",
     "mealOccasion": "brunch",
     "tags": [
-      "Med GL",
+      "Low GL",
       "Low GI",
       "Smart Swap",
       "Grain-Free",
@@ -261,8 +261,8 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 28,
-    "glycemicLoad": 12.4,
-    "glycemicImpact": "Moderate Impact",
+    "glycemicLoad": 3.1,
+    "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 385,
       "protein": 16.5,
@@ -272,7 +272,7 @@
       "fiber": 7,
       "netCarbs": 11.2,
       "glycemicIndex": 28,
-      "glycemicLoad": 12.4
+      "glycemicLoad": 3.1
     },
     "ingredients": [
       {
@@ -337,7 +337,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 12,
-    "glycemicLoad": 1.8,
+    "glycemicLoad": 0.2,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 310,
@@ -348,7 +348,7 @@
       "fiber": 2.4,
       "netCarbs": 1.8,
       "glycemicIndex": 12,
-      "glycemicLoad": 1.8
+      "glycemicLoad": 0.2
     },
     "ingredients": [
       {
@@ -417,7 +417,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 82,
-    "glycemicLoad": 25,
+    "glycemicLoad": 45.8,
     "glycemicImpact": "High Spike Risk",
     "nutrition": {
       "kcal": 480,
@@ -428,7 +428,7 @@
       "fiber": 2.2,
       "netCarbs": 55.8,
       "glycemicIndex": 82,
-      "glycemicLoad": 25
+      "glycemicLoad": 45.8
     },
     "ingredients": [
       {
@@ -498,7 +498,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 10,
-    "glycemicLoad": 1.9,
+    "glycemicLoad": 0.3,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 440,
@@ -509,7 +509,7 @@
       "fiber": 3.5,
       "netCarbs": 3,
       "glycemicIndex": 10,
-      "glycemicLoad": 1.9
+      "glycemicLoad": 0.3
     },
     "ingredients": [
       {
@@ -552,7 +552,7 @@
   {
     "id": "braised-beef-short-ribs-mashed-pairing",
     "title": "Braised Beef Short Ribs with Mashed Potato Base",
-    "description": "Fork-tender slow-braised beef short ribs in a rich rosemary red wine reduction over buttery mashed russet potatoes. Smart Swap available: replace high-GI mashed potatoes with Pureed Cauliflower & Roasted Garlic to drop GL from 22 to 2.8.",
+    "description": "Fork-tender slow-braised beef short ribs in a rich rosemary red wine reduction over buttery mashed russet potatoes. Smart Swap available: replace high-GI mashed potatoes with Pureed Cauliflower & Roasted Garlic to drop GL from 18.7 to 0.7.",
     "imageUrl": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
     "prepTime": 15,
     "cookTime": 45,
@@ -563,7 +563,7 @@
     "category": "Dinner",
     "mealOccasion": "dinner",
     "tags": [
-      "High GL",
+      "Med GL",
       "Smart Swap",
       "Comfort Food",
       "High Protein",
@@ -577,8 +577,8 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 78,
-    "glycemicLoad": 22,
-    "glycemicImpact": "High Spike Risk",
+    "glycemicLoad": 18.7,
+    "glycemicImpact": "Moderate Impact",
     "nutrition": {
       "kcal": 560,
       "protein": 42,
@@ -588,11 +588,11 @@
       "fiber": 2,
       "netCarbs": 24,
       "glycemicIndex": 78,
-      "glycemicLoad": 22
+      "glycemicLoad": 18.7
     },
     "ingredients": [
       {
-        "ingredientId": "chicken-breast",
+        "ingredientId": "beef-short-ribs",
         "amount": 180,
         "unit": "g",
         "prepState": "roasted"
@@ -636,7 +636,7 @@
     "category": "Snack",
     "mealOccasion": "snack",
     "tags": [
-      "Med GL",
+      "Low GL",
       "Low GI",
       "High Fiber",
       "Vegan",
@@ -652,8 +652,8 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 32,
-    "glycemicLoad": 11.2,
-    "glycemicImpact": "Moderate Impact",
+    "glycemicLoad": 7.2,
+    "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 220,
       "protein": 9,
@@ -663,7 +663,7 @@
       "fiber": 8.5,
       "netCarbs": 22.5,
       "glycemicIndex": 32,
-      "glycemicLoad": 11.2
+      "glycemicLoad": 7.2
     },
     "ingredients": [
       {
@@ -721,7 +721,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 15,
-    "glycemicLoad": 1.2,
+    "glycemicLoad": 0.3,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 180,
@@ -732,7 +732,7 @@
       "fiber": 5,
       "netCarbs": 2,
       "glycemicIndex": 15,
-      "glycemicLoad": 1.2
+      "glycemicLoad": 0.3
     },
     "ingredients": [
       {
@@ -796,7 +796,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 18,
-    "glycemicLoad": 2.4,
+    "glycemicLoad": 0.5,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 240,
@@ -807,7 +807,7 @@
       "fiber": 6,
       "netCarbs": 3,
       "glycemicIndex": 18,
-      "glycemicLoad": 2.4
+      "glycemicLoad": 0.5
     },
     "ingredients": [
       {
@@ -849,7 +849,7 @@
     "category": "Dessert",
     "mealOccasion": "dessert",
     "tags": [
-      "Med GL",
+      "Low GL",
       "Low GI",
       "Smart Swap",
       "High Fiber",
@@ -864,8 +864,8 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 30,
-    "glycemicLoad": 13.5,
-    "glycemicImpact": "Moderate Impact",
+    "glycemicLoad": 4.2,
+    "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 310,
       "protein": 7.5,
@@ -875,7 +875,7 @@
       "fiber": 10,
       "netCarbs": 14,
       "glycemicIndex": 30,
-      "glycemicLoad": 13.5
+      "glycemicLoad": 4.2
     },
     "ingredients": [
       {
@@ -1059,7 +1059,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 15,
-    "glycemicLoad": 1.4,
+    "glycemicLoad": 0.3,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 360,
@@ -1070,7 +1070,7 @@
       "fiber": 6.8,
       "netCarbs": 2.2,
       "glycemicIndex": 15,
-      "glycemicLoad": 1.4
+      "glycemicLoad": 0.3
     },
     "diabeticNotes": "Rich in marine omega-3 polyunsaturated fatty acids (EPA and DHA) and plant monounsaturated oleic acid. This lipid pairing elevates HDL, lowers circulating triglycerides, and improves cell-membrane insulin sensitivity.",
     "ingredients": [
@@ -1182,7 +1182,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 20,
-    "glycemicLoad": 2.1,
+    "glycemicLoad": 0.4,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 280,
@@ -1193,7 +1193,7 @@
       "fiber": 1.8,
       "netCarbs": 2.2,
       "glycemicIndex": 20,
-      "glycemicLoad": 2.1
+      "glycemicLoad": 0.4
     },
     "diabeticNotes": "Sea bass provides ultra-lean protein (34g) with minimal calories, making it ideal for aggressive fat loss protocols. Ginger and scallions contain gingerols and allicin, compounds shown to enhance peripheral insulin sensitivity and reduce vascular inflammation.",
     "ingredients": [
@@ -1306,7 +1306,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 25,
-    "glycemicLoad": 2.4,
+    "glycemicLoad": 0.9,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 295,
@@ -1317,7 +1317,7 @@
       "fiber": 4.5,
       "netCarbs": 3.5,
       "glycemicIndex": 25,
-      "glycemicLoad": 2.4
+      "glycemicLoad": 0.9
     },
     "diabeticNotes": "Shirataki noodles are composed of glucomannan, a viscous water-soluble fiber with zero digestible carbohydrates. Glucomannan slows carbohydrate breakdown and traps dietary cholesterol, aiding excretion.",
     "ingredients": [
@@ -1425,7 +1425,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 25,
-    "glycemicLoad": 3.3,
+    "glycemicLoad": 1.4,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 350,
@@ -1436,7 +1436,7 @@
       "fiber": 4.2,
       "netCarbs": 5.8,
       "glycemicIndex": 25,
-      "glycemicLoad": 3.3
+      "glycemicLoad": 1.4
     },
     "diabeticNotes": "Removing traditional boiled potatoes eliminates the primary glycemic spike of classical French Niçoise. Extra virgin olive oil provides oleocanthal and polyphenols that protect LDL particles against oxidation.",
     "ingredients": [
@@ -1551,7 +1551,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 25,
-    "glycemicLoad": 3.6,
+    "glycemicLoad": 1.5,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 260,
@@ -1562,7 +1562,7 @@
       "fiber": 5,
       "netCarbs": 6,
       "glycemicIndex": 25,
-      "glycemicLoad": 3.6
+      "glycemicLoad": 1.5
     },
     "diabeticNotes": "Soy isoflavones and plant proteins lower serum total cholesterol and LDL. Broccoli delivers sulforaphane, a bioactive isothiocyanate with proven anti-inflammatory and glucose-stabilizing properties.",
     "ingredients": [
@@ -1667,7 +1667,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 22,
-    "glycemicLoad": 4.3,
+    "glycemicLoad": 1.1,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 330,
@@ -1678,7 +1678,7 @@
       "fiber": 6,
       "netCarbs": 5,
       "glycemicIndex": 22,
-      "glycemicLoad": 4.3
+      "glycemicLoad": 1.1
     },
     "diabeticNotes": "Cruciferous cabbage provides insoluble bulk that prolongs fullness, while the monounsaturated fats from avocado and lean marine proteins maintain stable postprandial blood sugar.",
     "ingredients": [
@@ -1776,7 +1776,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 28,
-    "glycemicLoad": 5,
+    "glycemicLoad": 1.5,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 310,
@@ -1787,7 +1787,7 @@
       "fiber": 6.5,
       "netCarbs": 5.5,
       "glycemicIndex": 28,
-      "glycemicLoad": 5
+      "glycemicLoad": 1.5
     },
     "diabeticNotes": "The combination of beta-glucans in cremini mushrooms and glucomannan in shirataki creates a powerful dual-fiber barrier that blunts carbohydrate absorption and aids bile acid binding.",
     "ingredients": [
@@ -1892,7 +1892,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 30,
-    "glycemicLoad": 5.8,
+    "glycemicLoad": 1.9,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 340,
@@ -1903,7 +1903,7 @@
       "fiber": 2.8,
       "netCarbs": 6.2,
       "glycemicIndex": 30,
-      "glycemicLoad": 5.8
+      "glycemicLoad": 1.9
     },
     "diabeticNotes": "Turmeric's active compound curcumin improves glycemic markers and insulin receptor activity, while almond fats provide monounsaturated lipid protection.",
     "ingredients": [
@@ -2004,7 +2004,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 32,
-    "glycemicLoad": 6.1,
+    "glycemicLoad": 5,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 320,
@@ -2015,7 +2015,7 @@
       "fiber": 8.5,
       "netCarbs": 15.5,
       "glycemicIndex": 32,
-      "glycemicLoad": 6.1
+      "glycemicLoad": 5
     },
     "diabeticNotes": "Cannellini beans are rich in soluble resistant starch and alpha-amylase inhibitors (phaseolamin) which slow the conversion of complex carbohydrates into blood glucose. High soluble fiber binds LDL cholesterol.",
     "ingredients": [
@@ -2118,7 +2118,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 30,
-    "glycemicLoad": 6.4,
+    "glycemicLoad": 4.4,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 345,
@@ -2129,7 +2129,7 @@
       "fiber": 7.2,
       "netCarbs": 14.8,
       "glycemicIndex": 30,
-      "glycemicLoad": 6.4
+      "glycemicLoad": 4.4
     },
     "diabeticNotes": "Asparagus contains prebiotic inulin fiber, which fuels beneficial gut microbiota to produce short-chain fatty acids (SCFAs), improving systemic insulin sensitivity and hepatic lipid handling.",
     "ingredients": [
@@ -2234,7 +2234,7 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 35,
-    "glycemicLoad": 7,
+    "glycemicLoad": 4,
     "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 390,
@@ -2245,7 +2245,7 @@
       "fiber": 3.5,
       "netCarbs": 11.5,
       "glycemicIndex": 35,
-      "glycemicLoad": 7
+      "glycemicLoad": 4
     },
     "diabeticNotes": "Traditional Danish Frikadeller use white flour and soaked white bread; replacing them with rolled oats introduces beta-glucan soluble fiber. The acetic acid in the cucumber salad actively blunts postprandial glucose absorption.",
     "ingredients": [
@@ -2344,7 +2344,7 @@
     "category": "Main Course",
     "tags": [
       "Low GI",
-      "Med GL",
+      "Low GL",
       "High Protein",
       "High Fiber",
       "LOGI"
@@ -2353,8 +2353,8 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 35,
-    "glycemicLoad": 10.5,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 6.8,
+    "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 410,
       "protein": 36,
@@ -2364,7 +2364,7 @@
       "fiber": 10.5,
       "netCarbs": 19.5,
       "glycemicIndex": 35,
-      "glycemicLoad": 10.5
+      "glycemicLoad": 6.8
     },
     "diabeticNotes": "Omitting white rice and utilizing a two-bean foundation provides 10.5g of dietary fiber. The high proportion of resistant starch creates a low glycemic excursion and fuels colonic SCFA production.",
     "ingredients": [
@@ -2465,7 +2465,7 @@
     "category": "Main Course",
     "tags": [
       "Low GI",
-      "Med GL",
+      "Low GL",
       "High Fiber",
       "Vegetarian",
       "LOGI"
@@ -2474,8 +2474,8 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 33,
-    "glycemicLoad": 10.6,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 8,
+    "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 365,
       "protein": 17,
@@ -2485,7 +2485,7 @@
       "fiber": 9.8,
       "netCarbs": 24.2,
       "glycemicIndex": 33,
-      "glycemicLoad": 10.6
+      "glycemicLoad": 8
     },
     "diabeticNotes": "Chickpeas boast an exceptionally low GI (~33) due to dense legume protein and soluble fiber walls. The nearly 10g of fiber contributes directly to the entrapment and clearance of circulating LDL cholesterol.",
     "ingredients": [
@@ -2580,7 +2580,7 @@
     "category": "Main Course",
     "tags": [
       "Low GI",
-      "Med GL",
+      "Low GL",
       "High Protein",
       "Korean-Inspired",
       "LOGI"
@@ -2589,8 +2589,8 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 36,
-    "glycemicLoad": 11,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 4,
+    "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 380,
       "protein": 34,
@@ -2600,7 +2600,7 @@
       "fiber": 3,
       "netCarbs": 11,
       "glycemicIndex": 36,
-      "glycemicLoad": 11
+      "glycemicLoad": 4
     },
     "diabeticNotes": "Replacing cane sugar and corn syrup with minimal grated fresh pear and allulose delivers authentic Korean bulgogi flavors without glycemic volatility. Kimchi provides live lactobacilli that modulate gut inflammation.",
     "ingredients": [
@@ -2716,7 +2716,7 @@
     "isUserAuthored": false,
     "glycemicIndex": 40,
     "glycemicLoad": 11.4,
-    "glycemicImpact": "Medium Impact",
+    "glycemicImpact": "Moderate Impact",
     "nutrition": {
       "kcal": 350,
       "protein": 14,
@@ -2808,7 +2808,7 @@
     "category": "Salad",
     "tags": [
       "Low GI",
-      "Med GL",
+      "Low GL",
       "High Protein",
       "Under 30 Min",
       "LOGI"
@@ -2817,8 +2817,8 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 34,
-    "glycemicLoad": 11.5,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 3.6,
+    "glycemicImpact": "Optimal Low-GI",
     "nutrition": {
       "kcal": 320,
       "protein": 31,
@@ -2828,7 +2828,7 @@
       "fiber": 5.5,
       "netCarbs": 10.5,
       "glycemicIndex": 34,
-      "glycemicLoad": 11.5
+      "glycemicLoad": 3.6
     },
     "diabeticNotes": "Bell peppers provide abundant vitamin C and luteolin, reducing systemic oxidative stress and preventing vascular LDL particle glycation.",
     "ingredients": [
@@ -2947,8 +2947,8 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 38,
-    "glycemicLoad": 13.3,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 10.4,
+    "glycemicImpact": "Moderate Impact",
     "nutrition": {
       "kcal": 420,
       "protein": 38,
@@ -2958,7 +2958,7 @@
       "fiber": 8.5,
       "netCarbs": 27.5,
       "glycemicIndex": 38,
-      "glycemicLoad": 13.3
+      "glycemicLoad": 10.4
     },
     "diabeticNotes": "Using portion-controlled brown basmati rice paired with high-fiber black beans maintains a moderate GL (13.3). Greek yogurt and lean chicken breast drive a high 38g protein load, promoting GLP-1 secretion.",
     "ingredients": [
@@ -3068,8 +3068,8 @@
     "publishedAt": "2026-01-01T00:00:00.000Z",
     "isUserAuthored": false,
     "glycemicIndex": 35,
-    "glycemicLoad": 15.3,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 11.8,
+    "glycemicImpact": "Moderate Impact",
     "nutrition": {
       "kcal": 370,
       "protein": 16,
@@ -3079,7 +3079,7 @@
       "fiber": 11.2,
       "netCarbs": 33.8,
       "glycemicIndex": 35,
-      "glycemicLoad": 15.3
+      "glycemicLoad": 11.8
     },
     "diabeticNotes": "The substantial 11.2g fiber content creates a slow, sustained digestive breakdown. The lactic acid and protein from the yogurt raita further blunt postprandial glycemic excursions.",
     "ingredients": [

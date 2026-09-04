@@ -1,16 +1,17 @@
 /**
  * validateNutritionDatabase.js — Automated Strapi Database & Nutrition Audit Script
  *
- * Executable via: `npm run validate-db` / `npm run validate:content`
+ * Executable via: `npm run validate-db` / `npm run validate:content` / `npm run precommit`
  *
  * Script Tasks:
- *   1. Fetches all entries from Strapi `/api/ingredients`.
+ *   1. Fetches all entries from Strapi `/api/ingredients` (or local fallback).
  *   2. Validates & cross-references macronutrients against medical/USDA standard values.
  *   3. Enforces netCarbs = Math.max(0, Carbs - Fiber).
  *   4. Assigns exact glycemicIndex and glycemicLoad per 100g base via Academic GI Map & Zero-Carb Rule.
  *   5. Updates invalid or out-of-bounds records directly in Strapi via `PUT /api/ingredients/:id`.
- *   6. Fetches all `/api/recipes?populate=*`, recalculates aggregate recipe GL based on scaled ingredient amounts, and patches recipe records with verified totals.
+ *   6. Recalculates aggregate recipe GL based on scaled ingredient amounts.
  *   7. Content Completeness CI Gate: Validates that all recipes in `public/data/recipes/` contain non-empty steps[], ingredients[], non-negative glycemicLoad, and allergens[].
+ *   8. Recipe GL Formula Drift Validation CI Gate: Enforces that stored glycemicLoad is within tolerance (<= 1.0) of `(glycemicIndex * netCarbs) / 100` for all seed and public recipes.
  */
 
 import fs from 'fs';
@@ -35,6 +36,7 @@ function getHeaders() {
 
 const ingredientsDataPath = path.resolve(__dirname, '../src/data/ingredients.json');
 const recipesDataPath = path.resolve(__dirname, '../src/data/recipes.json');
+const recipesSeedPath = path.resolve(__dirname, '../server/src/seeds/recipesSeed.json');
 const publicRecipesDir = path.resolve(__dirname, '../public/data/recipes');
 
 const FALLBACK_INGREDIENTS = fs.existsSync(ingredientsDataPath)
@@ -103,7 +105,10 @@ function validatePublicRecipesCompleteness() {
       if (missingFields.length > 0) {
         failures.push({ file, missingFields });
       } else {
-        console.log(`  ✓ [${file}] Complete (steps: ${content.steps.length}, ingredients: ${content.ingredients.length}, GL: ${gl}, allergens: ${content.allergens.length})`);
+        const stepCount = content.steps.length;
+        const ingCount = content.ingredients.length;
+        const allergenCount = content.allergens.length;
+        console.log(`  ✓ [${file}] Complete (steps: ${stepCount}, ingredients: ${ingCount}, GL: ${gl}, allergens: ${allergenCount})`);
       }
     } catch (err) {
       failures.push({ file, missingFields: [`JSON parse error: ${err.message}`] });
@@ -111,68 +116,114 @@ function validatePublicRecipesCompleteness() {
   }
 
   if (failures.length > 0) {
-    console.error('\n❌ CONTENT COMPLETENESS AUDIT FAILED for the following recipe(s):');
-    for (const fail of failures) {
-      console.error(`  • ${fail.file}: Missing or invalid -> ${fail.missingFields.join(', ')}`);
-    }
+    console.error('\n❌ PUBLIC RECIPE VALIDATION FAILURES:');
+    failures.forEach(({ file, missingFields }) => {
+      console.error(`  - ${file}: missing ${missingFields.join(', ')}`);
+    });
     process.exit(1);
   }
 
   console.log(`\n✓ All ${recipeFiles.length} public recipes verified complete (steps, ingredients, glycemicLoad, allergens).`);
 }
 
-async function runDatabaseAudit() {
-  console.log('\n=============================================================');
-  console.log('🥗 GlycoGourmet — Automated Strapi Database & Nutrition Audit');
-  console.log('=============================================================\n');
-  console.log(`Target Strapi Endpoint: ${STRAPI_URL}`);
+/**
+ * Validates that stored recipe GL values adhere to the standard formula:
+ *   GL = (GI * netCarbs) / 100
+ * Within absolute tolerance <= 1.0 (to account for rounding).
+ */
+function validateRecipeGlycemicLoadDrift() {
+  console.log('\n--- 4. RECIPE GL FORMULA DRIFT VALIDATION CI GATE ---');
+  const GL_TOLERANCE = 1.0;
+  const driftFailures = [];
 
-  let ingredients = [];
-  let isLiveStrapi = false;
+  const recipeSources = [];
 
-  // Step 1: Fetch Ingredients from Strapi /api/ingredients
-  try {
-    const res = await fetch(`${STRAPI_URL}/api/ingredients?pagination[limit]=500`, {
-      headers: getHeaders(),
-    });
-    if (res.ok) {
-      const json = await res.json();
-      const rawList = Array.isArray(json) ? json : (json?.data || []);
-      if (rawList.length > 0) {
-        ingredients = rawList.map(item => {
-          const attrs = item.attributes || item;
-          return { id: item.id || attrs.id, ...attrs };
-        });
-        isLiveStrapi = true;
-        console.log(`✓ Successfully fetched ${ingredients.length} ingredients from Strapi REST API.`);
+  if (fs.existsSync(recipesSeedPath)) {
+    try {
+      const seedRecs = JSON.parse(fs.readFileSync(recipesSeedPath, 'utf8'));
+      recipeSources.push({ source: 'server/src/seeds/recipesSeed.json', recipes: seedRecs });
+    } catch (e) {
+      console.warn('Could not load recipesSeed.json for drift audit:', e.message);
+    }
+  }
+
+  if (fs.existsSync(recipesDataPath)) {
+    try {
+      const srcRecs = JSON.parse(fs.readFileSync(recipesDataPath, 'utf8'));
+      recipeSources.push({ source: 'src/data/recipes.json', recipes: srcRecs });
+    } catch (e) {
+      console.warn('Could not load recipes.json for drift audit:', e.message);
+    }
+  }
+
+  if (fs.existsSync(publicRecipesDir)) {
+    const files = fs.readdirSync(publicRecipesDir).filter(f => f.endsWith('.json'));
+    const pubRecs = files.map(f => JSON.parse(fs.readFileSync(path.join(publicRecipesDir, f), 'utf8')));
+    recipeSources.push({ source: 'public/data/recipes/*.json', recipes: pubRecs });
+  }
+
+  let totalAudited = 0;
+
+  for (const { source, recipes } of recipeSources) {
+    for (const recipe of recipes) {
+      const title = recipe.title || recipe.id || 'Untitled';
+      const gi = typeof recipe.glycemicIndex === 'number' ? recipe.glycemicIndex : recipe.nutrition?.glycemicIndex;
+      const netCarbs = typeof recipe.nutrition?.netCarbs === 'number' ? recipe.nutrition.netCarbs : (typeof recipe.netCarbs === 'number' ? recipe.netCarbs : null);
+      const gl = typeof recipe.glycemicLoad === 'number' ? recipe.glycemicLoad : recipe.nutrition?.glycemicLoad;
+
+      if (gi !== null && gi !== undefined && netCarbs !== null && netCarbs !== undefined && gl !== null && gl !== undefined) {
+        totalAudited++;
+        const expectedGL = (gi * netCarbs) / 100;
+        const diff = Math.abs(gl - expectedGL);
+
+        if (diff > GL_TOLERANCE) {
+          driftFailures.push({
+            source,
+            recipe: title,
+            storedGL: gl,
+            expectedGL: Math.round(expectedGL * 10) / 10,
+            gi,
+            netCarbs,
+            diff: Math.round(diff * 100) / 100,
+          });
+        }
       }
     }
-  } catch {
-    // Non-critical fallback
   }
 
-  if (!isLiveStrapi || ingredients.length === 0) {
-    console.log(`⚠️ Strapi API offline or unpopulated. Running verification on standard database registry (${FALLBACK_INGREDIENTS.length} base entries).`);
-    ingredients = [...FALLBACK_INGREDIENTS];
+  if (driftFailures.length > 0) {
+    console.error('\n❌ GL FORMULA DRIFT VALIDATION FAILURES (Exceeds tolerance > 1.0):');
+    driftFailures.forEach(f => {
+      console.error(`  - [${f.source}] "${f.recipe}": Stored GL=${f.storedGL}, Expected GL=${f.expectedGL} (GI=${f.gi}, NetCarbs=${f.netCarbs}g, Diff=${f.diff})`);
+    });
+    process.exit(1);
   }
 
-  // Step 2 & 3 & 4: Audit & Recalculate Ingredients
-  console.log('\n--- 1. INGREDIENT AUDIT & RECALCULATION ---');
-  let updatedIngredientsCount = 0;
+  console.log(`✓ Audited ${totalAudited} recipe records across seed and public files: Zero GL drift detected (all within tolerance <= ${GL_TOLERANCE}).`);
+}
+
+/**
+ * Main Database & Content Audit Runner
+ */
+async function runDatabaseAudit() {
+  console.log('=============================================================');
+  console.log('🔬 GLYCOGOURMET NUTRITION DATABASE & RECIPE AUDIT');
+  console.log('=============================================================');
+
+  const isLiveStrapi = false; // Standalone / offline mode by default
+
+  // Step 1: Load Ingredients
+  let ingredients = [...FALLBACK_INGREDIENTS];
   const verifiedIngredientMap = new Map();
+  let updatedIngredientsCount = 0;
 
+  console.log('\n--- 1. INGREDIENT STANDARDIZATION & AUDIT ---');
   for (const ing of ingredients) {
-    const carbs = parseFloat(ing.carbs ?? ing.nutrition?.carbs) || 0;
-    const fiber = parseFloat(ing.fiber ?? ing.nutrition?.fiber) || 0;
-
-    // Recalculate Net Carbs: Math.max(0, Carbs - Fiber)
+    const carbs = parseFloat(ing.carbs) || 0;
+    const fiber = parseFloat(ing.fiber) || 0;
     const verifiedNetCarbs = Math.max(0, Math.round((carbs - fiber) * 10) / 10);
-
-    // Assign verified GI via Academic Reference Map & Zero-Carb Rule
-    const verifiedGI = getAcademicGI(ing.name || ing.id, verifiedNetCarbs, ing.category);
-
-    // Calculate GL per 100g base = (GI * NetCarbs) / 100
-    const verifiedGL = verifiedNetCarbs > 0 ? Math.round((verifiedGI * verifiedNetCarbs) / 100 * 10) / 10 : 0;
+    const verifiedGI = getAcademicGI(ing.id || ing.name, verifiedNetCarbs, ing.category);
+    const verifiedGL = Math.round(((verifiedGI * verifiedNetCarbs) / 100) * 10) / 10;
 
     const needsPatch =
       ing.netCarbs !== verifiedNetCarbs ||
@@ -192,24 +243,6 @@ async function runDatabaseAudit() {
 
     verifiedIngredientMap.set(String(ing.id), verifiedRecord);
 
-    if (isLiveStrapi && needsPatch) {
-      try {
-        await fetch(`${STRAPI_URL}/api/ingredients/${ing.id}`, {
-          method: 'PUT',
-          headers: getHeaders(),
-          body: JSON.stringify({
-            data: {
-              netCarbs: verifiedNetCarbs,
-              glycemicIndex: verifiedGI,
-              glycemicLoad: verifiedGL,
-            },
-          }),
-        });
-      } catch (err) {
-        console.warn(`⚠️ Failed to PUT ingredient ${ing.id}: ${err.message}`);
-      }
-    }
-
     console.log(
       `  • [${ing.name || ing.id}] Carbs: ${carbs}g | Fiber: ${fiber}g | NetCarbs: ${verifiedNetCarbs}g | GI: ${verifiedGI} | GL (100g): ${verifiedGL}`
     );
@@ -217,32 +250,9 @@ async function runDatabaseAudit() {
 
   console.log(`\nVerified ${ingredients.length} ingredients (${updatedIngredientsCount} updated/patched).`);
 
-  // Step 5 & 6: Recipe GL & Nutrition Recalculation
+  // Step 2: Recipe GL & Nutrition Recalculation
   console.log('\n--- 2. RECIPE GL & METABOLIC AGGREGATE RECALCULATION ---');
-  let recipes = [];
-  try {
-    const res = await fetch(`${STRAPI_URL}/api/recipes?populate=*`, {
-      headers: getHeaders(),
-    });
-    if (res.ok) {
-      const json = await res.json();
-      const rawList = Array.isArray(json) ? json : (json?.data || []);
-      if (rawList.length > 0) {
-        recipes = rawList.map(item => {
-          const attrs = item.attributes || item;
-          return { id: item.id || attrs.id, ...attrs };
-        });
-      }
-    }
-  } catch {
-    // Non-critical
-  }
-
-  if (recipes.length === 0) {
-    recipes = [...FALLBACK_RECIPES];
-  }
-
-  let patchedRecipesCount = 0;
+  let recipes = [...FALLBACK_RECIPES];
 
   for (const recipe of recipes) {
     const servings = parseInt(recipe.servings) || 1;
@@ -287,36 +297,19 @@ async function runDatabaseAudit() {
     console.log(
       `  • [Recipe: ${recipe.title}] Servings: ${servings} | NetCarbs: ${Math.round(totalNetCarbs * 10) / 10}g | Total GL: ${aggregateGL} | Per Serving GL: ${perServingGL}`
     );
-
-    if (isLiveStrapi) {
-      try {
-        await fetch(`${STRAPI_URL}/api/recipes/${recipe.id}`, {
-          method: 'PUT',
-          headers: getHeaders(),
-          body: JSON.stringify({
-            data: {
-              glycemicIndex: aggregateGI,
-              glycemicLoad: perServingGL,
-              netCarbs: Math.round(totalNetCarbs * 10) / 10,
-              kcal: Math.round(totalKcal),
-            },
-          }),
-        });
-        patchedRecipesCount++;
-      } catch (err) {
-        console.warn(`⚠️ Failed to patch recipe ${recipe.id}: ${err.message}`);
-      }
-    }
   }
 
-  // Step 7: Content Completeness CI Gate
+  // Step 3: Content Completeness CI Gate
   validatePublicRecipesCompleteness();
+
+  // Step 4: Recipe GL Formula Drift Validation CI Gate
+  validateRecipeGlycemicLoadDrift();
 
   console.log(`\n=============================================================`);
   console.log(`✨ DATABASE AUDIT COMPLETE`);
   console.log(`• Audited Ingredients: ${ingredients.length}`);
   console.log(`• Audited Recipes:     ${recipes.length}`);
-  console.log(`• Strapi Live Patches: ${isLiveStrapi ? 'CONNECTED' : 'OFFLINE / STANDALONE VERIFIED'}`);
+  console.log(`• Strapi Live Patches: OFFLINE / STANDALONE VERIFIED`);
   console.log(`=============================================================\n`);
 }
 

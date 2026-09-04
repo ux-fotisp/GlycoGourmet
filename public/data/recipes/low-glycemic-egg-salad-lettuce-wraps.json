@@ -2,7 +2,7 @@
   "recipeNumber": 1,
   "id": "low-glycemic-egg-salad-lettuce-wraps",
   "title": "Low-Glycemic Egg Salad Lettuce Wraps",
-  "description": "Replacing refined sandwich bread with crisp Romaine lettuce eliminates 30g of fast-digesting carbohydrates, yielding a Glycemic Load of 0.0. Utilizing protein-rich Greek yogurt rather than commercial mayonnaise cuts heavy saturated fat and avoids inflammatory industrial seed oils.",
+  "description": "Hard-boiled pastured eggs folded with creamy avocado mayonnaise, Dijon mustard, crisp organic celery, and fresh chives, cradled in crunchy living butterhead lettuce cups.",
   "imageUrl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80",
   "prepTime": 12,
   "cookTime": 0,
@@ -13,79 +13,59 @@
   "category": "Lunch",
   "tags": [
     "Low GI",
-    "Zero GL",
+    "Low GL",
+    "Keto",
     "High Protein",
-    "Keto-Friendly",
-    "Under 30 Min",
-    "LOGI"
+    "Under 15 Min"
   ],
   "status": "published",
   "publishedAt": "2026-01-01T00:00:00.000Z",
   "isUserAuthored": false,
-  "glycemicIndex": 15,
-  "glycemicLoad": 0,
-  "glycemicImpact": "Zero Glycemic Impact",
+  "glycemicIndex": 12,
+  "glycemicLoad": 0.2,
+  "glycemicImpact": "Optimal Low-GI",
   "nutrition": {
-    "kcal": 240,
-    "protein": 14,
-    "fat": 18.5,
-    "saturatedFat": 4.2,
-    "carbs": 3,
-    "fiber": 1.5,
-    "netCarbs": 1.5,
-    "glycemicIndex": 15,
-    "glycemicLoad": 0
+    "kcal": 310,
+    "protein": 16,
+    "fat": 25,
+    "saturatedFat": 4.8,
+    "carbs": 4.2,
+    "fiber": 2.4,
+    "netCarbs": 1.8,
+    "glycemicIndex": 12,
+    "glycemicLoad": 0.2
   },
   "diabeticNotes": "Replacing refined sandwich bread with crisp Romaine lettuce eliminates 30g of fast-digesting carbohydrates, yielding a Glycemic Load of 0.0. Utilizing protein-rich Greek yogurt rather than commercial mayonnaise cuts heavy saturated fat and avoids inflammatory industrial seed oils.",
   "ingredients": [
     {
       "ingredientId": "eggs",
-      "amount": 2,
-      "unit": "piece",
-      "prepState": "boiled",
-      "name": "large hard-boiled eggs, peeled and diced"
-    },
-    {
-      "ingredientId": "greek-yogurt",
-      "amount": 30,
+      "amount": 100,
       "unit": "g",
-      "prepState": "raw",
-      "name": "2% Greek yogurt (substituting standard mayonnaise)"
-    },
-    {
-      "ingredientId": "dijon-mustard",
-      "amount": 5,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "Dijon mustard"
-    },
-    {
-      "ingredientId": "lemon-juice",
-      "amount": 5,
-      "unit": "g",
-      "prepState": "raw",
-      "name": "fresh lemon juice"
+      "prepState": "boiled"
     },
     {
       "ingredientId": "celery",
-      "amount": 20,
+      "amount": 30,
       "unit": "g",
-      "prepState": "raw",
-      "name": "finely diced celery (adds crunch and prebiotic insoluble fiber)"
+      "prepState": "raw"
+    },
+    {
+      "ingredientId": "dijon-mustard",
+      "amount": 10,
+      "unit": "g",
+      "prepState": "raw"
     },
     {
       "ingredientId": "chives",
       "amount": 5,
       "unit": "g",
-      "prepState": "raw",
-      "name": "finely minced fresh chives or dill"
+      "prepState": "raw"
     },
     {
       "ingredientId": "romaine-lettuce",
-      "amount": 45,
+      "amount": 60,
       "unit": "g",
-      "prepState": "raw",
-      "name": "large, crisp Romaine or butterhead lettuce leaves"
+      "prepState": "raw"
     }
   ],
   "steps": [
@@ -118,5 +98,11 @@
     "vegetarian",
     "gluten_free",
     "heart_healthy"
+  ],
+  "dietaryFlags": [
+    "Gluten-Free",
+    "Dairy-Free",
+    "Keto",
+    "High Protein"
   ]
 }
