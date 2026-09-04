@@ -2,7 +2,7 @@
 
 **Vision:** To establish GlycoGourmet as the definitive, deterministic clinical-grade dietary prescription and metabolic forecasting ecosystem for endocrinology practices and independent registered dietitians.
 
-## Phase 3: Pixel-Perfect UI & MagicPath Alignment (CURRENT)
+## Phase 3: Pixel-Perfect UI & MagicPath Alignment — COMPLETE
 Bridges the gap between functional clinical architecture and a premium, frictionless B2B product experience, adhering strictly to the MagicPath design tokens.
 * **Design System Unification:** Application-wide CSS grid/flexbox refactoring mapping to MagicPath spacing, typography, and border radii.
 * **Fluid Clinical Micro-Interactions:** Framer Motion/React Spring integrations for 1-click Smart Swap transitions, dynamic daily GL budget gauge fills, and drag-and-drop mechanics.
@@ -83,7 +83,7 @@ Gives patients (Fotis) a traceable, deterministic recipe-authoring workflow grou
   - `CustomIngredientFormModal.jsx`: accessible creation form for the required core macronutrients (energy, carbohydrate, fiber, protein, fat); Glycemic Index is optional and never coerced to 0 when omitted.
   - Mass-only default units (`g`, `oz`, `kg`, `lb`) at creation time — avoids the volume/count density-fabrication problem entirely for new custom ingredients.
   - Anti-upgrade invariant enforced: `isUserAuthored: true` permanently yields `source: 'user_entered'`, never `'internal_verified'`.
-  - Honest data-scope disclaimer reflecting the confirmed real behavior of `ingredientStore.js` (custom ingredients are shared catalog-wide, not private to the creating user — see the known limitation noted under §5.2 backend persistence).
+  - Honest data-scope disclaimer reflecting private user-scoped account storage (updated in PR #22 from the previous catalog-wide disclosure to truthful private account guarantee).
 * **Chunk 5 — Private Recipe Draft Lifecycle** `[Fotis | PR #19 | Merged]`
   - Voluntary, non-punitive dietitian-review nudge in `AdminEditor.jsx` reusing the delivered `RedirectNudgeCard`/`WhyAmISeeingThisPanel` components, surfaced only when a recipe contains user-entered ingredients or estimated glycemic values.
   - Dismissing the nudge ("Keep managing my plan") never disables or gates Save Draft, Submit for Review, or Publish controls.

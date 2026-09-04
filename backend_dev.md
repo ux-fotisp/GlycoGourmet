@@ -43,16 +43,22 @@ server/
 │   └── server.js             # Host (0.0.0.0), Port (1337), and APP_KEYS array
 ├── src/
 │   ├── api/
-│   │   ├── audit-record/     # Discrepancy review queue & lifecycle guards
-│   │   ├── client-profile/   # Tenant-scoped patient health records
-│   │   ├── ingredient/       # Master USDA ingredient registry & sync service
+│   │   ├── audit-log-entry/    # Append-only operational audit logging (Gap-Closure Chunk 2)
+│   │   ├── audit-record/       # Discrepancy review queue & lifecycle guards
+│   │   ├── client-profile/     # Tenant-scoped patient health records
+│   │   ├── clinic/             # Tenant organization entity & scoping controller (Gap-Closure Chunk 1)
+│   │   ├── consent-record/     # Layered, versioned patient consent storage (Gap-Closure Chunk 2)
+│   │   ├── ingredient/         # Master USDA & user-authored ingredient registry (Gap-Closure Chunk 3)
+│   │   ├── intake-lead/        # De-identified operational intake tracking (Gap-Closure Chunk 2)
 │   │   ├── metabolic-target-calibration/  # GL, ISF, and CIR clinical budgets
+│   │   ├── notification-preference/       # Split-channel notification preferences (Gap-Closure Chunk 2)
 │   │   ├── prescribed-meal-plan/          # 42-slot 7-day clinical prescriptions
-│   │   ├── recipe/           # Master culinary formulas & metabolic lifecycles
-│   │   └── smart-swap-rule/  # Automated low-GI substitution rules
+│   │   ├── recipe/             # Master culinary formulas & metabolic lifecycles
+│   │   └── smart-swap-rule/    # Automated low-GI substitution rules
 │   ├── extensions/
 │   │   └── users-permissions/# User schema extension & controller sanitization
 │   ├── policies/
+│   │   ├── is-clinic-admin.js    # Strict non-clinical PHI boundary gate (Gap-Closure Chunk 1)
 │   │   └── is-dietitian-owner.js # Row-level tenant boundary policy
 │   ├── services/
 │   │   ├── metabolicEngine.js# Backend deterministic math calculator
@@ -152,15 +158,27 @@ Represents master culinary formulas and patient-authored drafts:
 ---
 
 ### 3.2 `api::ingredient.ingredient`
-Nutritional building blocks linked to USDA FoodData Central ground truth:
-- **`name`** (`string`, Required, Unique)
-- **`category`** (`string`)
-- **`defaultAmount`** (`decimal`)
-- **`defaultUnit`** (`string`: `g`, `oz`, `cup`, `tbsp`, `tsp`)
-- **`defaultPrepState`** (`enumeration`: `raw`, `steamed`, `sauteed`, `roasted`, `boiled`, `mashed_processed`, `cooled`)
-- **`nutrition`** (`json`, Macronutrient profile per 100g)
-- **`substitutions`** (`json`, Array of `SmartSwapPairing`)
-- **`fdcId`** (`integer`, USDA FoodData Central ID)
+Nutritional building blocks linked to USDA FoodData Central ground truth and patient-authored custom ingredients (Gap-Closure Chunk 3). The canonical schema defines exactly 18 attributes:
+1. **`name`** (`string`)
+2. **`baseGI`** (`integer`)
+3. **`usdaFdcId`** (`string`, Unique)
+4. **`kcal`** (`decimal`)
+5. **`protein`** (`decimal`)
+6. **`fat`** (`decimal`)
+7. **`carbs`** (`decimal`)
+8. **`fiber`** (`decimal`)
+9. **`allergens`** (`enumeration`: `milk`, `egg`, `fish`, `crustacean_shellfish`, `tree_nuts`, `peanuts`, `wheat`, `soybeans`, `sesame`, Multiple)
+10. **`lastSyncedAt`** (`datetime`)
+11. **`isUserAuthored`** (`boolean`, Default `false`)
+12. **`owner`** (`relation`, `manyToOne` → `plugin::users-permissions.user`)
+13. **`category`** (`string`)
+14. **`defaultUnit`** (`string`, Default `"g"`)
+15. **`defaultAmount`** (`decimal`, Default `100`)
+16. **`glycemicIndex`** (`decimal`)
+17. **`glycemicLoad`** (`decimal`)
+18. **`netCarbs`** (`decimal`)
+
+*Scoping Rule:* Unauthenticated callers receive only verified/unowned catalog items. Authenticated patients receive verified items plus custom ingredients where `owner = user.id`. Non-owner patient requests return 404 Not Found (existence concealment).
 
 ---
 
@@ -216,10 +234,81 @@ Immutable verification records generated during recipe draft submission:
 ---
 
 ### 3.8 `plugin::users-permissions.user` (Extended User Schema)
-- **`roleType`** (`enumeration`: `user`, `dietitian`, `admin`)
+- **`roleType`** (`enumeration`: `user`, `dietitian`, `clinic_admin`, `admin`, `super_admin`)
+- **`clinic`** (`relation`, `manyToOne` → `api::clinic.clinic`, Tenant assignment)
 - **`isApproved`** (`boolean`, Default `false`)
 - **`licenseId`** (`string`, RDN clinical credential)
 - **`role`** (`relation`, `manyToOne` $	o$ `plugin::users-permissions.role`)
+
+---
+
+---
+
+### 3.9 `api::clinic.clinic` (Gap-Closure Chunk 1)
+Tenant organization entity partitioning clinical practices and patient records:
+- **`name`** (`string`, Required, Unique)
+- **`slug`** (`uid`, Target `name`, Unique)
+- **`tier`** (`enumeration`: `INDEPENDENT`, `CLINIC_PRO`, `ENTERPRISE`, Default `INDEPENDENT`)
+- **`totalSeats`** (`integer`, Default 5, Required)
+- **`activeSeats`** (`integer`, Default 1, Required)
+- **`dietitians`** (`relation`, `oneToMany` → `plugin::users-permissions.user`)
+- **`clients`** (`relation`, `oneToMany` → `api::client-profile.client-profile`)
+
+---
+
+### 3.10 `api::consent-record.consent-record` (Gap-Closure Chunk 2)
+Layered, versioned, revocable patient consent tracking for referrals and data sharing:
+- **`grantor`** (`relation`, `manyToOne` → `plugin::users-permissions.user`)
+- **`granteeId`** (`string`, Required)
+- **`clinic`** (`relation`, `manyToOne` → `api::clinic.clinic`)
+- **`purpose`** (`string`, Required)
+- **`scope`** (`json`, Required, e.g. `['intake_redirect', 'dietitian_share']`)
+- **`version`** (`string`, Default `"2.1"`, Required)
+- **`status`** (`enumeration`: `granted`, `active`, `revoked`, `expired`, Default `active`)
+- **`grantedAt`** (`datetime`, Required)
+- **`expiresAt`** / **`revokedAt`** (`datetime`)
+- **`metadata`** (`json`)
+
+---
+
+### 3.11 `api::audit-log-entry.audit-log-entry` (Gap-Closure Chunk 2)
+Immutable, append-only operational audit log for administrative mutations:
+- **`clinic`** (`relation`, `manyToOne` → `api::clinic.clinic`, Required)
+- **`actor`** (`relation`, `manyToOne` → `plugin::users-permissions.user`)
+- **`actorId`** (`string`, Required)
+- **`actorRole`** (`enumeration`: `clinic_admin`, `admin`, `super_admin`, `system`, Required)
+- **`action`** (`string`, Required, e.g. `intake_stage_changed`, `dietitian_assigned`)
+- **`entityId`** (`string`, Required)
+- **`entityType`** (`enumeration`: `referral_lead`, `client_profile`, `dietitian_profile`, `promotion_config`, `operational_suggestion`, Required)
+- **`suggestedValue`** (`json`)
+- **`finalValue`** (`json`, Required)
+- **`note`** (`text`)
+- **`timestamp`** (`datetime`, Required)
+- *Immutability Rule:* Controller strictly rejects update and delete with `405 Method Not Allowed`.
+
+---
+
+### 3.12 `api::notification-preference.notification-preference` (Gap-Closure Chunk 2)
+Split-channel patient notification configuration:
+- **`user`** (`relation`, `manyToOne` → `plugin::users-permissions.user`, Required)
+- **`category`** (`enumeration`: `care_reminders`, `promoted_dietitians`, Required)
+- **`enabled`** (`boolean`, Default `true`, Required)
+- **`quietHoursStart`** (`string`, Default `"22:00"`)
+- **`quietHoursEnd`** (`string`, Default `"07:00"`)
+- **`frequencyCap`** (`enumeration`: `daily`, `weekly`, `biweekly`, Default `weekly`)
+
+---
+
+### 3.13 `api::intake-lead.intake-lead` (Gap-Closure Chunk 2)
+De-identified operational intake and referral tracking records for Clinic Administrators:
+- **`clinic`** (`relation`, `manyToOne` → `api::clinic.clinic`, Required)
+- **`referenceCode`** (`string`, Unique, Required, e.g. `INT-1011`)
+- **`referralSource`** (`enumeration`: `gp_referral`, `self_service_redirect`, `campaign`, `walk_in`, `patient_referral`, Required)
+- **`serviceTier`** (`enumeration`: `FULL_CARE`, `ONLINE_SESSION_ONLY`, Default `FULL_CARE`, Required)
+- **`stage`** (`enumeration`: `Inquiry`, `Contacted`, `Intake Sent`, `Scheduled`, `Active`, `Lapsed`, Default `Inquiry`, Required)
+- **`stageReason`** (`string`)
+- **`assignedDietitian`** (`relation`, `manyToOne` → `plugin::users-permissions.user`)
+- **`assignedDietitianName`** (`string`)
 
 ---
 
@@ -386,6 +475,33 @@ module.exports = createCoreController("api::client-profile.client-profile", ({ s
 
 ---
 
+---
+
+### 5.4 Clinic Admin Non-Clinical Boundary Policy (`is-clinic-admin.js` — Gap-Closure Chunk 1)
+To protect patient Protected Health Information (PHI) and clinical telemetry, `server/src/policies/is-clinic-admin.js` intercepts all incoming requests from users with `roleType === 'clinic_admin'` and blocks access to clinical content types:
+
+```javascript
+const FORBIDDEN_CLINICAL_UIDS = [
+  'api::client-profile.client-profile',
+  'api::metabolic-target-calibration.metabolic-target-calibration',
+  'api::prescribed-meal-plan.prescribed-meal-plan',
+  'api::smart-swap-rule.smart-swap-rule',
+];
+
+module.exports = (policyContext, config, { strapi }) => {
+  const user = policyContext.state.user;
+  if (!user || user.roleType !== 'clinic_admin') return true;
+
+  const targetUid = policyContext.target?.uid || policyContext.request?.route?.info?.apiName;
+  if (FORBIDDEN_CLINICAL_UIDS.includes(targetUid)) {
+    return false; // Yields 403 Forbidden
+  }
+  return true;
+};
+```
+
+---
+
 ## 6. Complete REST API Specification & Endpoint Contracts
 
 ### 6.1 Authentication Endpoints
@@ -412,6 +528,12 @@ module.exports = createCoreController("api::client-profile.client-profile", ({ s
 | `/api/prescribed-meal-plans` | `POST` | Dietitian / Admin | Prescribe 7-day meal plan (unpublished recipe gate enforced). |
 | `/api/audit-records` | `GET` | Dietitian / Admin | Retrieve discrepancy triage queue ($|Delta| > 1.0	ext{g}$). |
 | `/api/audit-records/:id/resolve` | `POST` | Dietitian / Admin | 1-Click sync author draft to USDA ground truth. |
+| `/api/clinics` | `GET` | Clinic Admin / Admin | List tenant-scoped clinic organizations. |
+| `/api/clinics/:id` | `GET`, `PUT` | Clinic Admin / Admin | Retrieve and manage tenant clinic properties. |
+| `/api/consent-records` | `GET`, `POST` | Patient / Clinic Admin / Admin | Manage layered consent (scoped by clinic and consent scope). |
+| `/api/audit-log-entries` | `GET`, `POST` | Clinic Admin / Admin | Append-only operational audit logging (PUT/DELETE return 405). |
+| `/api/notification-preferences` | `GET`, `POST`, `PUT` | Patient / Admin | Per-user split-channel notification preferences. |
+| `/api/intake-leads` | `GET`, `POST`, `PUT` | Clinic Admin / Admin | De-identified operational intake pipeline leads. |
 
 ---
 

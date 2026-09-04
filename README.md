@@ -17,18 +17,20 @@
 
 ---
 
-## 📚 Platform Documentation Suite (12 Canonical Manuals)
+## 📚 Platform Documentation Suite
 
 The complete architectural, clinical, and engineering specifications are organized into canonical manuals across the repository:
 
 | Document | Focus & Technical Scope |
 | :--- | :--- |
+| 🏛️ **[HANDOFF_WIKI.md](HANDOFF_WIKI.md)** | Master technical architecture & clinical developer handoff wiki (v2.0.0-PROD), covering dual-sided architecture, FHIR export, multi-tenant RBAC, and Gap-Closure Chunks 1–3. |
+| 🗺️ **[ROADMAP.md](ROADMAP.md)** | Comprehensive engineering roadmap detailing delivered milestones (Phases 3–7, Gap-Closure Chunks 1–3) and remaining backlog. |
 | 📋 **[information_architecture.md](information_architecture.md)** | Object-Oriented UX (OOUX / ORCA) domain models, persona taxonomies (Patient, Dietitian, Admin), 6-occasion circadian meal segmentation, and system schemas. |
 | 🧠 **[UX.md](UX.md)** | Cognitive ergonomics, Nielsen Norman Group 10 UX Heuristics, 3 persona customer journeys, and 4 interactive userflows. |
 | 🎨 **[design.md](design.md)** | Sage & Grain Design DNA, color token specifications, typography scales, 8px grid system, and WCAG 2.1 AA/AAA contrast matrix. |
 | ⚛️ **[frontend_dev.md](frontend_dev.md)** | React 19 SPA architecture, Tailwind CSS v4 `@theme` configuration, deterministic metabolic math engine, and dynamic GI/GL resolution pipelines. |
 | 🛡️ **[backend_dev.md](backend_dev.md)** | Headless Strapi CMS (v4/v5), PostgreSQL schemas, lifecycle invariant validation guards, RBAC policies, and production operations runbook. |
-| 🧪 **[testing.md](testing.md)** | Comprehensive test pyramid, full test inventory table, 281-test passing Vitest summary, fuzzing vectors, and CI/CD validation gates. |
+| 🧪 **[testing.md](testing.md)** | Comprehensive test pyramid, full test inventory table, 690-test passing Vitest summary (68 test files), fuzzing vectors, and CI/CD validation gates. |
 | 🤖 **[agentic.md](agentic.md)** | Autonomous QA directives (QA-DIRECTIVE-2026), self-healing selector protocols, synthetic data fuzzing, and Antigravity agent orchestration. |
 | 🚀 **[ci_cd.md](ci_cd.md)** | GitHub Actions production & integration pipelines, certified live CI runs (33079017457 & 33079705050), and verification gates. |
 | 📜 **[changelog.md](changelog.md)** | Semantic versioning history, release milestones (`v1.0.0` to `v2.0.0`), and complete Git commit trajectory. |

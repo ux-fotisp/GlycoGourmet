@@ -13,7 +13,7 @@
 |---|---|---|
 | Patient / Client (e.g., "Fotis" persona) | End-user consuming plans, self-managing or dietitian-assisted | ✅ Built |
 | Clinical Dietitian ("Ivana" persona) | Creator, planner, auditor of clinical content | ✅ Built |
-| Clinic Administrator ("Konstantina" persona) | Growth, intake, assignment, promotion — non-clinical | 🌱 Dream (not yet a distinct role in RBAC) |
+| Clinic Administrator ("Konstantina" persona) | Growth, intake, assignment, promotion — non-clinical | ✅ Built (PR #14, PR #20, PR #21) |
 
 ## 3. Feature Scope
 
@@ -25,25 +25,30 @@
 - Recipe & Plan Management: Draft/Public recipe states, `PlanBuilder` canvas, dietary audit queue.
 - Notification infrastructure: `notificationEngine.ts` (bolus reminder scheduling), `NotificationOptIn.jsx` (patient opt-in card).
 - WCAG 2.1 AA compliance across all modals/drawers (Escape-to-close, `role="dialog"`, `aria-modal="true"`).
-- CI/CD: 254 Vitest unit tests, full Playwright E2E suite, Oxlint + `tsc --noEmit` gates, all green.
+- CI/CD: 690 Vitest unit tests (68 test files), full Playwright E2E suite, Oxlint + `tsc --noEmit` gates, all green.
 
-### 3.2 Dream (Phase 2 — UXartifact_v0.2 Scope, Not Yet Built)
+### 3.2 Delivered in Phase 5.2 & Gap-Closure Chunks 1–3 (PRs #11–#14, #20–#22)
 
-- **Clinic Admin role & dashboard growth tools**: referral source tracking, intake pipeline (Kanban: Inquiry → Contacted → Intake Sent → Scheduled → Active → Lapsed), funnel analytics.
-- **Self-Service Failure Detection & Redirect**: passive risk scoring off existing adherence/excursion signals, non-punitive in-app nudge, opt-in handoff to Konstantina's intake queue.
-- **Two-Tier Service Model**: Tier A (Full Care, ongoing) vs. Tier B (Online-Session-Only, lower fee, one-time tailored plan) — new `Session Request` queue separate from the full-care roster.
-- **Curated Dietitian Directory (not matching)**: `specialties[]` taxonomy (diabetes, cholesterol/lipid, renal, GDM, etc.), filterable/sortable listing, dietitian public profile built from published recipes as portfolio.
-- **Promoted Dietitian Notifications**: editorially-controlled, criteria-logged, transparently labeled ("Clinic-recommended"), gated behind `CLINIC_PRO` tier.
-- **Meal-Timing Reminders**: new notification type extending `notificationEngine.ts` beyond bolus reminders.
-- **Trust & Governance Layer**:
-  - `ConsentRecord` object — layered, versioned, revocable consent for data sharing and redirects.
-  - `AuditLogEntry` object — immutable log of every Konstantina assignment/promotion/tier decision (actor, suggested value, final value, note).
-  - `NotificationPreference` object — independently toggleable categories (care reminders vs. promoted-dietitian).
-  - "Why am I seeing this?" explainability panel (Fotis-facing).
-  - Permissions/Consent Dashboard with one-click revocation (Fotis-facing).
-  - PHI-Boundary Banner on `ClinicDashboard.jsx` (Konstantina-facing, visible enforcement of `is-dietitian-owner.js` isolation).
-  - Consent-status badge (visible to Konstantina, no clinical content exposed).
-  - Escalation/flag-as-wrong queue for Konstantina to contest system suggestions without penalty.
+- **Clinic Admin Role & Multi-Tenancy (PR #14, PR #20)**: `clinic_admin` role in RBAC, `api::clinic` tenant collection, and `is-clinic-admin.js` policy with `FORBIDDEN_CLINICAL_UIDS` enforcing complete non-clinical PHI isolation.
+- **Intake Pipeline & Two-Tier Service (PR #14, PR #21)**: `IntakePipelineBoard` (Inquiry → Contacted → Intake Sent → Scheduled → Active → Lapsed), `FULL_CARE` vs `ONLINE_SESSION_ONLY` tiers, de-identified `api::intake-lead` Strapi persistence with graceful fallback.
+- **Non-Punitive Self-Service Redirect Nudge (PR #13, PR #19)**: `RedirectNudgeCard` surfaced non-punitively when recipes contain user-entered or estimated glycemic data, gated by strict patient allow-list.
+- **Trust & Governance Backend Persistence (PR #11, #12, #21)**:
+  - `api::consent-record`: layered, versioned ('2.1'), revocable consent with scope allow-list defense-in-depth and live Strapi synchronization.
+  - `api::audit-log-entry`: immutable append-only operational audit log (`405 Method Not Allowed` on update/delete).
+  - `api::notification-preference`: split independent preferences (`care_reminders` vs `promoted_dietitians`) with quiet hours and frequency caps.
+  - `WhyAmISeeingThisPanel`: patient explainability disclosure.
+  - `ConsentPermissionsDashboard`: patient consent management with one-click revocation.
+  - `PHIBoundaryBanner`: persistent non-dismissible operational boundary indicator for Clinic Admin.
+  - `ConsentStatusBadge`: read-only consent state indicator for administrative staff.
+  - `EscalationFlagControl`: human-in-command operational suggestion contesting with audit logging.
+- **Custom Ingredient Ownership Scoping (PR #22)**: `isUserAuthored` and `owner` relation on `api::ingredient`, default-deny client filtering in `getCustomIngredients(userId = null)`, and 404 concealment for non-owner queries.
+
+### 3.3 Remaining Backlog
+
+- **Curated Dietitian Directory (not matching)**: `specialties[]` taxonomy (diabetes, lipids, renal, GDM), filterable listing by capacity.
+- **Promoted Dietitian Notification Campaign Engine**: Criteria-logged promotion triggering gated behind `CLINIC_PRO` tier.
+- **Ad-Hoc Session Request Queue**: Dedicated UI queue for ad-hoc consultation triage.
+- **Meal-Timing Reminders**: Extended schedule notifications beyond bolus offsets.
 
 ## 4. Key User Journeys
 

@@ -42,72 +42,98 @@ scratch/                       Temporary systemic file manipulations via Node sc
 
 - Chunks 1–8 fully resolved and validated.
 - `exportPipeline.js` fully functional: `generateGroceryManifest`, `generateClinicalSummaryReport`, `exportFHIRMetabolicTelemetry`.
-- All CI/CD gates green: lint, 254 Vitest tests, full Playwright E2E, successful build.
+- All CI/CD gates green: lint, 690 Vitest tests (68 test files), full Playwright E2E, successful build.
 - No active blockers; repository fully refactored and pushed.
 
 ---
 
-## 5. Dream — New Schemas Required for UXartifact_v0.2
+## 5. Trust & Governance Schemas (Built — PR #20, PR #21, PR #22)
 
-### 5.1 `ConsentRecord`
+### 5.1 `api::consent-record`
 
-```
-ConsentRecord {
-  id: string
-  grantorId: string        // patient ID
-  granteeId: string        // dietitian or clinic ID
-  purpose: string          // e.g. "self-service-redirect", "data-sharing"
-  scope: string[]           // e.g. ["adherence_history"], explicitly excludes raw glucose logs unless extended
-  version: string           // e.g. "2.1" — re-consent triggers on scope change
-  grantedAt: timestamp
-  expiresAt: timestamp | null
-  revokedAt: timestamp | null
+```json
+{
+  "grantor": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" },
+  "granteeId": { "type": "string", "required": true },
+  "clinic": { "type": "relation", "relation": "manyToOne", "target": "api::clinic.clinic" },
+  "purpose": { "type": "string", "required": true },
+  "scope": { "type": "json", "required": true },
+  "version": { "type": "string", "default": "2.1", "required": true },
+  "status": { "type": "enumeration", "enum": ["granted", "active", "revoked", "expired"], "default": "active" },
+  "grantedAt": { "type": "datetime", "required": true },
+  "expiresAt": { "type": "datetime" },
+  "revokedAt": { "type": "datetime" },
+  "metadata": { "type": "json" }
 }
 ```
 
-**FHIR/LOINC status:** N/A — non-clinical business object. Must never enter the `exportFHIRMetabolicTelemetry` pipeline.
+**FHIR/LOINC status:** N/A — non-clinical business object. Excluded from `exportFHIRMetabolicTelemetry`. Controller enforces consent-scope defense-in-depth (`intake_redirect` allow-list).
 
-### 5.2 `AuditLogEntry`
+### 5.2 `api::audit-log-entry`
 
-```
-AuditLogEntry {
-  id: string
-  actorId: string
-  actorRole: 'clinic_admin' | 'system'
-  action: 'assign_dietitian' | 'confirm_tier' | 'configure_promotion' | 'flag_escalation'
-  suggestedValue: object | null   // system's suggestion, if any
-  finalValue: object              // what actually happened
-  note: string | null
-  timestamp: timestamp
+```json
+{
+  "clinic": { "type": "relation", "relation": "manyToOne", "target": "api::clinic.clinic", "required": true },
+  "actor": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" },
+  "actorId": { "type": "string", "required": true },
+  "actorRole": { "type": "enumeration", "enum": ["clinic_admin", "admin", "super_admin", "system"] },
+  "action": { "type": "string", "required": true },
+  "entityId": { "type": "string", "required": true },
+  "entityType": { "type": "enumeration", "enum": ["referral_lead", "client_profile", "dietitian_profile", "promotion_config", "operational_suggestion"] },
+  "suggestedValue": { "type": "json" },
+  "finalValue": { "type": "json", "required": true },
+  "note": { "type": "text" },
+  "timestamp": { "type": "datetime", "required": true }
 }
 ```
 
-**Constraint:** append-only store, no update/delete mutation path. **FHIR/LOINC status:** N/A — non-clinical.
+**Constraint:** Append-only store. Controller rejects update and delete with `405 Method Not Allowed`. **FHIR/LOINC status:** N/A — non-clinical.
 
-### 5.3 `NotificationPreference`
+### 5.3 `api::notification-preference`
 
-```
-NotificationPreference {
-  userId: string
-  category: 'care_reminder' | 'promoted_dietitian'
-  enabled: boolean
-  quietHours: { start: string, end: string } | null
-  frequencyCap: number | null   // max notifications per period
+```json
+{
+  "user": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user", "required": true },
+  "category": { "type": "enumeration", "enum": ["care_reminders", "promoted_dietitians"], "required": true },
+  "enabled": { "type": "boolean", "default": true, "required": true },
+  "quietHoursStart": { "type": "string", "default": "22:00" },
+  "quietHoursEnd": { "type": "string", "default": "07:00" },
+  "frequencyCap": { "type": "enumeration", "enum": ["daily", "weekly", "biweekly"], "default": "weekly" }
 }
 ```
 
-**Constraint:** categories toggle independently — no shared enabled flag. **FHIR/LOINC status:** N/A — non-clinical.
+**Constraint:** Categories toggle independently — no shared enabled flag. **FHIR/LOINC status:** N/A — non-clinical.
 
-### 5.4 Extensions to Existing Schemas
+### 5.4 `api::intake-lead`
 
-- **Dietitian record (`clientStore.js`):** add `specialties: string[]` (e.g., `["diabetes", "cholesterol_lipid", "renal", "gdm"]`) and `activePatients` capacity field (already exists) used for directory filtering, not scoring.
-- **Client record (`clientStore.js`):** add `serviceTier: 'full_care' | 'online_session_only'`.
-- **Referral Lead (new entity):** `{ leadId, source: 'gp_referral' | 'ad_campaign' | 'self_service_redirect' | 'walk_in' | 'patient_referral', stage, assignedDietitianId | null, consentId | null }`.
+```json
+{
+  "clinic": { "type": "relation", "relation": "manyToOne", "target": "api::clinic.clinic", "required": true },
+  "referenceCode": { "type": "string", "required": true, "unique": true },
+  "referralSource": { "type": "enumeration", "enum": ["gp_referral", "self_service_redirect", "campaign", "walk_in", "patient_referral"], "required": true },
+  "serviceTier": { "type": "enumeration", "enum": ["FULL_CARE", "ONLINE_SESSION_ONLY"], "default": "FULL_CARE", "required": true },
+  "stage": { "type": "enumeration", "enum": ["Inquiry", "Contacted", "Intake Sent", "Scheduled", "Active", "Lapsed"], "default": "Inquiry", "required": true },
+  "stageReason": { "type": "string" },
+  "assignedDietitian": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" },
+  "assignedDietitianName": { "type": "string" }
+}
+```
 
-## 6. Architectural Boundary Rules (Dream — must be enforced at build time, not just documented)
+### 5.5 `api::ingredient` Ownership Extensions
 
-- `ConsentRecord`, `AuditLogEntry`, `NotificationPreference`, and Referral Lead entities must live in a schema namespace physically separate from clinical telemetry tables/collections.
-- Any query originating from a `clinic_admin`-scoped component must be structurally incapable of joining against clinical telemetry tables — enforce via `is-dietitian-owner.js`-equivalent policy scoped to the new role.
+```json
+{
+  "isUserAuthored": { "type": "boolean", "default": false },
+  "owner": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" }
+}
+```
+
+**Constraint:** Default-deny scoping in `getCustomIngredients(userId = null)` and 404 concealment for non-owner patient queries.
+
+## 6. Architectural Boundary Rules (Built & Enforced)
+
+- `ConsentRecord`, `AuditLogEntry`, `NotificationPreference`, and `IntakeLead` live in dedicated Strapi content types physically isolated from clinical telemetry collections.
+- Any query originating from a `clinic_admin` user is structurally blocked from clinical telemetry and client health endpoints via `server/src/policies/is-clinic-admin.js` with `FORBIDDEN_CLINICAL_UIDS` (returning `403 Forbidden`).
 - Consent scope changes must version the record rather than mutate in place, preserving a full history for audit defensibility.
 
 ## 7. Key Decisions Log (Appended for v0.2)
