@@ -1,220 +1,139 @@
 {
-    "recipeNumber":  18,
-    "id":  "mediterranean-rainbow-tuna-salad-with-mustard-dressing",
-    "title":  "Mediterranean Rainbow Tuna Salad with Mustard Dressing",
-    "description":  "Bell peppers provide abundant vitamin C and luteolin, reducing systemic oxidative stress and preventing vascular LDL particle glycation.",
-    "imageUrl":  "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format\u0026fit=crop\u0026w=1200\u0026q=80",
-    "prepTime":  12,
-    "cookTime":  0,
-    "cookingTime":  12,
-    "prepTimeMinutes":  12,
-    "cookTimeMinutes":  0,
-    "difficulty":  "Easy",
-    "servings":  1,
-    "yield":  "1 Serving",
-    "category":  "Salad",
-    "tags":  [
-                 "Low GI",
-                 "Med GL",
-                 "High Protein",
-                 "Under 30 Min",
-                 "LOGI"
-             ],
-    "allergens":  [
-                      "fish"
-                  ],
-    "dietaryTags":  [
-                        "gluten_free",
-                        "dairy_free",
-                        "heart_healthy"
-                    ],
-    "status":  "published",
-    "publishedAt":  "2026-01-01T00:00:00.000Z",
-    "isUserAuthored":  false,
-    "glycemicIndex":  34,
-    "glycemicLoad":  11.5,
-    "glycemicImpact":  "Medium Impact",
-    "nutrition":  {
-                      "kcal":  320,
-                      "protein":  31,
-                      "fat":  15,
-                      "saturatedFat":  2.2,
-                      "carbs":  16,
-                      "fiber":  5.5,
-                      "netCarbs":  10.5,
-                      "glycemicIndex":  34,
-                      "glycemicLoad":  11.5
-                  },
-    "diabeticNotes":  "Bell peppers provide abundant vitamin C and luteolin, reducing systemic oxidative stress and preventing vascular LDL particle glycation.",
-    "ingredients":  [
-                        {
-                            "ingredientId":  "tuna-light",
-                            "amount":  120,
-                            "unit":  "g",
-                            "prepState":  "raw",
-                            "name":  "chunk light tuna in spring water, drained",
-                            "kcal":  132,
-                            "protein":  29.0,
-                            "fat":  1.0,
-                            "carbs":  0,
-                            "fiber":  0,
-                            "netCarbs":  0,
-                            "glycemicIndex":  null,
-                            "glycemicLoad":  0,
-                            "allergens":  [
-                                              "fish"
-                                          ],
-                            "nutritionSource":  "USDA FoodData Central"
-                        },
-                        {
-                            "ingredientId":  "bell-pepper-yellow",
-                            "amount":  50,
-                            "unit":  "g",
-                            "prepState":  "raw",
-                            "name":  "yellow bell pepper, finely diced",
-                            "kcal":  14,
-                            "protein":  0.5,
-                            "fat":  0.1,
-                            "carbs":  3.2,
-                            "fiber":  0.9,
-                            "netCarbs":  2.3,
-                            "glycemicIndex":  15,
-                            "glycemicLoad":  0.3,
-                            "nutritionSource":  "Sydney University GI Database"
-                        },
-                        {
-                            "ingredientId":  "bell-pepper-red",
-                            "amount":  50,
-                            "unit":  "g",
-                            "prepState":  "raw",
-                            "name":  "red bell pepper, finely diced",
-                            "kcal":  16,
-                            "protein":  0.5,
-                            "fat":  0.2,
-                            "carbs":  3.0,
-                            "fiber":  1.1,
-                            "netCarbs":  1.9,
-                            "glycemicIndex":  15,
-                            "glycemicLoad":  0.3,
-                            "nutritionSource":  "Sydney University GI Database"
-                        },
-                        {
-                            "ingredientId":  "celery",
-                            "amount":  40,
-                            "unit":  "g",
-                            "prepState":  "raw",
-                            "name":  "stalk celery, finely diced",
-                            "kcal":  6,
-                            "protein":  0.3,
-                            "fat":  0.1,
-                            "carbs":  1.2,
-                            "fiber":  0.6,
-                            "netCarbs":  0.6,
-                            "glycemicIndex":  15,
-                            "glycemicLoad":  0.1,
-                            "nutritionSource":  "Sydney University GI Database"
-                        },
-                        {
-                            "ingredientId":  "red-onion",
-                            "amount":  20,
-                            "unit":  "g",
-                            "prepState":  "raw",
-                            "name":  "finely chopped red onion",
-                            "kcal":  8,
-                            "protein":  0.2,
-                            "fat":  0,
-                            "carbs":  1.9,
-                            "fiber":  0.3,
-                            "netCarbs":  1.6,
-                            "glycemicIndex":  15,
-                            "glycemicLoad":  0.2,
-                            "nutritionSource":  "Sydney University GI Database"
-                        },
-                        {
-                            "ingredientId":  "kalamata-olives",
-                            "amount":  15,
-                            "unit":  "g",
-                            "prepState":  "raw",
-                            "name":  "Kalamata olives, pitted and chopped",
-                            "kcal":  35,
-                            "protein":  0.2,
-                            "fat":  3.8,
-                            "carbs":  0.6,
-                            "fiber":  0.4,
-                            "netCarbs":  0.2,
-                            "glycemicIndex":  null,
-                            "glycemicLoad":  0,
-                            "nutritionSource":  "USDA FoodData Central"
-                        },
-                        {
-                            "ingredientId":  "extra-virgin-olive-oil",
-                            "amount":  14,
-                            "unit":  "g",
-                            "prepState":  "raw",
-                            "name":  "extra virgin olive oil",
-                            "kcal":  124,
-                            "protein":  0,
-                            "fat":  14,
-                            "carbs":  0,
-                            "fiber":  0,
-                            "netCarbs":  0,
-                            "glycemicIndex":  null,
-                            "glycemicLoad":  0,
-                            "nutritionSource":  "USDA FoodData Central"
-                        },
-                        {
-                            "ingredientId":  "dijon-mustard",
-                            "amount":  7,
-                            "unit":  "g",
-                            "prepState":  "raw",
-                            "name":  "coarse whole-grain Dijon mustard",
-                            "kcal":  10,
-                            "protein":  0.5,
-                            "fat":  0.6,
-                            "carbs":  0.5,
-                            "fiber":  0.2,
-                            "netCarbs":  0.3,
-                            "glycemicIndex":  15,
-                            "glycemicLoad":  0.0,
-                            "nutritionSource":  "USDA FoodData Central"
-                        },
-                        {
-                            "ingredientId":  "lemon-juice",
-                            "amount":  15,
-                            "unit":  "g",
-                            "prepState":  "raw",
-                            "name":  "fresh lemon juice",
-                            "kcal":  4,
-                            "protein":  0.1,
-                            "fat":  0,
-                            "carbs":  1.4,
-                            "fiber":  0.4,
-                            "netCarbs":  1.0,
-                            "glycemicIndex":  20,
-                            "glycemicLoad":  0.2,
-                            "nutritionSource":  "Sydney University GI Database"
-                        }
-                    ],
-    "steps":  [
-                  {
-                      "title":  "Whisk Mustard Vinaigrette",
-                      "description":  "In a salad bowl, whisk extra virgin olive oil, Dijon mustard, and fresh lemon juice until emulsified."
-                  },
-                  {
-                      "title":  "Dice Crisp Vegetables",
-                      "description":  "Finely dice yellow bell pepper, red bell pepper, celery, and red onion."
-                  },
-                  {
-                      "title":  "Chop Kalamata Olives",
-                      "description":  "Pit and roughly chop flavorful Kalamata olives."
-                  },
-                  {
-                      "title":  "Combine Veggies \u0026 Dressing",
-                      "description":  "Add diced peppers, celery, onion, and chopped olives to the bowl, tossing with the vinaigrette."
-                  },
-                  {
-                      "title":  "Flake Tuna \u0026 Serve",
-                      "description":  "Gently fold in drained tuna chunks. Toss lightly to coat and serve chilled."
-                  }
-              ]
+  "recipeNumber": 18,
+  "id": "mediterranean-rainbow-tuna-salad-with-mustard-dressing",
+  "title": "Mediterranean Rainbow Tuna Salad with Mustard Dressing",
+  "description": "Bell peppers provide abundant vitamin C and luteolin, reducing systemic oxidative stress and preventing vascular LDL particle glycation.",
+  "imageUrl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 12,
+  "cookTime": 0,
+  "cookingTime": 12,
+  "prepTimeMinutes": 12,
+  "cookTimeMinutes": 0,
+  "difficulty": "Easy",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Salad",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "High Protein",
+    "Under 30 Min",
+    "LOGI"
+  ],
+  "allergens": [
+    "fish"
+  ],
+  "dietaryTags": [
+    "gluten_free",
+    "dairy_free",
+    "heart_healthy"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 34,
+  "glycemicLoad": 3.6,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 320,
+    "protein": 31,
+    "fat": 15,
+    "saturatedFat": 2.2,
+    "carbs": 16,
+    "fiber": 5.5,
+    "netCarbs": 10.5,
+    "glycemicIndex": 34,
+    "glycemicLoad": 3.6
+  },
+  "diabeticNotes": "Bell peppers provide abundant vitamin C and luteolin, reducing systemic oxidative stress and preventing vascular LDL particle glycation.",
+  "ingredients": [
+    {
+      "ingredientId": "tuna-light",
+      "amount": 120,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "chunk light tuna in spring water, drained"
+    },
+    {
+      "ingredientId": "bell-pepper-yellow",
+      "amount": 50,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "yellow bell pepper, finely diced"
+    },
+    {
+      "ingredientId": "bell-pepper-red",
+      "amount": 50,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "red bell pepper, finely diced"
+    },
+    {
+      "ingredientId": "celery",
+      "amount": 40,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "stalk celery, finely diced"
+    },
+    {
+      "ingredientId": "red-onion",
+      "amount": 20,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "finely chopped red onion"
+    },
+    {
+      "ingredientId": "kalamata-olives",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "Kalamata olives, pitted and chopped"
+    },
+    {
+      "ingredientId": "extra-virgin-olive-oil",
+      "amount": 14,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "extra virgin olive oil"
+    },
+    {
+      "ingredientId": "dijon-mustard",
+      "amount": 7,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "coarse whole-grain Dijon mustard"
+    },
+    {
+      "ingredientId": "lemon-juice",
+      "amount": 15,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "fresh lemon juice"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Whisk Mustard Vinaigrette",
+      "description": "In a salad bowl, whisk extra virgin olive oil, Dijon mustard, and fresh lemon juice until emulsified."
+    },
+    {
+      "title": "Dice Crisp Vegetables",
+      "description": "Finely dice yellow bell pepper, red bell pepper, celery, and red onion."
+    },
+    {
+      "title": "Chop Kalamata Olives",
+      "description": "Pit and roughly chop flavorful Kalamata olives."
+    },
+    {
+      "title": "Combine Veggies & Dressing",
+      "description": "Add diced peppers, celery, onion, and chopped olives to the bowl, tossing with the vinaigrette."
+    },
+    {
+      "title": "Flake Tuna & Serve",
+      "description": "Gently fold in drained tuna chunks. Toss lightly to coat and serve chilled."
+    }
+  ],
+  "dietaryFlags": [
+    "High Fiber"
+  ]
 }

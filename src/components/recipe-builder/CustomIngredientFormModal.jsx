@@ -303,7 +303,8 @@ export const CustomIngredientFormModal = ({
         </div>
 
         {/* Modal Form Body */}
-        <form onSubmit={handleSubmit} noValidate className="p-5 space-y-4 overflow-y-auto flex-1 text-xs">
+        <form onSubmit={handleSubmit} noValidate className="flex flex-col flex-1 min-h-0 text-xs">
+          <div className="p-5 space-y-4 overflow-y-auto flex-1">
           {/* Global Error Banner */}
           {globalError && (
             <div
@@ -632,8 +633,10 @@ export const CustomIngredientFormModal = ({
             </p>
           </div>
 
+          </div>
+
           {/* Modal Action Buttons */}
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-outline-variant/20">
+          <div className="flex items-center justify-end gap-2 p-5 border-t border-outline-variant/20 bg-surface-container-low shrink-0">
             <button
               type="button"
               onClick={onClose}

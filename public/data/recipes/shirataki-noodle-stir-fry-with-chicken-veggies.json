@@ -1,192 +1,126 @@
 {
-    "recipeNumber":  9,
-    "id":  "shirataki-noodle-stir-fry-with-chicken-veggies",
-    "title":  "Shirataki Noodle Stir-Fry with Chicken \u0026 Veggies",
-    "description":  "The combination of beta-glucans in cremini mushrooms and glucomannan in shirataki creates a powerful dual-fiber barrier that blunts carbohydrate absorption and aids bile acid binding.",
-    "imageUrl":  "https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format\u0026fit=crop\u0026w=1200\u0026q=80",
-    "prepTime":  10,
-    "cookTime":  12,
-    "cookingTime":  22,
-    "prepTimeMinutes":  10,
-    "cookTimeMinutes":  12,
-    "difficulty":  "Medium",
-    "servings":  1,
-    "yield":  "1 Serving",
-    "category":  "Main Course",
-    "tags":  [
-                 "Low GI",
-                 "Low GL",
-                 "High Fiber",
-                 "Shirataki",
-                 "LOGI"
-             ],
-    "allergens":  [
-                      "soybeans",
-                      "sesame"
-                  ],
-    "dietaryTags":  [
-                        "gluten_free",
-                        "dairy_free",
-                        "heart_healthy"
-                    ],
-    "status":  "published",
-    "publishedAt":  "2026-01-01T00:00:00.000Z",
-    "isUserAuthored":  false,
-    "glycemicIndex":  28,
-    "glycemicLoad":  5,
-    "glycemicImpact":  "Optimal Low-GI",
-    "nutrition":  {
-                      "kcal":  310,
-                      "protein":  33,
-                      "fat":  13,
-                      "saturatedFat":  2,
-                      "carbs":  12,
-                      "fiber":  6.5,
-                      "netCarbs":  5.5,
-                      "glycemicIndex":  28,
-                      "glycemicLoad":  5
-                  },
-    "diabeticNotes":  "The combination of beta-glucans in cremini mushrooms and glucomannan in shirataki creates a powerful dual-fiber barrier that blunts carbohydrate absorption and aids bile acid binding.",
-    "ingredients":  [
-                        {
-                            "ingredientId":  "shirataki-noodles",
-                            "amount":  200,
-                            "unit":  "g",
-                            "prepState":  "boiled",
-                            "name":  "packet Shirataki / Konjac noodles (rinsed and drained)",
-                            "kcal":  20,
-                            "protein":  0.4,
-                            "fat":  0.2,
-                            "carbs":  4.0,
-                            "fiber":  4.0,
-                            "netCarbs":  0.0,
-                            "glycemicIndex":  null,
-                            "glycemicLoad":  0,
-                            "nutritionSource":  "USDA FoodData Central"
-                        },
-                        {
-                            "ingredientId":  "chicken-breast",
-                            "amount":  120,
-                            "unit":  "g",
-                            "prepState":  "sauteed",
-                            "name":  "skinless chicken breast, cut into thin strips",
-                            "kcal":  198,
-                            "protein":  37.2,
-                            "fat":  4.3,
-                            "carbs":  0,
-                            "fiber":  0,
-                            "netCarbs":  0,
-                            "glycemicIndex":  null,
-                            "glycemicLoad":  0,
-                            "nutritionSource":  "USDA FoodData Central"
-                        },
-                        {
-                            "ingredientId":  "bell-pepper-red",
-                            "amount":  60,
-                            "unit":  "g",
-                            "prepState":  "sauteed",
-                            "name":  "red bell pepper, thinly sliced",
-                            "kcal":  19,
-                            "protein":  0.6,
-                            "fat":  0.2,
-                            "carbs":  3.6,
-                            "fiber":  1.3,
-                            "netCarbs":  2.3,
-                            "glycemicIndex":  15,
-                            "glycemicLoad":  0.3,
-                            "nutritionSource":  "Sydney University GI Database"
-                        },
-                        {
-                            "ingredientId":  "sugar-snap-peas",
-                            "amount":  50,
-                            "unit":  "g",
-                            "prepState":  "sauteed",
-                            "name":  "sugar snap peas, trimmed",
-                            "kcal":  21,
-                            "protein":  1.4,
-                            "fat":  0.1,
-                            "carbs":  3.8,
-                            "fiber":  1.3,
-                            "netCarbs":  2.5,
-                            "glycemicIndex":  48,
-                            "glycemicLoad":  1.2,
-                            "nutritionSource":  "Sydney University GI Database"
-                        },
-                        {
-                            "ingredientId":  "cremini-mushrooms",
-                            "amount":  70,
-                            "unit":  "g",
-                            "prepState":  "sauteed",
-                            "name":  "sliced button or cremini mushrooms",
-                            "kcal":  15,
-                            "protein":  1.8,
-                            "fat":  0.1,
-                            "carbs":  2.3,
-                            "fiber":  0.8,
-                            "netCarbs":  1.5,
-                            "glycemicIndex":  15,
-                            "glycemicLoad":  0.2,
-                            "nutritionSource":  "Sydney University GI Database"
-                        },
-                        {
-                            "ingredientId":  "sesame-oil",
-                            "amount":  14,
-                            "unit":  "g",
-                            "prepState":  "raw",
-                            "name":  "avocado oil or cold-pressed sesame oil",
-                            "kcal":  124,
-                            "protein":  0,
-                            "fat":  14.0,
-                            "carbs":  0,
-                            "fiber":  0,
-                            "netCarbs":  0,
-                            "glycemicIndex":  null,
-                            "glycemicLoad":  0,
-                            "allergens":  [
-                                              "sesame"
-                                          ],
-                            "nutritionSource":  "USDA FoodData Central"
-                        },
-                        {
-                            "ingredientId":  "tamari-soy-sauce",
-                            "amount":  20,
-                            "unit":  "g",
-                            "prepState":  "raw",
-                            "name":  "tamari soy sauce",
-                            "kcal":  12,
-                            "protein":  2.0,
-                            "fat":  0.1,
-                            "carbs":  1.1,
-                            "fiber":  0,
-                            "netCarbs":  1.1,
-                            "glycemicIndex":  15,
-                            "glycemicLoad":  0.2,
-                            "allergens":  [
-                                              "soybeans"
-                                          ],
-                            "nutritionSource":  "USDA FoodData Central"
-                        }
-                    ],
-    "steps":  [
-                  {
-                      "title":  "Rinse \u0026 Dry-Sear Noodles",
-                      "description":  "Rinse shirataki noodles thoroughly in cold water, parboil for 1 minute, drain, and dry-sear in a hot pan."
-                  },
-                  {
-                      "title":  "Stir-Fry Sliced Chicken",
-                      "description":  "Heat sesame oil in a wok over high heat. Stir-fry sliced chicken breast for 4 minutes until golden."
-                  },
-                  {
-                      "title":  "Cook Crisp Vegetables",
-                      "description":  "Add sliced bell pepper, trimmed snap peas, and cremini mushrooms. Stir-fry for 3 minutes until tender-crisp."
-                  },
-                  {
-                      "title":  "Add Noodles \u0026 Sauce",
-                      "description":  "Add prepared shirataki noodles and pour tamari soy sauce over the mixture."
-                  },
-                  {
-                      "title":  "Toss \u0026 Glaze",
-                      "description":  "Toss vigorously for 2 minutes until sauce coats noodles and vegetables evenly. Serve hot."
-                  }
-              ]
+  "recipeNumber": 9,
+  "id": "shirataki-noodle-stir-fry-with-chicken-veggies",
+  "title": "Shirataki Noodle Stir-Fry with Chicken & Veggies",
+  "description": "The combination of beta-glucans in cremini mushrooms and glucomannan in shirataki creates a powerful dual-fiber barrier that blunts carbohydrate absorption and aids bile acid binding.",
+  "imageUrl": "https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=1200&q=80",
+  "prepTime": 10,
+  "cookTime": 12,
+  "cookingTime": 22,
+  "prepTimeMinutes": 10,
+  "cookTimeMinutes": 12,
+  "difficulty": "Medium",
+  "servings": 1,
+  "yield": "1 Serving",
+  "category": "Main Course",
+  "tags": [
+    "Low GI",
+    "Low GL",
+    "High Fiber",
+    "Shirataki",
+    "LOGI"
+  ],
+  "allergens": [
+    "soybeans",
+    "sesame"
+  ],
+  "dietaryTags": [
+    "gluten_free",
+    "dairy_free",
+    "heart_healthy"
+  ],
+  "status": "published",
+  "publishedAt": "2026-01-01T00:00:00.000Z",
+  "isUserAuthored": false,
+  "glycemicIndex": 28,
+  "glycemicLoad": 1.5,
+  "glycemicImpact": "Optimal Low-GI",
+  "nutrition": {
+    "kcal": 310,
+    "protein": 33,
+    "fat": 13,
+    "saturatedFat": 2,
+    "carbs": 12,
+    "fiber": 6.5,
+    "netCarbs": 5.5,
+    "glycemicIndex": 28,
+    "glycemicLoad": 1.5
+  },
+  "diabeticNotes": "The combination of beta-glucans in cremini mushrooms and glucomannan in shirataki creates a powerful dual-fiber barrier that blunts carbohydrate absorption and aids bile acid binding.",
+  "ingredients": [
+    {
+      "ingredientId": "shirataki-noodles",
+      "amount": 200,
+      "unit": "g",
+      "prepState": "boiled",
+      "name": "packet Shirataki / Konjac noodles (rinsed and drained)"
+    },
+    {
+      "ingredientId": "chicken-breast",
+      "amount": 120,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "skinless chicken breast, cut into thin strips"
+    },
+    {
+      "ingredientId": "bell-pepper-red",
+      "amount": 60,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "red bell pepper, thinly sliced"
+    },
+    {
+      "ingredientId": "sugar-snap-peas",
+      "amount": 50,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "sugar snap peas, trimmed"
+    },
+    {
+      "ingredientId": "cremini-mushrooms",
+      "amount": 70,
+      "unit": "g",
+      "prepState": "sauteed",
+      "name": "sliced button or cremini mushrooms"
+    },
+    {
+      "ingredientId": "sesame-oil",
+      "amount": 14,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "avocado oil or cold-pressed sesame oil"
+    },
+    {
+      "ingredientId": "tamari-soy-sauce",
+      "amount": 20,
+      "unit": "g",
+      "prepState": "raw",
+      "name": "tamari soy sauce"
+    }
+  ],
+  "steps": [
+    {
+      "title": "Rinse & Dry-Sear Noodles",
+      "description": "Rinse shirataki noodles thoroughly in cold water, parboil for 1 minute, drain, and dry-sear in a hot pan."
+    },
+    {
+      "title": "Stir-Fry Sliced Chicken",
+      "description": "Heat sesame oil in a wok over high heat. Stir-fry sliced chicken breast for 4 minutes until golden."
+    },
+    {
+      "title": "Cook Crisp Vegetables",
+      "description": "Add sliced bell pepper, trimmed snap peas, and cremini mushrooms. Stir-fry for 3 minutes until tender-crisp."
+    },
+    {
+      "title": "Add Noodles & Sauce",
+      "description": "Add prepared shirataki noodles and pour tamari soy sauce over the mixture."
+    },
+    {
+      "title": "Toss & Glaze",
+      "description": "Toss vigorously for 2 minutes until sauce coats noodles and vegetables evenly. Serve hot."
+    }
+  ],
+  "dietaryFlags": [
+    "High Fiber"
+  ]
 }

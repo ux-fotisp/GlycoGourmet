@@ -22,7 +22,7 @@
   "publishedAt": "2026-01-01T00:00:00.000Z",
   "isUserAuthored": false,
   "glycemicIndex": 25,
-  "glycemicLoad": 3.3,
+  "glycemicLoad": 1.4,
   "glycemicImpact": "Optimal Low-GI",
   "nutrition": {
     "kcal": 350,
@@ -33,7 +33,7 @@
     "fiber": 4.2,
     "netCarbs": 5.8,
     "glycemicIndex": 25,
-    "glycemicLoad": 3.3
+    "glycemicLoad": 1.4
   },
   "diabeticNotes": "Removing traditional boiled potatoes eliminates the primary glycemic spike of classical French Niçoise. Extra virgin olive oil provides oleocanthal and polyphenols that protect LDL particles against oxidation.",
   "ingredients": [
@@ -129,5 +129,6 @@
     "gluten_free",
     "dairy_free",
     "heart_healthy"
-  ]
+  ],
+  "dietaryFlags": []
 }

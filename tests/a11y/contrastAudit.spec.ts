@@ -1,4 +1,4 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 test.describe('WCAG 2.1 AA Automated Compliance & Chromatic Audits', () => {
@@ -29,7 +29,7 @@ test.describe('WCAG 2.1 AA Automated Compliance & Chromatic Audits', () => {
       await page.goto(route.path);
       await page.waitForLoadState('networkidle');
 
-      const accessibilityScanResults = await new AxeBuilder({ page })
+      const accessibilityScanResults = await new AxeBuilder({ page: page as any })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
         .analyze();
 

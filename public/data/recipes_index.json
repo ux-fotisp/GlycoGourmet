@@ -8,7 +8,7 @@
     "prepTime": 5,
     "cookTime": 7,
     "glycemicIndex": 10,
-    "glycemicLoad": 1.5,
+    "glycemicLoad": 0.2,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Gluten-Free",
@@ -29,7 +29,7 @@
     "prepTime": 10,
     "cookTime": 0,
     "glycemicIndex": 20,
-    "glycemicLoad": 3.2,
+    "glycemicLoad": 1.2,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Gluten-Free",
@@ -50,7 +50,7 @@
     "prepTime": 12,
     "cookTime": 18,
     "glycemicIndex": 12,
-    "glycemicLoad": 2.1,
+    "glycemicLoad": 0.3,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Gluten-Free",
@@ -71,8 +71,8 @@
     "prepTime": 10,
     "cookTime": 12,
     "glycemicIndex": 28,
-    "glycemicLoad": 12.4,
-    "glycemicImpact": "Moderate Impact",
+    "glycemicLoad": 3.1,
+    "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Gluten-Free",
       "Vegetarian",
@@ -91,7 +91,7 @@
     "prepTime": 10,
     "cookTime": 0,
     "glycemicIndex": 12,
-    "glycemicLoad": 1.8,
+    "glycemicLoad": 0.2,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Gluten-Free",
@@ -112,7 +112,7 @@
     "prepTime": 12,
     "cookTime": 12,
     "glycemicIndex": 82,
-    "glycemicLoad": 25,
+    "glycemicLoad": 45.8,
     "glycemicImpact": "High Spike Risk",
     "dietaryFlags": [
       "Gluten-Free",
@@ -132,7 +132,7 @@
     "prepTime": 10,
     "cookTime": 15,
     "glycemicIndex": 10,
-    "glycemicLoad": 1.9,
+    "glycemicLoad": 0.3,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Gluten-Free",
@@ -153,8 +153,8 @@
     "prepTime": 15,
     "cookTime": 45,
     "glycemicIndex": 78,
-    "glycemicLoad": 22,
-    "glycemicImpact": "High Spike Risk",
+    "glycemicLoad": 18.7,
+    "glycemicImpact": "Moderate Impact",
     "dietaryFlags": [
       "Gluten-Free",
       "High Protein"
@@ -172,8 +172,8 @@
     "prepTime": 5,
     "cookTime": 25,
     "glycemicIndex": 32,
-    "glycemicLoad": 11.2,
-    "glycemicImpact": "Moderate Impact",
+    "glycemicLoad": 7.2,
+    "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Gluten-Free",
       "Dairy-Free",
@@ -193,7 +193,7 @@
     "prepTime": 8,
     "cookTime": 0,
     "glycemicIndex": 15,
-    "glycemicLoad": 1.2,
+    "glycemicLoad": 0.3,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Gluten-Free",
@@ -214,7 +214,7 @@
     "prepTime": 10,
     "cookTime": 0,
     "glycemicIndex": 18,
-    "glycemicLoad": 2.4,
+    "glycemicLoad": 0.5,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Gluten-Free",
@@ -235,8 +235,8 @@
     "prepTime": 12,
     "cookTime": 20,
     "glycemicIndex": 30,
-    "glycemicLoad": 13.5,
-    "glycemicImpact": "Moderate Impact",
+    "glycemicLoad": 4.2,
+    "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Gluten-Free",
       "Vegetarian",
@@ -273,7 +273,7 @@
     "prepTime": 10,
     "cookTime": 0,
     "glycemicIndex": 15,
-    "glycemicLoad": 1.4,
+    "glycemicLoad": 0.3,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "High Fiber"
@@ -291,7 +291,7 @@
     "prepTime": 10,
     "cookTime": 10,
     "glycemicIndex": 20,
-    "glycemicLoad": 2.1,
+    "glycemicLoad": 0.4,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [],
     "imageUrl": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=1200&q=80",
@@ -307,7 +307,7 @@
     "prepTime": 15,
     "cookTime": 10,
     "glycemicIndex": 25,
-    "glycemicLoad": 2.4,
+    "glycemicLoad": 0.9,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [],
     "imageUrl": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=1200&q=80",
@@ -323,7 +323,7 @@
     "prepTime": 15,
     "cookTime": 10,
     "glycemicIndex": 25,
-    "glycemicLoad": 3.3,
+    "glycemicLoad": 1.4,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [],
     "imageUrl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80",
@@ -339,7 +339,7 @@
     "prepTime": 10,
     "cookTime": 12,
     "glycemicIndex": 25,
-    "glycemicLoad": 3.6,
+    "glycemicLoad": 1.5,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Vegan"
@@ -357,7 +357,7 @@
     "prepTime": 10,
     "cookTime": 0,
     "glycemicIndex": 22,
-    "glycemicLoad": 4.3,
+    "glycemicLoad": 1.1,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "High Fiber"
@@ -375,7 +375,7 @@
     "prepTime": 10,
     "cookTime": 12,
     "glycemicIndex": 28,
-    "glycemicLoad": 5,
+    "glycemicLoad": 1.5,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "High Fiber"
@@ -393,7 +393,7 @@
     "prepTime": 15,
     "cookTime": 0,
     "glycemicIndex": 30,
-    "glycemicLoad": 5.8,
+    "glycemicLoad": 1.9,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [],
     "imageUrl": "https://images.unsplash.com/photo-1546069901-5ec6a79120b0?auto=format&fit=crop&w=1200&q=80",
@@ -409,7 +409,7 @@
     "prepTime": 5,
     "cookTime": 15,
     "glycemicIndex": 32,
-    "glycemicLoad": 6.1,
+    "glycemicLoad": 5,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "High Fiber"
@@ -427,7 +427,7 @@
     "prepTime": 15,
     "cookTime": 0,
     "glycemicIndex": 30,
-    "glycemicLoad": 6.4,
+    "glycemicLoad": 4.4,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "High Fiber"
@@ -445,7 +445,7 @@
     "prepTime": 15,
     "cookTime": 12,
     "glycemicIndex": 35,
-    "glycemicLoad": 7,
+    "glycemicLoad": 4,
     "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [],
     "imageUrl": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=1200&q=80",
@@ -461,8 +461,8 @@
     "prepTime": 10,
     "cookTime": 25,
     "glycemicIndex": 35,
-    "glycemicLoad": 10.5,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 6.8,
+    "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "High Fiber"
     ],
@@ -479,8 +479,8 @@
     "prepTime": 5,
     "cookTime": 10,
     "glycemicIndex": 33,
-    "glycemicLoad": 10.6,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 8,
+    "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "Vegetarian",
       "High Fiber"
@@ -498,8 +498,8 @@
     "prepTime": 15,
     "cookTime": 6,
     "glycemicIndex": 36,
-    "glycemicLoad": 11,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 4,
+    "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [],
     "imageUrl": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
     "status": "published",
@@ -515,7 +515,7 @@
     "cookTime": 20,
     "glycemicIndex": 40,
     "glycemicLoad": 11.4,
-    "glycemicImpact": "Medium Impact",
+    "glycemicImpact": "Moderate Impact",
     "dietaryFlags": [
       "High Fiber"
     ],
@@ -532,8 +532,8 @@
     "prepTime": 12,
     "cookTime": 0,
     "glycemicIndex": 34,
-    "glycemicLoad": 11.5,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 3.6,
+    "glycemicImpact": "Optimal Low-GI",
     "dietaryFlags": [
       "High Fiber"
     ],
@@ -550,8 +550,8 @@
     "prepTime": 15,
     "cookTime": 15,
     "glycemicIndex": 38,
-    "glycemicLoad": 13.3,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 10.4,
+    "glycemicImpact": "Moderate Impact",
     "dietaryFlags": [
       "High Fiber"
     ],
@@ -568,8 +568,8 @@
     "prepTime": 10,
     "cookTime": 20,
     "glycemicIndex": 35,
-    "glycemicLoad": 15.3,
-    "glycemicImpact": "Medium Impact",
+    "glycemicLoad": 11.8,
+    "glycemicImpact": "Moderate Impact",
     "dietaryFlags": [
       "Vegetarian",
       "High Fiber"

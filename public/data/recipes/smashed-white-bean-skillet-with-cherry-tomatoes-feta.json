@@ -22,7 +22,7 @@
   "publishedAt": "2026-01-01T00:00:00.000Z",
   "isUserAuthored": false,
   "glycemicIndex": 32,
-  "glycemicLoad": 6.1,
+  "glycemicLoad": 5,
   "glycemicImpact": "Optimal Low-GI",
   "nutrition": {
     "kcal": 320,
@@ -33,7 +33,7 @@
     "fiber": 8.5,
     "netCarbs": 15.5,
     "glycemicIndex": 32,
-    "glycemicLoad": 6.1
+    "glycemicLoad": 5
   },
   "diabeticNotes": "Cannellini beans are rich in soluble resistant starch and alpha-amylase inhibitors (phaseolamin) which slow the conversion of complex carbohydrates into blood glucose. High soluble fiber binds LDL cholesterol.",
   "ingredients": [
@@ -114,5 +114,8 @@
     "vegetarian",
     "gluten_free",
     "heart_healthy"
+  ],
+  "dietaryFlags": [
+    "High Fiber"
   ]
 }

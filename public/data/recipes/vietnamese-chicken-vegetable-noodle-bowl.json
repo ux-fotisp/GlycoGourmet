@@ -22,7 +22,7 @@
   "publishedAt": "2026-01-01T00:00:00.000Z",
   "isUserAuthored": false,
   "glycemicIndex": 25,
-  "glycemicLoad": 2.4,
+  "glycemicLoad": 0.9,
   "glycemicImpact": "Optimal Low-GI",
   "nutrition": {
     "kcal": 295,
@@ -33,7 +33,7 @@
     "fiber": 4.5,
     "netCarbs": 3.5,
     "glycemicIndex": 25,
-    "glycemicLoad": 2.4
+    "glycemicLoad": 0.9
   },
   "diabeticNotes": "Shirataki noodles are composed of glucomannan, a viscous water-soluble fiber with zero digestible carbohydrates. Glucomannan slows carbohydrate breakdown and traps dietary cholesterol, aiding excretion.",
   "ingredients": [
@@ -121,5 +121,6 @@
     "gluten_free",
     "dairy_free",
     "heart_healthy"
-  ]
+  ],
+  "dietaryFlags": []
 }

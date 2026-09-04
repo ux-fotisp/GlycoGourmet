@@ -22,7 +22,7 @@
   "publishedAt": "2026-01-01T00:00:00.000Z",
   "isUserAuthored": false,
   "glycemicIndex": 25,
-  "glycemicLoad": 3.6,
+  "glycemicLoad": 1.5,
   "glycemicImpact": "Optimal Low-GI",
   "nutrition": {
     "kcal": 260,
@@ -33,7 +33,7 @@
     "fiber": 5,
     "netCarbs": 6,
     "glycemicIndex": 25,
-    "glycemicLoad": 3.6
+    "glycemicLoad": 1.5
   },
   "diabeticNotes": "Soy isoflavones and plant proteins lower serum total cholesterol and LDL. Broccoli delivers sulforaphane, a bioactive isothiocyanate with proven anti-inflammatory and glucose-stabilizing properties.",
   "ingredients": [
@@ -119,5 +119,8 @@
     "vegetarian",
     "dairy_free",
     "heart_healthy"
+  ],
+  "dietaryFlags": [
+    "Vegan"
   ]
 }
