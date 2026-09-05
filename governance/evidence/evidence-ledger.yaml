@@ -67,3 +67,19 @@ entries:
     verification_status: "verified"
     verification_notes: "Verified by git commit f5bbba5 introducing governance/exceptions/exception-register.yaml with empty exceptions array."
 
+  - id: "EVD-2026-005"
+    status: "active"
+    claim_ref: "governance/evidence/sg6-rollback-dryrun-2026-09-05.md#32-production-one-click-rollback-targets"
+    change_id: null
+    value: "SG-6 rollback dry-run verified cleanly for PR #26 (0 conflicts, 80ms) and PR #28 (0 conflicts, 91ms); Netlify deploy preview IDs 6a9bc2fb7a886b00080a45bc and 6a9bbeb837ce080008592ecf, and 16 restorable production deploys identified (primary target 6a97e55b6eec6c00089a3f65)"
+    provenance: "observed"
+    observed_at: "2026-09-05T07:27:30Z"
+    source_type: "repository_file"
+    source_url: "https://github.com/ux-fotisp/GlycoGourmet/blob/eb3ae9f/governance/evidence/sg6-rollback-dryrun-2026-09-05.md"
+    source_commit: "eb3ae9f"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-05T07:30:00Z"
+    verification_status: "verified"
+    verification_notes: "Observed clean git revert -m 1 --no-commit on simulated merge-preview commits (PR #26 SHA 0295e66, PR #28 SHA 92ef1e7) and confirmed restorable production deploy 6a97e55b6eec6c00089a3f65 via Netlify API listSiteDeploys."
+
+
