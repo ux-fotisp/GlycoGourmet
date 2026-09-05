@@ -79,8 +79,12 @@ export const Login = () => {
           </header>
 
           {error && (
-            <div className="bg-error-container text-error p-3 rounded-lg text-xs font-semibold flex gap-2 items-start mb-4">
-              <span className="material-symbols-outlined text-[16px] shrink-0 mt-0.5">error</span>
+            <div
+              role="alert"
+              aria-live="assertive"
+              className="bg-error-container text-error p-3 rounded-lg text-xs font-semibold flex gap-2 items-start mb-4"
+            >
+              <span className="material-symbols-outlined text-[16px] shrink-0 mt-0.5" aria-hidden="true">error</span>
               <span>{error}</span>
             </div>
           )}

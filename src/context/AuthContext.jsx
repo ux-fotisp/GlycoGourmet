@@ -182,13 +182,41 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
         setIsLoading(false);
         return { success: true };
-      } else {
-        const errorData = await res.json();
+      } else if (res.status === 502 || res.status === 503 || res.status === 504) {
         setIsLoading(false);
-        return { success: false, error: errorData.error?.message || 'Invalid email or password.' };
+        return {
+          success: false,
+          error: 'The demo service may be waking up. Please wait up to one minute and try again.'
+        };
+      } else {
+        let errorMessage = 'Invalid email or password.';
+        try {
+          const errorData = await res.json();
+          if (errorData?.error?.message) {
+            errorMessage = errorData.error.message;
+          } else if (res.status && res.status !== 400 && res.status !== 401) {
+            errorMessage = 'Network error during login';
+          }
+        } catch {
+          if (res.status && res.status !== 400 && res.status !== 401) {
+            errorMessage = 'Network error during login';
+          }
+        }
+        setIsLoading(false);
+        return { success: false, error: errorMessage };
       }
     } catch (_err) {
       setIsLoading(false);
+      const isTimeout =
+        _err?.name === 'AbortError' ||
+        _err?.message?.toLowerCase().includes('timeout') ||
+        _err?.message?.toLowerCase().includes('wake');
+      if (isTimeout) {
+        return {
+          success: false,
+          error: 'The demo service may be waking up. Please wait up to one minute and try again.'
+        };
+      }
       return { success: false, error: 'Network error during login' };
     }
   };
