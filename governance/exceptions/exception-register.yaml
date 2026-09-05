@@ -4,8 +4,13 @@
 # Operational triage policy: governance/exceptions/TRIAGE.md
 
 schema_version: "1.0.0"
-register_owner: "pending-human-assignment"
-updated_at: "2026-09-05T09:47:16Z"
+register_owner: "Fotis P"
+updated_at: "2026-09-05T07:41:00Z"
+
+# Custodian note: Register custodian assigned to Fotis P per explicit instruction.
+# PR #26 merge constitutes Fotis P's SG-7 human sign-off, referencing
+# governance/PR-26-REVIEW-DIGEST.md (confirming zero files touch src/ or server/ runtime code)
+# as the review and sign-off basis.
 
 # List of exception objects conforming to exception.schema.yaml.
 # By default, zero exceptions exist. An empty list ensures full gate enforcement.

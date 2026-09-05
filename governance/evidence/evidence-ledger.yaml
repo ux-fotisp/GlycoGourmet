@@ -82,4 +82,20 @@ entries:
     verification_status: "verified"
     verification_notes: "Observed clean git revert -m 1 --no-commit on simulated merge-preview commits (PR #26 SHA 0295e66, PR #28 SHA 92ef1e7) and confirmed restorable production deploy 6a97e55b6eec6c00089a3f65 via Netlify API listSiteDeploys."
 
+  - id: "EVD-2026-006"
+    status: "active"
+    claim_ref: "governance/evidence/sg-netlify-redirect-verification-2026-09-05.md#raw-terminal-output-summary"
+    change_id: null
+    value: "Netlify edge proxy redirect precedence verified on deploy-preview-28: /api/auth/local and /api/health return 502 text/plain confirming /api/* proxy rule intercepts requests before SPA catch-all (deploy-preview-26 and production return 200 text/html as negative controls)"
+    provenance: "observed"
+    observed_at: "2026-09-05T07:40:24Z"
+    source_type: "repository_file"
+    source_url: "https://github.com/ux-fotisp/GlycoGourmet/blob/98b7fc9/governance/evidence/sg-netlify-redirect-verification-2026-09-05.md"
+    source_commit: "98b7fc9"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-05T07:41:00Z"
+    verification_status: "verified"
+    verification_notes: "Empirical curl test against deploy-preview-28 yielded HTTP 502 text/plain confirming Netlify edge proxy rule takes precedence over SPA catch-all rewrite; deploy-preview-26 and production return HTTP 200 text/html."
+
+
 
