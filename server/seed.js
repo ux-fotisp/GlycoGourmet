@@ -1,6 +1,31 @@
 const Strapi = require('@strapi/strapi');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
 async function seed() {
+  const isPublicOrProd =
+    process.env.NODE_ENV === 'production' ||
+    process.env.PUBLIC_DEPLOYMENT === 'true';
+
+  // --- SG-1 / SG-3 Security Gate ---
+  // In production or public deployments, never use static 'Password123!'.
+  // Require either an explicitly set strong SEED_PASSWORD env var or generate
+  // cryptographically secure per-role random passwords printed once to deploy logs.
+  const generatePassword = (roleName) => {
+    if (isPublicOrProd) {
+      if (process.env.SEED_PASSWORD) {
+        return process.env.SEED_PASSWORD;
+      }
+      const randomSecret = 'Gg!' + crypto.randomBytes(16).toString('base64url') + '#9';
+      console.warn(
+        `[SECURITY SG-1/SG-3] Public/Production deployment detected. Randomized credential generated for role [${roleName}]: ${randomSecret}`
+      );
+      return randomSecret;
+    }
+    return process.env.SEED_PASSWORD || 'Password123!';
+  };
+
   const strapi = await Strapi({ appDir: '.', serveAdminPanel: false }).load();
 
   // Find Authenticated Role
@@ -34,11 +59,17 @@ async function seed() {
 
   const userService = strapi.plugin('users-permissions').service('user');
 
+  const pwDietitianA = generatePassword('dietitianA');
+  const pwDietitianB = generatePassword('dietitianB');
+  const pwPatientA = generatePassword('patientA');
+  const pwClinicAdminA = generatePassword('clinicAdminA');
+  const pwAdminA = generatePassword('adminA');
+
   // Create Dietitian A
   const dietitianA = await userService.add({
     username: 'dietitianA_' + Date.now(),
     email: 'dietitiana' + Date.now() + '@glyco.com',
-    password: 'Password123!',
+    password: pwDietitianA,
     roleType: 'dietitian',
     role: authRole.id,
     confirmed: true,
@@ -49,7 +80,7 @@ async function seed() {
   const dietitianB = await userService.add({
     username: 'dietitianB_' + Date.now(),
     email: 'dietitianb' + Date.now() + '@glyco.com',
-    password: 'Password123!',
+    password: pwDietitianB,
     roleType: 'dietitian',
     role: authRole.id,
     confirmed: true,
@@ -60,7 +91,7 @@ async function seed() {
   const patientA = await userService.add({
     username: 'patientA_' + Date.now(),
     email: 'patienta' + Date.now() + '@glyco.com',
-    password: 'Password123!',
+    password: pwPatientA,
     roleType: 'user',
     role: authRole.id,
     confirmed: true,
@@ -71,7 +102,7 @@ async function seed() {
   const clinicAdminA = await userService.add({
     username: 'clinicAdminA_' + Date.now(),
     email: 'clinicadmina' + Date.now() + '@glyco.com',
-    password: 'Password123!',
+    password: pwClinicAdminA,
     roleType: 'clinic_admin',
     role: authRole.id,
     confirmed: true,
@@ -82,7 +113,7 @@ async function seed() {
   const adminA = await userService.add({
     username: 'adminA_' + Date.now(),
     email: 'admina' + Date.now() + '@glyco.com',
-    password: 'Password123!',
+    password: pwAdminA,
     roleType: 'admin',
     role: authRole.id,
     confirmed: true,
@@ -99,24 +130,30 @@ async function seed() {
     }
   });
   
-  // Write credentials to file so the test can use them
-  const fs = require('fs');
-  fs.writeFileSync('../tests/integration/.seed_data.json', JSON.stringify({
-    dietitianAEmail: dietitianA.email,
-    dietitianAPassword: 'Password123!',
-    dietitianAId: dietitianA.id,
-    dietitianBEmail: dietitianB.email,
-    dietitianBPassword: 'Password123!',
-    dietitianBId: dietitianB.id,
-    patientAEmail: patientA.email,
-    patientAPassword: 'Password123!',
-    profileAId: profileA.id,
-    clinicAdminAEmail: clinicAdminA.email,
-    clinicAdminAPassword: 'Password123!',
-    clinicAdminAId: clinicAdminA.id,
-    adminAEmail: adminA.email,
-    adminAPassword: 'Password123!',
-  }));
+  // Write credentials to file only in non-production local runs for integration testing
+  if (!isPublicOrProd) {
+    const seedDataPath = path.resolve(__dirname, '../tests/integration/.seed_data.json');
+    if (fs.existsSync(path.dirname(seedDataPath))) {
+      fs.writeFileSync(seedDataPath, JSON.stringify({
+        dietitianAEmail: dietitianA.email,
+        dietitianAPassword: pwDietitianA,
+        dietitianAId: dietitianA.id,
+        dietitianBEmail: dietitianB.email,
+        dietitianBPassword: pwDietitianB,
+        dietitianBId: dietitianB.id,
+        patientAEmail: patientA.email,
+        patientAPassword: pwPatientA,
+        profileAId: profileA.id,
+        clinicAdminAEmail: clinicAdminA.email,
+        clinicAdminAPassword: pwClinicAdminA,
+        clinicAdminAId: clinicAdminA.id,
+        adminAEmail: adminA.email,
+        adminAPassword: pwAdminA,
+      }, null, 2));
+    }
+  } else {
+    console.log('[SECURITY SG-1/SG-3] Skipped writing .seed_data.json to disk in public/production deployment.');
+  }
 
   console.log('Seeding complete');
   await strapi.destroy();
