@@ -8,6 +8,7 @@ WORKDIR /opt/app
 COPY package.json ./
 RUN npm install
 COPY . .
+RUN mkdir -p /opt/app/public/uploads
 RUN npm run build
 EXPOSE 1337
 CMD ["npm", "run", "start"]
