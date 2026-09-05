@@ -261,8 +261,80 @@ This balance check runs at the **Plan** stage of the Section 5 Antigravity Orche
 
 ---
 
-## 9. Document Metadata & Attribution
+## 10. DAVE+R Governance & Delivery Orchestration
 
-- **Document Version:** `2.1.0`
+### 10.1 Adapter Specification
+
+The **DAVE+R Governance & Delivery Adapter** (`gg-governance-delivery`) provides a structured change lifecycle for RBAC, tenancy, PHI boundaries, and clinical export pipeline modifications.
+
+**Authoritative specification:** [`governance/GOVERNANCE.md`](governance/GOVERNANCE.md)
+
+The adapter maps five DAVE+R control planes to concrete GlycoGourmet artifacts:
+
+| Plane | Key Artifact(s) |
+|---|---|
+| **identity** | `usePermissions.js`, `ProtectedRoute.jsx`, RBAC state machine (`backend_dev.md` §5) |
+| **data** | `PHIBoundaryBanner.jsx`, `exportPipeline.js`, tenant-scoped Strapi schemas |
+| **application** | Metabolic engine (net-carb clamping, GI/GL composite, serving-multiplier) |
+| **edge-api** | Public Strapi REST endpoints, recipe catalog, export pipeline |
+| **ci-cd** | GitHub Actions workflows, oxlint, tsc, Vitest, Playwright |
+
+### 10.2 Worker Invocation Sequence
+
+Changes governed by this adapter must execute through five sequential Antigravity sub-agent workers. **No stage may be skipped**, and each worker's artifact must be committed before the next starts:
+
+```
+define-worker → architect-worker → validate-worker → execute-worker → refine-worker
+```
+
+| Worker | Stage | Output Artifact |
+|---|---|---|
+| `define-worker` | Define | `governance/<change-id>/01-define.md` |
+| `architect-worker` | Architect | `governance/<change-id>/02-architect.md` |
+| `validate-worker` | Validate | `governance/<change-id>/03-validate.md` |
+| `execute-worker` | Execute | Feature branch + PR |
+| `refine-worker` | Refine | `governance/<change-id>/04-refine.md` |
+
+Templates for each artifact are in `governance/_templates/`.
+
+### 10.3 Non-Negotiable Axioms
+
+Five axioms are load-bearing across all workers:
+
+1. **Gates are data, not code.** Every check is a declarative pass/fail assertion.
+2. **Evidence over assertion.** Never claim a metric not just observed (test count, CI run ID, coverage).
+3. **Named human owns the risk.** Default: Fotis P.
+4. **Shadow before enforce.** New controls run in observe-only mode for ≥ 3 days before enforcement.
+5. **Reversibility is mandatory.** One-command rollback documented before merge.
+
+### 10.4 Session Bootstrap
+
+When invoking an Antigravity agent for a governance change, paste this as the first message:
+
+```text
+You are running the DAVE+R Governance & Delivery cycle (adapter: gg-governance-delivery)
+for the GlycoGourmet repository (ux-fotisp/GlycoGourmet).
+
+Ground every claim in real repo state — read agentic.md, ci_cd.md, backend_dev.md §5,
+SECURITY.md, and testing.md before proposing anything. Never state a test count, CI run
+ID, or coverage number you have not just observed.
+
+Execute stages in order: define-worker → architect-worker → validate-worker →
+execute-worker → refine-worker. Do not skip a stage or merge to main without an
+explicit human confirmation. Every control ships in shadow mode first and must have a
+one-command rollback documented before merge.
+
+Target change: <describe the specific RBAC/PHI/export/API change here>
+```
+
+### 10.5 Relationship to Existing Orchestration
+
+This governance workflow operates **upstream** of the Section 5 Antigravity Orchestration flow. The DAVE+R cycle produces the design and evidence artifacts; the Section 5 flow then handles the actual code generation, validation gates, and commit mechanics. The Section 8 Balance Protocol (QA × UX × Technical precedence) applies within the `architect-worker` and `validate-worker` stages.
+
+---
+
+## 11. Document Metadata & Attribution
+
+- **Document Version:** `2.2.0`
 - **Lead Systems Architect & QA Lead:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
-- **Execution Standard:** QA-DIRECTIVE-2026, BALANCE-DIRECTIVE-2026, WCAG 2.1 Level AA, Conventional Commits 1.0
+- **Execution Standard:** QA-DIRECTIVE-2026, BALANCE-DIRECTIVE-2026, DAVE+R-GOVERNANCE-2026, WCAG 2.1 Level AA, Conventional Commits 1.0
