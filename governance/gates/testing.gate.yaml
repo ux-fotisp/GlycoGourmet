@@ -1,0 +1,56 @@
+# DAVE+R-style declarative gate set - Testing Orchestrator
+# Modeled on ai/spec/gates/validate.yaml from DtheRock/DAVE-R: gates are data, not code.
+id: gg-testing-orchestrator
+stage: validate
+worker: test-orchestrator-worker
+adapter: gg-governance-delivery
+
+evidence_schema:
+  test_run:
+    value: string
+    provenance: [observed, asserted, estimated]
+    observed_at: iso8601
+    source_url: string
+  lint_run:
+    value: string
+    provenance: [observed, asserted, estimated]
+    observed_at: iso8601
+    source_url: string
+  coverage_report:
+    value: string
+    provenance: [observed, asserted, estimated]
+    observed_at: iso8601
+    source_url: string
+
+gates:
+  - id: TO-1
+    description: Vitest suite result is freshly observed this session, not recalled.
+    check: "evidence.test_run.provenance == 'observed' AND age(evidence.test_run.observed_at) < 24h"
+    fail_action: block
+
+  - id: TO-2
+    description: Metabolic-engine floating point assertions use tolerance, not strict equality.
+    check: "count(grep(tests/unit/metabolicEngine*.spec.ts, 'toBeCloseTo')) == 0"
+    fail_action: block
+
+  - id: TO-3
+    description: Playwright locators are text/role-based, not brittle DOM paths.
+    check: "count(grep(tests/e2e/**, nth-child|css=)) == 0"
+    fail_action: warn
+
+  - id: TO-4
+    description: oxlint and `tsc --noEmit` both pass with zero errors, freshly observed.
+    check: "evidence.lint_run.provenance == 'observed' AND evidence.lint_run.value == 'pass'"
+    fail_action: block
+
+  - id: TO-5
+    description: Invariant-adjacent changes carry 100% line/branch coverage on changed scope.
+    check: "evidence.coverage_report.value == '100%' when touches(invariant_scope)"
+    fail_action: block
+
+  - id: TO-6
+    description: React Hooks rule is respected - no conditional useEffect introduced.
+    check: "count(grep(src/**, 'if (.*) { useEffect')) == 0"
+    fail_action: block
+
+# Attribution: DAVE+R Framework by Demetrios Petropoulos (CC BY 4.0) - https://github.com/DtheRock/DAVE-R. Changes were made.
