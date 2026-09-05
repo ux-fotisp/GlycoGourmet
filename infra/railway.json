@@ -1,0 +1,33 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "rootDirectory": "server",
+    "buildCommand": "npm install && npm run build"
+  },
+  "deploy": {
+    "startCommand": "npm run start",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 100,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 5
+  },
+  "environments": {
+    "production": {
+      "variables": {
+        "NODE_ENV": "production",
+        "PORT": "1337",
+        "DATABASE_CLIENT": "postgres",
+        "DATABASE_URL": "${{Postgres.DATABASE_URL}}",
+        "PUBLIC_DEPLOYMENT": "true",
+        "CORS_ORIGIN": "https://glycogourmet.netlify.app",
+        "SEED_PASSWORD": "${{SEED_PASSWORD}}",
+        "JWT_SECRET": "${{JWT_SECRET}}",
+        "ADMIN_JWT_SECRET": "${{ADMIN_JWT_SECRET}}",
+        "APP_KEYS": "${{APP_KEYS}}",
+        "API_TOKEN_SALT": "${{API_TOKEN_SALT}}",
+        "TRANSFER_TOKEN_SALT": "${{TRANSFER_TOKEN_SALT}}"
+      }
+    }
+  }
+}
