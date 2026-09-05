@@ -4,9 +4,20 @@ on:
   pull_request:
     paths:
       - 'src/**'
+      - 'server/**'
       - 'tests/**'
       - 'governance/**'
+      - 'scripts/governance-gates.js'
+      - '.github/workflows/governance-gates.yml'
       - 'backend_dev.md'
+      - 'SECURITY.md'
+      - 'agentic.md'
+      - 'ci_cd.md'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'netlify.toml'
+      - 'public/_redirects'
+      - '.env.example'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -24,7 +35,7 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js (v22 LTS)
         uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -37,8 +48,17 @@ jobs:
         id: run_gates
         run: node scripts/governance-gates.js
 
+      - name: Upload Governance Gate Report Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: governance-gate-report
+          path: governance-gate-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Post PR Comment on Gate Failure
-        if: failure() && github.event_name == 'pull_request'
+        if: failure() && github.event_name == 'pull_request' && github.event.pull_request
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -46,6 +66,24 @@ jobs:
             const fs = require('fs');
             const path = require('path');
             const reportPath = path.join(process.env.GITHUB_WORKSPACE, 'governance-gate-report.json');
+            
+            const issueNumber = context.issue?.number || context.payload?.pull_request?.number;
+            if (!issueNumber) {
+              core.warning('No issue/PR number found in context; skipping comment.');
+              return;
+            }
+
+            // Sensitive data redaction helper to guarantee no tokens/credentials leak
+            function sanitize(text) {
+              if (typeof text !== 'string') return String(text || '');
+              return text
+                .replace(/(Bearer\s+)[A-Za-z0-9._~+/-]+=*/gi, '$1[REDACTED]')
+                .replace(/(sk_live_[A-Za-z0-9]+)/gi, '[REDACTED_API_KEY]')
+                .replace(/(ghp_[A-Za-z0-9]+)/gi, '[REDACTED_GH_TOKEN]')
+                .replace(/(AIzaSy[A-Za-z0-9_-]+)/gi, '[REDACTED_GOOGLE_KEY]')
+                .replace(/(password['"]?\s*[:=]\s*['"]?)[^'"\s,]+/gi, '$1[REDACTED]')
+                .slice(0, 4000);
+            }
             
             let commentBody = '### ❌ DAVE+R Governance Gate Verification Failed\n\n';
             commentBody += 'The following mechanical governance gate(s) failed on this Pull Request:\n\n';
@@ -55,31 +93,31 @@ jobs:
                 const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
                 if (report.failures && report.failures.length > 0) {
                   for (const f of report.failures) {
-                    commentBody += `#### ✖ \`${f.gateId}\`: ${f.description}\n`;
-                    commentBody += `> **Error / Finding:**\n> \`\`\`\n> ${f.error}\n> \`\`\`\n\n`;
+                    commentBody += `#### ✖ \`${sanitize(f.gateId)}\`: ${sanitize(f.description)}\n`;
+                    commentBody += `> **Error / Finding:**\n> \`\`\`\n> ${sanitize(f.error)}\n> \`\`\`\n\n`;
                   }
                 } else {
-                  commentBody += 'The gate script exited non-zero with an unexpected runtime error. Check the workflow logs.\n';
+                  commentBody += 'The gate script exited non-zero with an unhandled exception. Check the workflow logs.\n\n';
                 }
                 
                 if (report.warnings && report.warnings.length > 0) {
                   commentBody += '#### ⚠️ Warnings (Non-Blocking):\n';
                   for (const w of report.warnings) {
-                    commentBody += `- **\`${w.gateId}\`**: ${w.description}\n  > ${w.warning}\n`;
+                    commentBody += `- **\`${sanitize(w.gateId)}\`**: ${sanitize(w.description)}\n  > ${sanitize(w.warning)}\n`;
                   }
                   commentBody += '\n';
                 }
               } catch (e) {
-                commentBody += `Failed to parse gate report JSON: ${e.message}. Please inspect the step logs.\n`;
+                commentBody += `Failed to parse gate report JSON: ${sanitize(e.message)}. Please inspect the step logs.\n\n`;
               }
             } else {
-              commentBody += 'No `governance-gate-report.json` was generated. Please review the Actions log for details.\n';
+              commentBody += 'No `governance-gate-report.json` was generated. Please review the Actions log for details.\n\n';
             }
             
-            commentBody += '\n---\n*Automated gate enforcement by `scripts/governance-gates.js` per [`governance/GOVERNANCE.md`](https://github.com/' + context.repo.owner + '/' + context.repo.repo + '/blob/feat/dave-r-governance-workers/governance/GOVERNANCE.md).*';
+            commentBody += '---\n*Automated gate enforcement by `scripts/governance-gates.js` per [`governance/GOVERNANCE.md`](https://github.com/' + context.repo.owner + '/' + context.repo.repo + '/blob/feat/dave-r-governance-workers/governance/GOVERNANCE.md).*';
 
             await github.rest.issues.createComment({
-              issue_number: context.issue.number,
+              issue_number: issueNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: commentBody

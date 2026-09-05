@@ -373,33 +373,46 @@ delegatedGates.forEach((g) => {
 // -----------------------------------------------------------------------------
 // Summary & Report Generation
 // -----------------------------------------------------------------------------
+function writeReport() {
+  const reportPath = path.join(ROOT_DIR, 'governance-gate-report.json');
+  try {
+    fs.writeFileSync(
+      reportPath,
+      JSON.stringify(
+        {
+          timestamp: new Date().toISOString(),
+          summary: {
+            passed: results.passed.length,
+            warnings: results.warnings.length,
+            failures: results.failures.length,
+          },
+          passed: results.passed,
+          warnings: results.warnings,
+          failures: results.failures,
+          delegated: delegatedGates,
+        },
+        null,
+        2
+      )
+    );
+  } catch (writeErr) {
+    console.error('Failed to write governance-gate-report.json:', writeErr);
+  }
+}
+
+process.on('uncaughtException', (err) => {
+  recordFail('RUNTIME-ERR', 'Unhandled exception during gate verification', err.message);
+  writeReport();
+  process.exit(1);
+});
+
 console.log('\n================================================================');
 console.log(
   ` Summary: ${results.passed.length} passed, ${results.warnings.length} warnings, ${results.failures.length} failures`
 );
 console.log('================================================================\n');
 
-// Write JSON report for CI consumption (PR commenting)
-const reportPath = path.join(ROOT_DIR, 'governance-gate-report.json');
-fs.writeFileSync(
-  reportPath,
-  JSON.stringify(
-    {
-      timestamp: new Date().toISOString(),
-      summary: {
-        passed: results.passed.length,
-        warnings: results.warnings.length,
-        failures: results.failures.length,
-      },
-      passed: results.passed,
-      warnings: results.warnings,
-      failures: results.failures,
-      delegated: delegatedGates,
-    },
-    null,
-    2
-  )
-);
+writeReport();
 
 if (results.failures.length > 0) {
   console.error(`\x1b[31m✖ Governance gate verification FAILED (${results.failures.length} failure(s)).\x1b[0m\n`);
