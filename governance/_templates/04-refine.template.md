@@ -97,3 +97,7 @@ _Only if promoting. Follow `changelog.md`'s existing semantic-versioning table f
 | Changelog entry prepared (if promoting) | ⬜ Pass / ⬜ N/A |
 | Rollback command verified (if rolling back) | ⬜ Pass / ⬜ N/A |
 | Governance cycle complete | ⬜ Pass / ⬜ Fail |
+
+---
+_Security-control lifecycle concepts (Define→Architect→Validate→Execute→Refine, typed evidence, gates-as-data) adapted from the **DAVE+R Framework by Demetrios Petropoulos** (CC BY 4.0), https://github.com/DtheRock/DAVE-R. Changes were made._
+

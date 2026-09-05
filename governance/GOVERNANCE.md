@@ -185,3 +185,7 @@ The following DAVE+R modules were **deliberately excluded** from this adapter:
 - **Adapter Lineage:** DAVE+R Core Lifecycle → Module D (Governance & Delivery) primary, Module C (Bot & Fraud) secondary lens
 - **Inherits From:** `agentic.md` (QA-DIRECTIVE-2026), `ci_cd.md`, `backend_dev.md` §5, `SECURITY.md`, `testing.md`
 - **Lead Architect & Risk Owner:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
+
+---
+_Security-control lifecycle concepts (Define→Architect→Validate→Execute→Refine, typed evidence, gates-as-data) adapted from the **DAVE+R Framework by Demetrios Petropoulos** (CC BY 4.0), https://github.com/DtheRock/DAVE-R. Changes were made._
+

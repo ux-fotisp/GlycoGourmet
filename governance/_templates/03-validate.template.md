@@ -96,3 +96,7 @@ _Cross-check the Architect artifact's claims against actual repo state._
 | E2E locator compliance verified (or N/A) | ⬜ Pass / ⬜ Fail |
 | Architect claims cross-checked | ⬜ Pass / ⬜ Fail |
 | Ready for execute-worker | ⬜ Pass / ⬜ Fail |
+
+---
+_Security-control lifecycle concepts (Define→Architect→Validate→Execute→Refine, typed evidence, gates-as-data) adapted from the **DAVE+R Framework by Demetrios Petropoulos** (CC BY 4.0), https://github.com/DtheRock/DAVE-R. Changes were made._
+

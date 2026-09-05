@@ -101,3 +101,7 @@ _Only required if Define artifact marked `gg-bot-fraud` as applicable._
 | WCAG/Hooks compliance verified (or N/A) | ⬜ Pass / ⬜ Fail |
 | Secondary lens checks passed (or N/A) | ⬜ Pass / ⬜ Fail |
 | Ready for validate-worker | ⬜ Pass / ⬜ Fail |
+
+---
+_Security-control lifecycle concepts (Define→Architect→Validate→Execute→Refine, typed evidence, gates-as-data) adapted from the **DAVE+R Framework by Demetrios Petropoulos** (CC BY 4.0), https://github.com/DtheRock/DAVE-R. Changes were made._
+

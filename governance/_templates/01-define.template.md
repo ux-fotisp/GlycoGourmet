@@ -80,3 +80,7 @@ _What this change must NOT touch. Be specific._
 | Blast radius enumerated | ⬜ Pass / ⬜ Fail |
 | Non-goals declared | ⬜ Pass / ⬜ Fail |
 | Ready for architect-worker | ⬜ Pass / ⬜ Fail |
+
+---
+_Security-control lifecycle concepts (Define→Architect→Validate→Execute→Refine, typed evidence, gates-as-data) adapted from the **DAVE+R Framework by Demetrios Petropoulos** (CC BY 4.0), https://github.com/DtheRock/DAVE-R. Changes were made._
+
