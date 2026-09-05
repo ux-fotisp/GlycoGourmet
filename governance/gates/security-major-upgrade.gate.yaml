@@ -27,8 +27,8 @@ evidence_schema:
 
 gates:
   - id: SG-1
-    description: RBAC state machine roles (ClinicAdmin, Dietitian, Patient, SuperAdmin)
-      are unchanged, or any change to usePermissions.js has its own completed
+    description: RBAC state machine roles (ClinicAdmin, Dietitian, Patient, SuperAdmin, Admin [legacy/platform])
+      are unchanged per governance/RBAC-ROLE-MAPPING.md, or any change to usePermissions.js has its own completed
       Define/Architect/Validate artifacts.
     fail_action: block
 
