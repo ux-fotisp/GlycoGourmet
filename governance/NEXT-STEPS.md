@@ -10,22 +10,14 @@ upstream DAVE+R engine (DtheRock/DAVE-R) and its `evidence.md` / `gates/*.yaml` 
    `01-define.template.md` through `04-refine.template.md` so every future cycle
    inherits it, not just the two new workers.
 
-2. **Add a real integrity gate.** Upstream DAVE+R runs `integrity.yaml` independent of
-   stage - a cross-check that no artifact in the chain was skipped, reordered, or
-   backdated. GlycoGourmet has no equivalent yet outside the new security-gatekeeper's
-   narrow major-release scope. Consider a lightweight check: any `governance/<change-id>/`
-   folder missing one of the four numbered files should fail CI.
+2. **[PARTIALLY COMPLETED] Add a real integrity gate.** The folder-completeness check is now automated in [`scripts/governance-gates.js`](../scripts/governance-gates.js) and enforced via [`.github/workflows/governance-gates.yml`](../.github/workflows/governance-gates.yml) (gate `INT-1` blocks CI if any `governance/<change-id>/` folder is missing any of the 4 required stage artifacts). A full artifact-tamper/backdating check (verifying git commit timestamps match claimed `observed_at` values in artifact evidence tables) remains open and stays on the backlog.
 
 3. **Exception register + triage tiers.** Every change currently must complete the full
    5-stage cycle. Add a `planned / expedited / emergency` triage field (mirroring
    upstream's `references/triage.md`) so a genuine incident has a faster, still-logged
    path instead of bypassing governance entirely.
 
-4. **Wire gates into actual CI**, not just markdown read by a human+agent. The `TO-*`
-   and `SG-*` checks in the two new gate files are mechanically checkable (grep counts,
-   coverage percentages, freshness of `observed_at`) - a follow-up task should add a
-   GitHub Actions job that evaluates them automatically on PRs touching the relevant
-   paths, rather than relying on an agent to self-report compliance.
+4. **[COMPLETED] Wire gates into actual CI**, not just markdown read by a human+agent. Automated via [`.github/workflows/governance-gates.yml`](../.github/workflows/governance-gates.yml) running [`scripts/governance-gates.js`](../scripts/governance-gates.js). Mechanically evaluates gates `TO-2`, `TO-3`, `TO-6`, `INT-1`, `SG-1`, and `SG-2` on pull requests touching `src/**`, `tests/**`, `governance/**`, or `backend_dev.md`, blocks on failure, and automatically posts diagnostic PR comments quoting the exact gate YAML descriptions.
 
 5. **[COMPLETED] Pilot on one real change.** Addressed via the **Login Network Error Investigation & Staging Fix** ([`governance/2026-09-login-fix/`](./2026-09-login-fix/)), executed across the full DAVE+R cycle:
    - [`01-define.md`](./2026-09-login-fix/01-define.md): Problem statement, blast radius (`AuthContext.jsx`, `netlify.toml`, `.env.example`), and explicit non-goals (zero RBAC/PHI modification).
