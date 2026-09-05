@@ -12,10 +12,15 @@ upstream DAVE+R engine (DtheRock/DAVE-R) and its `evidence.md` / `gates/*.yaml` 
 
 2. **[PARTIALLY COMPLETED] Add a real integrity gate.** The folder-completeness check is now automated in [`scripts/governance-gates.js`](../scripts/governance-gates.js) and enforced via [`.github/workflows/governance-gates.yml`](../.github/workflows/governance-gates.yml) (gate `INT-1` blocks CI if any `governance/<change-id>/` folder is missing any of the 4 required stage artifacts). A full artifact-tamper/backdating check (verifying git commit timestamps match claimed `observed_at` values in artifact evidence tables) remains open and stays on the backlog.
 
-3. **Exception register + triage tiers.** Every change currently must complete the full
-   5-stage cycle. Add a `planned / expedited / emergency` triage field (mirroring
-   upstream's `references/triage.md`) so a genuine incident has a faster, still-logged
-   path instead of bypassing governance entirely.
+3. **[COMPLETED] Exception register + triage tiers.** Implemented via [`governance/exceptions/exception-register.yaml`](./exceptions/exception-register.yaml), machine-readable schema [`governance/exceptions/exception.schema.yaml`](./exceptions/exception.schema.yaml), and operational protocol [`governance/exceptions/TRIAGE.md`](./exceptions/TRIAGE.md). Provides typed exception structures for `planned`, `expedited`, and `emergency` triage tracks with mandatory expiry (≤ 30 days), named human accountability, non-placeholder containment commands, and retrospective SLAs. Mechanically enforced in CI by [`scripts/governance-gates.js`](../scripts/governance-gates.js) via gates `EXC-1` through `EXC-7`.
+
+## Remaining Non-Finished DAVE+R Work (Priority Order)
+
+1. **Full evidence provenance & timestamp anti-backdating integrity check:** Mechanically verify git commit author dates and audit log timestamps strictly correlate with claimed `observed_at` values in artifact evidence tables.
+2. **Backend provider selection and real Strapi deployment:** Decide hosting provider (Render, Railway, Fly.io, Strapi Cloud, or VPS), provision PostgreSQL, configure production JWT secrets, and bind DNS.
+3. **Live endpoint & PHI audit (SG-3):** Inspect live responses to guarantee zero unsanitized health data or patient identifier leakage across unauthenticated routes.
+4. **Rollback dry-run (SG-6):** Document and dry-run verify one-command rollback before production release.
+5. **Named human release sign-off (SG-7):** Obtain Fotis P's documented co-signature on the release PR before merging to master.
 
 4. **[COMPLETED] Wire gates into actual CI**, not just markdown read by a human+agent. Automated via [`.github/workflows/governance-gates.yml`](../.github/workflows/governance-gates.yml) running [`scripts/governance-gates.js`](../scripts/governance-gates.js). Mechanically evaluates gates `TO-2`, `TO-3`, `TO-6`, `INT-1`, `SG-1`, and `SG-2` on pull requests touching `src/**`, `tests/**`, `governance/**`, or `backend_dev.md`, blocks on failure, and automatically posts diagnostic PR comments quoting the exact gate YAML descriptions.
 
