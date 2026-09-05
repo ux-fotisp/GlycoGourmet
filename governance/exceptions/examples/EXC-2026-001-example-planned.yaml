@@ -1,0 +1,28 @@
+# Example DAVE+R Exception Fixture (Non-Active Reference)
+# This is a sample fixture demonstrating the exception data model.
+# DISCLAIMER: Status is 'proposed'. It carries NO approval and does not waive any gate.
+
+id: "EXC-2026-001"
+status: "proposed"
+track: "planned"
+created_at: "2026-09-05T09:00:00Z"
+requested_by: "antigravity-agent"
+human_owner: "pending-human-assignment"
+approver: "pending-human-review"
+change_id: "2026-09-login-fix"
+affected_gate_ids:
+  - "TO-5"
+reason: "Demonstration fixture: temporarily decouples invariant coverage gate during draft component scaffolding."
+blast_radius: "Non-production sample component tree in sandbox environment. Zero tenant or clinical impact."
+
+evidence:
+  - value: "Unit test suite execution passes 690 tests with 0 failures."
+    provenance: "observed"
+    observed_at: "2026-09-05T08:35:28Z"
+    source_url: "https://github.com/ux-fotisp/GlycoGourmet/actions/runs/33950414894"
+
+containment_or_rollback: "git revert HEAD && npm run test"
+compensating_controls: "Synthetic test data only; route isolated from public ingress."
+expires_at: "2026-09-25T09:00:00Z"
+retrospective_due_at: "2026-09-26T09:00:00Z"
+closure_evidence: "Pending review"

@@ -1,0 +1,68 @@
+# DAVE+R-style declarative gate set - Security Gatekeeper (major upgrades)
+# Modeled on ai/spec/gates/integrity.yaml + ai/spec/THREAT-MODEL.md from DtheRock/DAVE-R
+id: gg-security-gatekeeper
+trigger: semver_major_bump
+adapter: gg-governance-delivery
+secondary_lens: gg-bot-fraud
+
+evidence_schema:
+  rbac_review:
+    value: string
+    provenance: [observed, asserted, estimated]
+    observed_at: iso8601
+    source_url: string
+  phi_boundary_review:
+    value: string
+    provenance: [observed, asserted, estimated]
+    observed_at: iso8601
+  export_invariant_review:
+    value: string
+    provenance: [observed, asserted, estimated]
+    observed_at: iso8601
+  dependency_scan:
+    value: string
+    provenance: [observed, asserted, estimated]
+    observed_at: iso8601
+    source_url: string
+
+gates:
+  - id: SG-1
+    description: RBAC state machine roles (ClinicAdmin, Dietitian, Patient, SuperAdmin, Admin [legacy/platform])
+      are unchanged per governance/RBAC-ROLE-MAPPING.md, or any change to usePermissions.js has its own completed
+      Define/Architect/Validate artifacts.
+    fail_action: block
+
+  - id: SG-2
+    description: PHIBoundaryBanner.jsx render condition audited - confirmed it never
+      renders for Patient or standard Dietitian contexts (Clinic Admin only).
+    fail_action: block
+
+  - id: SG-3
+    description: Every public (unauthenticated) Strapi endpoint reviewed for
+      PHI-adjacent field leakage; bulk-export/pagination limits confirmed present.
+    fail_action: block
+
+  - id: SG-4
+    description: FHIR/LOINC export invariants re-validated against ci_cd.md's
+      Invariant Scope (Net Carbs clamp, thermal multipliers 1.00x-1.25x/0.85x,
+      zero-carb singularity protection).
+    fail_action: block
+
+  - id: SG-5
+    description: Any dependency major-version bump in package.json scanned for known
+      CVEs before merge.
+    fail_action: block
+
+  - id: SG-6
+    description: One-command rollback for the release documented and dry-run tested.
+    fail_action: block
+
+  - id: SG-7
+    description: Named human owner has co-signed the release PR. No major release
+      merges on agent authority alone.
+    fail_action: block
+
+soak_period: none   # pre-merge gate, not a runtime shadow control
+block_on_fail: true
+
+# Attribution: DAVE+R Framework by Demetrios Petropoulos (CC BY 4.0) - https://github.com/DtheRock/DAVE-R. Changes were made.

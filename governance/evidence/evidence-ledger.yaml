@@ -1,0 +1,101 @@
+# DAVE+R Declarative Evidence Ledger
+# Authoritative index of machine-checkable and audit-verified repository evidence.
+# Schema specification: governance/evidence/evidence.schema.yaml
+# Verification documentation: governance/evidence/README.md
+
+schema_version: "1.0.0"
+updated_at: "2026-09-05T09:56:00Z"
+
+entries:
+  - id: "EVD-2026-001"
+    status: "active"
+    claim_ref: "governance/AUDIT-2026-09-05.md#ci_clean_run_id"
+    change_id: null
+    value: "GitHub Actions DAVE+R Governance Gate Enforcement run completed successfully on PR #26 (6 mechanical gates passed, 0 warnings, 0 failures)"
+    provenance: "observed"
+    observed_at: "2026-09-05T06:39:54Z"
+    source_type: "github_actions_run"
+    source_url: "https://github.com/ux-fotisp/GlycoGourmet/actions/runs/33950414894"
+    source_commit: "435dc70"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-05T06:40:00Z"
+    verification_status: "verified"
+    verification_notes: "Verified via GitHub Actions API: run 33950414894 concluded with status success in 21s; artifact 9964630546 retained."
+
+  - id: "EVD-2026-002"
+    status: "active"
+    claim_ref: "governance/AUDIT-2026-09-05.md#ci_negative_run_id"
+    change_id: null
+    value: "GitHub Actions DAVE+R Governance Gate Enforcement negative-control run failed with code 1 on PR #27, accurately trapping TO-2 violation and posting diagnostic PR comment"
+    provenance: "observed"
+    observed_at: "2026-09-05T06:41:09Z"
+    source_type: "github_actions_run"
+    source_url: "https://github.com/ux-fotisp/GlycoGourmet/actions/runs/33950477093"
+    source_commit: "435dc70"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-05T06:41:35Z"
+    verification_status: "verified"
+    verification_notes: "Verified via GitHub Actions API: run 33950477093 failed with exit code 1 on TO-2 toBeCloseTo check; PR comment 5550040288 posted."
+
+  - id: "EVD-2026-003"
+    status: "legacy-unverifiable"
+    claim_ref: "governance/2026-09-login-fix/03-validate.md#21-target-production-domain-dns-check"
+    change_id: "2026-09-login-fix"
+    value: "Target production API domain api.glycogourmet.com produced NXDOMAIN (could not resolve host) on live curl check"
+    provenance: "observed"
+    observed_at: "2026-09-05T06:18:16Z"
+    source_type: "external_live_check"
+    source_url: "https://api.glycogourmet.com"
+    source_commit: "48b84ea"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-05T06:20:00Z"
+    verification_status: "legacy-unverifiable"
+    verification_notes: "Live terminal curl output observed during session. Lacks a committed cryptographic blob or Actions artifact; retained as legacy-unverifiable per DAVE+R Axiom 2."
+
+  - id: "EVD-2026-004"
+    status: "active"
+    claim_ref: "governance/AUDIT-2026-09-05.md#active_exceptions_baseline"
+    change_id: null
+    value: "Exception register initialized with clean baseline (exceptions: []) ensuring zero active exemptions bypass mechanical gates"
+    provenance: "observed"
+    observed_at: "2026-09-05T06:51:30Z"
+    source_type: "git_commit"
+    source_url: "https://github.com/ux-fotisp/GlycoGourmet/commit/f5bbba5"
+    source_commit: "f5bbba5"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-05T06:51:31Z"
+    verification_status: "verified"
+    verification_notes: "Verified by git commit f5bbba5 introducing governance/exceptions/exception-register.yaml with empty exceptions array."
+
+  - id: "EVD-2026-005"
+    status: "active"
+    claim_ref: "governance/evidence/sg6-rollback-dryrun-2026-09-05.md#32-production-one-click-rollback-targets"
+    change_id: null
+    value: "SG-6 rollback dry-run verified cleanly for PR #26 (0 conflicts, 80ms) and PR #28 (0 conflicts, 91ms); Netlify deploy preview IDs 6a9bc2fb7a886b00080a45bc and 6a9bbeb837ce080008592ecf, and 16 restorable production deploys identified (primary target 6a97e55b6eec6c00089a3f65)"
+    provenance: "observed"
+    observed_at: "2026-09-05T07:27:30Z"
+    source_type: "repository_file"
+    source_url: "https://github.com/ux-fotisp/GlycoGourmet/blob/eb3ae9f/governance/evidence/sg6-rollback-dryrun-2026-09-05.md"
+    source_commit: "eb3ae9f"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-05T07:30:00Z"
+    verification_status: "verified"
+    verification_notes: "Observed clean git revert -m 1 --no-commit on simulated merge-preview commits (PR #26 SHA 0295e66, PR #28 SHA 92ef1e7) and confirmed restorable production deploy 6a97e55b6eec6c00089a3f65 via Netlify API listSiteDeploys."
+
+  - id: "EVD-2026-006"
+    status: "active"
+    claim_ref: "governance/evidence/sg-netlify-redirect-verification-2026-09-05.md#raw-terminal-output-summary"
+    change_id: null
+    value: "Netlify edge proxy redirect precedence verified on deploy-preview-28: /api/auth/local and /api/health return 502 text/plain confirming /api/* proxy rule intercepts requests before SPA catch-all (deploy-preview-26 and production return 200 text/html as negative controls)"
+    provenance: "observed"
+    observed_at: "2026-09-05T07:40:24Z"
+    source_type: "repository_file"
+    source_url: "https://github.com/ux-fotisp/GlycoGourmet/blob/98b7fc9/governance/evidence/sg-netlify-redirect-verification-2026-09-05.md"
+    source_commit: "98b7fc9"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-05T07:41:00Z"
+    verification_status: "verified"
+    verification_notes: "Empirical curl test against deploy-preview-28 yielded HTTP 502 text/plain confirming Netlify edge proxy rule takes precedence over SPA catch-all rewrite; deploy-preview-26 and production return HTTP 200 text/html."
+
+
+

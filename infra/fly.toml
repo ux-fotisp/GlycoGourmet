@@ -1,0 +1,52 @@
+# ==============================================================================
+# GlycoGourmet — Fly.io Application Specification
+# Candidate Backend Infrastructure: Strapi v4 Headless CMS
+# Attached Database: Managed Fly PostgreSQL Machine
+# Documentation: infra/README.md
+# ==============================================================================
+
+app = "glycogourmet-api"
+primary_region = "fra"
+
+[build]
+  dockerfile = "../server/Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "1337"
+  DATABASE_CLIENT = "postgres"
+  PUBLIC_DEPLOYMENT = "true"
+  CORS_ORIGIN = "https://glycogourmet.netlify.app"
+
+[http_service]
+  internal_port = 1337
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 250
+    soft_limit = 200
+
+  [[http_service.checks]]
+    grace_period = "15s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
+
+# Secrets managed via `fly secrets set`:
+# DATABASE_URL (injected via `fly postgres attach glycogourmet-postgres`)
+# SEED_PASSWORD
+# JWT_SECRET
+# ADMIN_JWT_SECRET
+# APP_KEYS
+# API_TOKEN_SALT
+# TRANSFER_TOKEN_SALT

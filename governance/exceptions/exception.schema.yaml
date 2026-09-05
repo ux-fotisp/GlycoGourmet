@@ -1,0 +1,136 @@
+# DAVE+R Declarative Exception Schema Specification
+# Defines the machine-readable data model and validation constraints for governance gate exceptions.
+# Evaluated mechanically by scripts/governance-gates.js (Gates EXC-1 through EXC-7).
+
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "GlycoGourmet DAVE+R Governance Exception Schema"
+description: "Data model for time-bounded, accountable exemptions to declarative governance gates."
+type: "object"
+
+properties:
+  id:
+    type: "string"
+    pattern: "^EXC-\\d{4}-\\d{3}$"
+    description: "Unique, stable identifier formatted as EXC-YYYY-NNN (e.g., EXC-2026-001)."
+
+  status:
+    type: "string"
+    enum: ["proposed", "approved", "active", "expired", "rejected", "closed"]
+    description: "Lifecycle status of the exception."
+
+  track:
+    type: "string"
+    enum: ["planned", "expedited", "emergency"]
+    description: "Triage path determining the urgency, governance cadence, and retrospective SLAs."
+
+  created_at:
+    type: "string"
+    format: "date-time"
+    description: "ISO 8601 timestamp of exception proposal."
+
+  requested_by:
+    type: "string"
+    description: "Identity of the human engineer or AI agent drafting the exception (e.g., 'Fotis P' or 'antigravity-agent')."
+
+  human_owner:
+    type: "string"
+    description: "Required named human owner accountable for this exception. Cannot be blank or an automated agent."
+
+  approver:
+    type: "string"
+    description: "Required named human who authorized the exception. Mandatory when status is 'approved' or 'active'. Never agent-only."
+
+  change_id:
+    type: "string"
+    description: "Optional identifier or path referencing the relevant change folder under governance/<change-id>/."
+
+  affected_gate_ids:
+    type: "array"
+    items:
+      type: "string"
+    minItems: 1
+    description: "Declarative gate identifiers temporarily exempted (e.g., ['SG-3', 'TO-5'])."
+
+  reason:
+    type: "string"
+    minLength: 10
+    description: "Concise, factual justification for why the gate condition cannot be met immediately."
+
+  blast_radius:
+    type: "string"
+    minLength: 10
+    description: "Detailed description of systems, RBAC roles, tenant boundaries, routes, or exports affected."
+
+  evidence:
+    type: "array"
+    items:
+      type: "object"
+      required: ["value", "provenance", "observed_at", "source_url"]
+      properties:
+        value:
+          type: "string"
+          description: "Empirical finding, metric value, or diagnostic snippet."
+        provenance:
+          type: "string"
+          enum: ["observed", "asserted", "estimated"]
+          description: "Evidence origin. Only 'observed' carries high-confidence assurance."
+        observed_at:
+          type: "string"
+          format: "date-time"
+          description: "ISO 8601 timestamp when the evidence was captured."
+        source_url:
+          type: "string"
+          description: "Clickable URL, commit SHA, or reproducible CLI command producing the evidence."
+    description: "Array of typed evidence supporting the exception."
+
+  containment_or_rollback:
+    type: "string"
+    minLength: 10
+    description: "Exact executable command or operational procedure to revert or contain the un-gated behavior."
+
+  compensating_controls:
+    type: "string"
+    description: "Interim mitigations reducing risk during the exception window. Required for 'expedited' and 'emergency' tracks."
+
+  expires_at:
+    type: "string"
+    format: "date-time"
+    description: "Mandatory ISO 8601 expiration timestamp. Must not exceed 30 days from created_at."
+
+  retrospective_due_at:
+    type: "string"
+    format: "date-time"
+    description: "Mandatory ISO 8601 deadline for post-incident review. Mandatory for 'expedited' and 'emergency' tracks."
+
+  closure_evidence:
+    type: "string"
+    description: "Evidence documenting permanent resolution and rollback of the exception. Required before status becomes 'closed'."
+
+required:
+  - "id"
+  - "status"
+  - "track"
+  - "created_at"
+  - "requested_by"
+  - "human_owner"
+  - "affected_gate_ids"
+  - "reason"
+  - "blast_radius"
+  - "containment_or_rollback"
+  - "expires_at"
+
+rules:
+  - id: "RULE-EXC-ACTIVE-PREREQS"
+    description: "An exception cannot be 'active' without human_owner, approver, expires_at, and containment_or_rollback."
+  - id: "RULE-EXC-TRACK-CONTROLS"
+    description: "Emergency and expedited tracks must have compensating_controls and retrospective_due_at."
+  - id: "RULE-EXC-MAX-DURATION"
+    description: "No exception may have expires_at more than 30 days after created_at without an explicit renewed exception created by a human."
+  - id: "RULE-EXC-NO-EXPIRED-ACTIVE"
+    description: "An expired exception must not remain active or approved."
+  - id: "RULE-EXC-NO-AUTO-CLINICAL-APPROVAL"
+    description: "Exceptions affecting SG-1, SG-2, SG-3, SG-4, SG-6, or SG-7 cannot be automatically approved by any automation."
+  - id: "RULE-EXC-VALID-CONTAINMENT"
+    description: "'accepted risk', 'temporary', 'TBD', and blank rollback instructions are not valid values for containment_or_rollback."
+  - id: "RULE-EXC-CLOSURE-EVIDENCE"
+    description: "Status 'closed' requires non-empty closure_evidence."

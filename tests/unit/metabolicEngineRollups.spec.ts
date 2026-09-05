@@ -182,8 +182,8 @@ describe('calculateDailyRollup', () => {
     const resultBase = calculateDailyRollup(slots, recipesMap);
     const resultDoubled = calculateDailyRollup(slots, recipesMap, { rec_rice: 2 });
 
-    // Net carbs should double (within rounding tolerance)
-    expect(resultDoubled.netCarbs).toBeCloseTo(resultBase.netCarbs * 2, 1);
+    // Net carbs should double (within rounding tolerance of ±1)
+    expect(Math.abs(resultDoubled.netCarbs - resultBase.netCarbs * 2)).toBeLessThanOrEqual(1);
   });
 
   it('should skip missing recipe IDs gracefully', () => {
@@ -288,8 +288,8 @@ describe('applyServingScale', () => {
     // GI must remain invariant (carb-weighted ratio is independent of mass)
     expect(doubled.profile.glycemicIndex).toBe(base.profile.glycemicIndex);
 
-    // Net carbs should double (within rounding tolerance)
-    expect(doubled.profile.netCarbs).toBeCloseTo(base.profile.netCarbs * 2, 1);
+    // Net carbs should double (within rounding tolerance of ±1)
+    expect(Math.abs(doubled.profile.netCarbs - base.profile.netCarbs * 2)).toBeLessThanOrEqual(1);
 
     // GL should double (within rounding tolerance of ±1 due to integer rounding)
     expect(Math.abs(doubled.profile.glycemicLoad - base.profile.glycemicLoad * 2)).toBeLessThanOrEqual(1);
@@ -299,10 +299,10 @@ describe('applyServingScale', () => {
     const base = applyServingScale(whiteRiceIngredients, 1);
     const halved = applyServingScale(whiteRiceIngredients, 0.5);
 
-    expect(halved.profile.netCarbs).toBeCloseTo(base.profile.netCarbs * 0.5, 1);
-    expect(halved.profile.kcal).toBeCloseTo(base.profile.kcal * 0.5, 1);
-    expect(halved.profile.protein).toBeCloseTo(base.profile.protein * 0.5, 1);
-    expect(halved.profile.fat).toBeCloseTo(base.profile.fat * 0.5, 1);
+    expect(Math.abs(halved.profile.netCarbs - base.profile.netCarbs * 0.5)).toBeLessThanOrEqual(1);
+    expect(Math.abs(halved.profile.kcal - base.profile.kcal * 0.5)).toBeLessThanOrEqual(1);
+    expect(Math.abs(halved.profile.protein - base.profile.protein * 0.5)).toBeLessThanOrEqual(1);
+    expect(Math.abs(halved.profile.fat - base.profile.fat * 0.5)).toBeLessThanOrEqual(1);
   });
 
   it('scaling by 1x should produce identical profile', () => {

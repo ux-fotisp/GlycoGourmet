@@ -1,0 +1,126 @@
+# DAVE+R Declarative Evidence Ledger Schema Specification
+# Defines the machine-readable data model for durable, checkable repository evidence.
+# Evaluated mechanically by scripts/governance-gates.js (Gates INT-2 through INT-8).
+
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "GlycoGourmet DAVE+R Evidence Ledger Schema"
+description: "Data model and anti-backdating constraints for governance evidence records."
+type: "object"
+
+properties:
+  schema_version:
+    type: "string"
+    description: "Version of the evidence ledger schema."
+
+  updated_at:
+    type: "string"
+    format: "date-time"
+    description: "ISO 8601 timestamp when the ledger was last modified."
+
+  entries:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          pattern: "^EVD-\\d{4}-\\d{3}$"
+          description: "Unique, stable identifier formatted as EVD-YYYY-NNN (e.g., EVD-2026-001)."
+
+        status:
+          type: "string"
+          enum: ["active", "superseded", "legacy-unverifiable"]
+          description: "Lifecycle state of this evidence entry."
+
+        claim_ref:
+          type: "string"
+          description: "Path and anchor/section referencing the claim in a governance artifact (e.g., 'governance/AUDIT-2026-09-05.md#ci_clean_run_id')."
+
+        change_id:
+          type: ["string", "null"]
+          description: "Optional reference to a change directory under governance/<change-id>/."
+
+        value:
+          type: "string"
+          minLength: 5
+          description: "Concise factual statement of the observed or verified state."
+
+        provenance:
+          type: "string"
+          enum: ["observed", "asserted", "estimated"]
+          description: "Confidence classification of how the evidence was obtained."
+
+        observed_at:
+          type: "string"
+          format: "date-time"
+          description: "ISO 8601 timestamp when the empirical phenomenon or metric was captured."
+
+        source_type:
+          type: "string"
+          enum:
+            - "github_actions_run"
+            - "git_commit"
+            - "github_pull_request"
+            - "repository_file"
+            - "external_live_check"
+          description: "Technical medium from which the evidence originates."
+
+        source_url:
+          type: "string"
+          minLength: 1
+          description: "Durable URL or explicit local repository reference. Mandatory for all entries."
+
+        source_commit:
+          type: ["string", "null"]
+          pattern: "^[0-9a-fA-F]{7,40}$"
+          description: "Git commit SHA (7-40 hex characters) associated with repository files or git-derived claims."
+
+        recorded_by:
+          type: "string"
+          minLength: 3
+          description: "Entity that ingested the record into the ledger (human or identified agent session)."
+
+        recorded_at:
+          type: "string"
+          format: "date-time"
+          description: "ISO 8601 timestamp when this entry was written to the ledger."
+
+        verification_status:
+          type: "string"
+          enum: ["verified", "legacy-unverifiable", "pending-human-review"]
+          description: "Integrity status established by mechanical cross-reference with Git and GitHub metadata."
+
+        verification_notes:
+          type: "string"
+          minLength: 10
+          description: "Technical explanation of what was verified and any verification boundaries."
+
+      required:
+        - "id"
+        - "status"
+        - "claim_ref"
+        - "value"
+        - "provenance"
+        - "observed_at"
+        - "source_type"
+        - "source_url"
+        - "recorded_by"
+        - "recorded_at"
+        - "verification_status"
+        - "verification_notes"
+
+rules:
+  - id: "RULE-EVD-NO-EMPTY-SOURCE"
+    description: "Verification status 'verified' cannot be used when source_url is blank."
+  - id: "RULE-EVD-ACTIONS-RUN-ID"
+    description: "github_actions_run evidence must contain a numeric GitHub run ID in source_url."
+  - id: "RULE-EVD-GIT-COMMIT-SHA"
+    description: "git_commit and repository_file evidence must contain a valid 7-40 char Git commit SHA."
+  - id: "RULE-EVD-REPO-FILE-REF"
+    description: "repository_file evidence must specify a commit SHA and valid file path in claim_ref."
+  - id: "RULE-EVD-EXTERNAL-CHECK-ARTIFACT"
+    description: "external_live_check cannot be marked 'verified' without a durable artifact URL or committed terminal output."
+  - id: "RULE-EVD-ANTI-BACKDATING"
+    description: "observed_at must not be later than recorded_at; neither timestamp may be in the future."
+  - id: "RULE-EVD-NO-CREDENTIALS-OR-PHI"
+    description: "Zero credentials, JWTs, user IDs, API keys, or patient health information permitted in ledger."

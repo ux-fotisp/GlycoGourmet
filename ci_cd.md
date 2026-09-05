@@ -146,8 +146,37 @@ npm run validate-db
 
 ---
 
-## 6. Document Metadata & Attribution
+## 6. DAVE+R Governance Artifact Gate
 
-- **Document Version:** `2.0.0`
+Pull Requests labeled `gov:rbac`, `gov:phi`, `gov:export`, or `gov:tenancy` are subject to the **DAVE+R Governance & Delivery Adapter** lifecycle defined in [`governance/GOVERNANCE.md`](governance/GOVERNANCE.md).
+
+### 6.1 Pre-Merge Requirements for Governance PRs
+
+| Requirement | Verification Method |
+|---|---|
+| **Define artifact** committed to `governance/<change-id>/01-define.md` | Manual review — blast radius and non-goals documented |
+| **Architect artifact** committed to `governance/<change-id>/02-architect.md` | Manual review — shadow-mode mechanism and rollback command documented |
+| **Validate artifact** committed to `governance/<change-id>/03-validate.md` | Manual review — real CI run ID cited, Vitest count re-verified |
+| **Named human owner** in PR description | Manual review — default: Fotis P |
+| **Shadow mode** — control ships in observe-only mode | Code review — feature flag or `console.warn`-only policy present |
+| **Rollback command** documented and viable | Code review — `git revert`, feature flag off, or Strapi policy toggle |
+| All existing CI gates (§2) pass | Automated — GitHub Actions |
+
+### 6.2 Post-Merge Requirements
+
+| Requirement | Verification Method |
+|---|---|
+| **Soak period** ≥ `min_shadow_days: 3` | Manual tracking — refine-worker scheduled |
+| **Refine artifact** committed to `governance/<change-id>/04-refine.md` | Manual review — promotion decision documented |
+| **Changelog entry** appended (if promoted) | Manual review — follows `changelog.md` semver convention |
+
+> **Note:** This is a documentation-level gate, not a GitHub Actions workflow modification. The existing production and integration pipelines (§2, §3) remain unchanged. Governance artifact review is performed by the named human owner during PR review.
+
+---
+
+## 7. Document Metadata & Attribution
+
+- **Document Version:** `2.1.0`
 - **DevOps & Systems Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **CI/CD Platform:** GitHub Actions, Playwright Test Runner, Vitest, Netlify CDN
+
