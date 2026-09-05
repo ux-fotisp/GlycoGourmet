@@ -1,0 +1,12 @@
+# DAVE+R Mechanical Governance Exception Register
+# Authoritative log of all time-bounded exceptions to declarative gates.
+# Schema specification: governance/exceptions/exception.schema.yaml
+# Operational triage policy: governance/exceptions/TRIAGE.md
+
+schema_version: "1.0.0"
+register_owner: "pending-human-assignment"
+updated_at: "2026-09-05T09:47:16Z"
+
+# List of exception objects conforming to exception.schema.yaml.
+# By default, zero exceptions exist. An empty list ensures full gate enforcement.
+exceptions: []
