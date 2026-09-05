@@ -27,11 +27,13 @@ upstream DAVE+R engine (DtheRock/DAVE-R) and its `evidence.md` / `gates/*.yaml` 
    GitHub Actions job that evaluates them automatically on PRs touching the relevant
    paths, rather than relying on an agent to self-report compliance.
 
-5. **Pilot on one real change.** Nothing in `governance/` has been run end-to-end yet.
-   Recommended first pilot, pulled from `ROADMAP.md` Section 5.1: the **Extended RBAC
-   Hierarchy** (`ClinicBillingAdmin` role) - it exercises `identity` and `data` planes,
-   both DAVE+R workers, and both new gate files, without touching the clinical export
-   pipeline on the first attempt.
+5. **[COMPLETED] Pilot on one real change.** Addressed via the **Login Network Error Investigation & Staging Fix** ([`governance/2026-09-login-fix/`](./2026-09-login-fix/)), executed across the full DAVE+R cycle:
+   - [`01-define.md`](./2026-09-login-fix/01-define.md): Problem statement, blast radius (`AuthContext.jsx`, `netlify.toml`, `.env.example`), and explicit non-goals (zero RBAC/PHI modification).
+   - [`02-architect.md`](./2026-09-login-fix/02-architect.md): Architecture of the two fix mechanisms (relative fetch routed through `STRAPI_URL`; edge proxy `/api/*` rewrite added) and documentation of the open infrastructure gap (unprovisioned backend).
+   - [`03-validate.md`](./2026-09-login-fix/03-validate.md): Live curl observations, typed evidence schema, DNS resolution failure proof, and 690-test Vitest verification.
+   - [`04-refine.md`](./2026-09-login-fix/04-refine.md): Honest Refine-stage outcome (`HOLD — cannot promote to enforcing/resolved until a real backend exists`, conforming to Axioms 2 & 4).
+   
+   **Next Pilot Candidate:** The original suggestion from `ROADMAP.md` Section 5.1 — the **Extended RBAC Hierarchy** (`ClinicBillingAdmin` role) — is now the NEXT pilot candidate to exercise `identity` and `data` planes under enforcing conditions.
 
 ---
 _Security-control lifecycle concepts (Define→Architect→Validate→Execute→Refine, typed evidence, gates-as-data) adapted from the **DAVE+R Framework by Demetrios Petropoulos** (CC BY 4.0), https://github.com/DtheRock/DAVE-R. Changes were made._
