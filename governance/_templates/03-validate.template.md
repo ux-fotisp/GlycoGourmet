@@ -86,7 +86,20 @@ _Cross-check the Architect artifact's claims against actual repo state._
 
 ---
 
-## 6. Gate Status
+## 6. Evidence
+
+_Every factual claim in this artifact must be recorded with typed evidence matching the schema in `governance/gates/testing.gate.yaml`:_
+`{ value: <string>, provenance: observed|asserted|estimated, observed_at: <iso8601>, source_url: <string> }`
+
+| Claim / Key | Value | Provenance (`observed` / `asserted` / `estimated`) | Observed At (ISO 8601) | Source URL / Command |
+|---|---|---|---|---|
+| `test_run` | _`e.g. 690 passing`_ | `observed` | `<YYYY-MM-DDTHH:MM:SSZ>` | _`https://github.com/ux-fotisp/GlycoGourmet/actions/runs/...`_ |
+| `lint_run` | _`e.g. pass (0 errors)`_ | `observed` | `<YYYY-MM-DDTHH:MM:SSZ>` | _`npx oxlint && npx tsc --noEmit`_ |
+| `coverage_report` | _`e.g. 100% lines/branches`_ | `observed` | `<YYYY-MM-DDTHH:MM:SSZ>` | _`coverage/index.html`_ |
+
+---
+
+## 7. Gate Status
 
 | Gate | Status |
 |---|---|
@@ -95,6 +108,7 @@ _Cross-check the Architect artifact's claims against actual repo state._
 | Floating-point checks passed (or N/A) | ⬜ Pass / ⬜ Fail |
 | E2E locator compliance verified (or N/A) | ⬜ Pass / ⬜ Fail |
 | Architect claims cross-checked | ⬜ Pass / ⬜ Fail |
+| Evidence recorded with provenance | ⬜ Pass / ⬜ Fail |
 | Ready for execute-worker | ⬜ Pass / ⬜ Fail |
 
 ---

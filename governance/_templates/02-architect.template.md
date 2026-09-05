@@ -91,7 +91,18 @@ _Only required if Define artifact marked `gg-bot-fraud` as applicable._
 
 ---
 
-## 6. Gate Status
+## 6. Evidence
+
+_Every factual claim in this artifact must be recorded with typed evidence matching the schema in `governance/gates/testing.gate.yaml`:_
+`{ value: <string>, provenance: observed|asserted|estimated, observed_at: <iso8601>, source_url: <string> }`
+
+| Claim / Key | Value | Provenance (`observed` / `asserted` / `estimated`) | Observed At (ISO 8601) | Source URL / Command |
+|---|---|---|---|---|
+| _e.g. `component_inventory`_ | _`src/hooks/usePermissions.js verified exports`_ | `observed` | `<YYYY-MM-DDTHH:MM:SSZ>` | _`src/hooks/usePermissions.js:L1`_ |
+
+---
+
+## 7. Gate Status
 
 | Gate | Status |
 |---|---|
@@ -100,6 +111,7 @@ _Only required if Define artifact marked `gg-bot-fraud` as applicable._
 | Rollback command documented and viable | ⬜ Pass / ⬜ Fail |
 | WCAG/Hooks compliance verified (or N/A) | ⬜ Pass / ⬜ Fail |
 | Secondary lens checks passed (or N/A) | ⬜ Pass / ⬜ Fail |
+| Evidence recorded with provenance | ⬜ Pass / ⬜ Fail |
 | Ready for validate-worker | ⬜ Pass / ⬜ Fail |
 
 ---

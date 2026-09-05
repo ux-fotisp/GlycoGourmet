@@ -72,13 +72,25 @@ _What this change must NOT touch. Be specific._
 
 ---
 
-## 5. Gate Status
+## 5. Evidence
+
+_Every factual claim in this artifact must be recorded with typed evidence matching the schema in `governance/gates/testing.gate.yaml`:_
+`{ value: <string>, provenance: observed|asserted|estimated, observed_at: <iso8601>, source_url: <string> }`
+
+| Claim / Key | Value | Provenance (`observed` / `asserted` / `estimated`) | Observed At (ISO 8601) | Source URL / Command |
+|---|---|---|---|---|
+| _e.g. `current_policy_state`_ | _`is-clinic-admin.js blocks forbidden UIDs`_ | `observed` | `<YYYY-MM-DDTHH:MM:SSZ>` | _`server/src/policies/is-clinic-admin.js:L12`_ |
+
+---
+
+## 6. Gate Status
 
 | Gate | Status |
 |---|---|
 | Problem statement grounded in SECURITY.md | ⬜ Pass / ⬜ Fail |
 | Blast radius enumerated | ⬜ Pass / ⬜ Fail |
 | Non-goals declared | ⬜ Pass / ⬜ Fail |
+| Evidence recorded with provenance | ⬜ Pass / ⬜ Fail |
 | Ready for architect-worker | ⬜ Pass / ⬜ Fail |
 
 ---

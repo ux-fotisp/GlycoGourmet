@@ -87,7 +87,18 @@ _Only if promoting. Follow `changelog.md`'s existing semantic-versioning table f
 
 ---
 
-## 5. Gate Status
+## 5. Evidence
+
+_Every factual claim in this artifact must be recorded with typed evidence matching the schema in `governance/gates/testing.gate.yaml`:_
+`{ value: <string>, provenance: observed|asserted|estimated, observed_at: <iso8601>, source_url: <string> }`
+
+| Claim / Key | Value | Provenance (`observed` / `asserted` / `estimated`) | Observed At (ISO 8601) | Source URL / Command |
+|---|---|---|---|---|
+| _e.g. `soak_telemetry`_ | _`0 false positives over 3 days`_ | `observed` | `<YYYY-MM-DDTHH:MM:SSZ>` | _`<datadog/actions-log-url>`_ |
+
+---
+
+## 6. Gate Status
 
 | Gate | Status |
 |---|---|
@@ -96,6 +107,7 @@ _Only if promoting. Follow `changelog.md`'s existing semantic-versioning table f
 | Promotion decision documented | ⬜ Pass / ⬜ Fail |
 | Changelog entry prepared (if promoting) | ⬜ Pass / ⬜ N/A |
 | Rollback command verified (if rolling back) | ⬜ Pass / ⬜ N/A |
+| Evidence recorded with provenance | ⬜ Pass / ⬜ Fail |
 | Governance cycle complete | ⬜ Pass / ⬜ Fail |
 
 ---
