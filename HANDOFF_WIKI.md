@@ -388,7 +388,7 @@ npm run test:unit
 
 | Variable Name | Environment | Description |
 | :--- | :--- | :--- |
-| `VITE_STRAPI_URL` | Frontend | Fully qualified URL to Strapi API instance (e.g. `https://api.glycogourmet.com`). |
+| `VITE_STRAPI_API_URL` | Frontend | Fully qualified URL to Strapi API instance (live demo: `https://glycogourmet-demo-api.onrender.com`; local dev: `http://localhost:1337`; see [`docs/DEMO-ENVIRONMENT.md`](docs/DEMO-ENVIRONMENT.md)). |
 | `DATABASE_URL` | Backend | PostgreSQL connection string with SSL requirements. |
 | `APP_KEYS` | Backend | Strapi cookie signing and session encryption keys. |
 | `JWT_SECRET` | Backend | Secret string for clinical user JWT signing. |

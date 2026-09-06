@@ -114,7 +114,81 @@ $ git log -p --all -S "onrender.com" -S "railway.app" -S "fly.dev" -S ".herokuap
 
 ---
 
-## 4. Evidence Master Table
+## 4. Render Live Backend & Authentication Evidence (Chunk 5 Final)
+
+### 4.1 Provisioned Environment Configuration
+- **Backend Host:** `https://glycogourmet-demo-api.onrender.com`
+- **Deployed Commit SHA:** `f9e29c287c24495219846dcbe15fbc95a745b5bf` (`f9e29c2`)
+- **Database Engine:** Managed PostgreSQL (`glycogourmet-demo-postgres` on Render), confirmed via Strapi runtime startup banner (`Database: postgres`).
+- **Demo Accounts Confirmed:** All 5 deterministic demo accounts confirmed present and `confirmed: true` via Strapi Admin Content Manager:
+  1. `demo_patient` (`demo-patient@glycogourmet.demo`)
+  2. `demo_dietitian` (`demo-dietitian@glycogourmet.demo`)
+  3. `demo_dietitian_b` (`demo-dietitian-b@glycogourmet.demo`)
+  4. `demo_clinic_admin` (`demo-clinic-admin@glycogourmet.demo`)
+  5. `demo_admin` (`demo-admin@glycogourmet.demo`)
+
+### 4.2 Live JWT Authentication Test (Positive Verification)
+- **Endpoint:** `POST https://glycogourmet-demo-api.onrender.com/api/auth/local`
+- **Identifier:** `demo-patient@glycogourmet.demo`
+- **Observed HTTP Status:** `HTTP/1.1 200 OK`
+- **JWT Evidence:** Present, valid non-empty signed string (`[REDACTED]` per security constraints; value never printed or committed).
+- **User Payload Returned:**
+  ```json
+  {
+    "id": 3,
+    "username": "demo_patient",
+    "email": "demo-patient@glycogourmet.demo",
+    "provider": "local",
+    "confirmed": true,
+    "blocked": false,
+    "roleType": "user",
+    "isApproved": false,
+    "onboarded": false
+  }
+  ```
+
+### 4.3 Negative Control / Invalid Password Test
+- **Endpoint:** `POST https://glycogourmet-demo-api.onrender.com/api/auth/local`
+- **Identifier:** `demo-patient@glycogourmet.demo`
+- **Password:** Incorrect / invalid string test vector
+- **Observed HTTP Status:** `HTTP/1.1 400 Bad Request`
+- **Observed Payload:**
+  ```json
+  {
+    "data": null,
+    "error": {
+      "status": 400,
+      "name": "ValidationError",
+      "message": "Invalid identifier or password"
+    }
+  }
+  ```
+- *Finding:* Strapi correctly handles invalid credentials with generic validation error, preventing credential guessing or account enumeration without exposing stack traces.
+
+### 4.4 Audit Trail & Operational Transparency Note
+- **Credential Provisioning Trail:** The password for `demo_patient` was manually reset via the Strapi Admin UI directly (not via the automated `SEED_PASSWORD` boot hook) to cleanly unblock this live authentication validation without credential exposure.
+- **RBAC Operational Flag:** Notice that `demo_patient` returned `"isApproved": false`. In GlycoGourmet's client RBAC routing, `isApproved: false` directs users to a pending approval state. This is preserved as an operational finding for Fotis P to decide whether to toggle approval in Strapi Admin or retain it to showcase the approval workflow.
+
+---
+
+## 5. Live Browser Verification (Chunk 7 Final Closing Gate)
+
+- **Date & Time of Test:** 2026-09-06, ~09:38 EEST (06:38 UTC)
+- **Evaluator / Tester:** Fotis P (Risk Owner)
+- **Environment:** PR #28 Netlify Deploy Preview (`https://deploy-preview-28--glycogourmet.netlify.app`), clean incognito browser session
+- **Test Account Used:** `demo-patient@glycogourmet.demo` (Role: `user` / Patient, `isApproved: true`)
+- **Observed Result:**
+  1. Login form dispatched credentials to `/api/auth/local`, cleanly proxied by Netlify edge to `https://glycogourmet-demo-api.onrender.com/api/auth/local`.
+  2. Successful HTTP 200 response with valid JWT and safe user payload processed by `AuthContext`.
+  3. App navigated cleanly to `/onboarding` and rendered the post-login onboarding screen ("Welcome to GlycoGourmet!") with dietary profile selection and unit preferences.
+  4. **Zero Console Errors:** Inspected browser developer tools console — zero CORS errors, zero CSP violations, and zero network/unhandled exception errors.
+- **DAVE+R Finding:** This live observation confirms the entire end-to-end integration chain:
+  $$\text{Netlify Edge Ingress} \longrightarrow \text{Render Web Service} \longrightarrow \text{Managed PostgreSQL} \longrightarrow \text{Strapi Auth / JWT} \longrightarrow \text{Vite Client AuthContext} \longrightarrow \text{Protected UI Route}$$
+  This empirically satisfies the final open verification item from Chunk 7's manual browser verification checklist.
+
+---
+
+## 6. Evidence Master Table
 
 All factual claims documented using the typed schema `{ value, provenance, observed_at, source_url }`:
 
@@ -130,10 +204,14 @@ All factual claims documented using the typed schema `{ value, provenance, obser
 | `linter_run` | `0 oxlint errors, 0 tsc errors` | `observed` | `2026-09-05T05:57:45Z` | `npx oxlint && npx tsc --noEmit` |
 | `seed_guard_verification` | `Environment check added for NODE_ENV=production / PUBLIC_DEPLOYMENT=true` | `observed` | `2026-09-05T06:23:42Z` | `node -c server/seed.js` |
 | `cors_verification` | `CORS middleware exports valid array with https://glycogourmet.netlify.app` | `observed` | `2026-09-05T06:25:09Z` | `node -e "require('./server/config/middlewares.js')()"` |
+| `render_live_login_success` | `HTTP 200 with valid JWT and safe user fields (id: 3, roleType: 'user')` | `observed` | `2026-09-06T05:35:00Z` | `POST https://glycogourmet-demo-api.onrender.com/api/auth/local` |
+| `render_wrong_password_test` | `HTTP 400 ValidationError (Invalid identifier or password)` | `observed` | `2026-09-06T05:36:00Z` | `POST https://glycogourmet-demo-api.onrender.com/api/auth/local` |
+| `render_database_postgres` | `Strapi startup banner confirms Database: postgres on Render managed instance` | `observed` | `2026-09-06T05:25:00Z` | `Render deploy logs for commit f9e29c2` |
+| `browser_login_preview28` | `Real incognito browser login succeeded, onboarding screen rendered, 0 console errors` | `observed` | `2026-09-06T06:38:00Z` | `https://deploy-preview-28--glycogourmet.netlify.app` |
 
 ---
 
-## 5. Gate Status
+## 7. Gate Status
 
 | Gate | Status |
 |---|---|
@@ -144,7 +222,12 @@ All factual claims documented using the typed schema `{ value, provenance, obser
 | Playwright E2E suite verified (42 passing) | ✅ Pass |
 | oxlint and tsc clean (0 errors) | ✅ Pass |
 | Evidence recorded with provenance | ✅ Pass |
+| Render live backend deployed on PostgreSQL | ✅ Pass |
+| Live JWT authentication verified (HTTP 200 + JWT) | ✅ Pass |
+| Negative credential control verified (HTTP 400) | ✅ Pass |
+| Live browser authentication verified on Deploy Preview #28 | ✅ Pass |
 | Ready for refine-worker | ✅ Pass |
 
 ---
 _Security-control lifecycle concepts (Define→Architect→Validate→Execute→Refine, typed evidence, gates-as-data) adapted from the **DAVE+R Framework by Demetrios Petropoulos** (CC BY 4.0), https://github.com/DtheRock/DAVE-R. Changes were made._
+
