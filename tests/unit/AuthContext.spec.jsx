@@ -1,7 +1,8 @@
-﻿import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import React from 'react';
 import { AuthProvider, useAuth } from '../../src/context/AuthContext';
+import { STRAPI_URL } from '../../src/services/strapiClient';
 
 describe('AuthContext Strict Backend Trust', () => {
   beforeEach(() => {
@@ -35,7 +36,8 @@ describe('AuthContext Strict Backend Trust', () => {
       response = await result.current.login('test@glyco.com', 'password123');
     });
 
-    expect(global.fetch).toHaveBeenCalledWith('/api/auth/local', expect.objectContaining({
+    const expectedAuthUrl = `${(STRAPI_URL || '').trim().replace(/\/+$/, '')}/api/auth/local`;
+    expect(global.fetch).toHaveBeenCalledWith(expectedAuthUrl, expect.objectContaining({
       method: 'POST'
     }));
     expect(response.success).toBe(false);
@@ -88,7 +90,8 @@ describe('AuthContext Strict Backend Trust', () => {
       await new Promise(resolve => setTimeout(resolve, 0));
     });
 
-    expect(global.fetch).toHaveBeenCalledWith('/api/users/me', expect.objectContaining({
+    const expectedMeUrl = `${(STRAPI_URL || '').trim().replace(/\/+$/, '')}/api/users/me`;
+    expect(global.fetch).toHaveBeenCalledWith(expectedMeUrl, expect.objectContaining({
       headers: { Authorization: 'Bearer stale-jwt' }
     }));
 

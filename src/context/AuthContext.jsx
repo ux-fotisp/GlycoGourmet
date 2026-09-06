@@ -1,6 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { STRAPI_URL } from '../services/strapiClient';
 
 const AuthContext = createContext(null);
+
+const getApiUrl = (path) => {
+  const base = (STRAPI_URL || '').trim().replace(/\/+$/, '');
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return base ? `${base}${cleanPath}` : cleanPath;
+};
 
 const DEFAULT_SETTINGS = {
   unitSystem: 'imperial',
@@ -115,7 +122,7 @@ export const AuthProvider = ({ children }) => {
     }
     
     try {
-      const res = await fetch('/api/users/me', {
+      const res = await fetch(getApiUrl('/api/users/me'), {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -141,7 +148,7 @@ export const AuthProvider = ({ children }) => {
         return null;
       }
     } catch (_err) {
-      console.warn('Unable to refresh user status:', err);
+      console.warn('Unable to refresh user status:', _err);
       localStorage.removeItem('glyco_jwt');
       setUser(null);
       setIsAuthenticated(false);
@@ -168,7 +175,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const res = await fetch('/api/auth/local', {
+      const res = await fetch(getApiUrl('/api/auth/local'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier: email, password })
@@ -198,7 +205,7 @@ export const AuthProvider = ({ children }) => {
     const lowerEmail = email.toLowerCase();
     
     try {
-      const res = await fetch('/api/auth/local/register', {
+      const res = await fetch(getApiUrl('/api/auth/local/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: lowerEmail, email: lowerEmail, password, name })
@@ -243,7 +250,7 @@ export const AuthProvider = ({ children }) => {
     if (!token) return;
 
     try {
-      await fetch(`/api/users/${user.id}`, {
+      await fetch(getApiUrl(`/api/users/${user.id}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -252,7 +259,7 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(updatedFields)
       });
     } catch (_err) {
-      console.warn('Failed to persist user fields to Strapi:', err);
+      console.warn('Failed to persist user fields to Strapi:', _err);
     }
   };
 
