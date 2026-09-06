@@ -94,3 +94,13 @@ Live audit verification confirmed that pre-flight `OPTIONS` and standard `POST`/
    The Render demo instance runs on Render cloud infrastructure. If idle, the service may take 30–50 seconds on initial wake-up. Health probes hitting `/_health` or initial API calls will wait for container initialization.
 4. **PHI & Security Compliance:**  
    The live endpoint audit (Gate `SG-3`, [`governance/evidence/sg-3-live-endpoint-audit-2026-09-06.md`](../governance/evidence/sg-3-live-endpoint-audit-2026-09-06.md)) verified that all 20 clinical endpoints enforce default-deny (`HTTP 403`) with zero leakage of patient identifiers, carbohydrate budgets, or clinic tenant metadata.
+
+---
+
+## 6. Known Operational Risks
+
+### Netlify Production Deploys Paused (Billing Credits Exhausted)
+- **Status (Observed 2026-09-06):** Netlify production deploys are currently paused due to exhausted billing credits for the current billing cycle.
+- **Deploy Previews Unaffected:** This does **NOT** block deploy previews (e.g., PR #28's preview builds continue to build and function normally for testing and verification).
+- **Production Merge Impact:** This **WILL block automatic publishing to production** if/when PR #28 is merged to `master`, until either the Netlify billing cycle resets or the plan is upgraded.
+- **Action Owner:** Fotis P, to inspect the Netlify billing dashboard and verify billing status before scheduling any production merge or release promotion to `master`.

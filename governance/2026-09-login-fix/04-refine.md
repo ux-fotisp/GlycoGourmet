@@ -72,5 +72,20 @@ All factual claims documented using the typed schema `{ value, provenance, obser
 | Ready for Chunk 7 (Netlify Edge Proxy & PR #28 Wiring) | ✅ Pass |
 
 ---
+
+## 6. Forward-Looking Operational Risk Note (Observed 2026-09-06)
+
+> ⚠️ **NEW Non-Code Operational Blocker: Netlify Production Publishing Paused**  
+> **Classification:** External Hosting Account Constraint (Independent of Code Readiness)  
+> **Observed Date:** 2026-09-06  
+> **Action Owner (Human):** Fotis P  
+> 
+> **Operational Context & Release Boundary:**
+> - **Code Readiness Unaffected:** This is purely an external Netlify account billing constraint (exhausted billing credits for the current cycle) and is strictly independent of code readiness. All code changes across PR #28 (`fix/login-network-error`) and backend infrastructure on Render are functionally complete and verified. This does **not** alter or invalidate the technical `PROMOTE` decision or any completed/passed audit records for Chunks 1–7.
+> - **Deploy Previews Functional:** Staging and preview validation via Netlify deploy previews continues to operate normally (including PR #28's preview build).
+> - **Production Merge Gated on Billing:** Merging PR #28 into `master` will **not** automatically deploy to live production while billing credits remain exhausted. Production release timing is therefore separately gated on Fotis P verifying or resolving credit allocation in the Netlify billing dashboard.
+
+---
 _Security-control lifecycle concepts (Define→Architect→Validate→Execute→Refine, typed evidence, gates-as-data) adapted from the **DAVE+R Framework by Demetrios Petropoulos** (CC BY 4.0), https://github.com/DtheRock/DAVE-R. Changes were made._
+
 
