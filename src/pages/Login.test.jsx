@@ -91,7 +91,49 @@ describe('Login page', () => {
     fireEvent.click(screen.getByText('Sign In'));
 
     await vi.waitFor(() => {
-      expect(screen.getByText('Invalid credentials')).toBeDefined();
+      const alert = screen.getByRole('alert');
+      expect(alert).toBeDefined();
+      expect(alert.textContent).toContain('Invalid credentials');
+    });
+  });
+
+  it('renders wake-up guidance in accessible alert region when backend wakes up', async () => {
+    const wakeUpMessage = 'The demo service may be waking up. Please wait up to one minute and try again.';
+    mockLogin.mockResolvedValue({ success: false, error: wakeUpMessage });
+    renderLogin();
+
+    fireEvent.change(screen.getByPlaceholderText('name@example.com'), {
+      target: { value: 'demo@glyco.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('••••••••'), {
+      target: { value: 'demo123' },
+    });
+    fireEvent.click(screen.getByText('Sign In'));
+
+    await vi.waitFor(() => {
+      const alert = screen.getByRole('alert');
+      expect(alert).toBeDefined();
+      expect(alert.getAttribute('aria-live')).toBe('assertive');
+      expect(alert.textContent).toContain(wakeUpMessage);
+    });
+  });
+
+  it('renders generic network error in accessible alert region', async () => {
+    mockLogin.mockResolvedValue({ success: false, error: 'Network error during login' });
+    renderLogin();
+
+    fireEvent.change(screen.getByPlaceholderText('name@example.com'), {
+      target: { value: 'demo@glyco.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('••••••••'), {
+      target: { value: 'demo123' },
+    });
+    fireEvent.click(screen.getByText('Sign In'));
+
+    await vi.waitFor(() => {
+      const alert = screen.getByRole('alert');
+      expect(alert).toBeDefined();
+      expect(alert.textContent).toContain('Network error during login');
     });
   });
 
