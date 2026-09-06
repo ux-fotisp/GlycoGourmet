@@ -44,13 +44,12 @@ The complete architectural, clinical, and engineering specifications are organiz
 
 | Environment Variable | Required | Default / Example Value | Description & Clinical Security Scope |
 | :--- | :---: | :--- | :--- |
-| **`VITE_SNAPPI_API_BASE`** | Yes | `https://instance.snappi.io/api/v1` | Public API gateway endpoint for Strapi/Snappi CMS instance. |
-| **`VITE_SNAPPI_READ_TOKEN`**| Yes | `your-read-only-api-key` | Public read-only API key for fetching published master recipes and USDA ingredients. |
-| **`VITE_STRAPI_API_URL`** | Optional | `http://localhost:1337` | Local or staging Strapi backend API base URL. |
-| **`VITE_ENABLE_DEMO_AUTH`** | Optional | `false` (`true` in dev) | Enables mock authentication fallback for local offline development. |
+| **`VITE_STRAPI_API_URL`** | Yes | `https://glycogourmet-demo-api.onrender.com` | Strapi backend REST API base URL. For local development, set to `http://localhost:1337`. **Note:** Vite bakes this value into the frontend bundle at build time; changing it in deployed environments requires a rebuild and redeploy. For full details on the Render demo backend, PostgreSQL architecture, and seeded demo accounts, see [DEMO-ENVIRONMENT.md](docs/DEMO-ENVIRONMENT.md). |
+| **`VITE_STRAPI_TOKEN`** | Optional | `your-read-only-api-token` | Optional read-only API token for public content queries. |
+| **`VITE_ENABLE_DEMO_AUTH`** | Optional | `false` (`true` in dev) | Enables mock authentication fallback for local offline development. Must be `false` in deployed environments. |
 | **`VITE_USDA_API_KEY`** | Optional | `DEMO_KEY` | USDA FoodData Central API token for live custom ingredient lookups. |
 
-> ⚠️ **Security Note:** User JWTs for write and publish operations are dynamically injected via `AuthContext` and stored in secure browser memory. **Never store user write tokens in `.env` files.**
+> ⚠️ **Security Note:** User JWTs for write and publish operations are dynamically injected via `AuthContext` and stored in secure client storage (`localStorage`). **Never store user write tokens or JWTs in `.env` files.**
 
 ---
 
