@@ -1,6 +1,8 @@
-# ☁️ GlycoGourmet — Backend Hosting Provider Candidates
+# ☁️ GlycoGourmet — Backend Hosting Infrastructure
 
-> **Status:** Scaffolding Only. Neither selected nor deployed.  
+> **Status:** Render Selected & Deployed (`https://glycogourmet-demo-api.onrender.com`).  
+> **Database:** Render-Managed PostgreSQL (`glycogourmet-demo-postgres`).  
+> **Documentation:** See [`docs/DEMO-ENVIRONMENT.md`](../docs/DEMO-ENVIRONMENT.md) for live topology, accounts, and runbook.  
 > **Authority:** DAVE+R Framework (Axiom 3: Named Human Owns Risk).  
 > **Decision Owner:** Fotis P (Gate `SG-7`).
 
@@ -80,8 +82,9 @@ All three configurations are pre-wired for:
 
 ---
 
-## Next Steps for Fotis P
-1. Select one of the three options based on cost vs. convenience preference.
-2. Direct Antigravity or execute the selected provider's setup.
-3. Configure DNS CNAME/A record for `api.glycogourmet.com` pointing to the assigned ingress.
-4. Run `scripts/sg3-endpoint-audit.sh https://api.glycogourmet.com` to verify live deployment and close Gate `SG-3`.
+## Deployment Status & Operational Runbook
+1. **Selected & Deployed Provider:** Render was selected and provisioned via Blueprint [`infra/render.yaml`](./render.yaml).
+2. **Live Backend Service:** `https://glycogourmet-demo-api.onrender.com` (Web Service `glycogourmet-demo-api` + PostgreSQL `glycogourmet-demo-postgres`).
+3. **Security Audit & Gate SG-3:** Gate `SG-3` closed and verified PASS (`scripts/sg3-endpoint-audit.sh https://glycogourmet-demo-api.onrender.com`). See [`governance/evidence/sg-3-live-endpoint-audit-2026-09-06.md`](../governance/evidence/sg-3-live-endpoint-audit-2026-09-06.md).
+4. **Custom Domain / DNS:** If production DNS `api.glycogourmet.com` is provisioned in the future, bind CNAME to `glycogourmet-demo-api.onrender.com` in Render Custom Domains.
+5. **Full Runbook:** See [`docs/DEMO-ENVIRONMENT.md`](../docs/DEMO-ENVIRONMENT.md) for complete demo environment details and credentials policy.
