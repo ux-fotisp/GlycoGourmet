@@ -16,7 +16,7 @@
 # ------------------------------------------------------------------------------
 [[redirects]]
   from = "/api/*"
-  to = "https://api.glycogourmet.com/api/:splat"
+  to = "https://glycogourmet-demo-api.onrender.com/api/:splat"
   status = 200
   force = true
 
@@ -36,7 +36,7 @@
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://images.unsplash.com https://*.strapi.io https://*.netlify.app; connect-src 'self' http://localhost:1337 https://*.strapi.io https://api.data.gov https://*.netlify.app;"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://images.unsplash.com https://*.strapi.io https://*.netlify.app; connect-src 'self' http://localhost:1337 https://*.strapi.io https://api.data.gov https://*.netlify.app https://*.onrender.com;"
 
 # ------------------------------------------------------------------------------
 # Asset Cache Invalidation & Immutability Directives
