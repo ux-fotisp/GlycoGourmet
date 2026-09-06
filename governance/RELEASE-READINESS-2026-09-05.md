@@ -211,6 +211,13 @@ Netlify maintains immutable deployment builds. In case of a broken web release:
 
 ---
 
+## Operational Flag: Demo Account Approval State (Chunk 5 Closeout)
+
+> [!NOTE]
+> **Operational Flag (Non-Security):** Demo patient account currently has `isApproved: false`, which may trigger the app's pending-approval RBAC redirect for demo visitors. Fotis to decide whether to pre-approve the demo account or leave the approval gate visible as part of the demo.
+
+---
+
 ## Proposed PR #28 Description (for `fix/login-network-error`)
 
 ```markdown

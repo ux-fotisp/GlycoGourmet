@@ -4,7 +4,7 @@
 # Verification documentation: governance/evidence/README.md
 
 schema_version: "1.0.0"
-updated_at: "2026-09-06T04:43:00Z"
+updated_at: "2026-09-06T05:45:00Z"
 
 entries:
   - id: "EVD-2026-001"
@@ -111,6 +111,22 @@ entries:
     recorded_at: "2026-09-06T04:43:00Z"
     verification_status: "verified"
     verification_notes: "Observed HTTP 204 No Content on /_health (header 'strapi: You are so French!', server 'Render') and HTTP 200 on /admin from https://glycogourmet-demo-api.onrender.com; backed by committed evidence artifact render-backend-provisioning-2026-09-05.md."
+
+  - id: "EVD-2026-008"
+    status: "active"
+    claim_ref: "governance/2026-09-login-fix/03-validate.md#42-live-jwt-authentication-test-positive-verification"
+    change_id: "2026-09-login-fix"
+    value: "Render live demo backend (glycogourmet-demo-api) authenticated login verified: /api/auth/local returns HTTP 200 with JWT and user object (id: 3, roleType: 'user') against Render managed PostgreSQL"
+    provenance: "observed"
+    observed_at: "2026-09-06T05:35:00Z"
+    source_type: "external_live_check"
+    source_url: "file:///governance/2026-09-login-fix/03-validate.md"
+    source_commit: "f9e29c2"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-06T05:45:00Z"
+    verification_status: "verified"
+    verification_notes: "Observed HTTP 200 with valid JWT and safe user fields on /api/auth/local against Render live backend running on managed PostgreSQL; negative control returned HTTP 400 ValidationError; backed by committed documentation in 03-validate.md."
+
 
 
 
