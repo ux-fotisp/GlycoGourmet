@@ -541,13 +541,14 @@ module.exports = (policyContext, config, { strapi }) => {
 
 ### 7.1 Environment Variable Master Matrix
 
-#### Netlify Frontend Production Environment:
+#### Netlify Frontend Staging & Production Environment:
 ```env
-VITE_STRAPI_URL=https://api.glycogourmet.com
+VITE_STRAPI_API_URL=https://glycogourmet-demo-api.onrender.com
 VITE_USDA_API_KEY=live_usda_production_token
 VITE_ENABLE_DEMO_AUTH=false
 VITE_APP_ENV=production
 ```
+*(See `docs/DEMO-ENVIRONMENT.md` for live staging topology, seeded demo accounts, and CORS setup)*
 
 #### Strapi CMS Production Environment:
 ```env
@@ -578,7 +579,7 @@ DATABASE_SSL=true
    docker build -t glycogourmet-server:latest ./server
    docker run -d --name glycogourmet-api -p 1337:1337 --env-file .env.production glycogourmet-server:latest
    ```
-3. Verify backend health endpoint: `curl -I https://api.glycogourmet.com/_health` (returns `HTTP 204`).
+3. Verify backend health endpoint: `curl -I https://glycogourmet-demo-api.onrender.com/_health` (returns `HTTP 204`). *(Production custom domain `api.glycogourmet.com` can be bound via Render Custom Domains once DNS is mapped).*
 
 #### Phase B: Netlify Edge Frontend Deployment
 1. Build production static bundle: `npm run build`
@@ -597,7 +598,7 @@ DATABASE_SSL=true
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.glycogourmet.com https://api.nal.usda.gov;"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://glycogourmet-demo-api.onrender.com https://*.onrender.com https://api.nal.usda.gov;"
 ```
 
 ---
