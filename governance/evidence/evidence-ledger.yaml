@@ -4,7 +4,7 @@
 # Verification documentation: governance/evidence/README.md
 
 schema_version: "1.0.0"
-updated_at: "2026-09-05T09:56:00Z"
+updated_at: "2026-09-06T04:43:00Z"
 
 entries:
   - id: "EVD-2026-001"
@@ -96,6 +96,21 @@ entries:
     recorded_at: "2026-09-05T07:41:00Z"
     verification_status: "verified"
     verification_notes: "Empirical curl test against deploy-preview-28 yielded HTTP 502 text/plain confirming Netlify edge proxy rule takes precedence over SPA catch-all rewrite; deploy-preview-26 and production return HTTP 200 text/html."
+
+  - id: "EVD-2026-007"
+    status: "active"
+    claim_ref: "governance/evidence/render-backend-provisioning-2026-09-05.md#4-verification-summary-table"
+    change_id: null
+    value: "Render synthetic demo backend (glycogourmet-demo-api) verified live and healthy: /_health returns HTTP 204 with Strapi engine signature; /admin returns HTTP 200 SPA shell"
+    provenance: "observed"
+    observed_at: "2026-09-06T04:42:28Z"
+    source_type: "external_live_check"
+    source_url: "file:///governance/evidence/render-backend-provisioning-2026-09-05.md"
+    source_commit: "0bf667e"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-06T04:43:00Z"
+    verification_status: "verified"
+    verification_notes: "Observed HTTP 204 No Content on /_health (header 'strapi: You are so French!', server 'Render') and HTTP 200 on /admin from https://glycogourmet-demo-api.onrender.com; backed by committed evidence artifact render-backend-provisioning-2026-09-05.md."
 
 
 
