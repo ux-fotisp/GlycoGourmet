@@ -9,6 +9,7 @@
 
 | Date | Version | Type | Description | Author |
 | :--- | :---: | :---: | :--- | :--- |
+| **2026-09-06** | `v2.0.1` | `fix` | **Cold-Start Delay & Governance Repair (PR #30):** Distinguished cold-start delays from auth errors; corrected stale evidence ledger SHAs. | Fotis Pastrakis |
 | **2026-08-30** | `v2.0.0` | `docs` | **Documentation Consolidation:** Created root architectural suite (`information_architecture.md`, `testing.md`, `backend_dev.md`, `frontend_dev.md`, `agentic.md`, `changelog.md`, `UX.md`, `design.md`) with duplicate-content mapping. | Fotis Pastrakis |
 | **2026-08-27** | `v1.2.0` | `docs` | **Chunks 9-12 Sync:** Synchronized PRD, Technical Architecture, and Changelog documentation across clinical entities. | Fotis Pastrakis |
 | **2026-08-27** | `v1.2.0` | `chore` | **Housekeeping:** Removed orphaned CookMode components, obsolete test suites, and cleared temporary scratch scripts. | Fotis Pastrakis |
@@ -45,6 +46,13 @@
 ---
 
 ## 2. Release Milestone Summaries
+
+### Fixed
+- Login now distinguishes Render cold-start delays (502/503/504/timeout) from
+  actual authentication failures, showing a wake-up-specific message instead of a
+  generic network error. (PR #30)
+- Corrected stale/incorrect source_commit SHA references in the governance evidence
+  ledger (auto-detected and fixed via GitHub Copilot review during PR #30).
 
 ### v2.0.0 — Unified Architecture Consolidation
 - Unified and deduplicated 9 legacy specifications into 8 canonical root architectural guides:

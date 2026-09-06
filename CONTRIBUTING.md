@@ -88,3 +88,7 @@ npm run precommit
 - [ ] Mathematical calculations include unit tests verifying boundary invariants (e.g. zero division, fiber inversion).
 - [ ] No regression in passing test count ($281+$ passing tests).
 - [ ] Commit messages conform to Conventional Commits.
+
+### Automated Reviewer & Post-Verification Invariant
+> [!IMPORTANT]
+> If GitHub Copilot or another automated reviewer pushes a commit to a branch after GA's quality-gate verification but before merge, re-run the full gate suite against the final merged commit before considering the PR closed — do not assume the original verification still covers the final state.
