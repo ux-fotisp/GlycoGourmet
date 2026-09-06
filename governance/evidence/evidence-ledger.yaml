@@ -4,7 +4,7 @@
 # Verification documentation: governance/evidence/README.md
 
 schema_version: "1.0.0"
-updated_at: "2026-09-06T05:45:00Z"
+updated_at: "2026-09-06T05:56:00Z"
 
 entries:
   - id: "EVD-2026-001"
@@ -126,6 +126,21 @@ entries:
     recorded_at: "2026-09-06T05:45:00Z"
     verification_status: "verified"
     verification_notes: "Observed HTTP 200 with valid JWT and safe user fields on /api/auth/local against Render live backend running on managed PostgreSQL; negative control returned HTTP 400 ValidationError; backed by committed documentation in 03-validate.md."
+
+  - id: "EVD-2026-009"
+    status: "active"
+    claim_ref: "governance/evidence/sg-3-live-endpoint-audit-2026-09-06.md#2-endpoint-audit-matrix"
+    change_id: "2026-09-login-fix"
+    value: "Render live backend (glycogourmet-demo-api) passed SG-3 PHI exposure audit: 20 endpoints probed, all clinical resources return 403 Forbidden unauthenticated, zero patient data or PHI leaked"
+    provenance: "observed"
+    observed_at: "2026-09-06T05:55:00Z"
+    source_type: "external_live_check"
+    source_url: "file:///governance/evidence/sg-3-live-endpoint-audit-2026-09-06.md"
+    source_commit: "f9e29c2"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-06T05:56:00Z"
+    verification_status: "verified"
+    verification_notes: "Probed 20 live endpoints via curl.exe against https://glycogourmet-demo-api.onrender.com; confirmed zero PHI leakage, default-deny 403 on all protected models, active auth rate-limiting; backed by committed artifact sg-3-live-endpoint-audit-2026-09-06.md."
 
 
 
