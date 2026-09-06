@@ -142,6 +142,21 @@ entries:
     verification_status: "verified"
     verification_notes: "Probed 20 live endpoints via curl.exe against https://glycogourmet-demo-api.onrender.com; confirmed zero PHI leakage, default-deny 403 on all protected models, active auth rate-limiting; backed by committed artifact sg-3-live-endpoint-audit-2026-09-06.md."
 
+  - id: "EVD-2026-010"
+    status: "active"
+    claim_ref: "governance/2026-09-login-fix/03-validate.md#5-live-browser-verification-chunk-7-final-closing-gate"
+    change_id: "2026-09-login-fix"
+    value: "Live incognito browser login verified on Deploy Preview #28 (deploy-preview-28--glycogourmet.netlify.app): authenticated successfully as demo-patient@glycogourmet.demo, post-login onboarding screen rendered, 0 console errors"
+    provenance: "observed"
+    observed_at: "2026-09-06T06:38:00Z"
+    source_type: "external_live_check"
+    source_url: "file:///governance/2026-09-login-fix/03-validate.md"
+    source_commit: "f9e29c2"
+    recorded_by: "Antigravity agent (session e622fc11)"
+    recorded_at: "2026-09-06T06:40:00Z"
+    verification_status: "verified"
+    verification_notes: "Live incognito browser login test executed and confirmed by Fotis P against Netlify Deploy Preview #28; end-to-end chain (Netlify edge proxy -> Render backend -> PostgreSQL -> Strapi auth -> JWT -> AuthContext -> onboarding route) confirmed working with zero console errors; closes 2026-09-login-fix cycle."
+
 
 
 

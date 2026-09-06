@@ -171,7 +171,24 @@ $ git log -p --all -S "onrender.com" -S "railway.app" -S "fly.dev" -S ".herokuap
 
 ---
 
-## 5. Evidence Master Table
+## 5. Live Browser Verification (Chunk 7 Final Closing Gate)
+
+- **Date & Time of Test:** 2026-09-06, ~09:38 EEST (06:38 UTC)
+- **Evaluator / Tester:** Fotis P (Risk Owner)
+- **Environment:** PR #28 Netlify Deploy Preview (`https://deploy-preview-28--glycogourmet.netlify.app`), clean incognito browser session
+- **Test Account Used:** `demo-patient@glycogourmet.demo` (Role: `user` / Patient, `isApproved: true`)
+- **Observed Result:**
+  1. Login form dispatched credentials to `/api/auth/local`, cleanly proxied by Netlify edge to `https://glycogourmet-demo-api.onrender.com/api/auth/local`.
+  2. Successful HTTP 200 response with valid JWT and safe user payload processed by `AuthContext`.
+  3. App navigated cleanly to `/onboarding` and rendered the post-login onboarding screen ("Welcome to GlycoGourmet!") with dietary profile selection and unit preferences.
+  4. **Zero Console Errors:** Inspected browser developer tools console — zero CORS errors, zero CSP violations, and zero network/unhandled exception errors.
+- **DAVE+R Finding:** This live observation confirms the entire end-to-end integration chain:
+  $$\text{Netlify Edge Ingress} \longrightarrow \text{Render Web Service} \longrightarrow \text{Managed PostgreSQL} \longrightarrow \text{Strapi Auth / JWT} \longrightarrow \text{Vite Client AuthContext} \longrightarrow \text{Protected UI Route}$$
+  This empirically satisfies the final open verification item from Chunk 7's manual browser verification checklist.
+
+---
+
+## 6. Evidence Master Table
 
 All factual claims documented using the typed schema `{ value, provenance, observed_at, source_url }`:
 
@@ -190,10 +207,11 @@ All factual claims documented using the typed schema `{ value, provenance, obser
 | `render_live_login_success` | `HTTP 200 with valid JWT and safe user fields (id: 3, roleType: 'user')` | `observed` | `2026-09-06T05:35:00Z` | `POST https://glycogourmet-demo-api.onrender.com/api/auth/local` |
 | `render_wrong_password_test` | `HTTP 400 ValidationError (Invalid identifier or password)` | `observed` | `2026-09-06T05:36:00Z` | `POST https://glycogourmet-demo-api.onrender.com/api/auth/local` |
 | `render_database_postgres` | `Strapi startup banner confirms Database: postgres on Render managed instance` | `observed` | `2026-09-06T05:25:00Z` | `Render deploy logs for commit f9e29c2` |
+| `browser_login_preview28` | `Real incognito browser login succeeded, onboarding screen rendered, 0 console errors` | `observed` | `2026-09-06T06:38:00Z` | `https://deploy-preview-28--glycogourmet.netlify.app` |
 
 ---
 
-## 6. Gate Status
+## 7. Gate Status
 
 | Gate | Status |
 |---|---|
@@ -207,6 +225,7 @@ All factual claims documented using the typed schema `{ value, provenance, obser
 | Render live backend deployed on PostgreSQL | ✅ Pass |
 | Live JWT authentication verified (HTTP 200 + JWT) | ✅ Pass |
 | Negative credential control verified (HTTP 400) | ✅ Pass |
+| Live browser authentication verified on Deploy Preview #28 | ✅ Pass |
 | Ready for refine-worker | ✅ Pass |
 
 ---

@@ -48,11 +48,11 @@ The following operational items are out of scope for automated approval and are 
 | Decision | Status | Blocking Evidence / Preconditions | Human Action Required |
 |---|---|---|---|
 | **Merge Governance PR #26** | **READY** | None mechanically. All 21 mechanical gates passed in GitHub Actions CI (Run `33951521115`). Full integration test suite green (Run `33951521050`). Zero file conflicts with master. Zero file conflicts with `fix/login-network-error`. | Fotis P code review and co-signature per Axiom 3 and Gate `SG-7`. Merge PR #26 to `master`. |
-| **Open Login-Fix PR** | **READY TO OPEN PR, BUT HOLD FOR BACKEND HOST** | Mechanically sound: 690 unit tests pass, 42 E2E tests pass, precommit clean, build clean. PR #28 already exists in open state with blank description. | Fotis P review of proposed PR title and body (detailed below); update PR #28 body. |
-| **Merge Login-Fix PR** | **HOLD** | Cannot merge to master before a real backend host exists. Merging prematurely would point master's production Netlify redirect (`/api/*`) to a non-resolving domain (`api.glycogourmet.com` NXDOMAIN). Must be rebased on master after PR #26 merges to inherit the governance gate CI workflow. | Defer merge until backend host is provisioned and live login returns HTTP 200 + JWT. Rebase on `master`. |
-| **Deploy Staging Backend** | **BLOCKED** | Hosting decision unresolved. No provider provisioned (Railway, Render, Fly.io, Strapi Cloud, or VPS). No production PostgreSQL provisioned. Production JWT secrets unconfigured. | Fotis P decision on hosting provider; provision Strapi instance and database; bind DNS for `api.glycogourmet.com`. |
-| **Declare Login Resolved** | **BLOCKED** | Live empirical observation required by DAVE+R Axiom 2. External endpoint `api.glycogourmet.com` yields NXDOMAIN. No genuine HTTP 200 JSON login response with valid JWT observed from public internet. | Execute live curl check against provisioned backend returning valid JWT. Promote `governance/2026-09-login-fix/04-refine.md` off `HOLD`. |
-| **Production Release** | **BLOCKED** | Multi-gate block: backend unprovisioned; live endpoint PHI audit (`SG-3`) pending live deployment; rollback dry-run (`SG-6`) pending host; human release sign-off (`SG-7`) pending. | Execute manual gates checklist (`SG-3`, `SG-6`, `SG-7`) and sign off on release co-signature. |
+| **Open Login-Fix PR** | **OPEN (PR #28)** | PR #28 opened on branch `fix/login-network-error` with verified edge proxy and CSP configuration. | Updated PR description and wiring. |
+| **Merge Login-Fix PR** | **PROMOTE** | Code fix verified clean and ready to merge. Complete chain verified live: Netlify edge -> Render backend -> PostgreSQL -> Strapi auth -> JWT -> AuthContext -> onboarding screen (`EVD-2026-010`). *Sole external dependency:* Netlify production publishing paused due to billing credit exhaustion for the cycle. | Fotis P decision to merge PR #28 to `master` (accounting for Netlify billing pause on live production visibility). |
+| **Deploy Staging Backend** | **COMPLETE** | Render Web Service (`glycogourmet-demo-api`) and Managed PostgreSQL (`glycogourmet-demo-postgres`) provisioned via `infra/render.yaml` and verified live (`EVD-2026-007`). | None (complete). |
+| **Declare Login Resolved** | **RESOLVED / PROMOTE** | Real incognito browser login verified on Deploy Preview #28 with `demo-patient@glycogourmet.demo`; returns HTTP 200 + valid JWT and renders post-login onboarding screen without console errors. Status in `04-refine.md` promoted to PROMOTE. | None (verified). |
+| **Production Release** | **BLOCKED (BY BILLING & SG-6/SG-7)** | Code-readiness resolved. Live endpoint PHI audit (`SG-3`) passed. External blocker: Netlify production deploys paused due to billing credits. Pre-release gates pending: rollback dry-run (`SG-6`) and human release sign-off (`SG-7`). | Fotis P Netlify billing resolution, rollback dry-run (`SG-6`), and release co-signature (`SG-7`). |
 
 ---
 
@@ -211,10 +211,13 @@ Netlify maintains immutable deployment builds. In case of a broken web release:
 
 ---
 
-## Operational Flag: Demo Account Approval State (Chunk 5 Closeout)
+## Operational Flags & Production Release Caveats
 
 > [!NOTE]
-> **Operational Flag (Non-Security):** Demo patient account currently has `isApproved: false`, which may trigger the app's pending-approval RBAC redirect for demo visitors. Fotis to decide whether to pre-approve the demo account or leave the approval gate visible as part of the demo.
+> **Operational Flag (Demo Account Approval):** `demo_patient` has been marked `isApproved: true` in Strapi Admin Content Manager, unblocking immediate direct dashboard and meal planning access.
+
+> [!WARNING]
+> **Operational Blocker (Netlify Production Billing Pause):** Netlify production publishing is currently paused due to exhausted billing credits for the current billing cycle (observed 2026-09-06). Deploy previews (including PR #28) build and function normally. Automatic live production publishing upon merging to `master` will remain paused until billing credits reset or the account plan is upgraded. Merge timing is at Fotis P's discretion.
 
 ---
 
@@ -243,11 +246,12 @@ The Netlify staging deployment exhibited a "Network error during login" when use
 - Build: Vite production bundle built clean in 566ms.
 
 ### 4. DAVE+R Lifecycle Status
-⚠️ **HOLD — PENDING BACKEND HOST PROVISIONING**  
-In accordance with DAVE+R Axiom 2 (evidence over assertion), this PR remains on **HOLD** and must not be merged to master until:
-1. A backend hosting provider is selected and deployed.
-2. DNS for `api.glycogourmet.com` resolves.
-3. A live HTTP 200 login response containing a genuine JWT is empirically observed.
+✅ **PROMOTE — CODE & INTEGRATION VERIFIED**  
+The full integration chain has been empirically verified live on Deploy Preview #28:
+1. Render backend deployed on managed PostgreSQL (`glycogourmet-demo-postgres`).
+2. Netlify edge proxy cleanly routes `/api/*` to Render with CSP allowlisting.
+3. Live incognito browser login succeeded, rendering post-login onboarding with zero console errors (`EVD-2026-010`).
+*Note:* Live production publishing is separately gated on Netlify billing resolution by Fotis P.
 ```
 
 ---
@@ -256,7 +260,7 @@ In accordance with DAVE+R Axiom 2 (evidence over assertion), this PR remains on 
 
 Automated mechanical enforcement covers gates **`TO-2`, `TO-3`, `TO-6`, `INT-1` through `INT-9`, `SG-1`, `SG-2`, and `EXC-1` through `EXC-7`**. All 21 automated gates are verified clean on PR #26 in CI.
 
-Governance PR #26 is **READY** for Fotis P's review and merge. Branch `fix/login-network-error` is **READY TO OPEN PR, BUT HOLD FOR BACKEND HOST**. Production release, live JWT validation, and live PHI auditing (`SG-3`) remain **BLOCKED** pending the backend hosting decision and deployment.
+Governance PR #26 is **READY** for Fotis P's review and merge. Branch `fix/login-network-error` (PR #28) is **PROMOTE** (code-ready for merge to `master`), with the Netlify billing credit exhaustion carried forward as the sole external dependency before live production deployment.
 
 ---
 _Security-control lifecycle concepts (Define→Architect→Validate→Execute→Refine, typed evidence, gates-as-data) adapted from the **DAVE+R Framework by Demetrios Petropoulos** (CC BY 4.0), https://github.com/DtheRock/DAVE-R. Changes were made._
