@@ -73,6 +73,9 @@ npm run dev
 ```
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
+> [!NOTE]
+> **Local Backend Development:** `vite.config.js` does not configure a dev server proxy for `/api/*`. To connect the local Vite dev server to a local Strapi instance, set `VITE_STRAPI_API_URL=http://localhost:1337` in `.env.local`.
+
 ---
 
 ## 🧪 Verification & CI Quality Gates

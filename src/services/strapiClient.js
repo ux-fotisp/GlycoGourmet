@@ -18,10 +18,10 @@
 
     // --- Environment Configuration ------------------------------------------------
 
-export const STRAPI_URL = import.meta.env.VITE_STRAPI_API_URL || 'https://api.glycogourmet.com';
+export const STRAPI_URL = (import.meta.env.VITE_STRAPI_API_URL || '').trim().replace(/\/+$/, '');
 
 function buildUrl(path = '', params = {}) {
-  const baseStr = (STRAPI_URL || 'http://localhost:1337').trim();
+  const baseStr = STRAPI_URL || (typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'http://localhost:1337');
   const base = baseStr.endsWith('/') ? baseStr : baseStr + '/';
   const cleanPath = (path || '').toString().trim().replace(/^\/+/, '');
   const url = new URL(cleanPath, base);
