@@ -5,7 +5,7 @@
 
 schema_version: "1.0.0"
 register_owner: "Fotis P"
-updated_at: "2026-09-05T07:41:00Z"
+updated_at: "2026-09-07T12:16:45Z"
 
 # Custodian note: Register custodian assigned to Fotis P per explicit instruction.
 # PR #26 merge constitutes Fotis P's SG-7 human sign-off, referencing
@@ -13,5 +13,38 @@ updated_at: "2026-09-05T07:41:00Z"
 # as the review and sign-off basis.
 
 # List of exception objects conforming to exception.schema.yaml.
-# By default, zero exceptions exist. An empty list ensures full gate enforcement.
-exceptions: []
+exceptions:
+  - id: "EXC-2026-001"
+    status: "closed"
+    track: "expedited"
+    created_at: "2026-09-06T07:37:37Z"
+    requested_by: "Fotis P"
+    human_owner: "Fotis P"
+    approver: "Fotis P"
+    change_id: "2026-09-login-fix"
+    affected_gate_ids:
+      - "SG-7"
+    reason: "Direct-to-master documentation, postmortem, and diagnostic commits (8c500c7, 29715a7, 6f015610) were executed outside PR review during an active staging login incident window before GitHub branch protection was enabled on master. Retroactively logged to close out governance audit gap."
+    blast_radius: "Repository master branch git trajectory and non-runtime markdown documentation (05-postmortem.md, RELEASE-READINESS-2026-09-05.md, CONTRIBUTING.md, changelog.md). Zero clinical math, runtime application source code, or Strapi server controller logic was altered."
+    evidence:
+      - value: "Direct master commit 8c500c7 added 05-postmortem.md without PR"
+        provenance: "observed"
+        observed_at: "2026-09-06T07:37:37Z"
+        source_url: "https://github.com/ux-fotisp/GlycoGourmet/commit/8c500c70919151a90b167d5aefbe3c532ac2a752"
+      - value: "Direct master commit 29715a7 added post-hoc verification invariant to CONTRIBUTING.md without PR"
+        provenance: "observed"
+        observed_at: "2026-09-06T08:24:23Z"
+        source_url: "https://github.com/ux-fotisp/GlycoGourmet/commit/29715a7b5efe2acde0be5c1e4f6d04e1a8ca34d1"
+      - value: "Direct master commit 6f01561 pushed empty diagnostic commit without PR"
+        provenance: "observed"
+        observed_at: "2026-09-07T06:21:45Z"
+        source_url: "https://github.com/ux-fotisp/GlycoGourmet/commit/6f015610e295b1cd6ccd2fa556ce8a4d68a4d485"
+      - value: "GitHub branch protection successfully activated on master requiring pull requests and status checks"
+        provenance: "observed"
+        observed_at: "2026-09-07T12:16:16Z"
+        source_url: "https://api.github.com/repos/ux-fotisp/GlycoGourmet/branches/master/protection"
+    containment_or_rollback: "git revert 6f015610e295b1cd6ccd2fa556ce8a4d68a4d485 29715a7b5efe2acde0be5c1e4f6d04e1a8ca34d1 8c500c70919151a90b167d5aefbe3c532ac2a752"
+    compensating_controls: "Pre-push and post-merge mechanical quality gates (lint, tsc, vitest, governance-gates.js) were executed and observed green for all direct commits."
+    expires_at: "2026-09-07T12:16:16Z"
+    retrospective_due_at: "2026-09-07T12:16:16Z"
+    closure_evidence: "GitHub branch protection enabled on master requiring pull requests before merging, enforcing CI status checks ('test' and 'Governance Gate Check'), and preventing admin bypass (verified active via GitHub API on 2026-09-07T12:16:28Z)."
