@@ -36,3 +36,5 @@ ehthumbs.db
 # CI Reports
 governance-gate-report.json
 
+# Local agent tooling
+.agents/
