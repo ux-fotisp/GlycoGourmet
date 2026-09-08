@@ -179,6 +179,12 @@
   .voice-pulse {
     animation: voice-pulse-anim 2s infinite;
   }
+
+  /* MagicPath DS: Metabolic card gradient — white to sage tint */
+  .metabolic-card-gradient {
+    background: linear-gradient(145deg, #FFFFFF 0%, #EEF6E8 55%, #E3F2D8 100%);
+    border: 1px solid #D4EBC4;
+  }
 }
 
 @keyframes voice-pulse-anim {
