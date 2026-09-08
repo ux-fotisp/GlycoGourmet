@@ -179,6 +179,11 @@
   .voice-pulse {
     animation: voice-pulse-anim 2s infinite;
   }
+
+  /* MagicPath DS: Sidebar gradient — deep pine to moss */
+  .sidebar-gradient {
+    background: linear-gradient(180deg, #1A3409 0%, #2D5016 50%, #3D6B1E 100%);
+  }
 }
 
 @keyframes voice-pulse-anim {
