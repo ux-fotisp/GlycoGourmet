@@ -5,7 +5,7 @@
 
 schema_version: "1.0.0"
 register_owner: "Fotis P"
-updated_at: "2026-09-07T12:16:45Z"
+updated_at: "2026-09-09T04:54:00Z"
 
 # Custodian note: Register custodian assigned to Fotis P per explicit instruction.
 # PR #26 merge constitutes Fotis P's SG-7 human sign-off, referencing
@@ -48,3 +48,33 @@ exceptions:
     expires_at: "2026-09-07T12:16:16Z"
     retrospective_due_at: "2026-09-07T12:16:16Z"
     closure_evidence: "GitHub branch protection enabled on master requiring pull requests before merging, enforcing CI status checks ('test' and 'Governance Gate Check'), and preventing admin bypass (verified active via GitHub API on 2026-09-07T12:16:28Z)."
+  - id: "EXC-2026-002"
+    status: "closed"
+    track: "expedited"
+    created_at: "2026-09-09T04:54:00Z"
+    requested_by: "Fotis P"
+    human_owner: "Fotis P"
+    approver: "Fotis P"
+    affected_gate_ids:
+      - "SG-7"
+    reason: "Misconfigured branch triggers (main vs master) discovered in .github/workflows/production-pipeline.yml and integration-tests.yml blocking all master-targeted PRs from triggering required CI status checks since branch protection hardening on 2026-09-07."
+    blast_radius: "CI/CD workflow definitions (.github/workflows/production-pipeline.yml and .github/workflows/integration-tests.yml) and PR automated status checks. Zero runtime application source code, clinical calculations, or Strapi server controller logic altered."
+    evidence:
+      - value: "production-pipeline.yml targeted main instead of master for push and pull_request events"
+        provenance: "observed"
+        observed_at: "2026-09-09T04:54:00Z"
+        source_url: ".github/workflows/production-pipeline.yml"
+      - value: "integration-tests.yml had hardcoded push branch fix/tenant-scoping-middleware"
+        provenance: "observed"
+        observed_at: "2026-09-09T04:54:00Z"
+        source_url: ".github/workflows/integration-tests.yml"
+      - value: "GitHub required checks 'test' and 'Governance Gate Check' were not triggering on master-targeted pull requests"
+        provenance: "observed"
+        observed_at: "2026-09-09T04:54:00Z"
+        source_url: "https://github.com/ux-fotisp/GlycoGourmet/pull/33"
+    containment_or_rollback: "git revert <commit-sha> or restore previous workflow trigger configuration"
+    compensating_controls: "All quality gates (oxlint, tsc --noEmit, vitest, and governance-gates.js) are executed locally and pass before PR submission."
+    expires_at: "2026-09-16T00:00:00Z"
+    retrospective_due_at: "2026-09-16T00:00:00Z"
+    closure_evidence: "production-pipeline.yml and integration-tests.yml branch triggers corrected to master; pull requests targeting master now properly register and execute all CI workflows."
+
