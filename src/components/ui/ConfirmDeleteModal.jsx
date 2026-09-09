@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from './Button';
 
 /**
  * ConfirmDeleteModal — Don Norman Usability Guard for Destructive Actions
@@ -54,14 +55,15 @@ export const ConfirmDeleteModal = ({
           >
             Cancel
           </button>
-          <button
-            type="button"
+          <Button
+            variant="destructive"
+            size="sm"
             onClick={onConfirm}
-            className="h-10 px-5 rounded-lg bg-error text-on-error text-xs font-bold hover:bg-error/90 transition-colors cursor-pointer flex items-center gap-1.5"
+            className="gap-1.5"
           >
             <span className="material-symbols-outlined text-[16px]">delete</span>
             Delete Permanently
-          </button>
+          </Button>
         </div>
       </div>
     </div>
