@@ -194,6 +194,22 @@ describe('calculateDailyRollup', () => {
     const oatsProfile = calculateMetabolicProfile(oatsIngredients, 1);
     expect(result.kcal).toBe(oatsProfile.kcal);
   });
+
+  it('should skip non-string and falsy recipeId slot values (L308 guard)', () => {
+    // Exercises the `!recipeId || typeof recipeId !== 'string'` guard at L308
+    const slots = {
+      breakfast: 'rec_oats',
+      lunch: 42 as unknown as string,       // non-string
+      dinner: null as unknown as string,     // null
+      snack: undefined as unknown as string, // undefined
+    };
+    const result = calculateDailyRollup(slots, recipesMap);
+
+    // Only oats should be counted; non-string slots are skipped
+    const oatsProfile = calculateMetabolicProfile(oatsIngredients, 1);
+    expect(result.kcal).toBe(oatsProfile.kcal);
+    expect(result.netCarbs).toBe(oatsProfile.netCarbs);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -274,6 +290,19 @@ describe('calculateWeeklyAdherence', () => {
     expect(result.daysOverBudget).toBe(0);
     expect(result.adherencePercent).toBe(100);
   });
+
+  it('should handle falsy cumulativeDailyGL via || {} fallback (L379 guard)', () => {
+    // Exercises the `plan.cumulativeDailyGL || {}` fallback at L379
+    const plan = {
+      cumulativeDailyGL: undefined as unknown as Record<string, number | undefined>,
+    };
+    const calibration = { glTargetDaily: 50 };
+    const result = calculateWeeklyAdherence(plan, calibration);
+
+    expect(result.daysOverBudget).toBe(0);
+    expect(result.avgDailyGL).toBe(0);
+    expect(result.adherencePercent).toBe(100);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -350,5 +379,44 @@ describe('applyServingScale', () => {
     const result = applyServingScale(whiteRiceIngredients, 1.5);
     expect(result.scaledIngredients[0].amount).toBe(300); // 200 * 1.5
     expect(result.multiplier).toBe(1.5);
+  });
+
+  it('should skip falsy elements inside the ingredient array (L433 guard)', () => {
+    // Exercises the `if (!item) return item` guard inside .map() at L433
+    const mixedArray: RecipeIngredientItem[] = [
+      whiteRiceIngredients[0],
+      null as unknown as RecipeIngredientItem,
+      undefined as unknown as RecipeIngredientItem,
+    ];
+    const result = applyServingScale(mixedArray, 2);
+
+    // Should process the valid item and pass through null/undefined unchanged
+    expect(result.scaledIngredients.length).toBe(3);
+    expect(result.scaledIngredients[0].amount).toBe(400); // 200 * 2
+    expect(result.scaledIngredients[1]).toBeNull();
+    expect(result.scaledIngredients[2]).toBeUndefined();
+  });
+
+  it('should handle items with top-level nutrition (no nested .ingredient) (L437 branch)', () => {
+    // Exercises the `else` branch of `if (item.ingredient)` at L437
+    // When an item has nutrition at the top level, the ingredient sub-object
+    // is absent, so the clone should skip the deep-clone branch.
+    const topLevelItem: RecipeIngredientItem = {
+      amount: 100,
+      nutrition: {
+        kcal: 130,
+        protein: 2.7,
+        fat: 0.3,
+        carbs: 28,
+        fiber: 0.4,
+        glycemicIndex: 73,
+      },
+    };
+    const result = applyServingScale([topLevelItem], 2);
+
+    expect(result.scaledIngredients[0].amount).toBe(200); // 100 * 2
+    expect(result.scaledIngredients[0].ingredient).toBeUndefined();
+    // Profile should still compute correctly via the delegation to calculateMetabolicProfile
+    expect(result.profile.netCarbs).toBeGreaterThan(0);
   });
 });

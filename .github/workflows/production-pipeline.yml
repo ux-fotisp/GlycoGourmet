@@ -75,7 +75,8 @@ jobs:
             --coverage.functions=100 \
             --coverage.branches=100 \
             --coverage.statements=100 \
-            tests/unit/metabolicEngine.spec.ts
+            tests/unit/metabolicEngine.spec.ts \
+            tests/unit/metabolicEngineRollups.spec.ts
 
   # =========================================================================
   # STAGE 3: Accessibility & Chromatic Contrast Audits
