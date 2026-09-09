@@ -625,8 +625,25 @@ node scripts/strip-bom.js
 ```
 This utility safely strips the leading `\xEF\xBB\xBF` byte sequence without altering content formatting.
 
+### 7.6 Client-to-Backend Cold-Start Resilience (`fetchWithRetry`)
+
+In staging and demo environments (such as Render free tier hosting `glycogourmet-demo-api.onrender.com`), backend instances automatically spin down to sleep after 15 minutes of inactivity. Subsequent inbound requests incur a 30–60 second container spin-up penalty, which may exceed upstream proxy timeouts.
+
+To maintain UX continuity without exposing raw gateway timeouts to users:
+1. **Exponential Backoff Wrapper (`src/services/strapiClient.js`)**:
+   - `fetchWithRetry(url, options, maxRetries = 3)` executes up to 3 retry attempts with progressive delays (`2000ms`, `5000ms`, `10000ms`).
+   - **Retry Classification**: Strictly retries on network transport drops, request timeouts, and HTTP `502 Bad Gateway`, `503 Service Unavailable`, and `504 Gateway Timeout`.
+   - **Fast-Fail on Client Errors**: HTTP 4xx responses (400, 401, 403, 404) are never retried and surface immediately to callers.
+2. **Reactive Wake-Up Telemetry**:
+   - Dispatches wake-in-progress state updates to the UI via `subscribeToBackendWakeStatus`.
+   - Frontend renders the non-blocking `BackendWakingBanner` and updates `NetworkStatusToast`.
+3. **Reference Documentation**:
+   - For live staging topology, environment variables, and seeder scripts, consult [`docs/DEMO-ENVIRONMENT.md`](docs/DEMO-ENVIRONMENT.md).
+
+---
+
 ## 8. Document Metadata & Attribution
 
-- **Document Version:** `2.0.0`
+- **Document Version:** `2.1.1`
 - **Backend Lead & Systems Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **Core Technologies:** Strapi v4/v5, PostgreSQL 16, Node.js 20 LTS, Docker, Netlify CDN

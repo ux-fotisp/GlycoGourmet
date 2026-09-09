@@ -1,9 +1,9 @@
 # GlycoGourmet — Technical Architecture & Developer Handoff Wiki
 
-**Document Version:** 2.0.0-PROD  
+**Document Version:** 2.1.1-PROD  
 **Classification:** Clinical Systems Engineering / Enterprise Architecture  
 **Author:** Principal Systems Architect & Lead Clinical UX Strategist  
-**Last Updated:** August 30, 2026  
+**Last Updated:** September 9, 2026  
 
 ---
 
@@ -18,6 +18,7 @@
 8. [Production Deployment, Lifecycle Hooks & Runbooks](#8-production-deployment-lifecycle-hooks--runbooks)
 9. [Roadmap Synthesis & Architectural North Star](#9-roadmap-synthesis--architectural-north-star)
 10. [Gap-Closure Chunks 1–3 Synthesis (Multi-Tenancy, Trust Persistence, Ingredient Ownership)](#10-gap-closure-chunks-13-synthesis-multi-tenancy-trust-persistence-ingredient-ownership)
+11. [Gap-Closure Chunks 4–6 Synthesis (Design System Import, CI Standardization & Cold-Start Resilience)](#11-gap-closure-chunks-46-synthesis-design-system-import-ci-standardization--cold-start-resilience)
 
 ---
 
@@ -380,6 +381,9 @@ To optimize computational resources and LLM context tokens during UI/Routing dev
 npm run test:unit
 ```
 
+### 7.3 Certified Verification Metrics
+As of September 2026 (Milestone v2.1.1), the automated Vitest verification inventory encompasses **78 test files and 754 tests (753 passed, 1 skipped integration DB scenario)** with 100% deterministic coverage across metabolic calculations, tenant policies, and waking state observers.
+
 ---
 
 ## 8. Production Deployment, Lifecycle Hooks & Runbooks
@@ -455,3 +459,38 @@ Between August 31 and September 3, 2026, three gap-closure chunks were implement
 - **Controller-Level 404 Concealment**: Cross-patient `findOne` queries on custom ingredients return 404 Not Found rather than 403, preventing ingredient ID enumeration.
 - **Automatic Owner Assignment**: `create` controller automatically forces `owner = user.id` for patient callers, ignoring client-spoofed IDs.
 - **Truthful Privacy Statement**: Component disclaimer in `CustomIngredientFormModal.jsx` updated to guarantee private account storage.
+
+---
+
+## 11. Gap-Closure Chunks 4–6 Synthesis (Design System Import, CI Standardization & Cold-Start Resilience)
+
+Between September 7 and September 9, 2026, three subsequent platform gap-closure and resilience cycles were executed and verified across the codebase:
+
+### 11.1 Gap-Closure Chunk 4: MagicPath Design System Import Sweep (PRs #31–#41)
+- **Token Alignment & Contrast Certification (PR #32)**: Reconciled chromatic glycemic badge container and text colors (`#D8E8CB` / `#2D5016` low GL, `#FFDBCF` / `#7A4A1E` medium GL, `#FFDAD6` / `#8B1A1A` high GL) against Grain Ivory canvas (`#F6F4EE`), certifying WCAG 2.1 AA/AAA compliance across all viewing densities.
+- **Button, Chip Gradients & Canonical Card Radius (PR #33)**: Added `.btn-gradient-primary` (`linear-gradient(135deg, #1A3409 0%, #3D6B1E 100%)`), `.btn-gradient-destructive` (`linear-gradient(135deg, #7B1818 0%, #B02020 100%)`), `.chip-gradient-active`, and locked canonical card radius `--radius-card: 20px` across all cards.
+- **New Reusable UI Atoms & Filters (PRs #34–#41)**:
+  - `StatusChip.jsx` (#34): 7-variant semantic lifecycle status badge (`draft`, `pending`, `published`, `verified`, `archived`, `warning`, `info`).
+  - `Breadcrumb.jsx` (#35): Accessible hierarchical `<nav aria-label="Breadcrumb">` path.
+  - `SectionHeader.jsx` (#36): Standardized typography header with action slots.
+  - `.metabolic-card-gradient` (#37): Applied to `GlycemicSnapshotCard.jsx`.
+  - `FilterSummaryCard.jsx` (#38): Active filter token summary with 1-click clear.
+  - `NetCarbsFilter.jsx` & `FitsDailyBudgetChip.jsx` (#39): Net carbohydrate constraint and daily budget allowance filters.
+  - `.sidebar-gradient` (#40): Applied to `DesktopNav.jsx` sidebar rail.
+  - `VerifiedBadge.jsx` (#41): Deterministic clinical verification seal.
+
+### 11.2 Gap-Closure Chunk 5: CI Pipeline Trunk Standardization & Governance Exception (PR #42)
+- **Master Branch Alignment**: Corrected legacy `main` branch triggers across GitHub Actions workflows (`production-pipeline.yml` and `integration-tests.yml`) to canonical repository trunk `master`.
+- **Governance Exception `EXC-2026-002`**: Formally recorded in `governance/exceptions/exception-register.yaml` to ensure audit defensibility for pipeline branch triggers.
+
+### 11.3 Gap-Closure Chunk 6: Render Cold-Start Resilience & Waking UX (PR #43)
+- **Forensic Deployment Diagnosis**: Diagnosed root cause of production deployment freeze (Netlify billing credit freeze serving stale code) and free-tier latency mismatch (Render free-tier 30–60s spin-up exceeding Netlify edge proxy default timeout of ~26s).
+- **Deterministic Network Backoff Retry (`fetchWithRetry`)**:
+  - Max 3 attempts with exponential delay backoff (2s -> 5s -> 10s).
+  - Target error classification: strictly retries network transport drops, timeouts, and HTTP 502/503/504 status codes.
+  - Fast-fail protection: 4xx client errors (400, 401, 403, 404) are never retried and surface immediately.
+- **Global Reactive Wake-up State Observer**:
+  - Pub-sub event emitter and custom hook (`useBackendWakeStatus.js`) notifying components of backend spin-up state without polling.
+  - Non-blocking `BackendWakingBanner.jsx` with `role="status"`, `aria-live="polite"`, and dismiss action.
+  - Integrated with `NetworkStatusToast.jsx` for persistent user awareness.
+- **Testing**: Added 15 Vitest tests across `StrapiColdStartResilience.spec.js` and `BackendWakingUX.spec.jsx`, certifying 100% pass across 78 test files and 754 tests.

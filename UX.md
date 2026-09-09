@@ -214,10 +214,18 @@ flowchart TD
 - Reversible micro-interaction: Clicking *"Swap & Apply"* swaps ingredients, immediately updating GL.
 - Clicking *"Revert to Original"* restores baseline ingredients without re-entering amounts or unlinking recipes from meal plans.
 
+### 5.4 Active Filter Transparency (`FilterSummaryCard.jsx`)
+- Immediate visual confirmation of applied nutritional constraints (occasion, GL ceiling, net carbs, daily budget fit).
+- Displays interactive token chips with 1-click removal and "Clear all" actions, eliminating the cognitive friction of forgotten active filters.
+
+### 5.5 Non-Blocking Backend Wake-Up Feedback (`BackendWakingBanner.jsx`)
+- During Render free-tier cold starts, surfaces polite non-blocking status (`role="status"`, `aria-live="polite"`).
+- Explains the transient delay in plain language and prevents patient abandonment without trapping focus or interrupting cached catalog browsing.
+
 ---
 
 ## 6. Document Metadata & Attribution
 
-- **Document Version:** `2.0.0`
+- **Document Version:** `2.1.1`
 - **Lead UX Architect & Designer:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **Design Frameworks:** Nielsen Norman Group UX Heuristics, Sophia Prater OOUX/ORCA, WCAG 2.1 AA

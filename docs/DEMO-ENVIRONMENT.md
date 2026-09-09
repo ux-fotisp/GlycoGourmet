@@ -1,8 +1,8 @@
 # 🌐 GlycoGourmet — Demo Environment Architecture & Runbook
 
 > **Single Source of Truth for Live Backend Services, Seeded Accounts & Integration Settings**  
-> **Last Verified:** 2026-09-06 (Chunks 5–7 Verification)  
-> **Platform Version:** v2.0.0-PROD
+> **Last Verified:** 2026-09-09 (PR #43 Strapi Cold-Start Resilience & Waking UX)  
+> **Platform Version:** v2.1.1-PROD
 
 ---
 

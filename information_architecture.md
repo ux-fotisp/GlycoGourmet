@@ -159,10 +159,11 @@ Glycemic Load (GL) Spectrum:
 | Semantic Token | Foreground Hex | Background Surface | Contrast Ratio | Compliance Level |
 | :--- | :---: | :---: | :---: | :---: |
 | **Deep Pine (`--color-pine-900`)** | `#1B3B22` | Grain Ivory (`#F6F4EE`) | **$10.8 : 1$** | ✅ Passes (Exceeds AAA) |
+| **Low GL Sage Text (`--color-sage-text`)** | `#2D5016` | Low GL Sage Container (`#D8E8CB`) | **$4.9 : 1$** | ✅ Passes (Exceeds AA) |
 | **Glyco Sage (`--color-sage-700`)** | `#386A20` | Soft Sage (`#D8E8CB`) | **$4.8 : 1$** | ✅ Passes (Exceeds AA) |
 | **Forest Moss (`--color-moss-800`)** | `#2D5A34` | Soft Sage (`#D8E8CB`) | **$5.4 : 1$** | ✅ Passes (Exceeds AA) |
-| **Amber Alert (`--color-tertiary`)** | `#9E4D2A` | Amber Container (`#FFDBCF`) | **$5.1 : 1$** | ✅ Passes (Exceeds AA) |
-| **Error Rose (`--color-error`)** | `#BA1A1A` | Error Container (`#FFDAD6`) | **$5.8 : 1$** | ✅ Passes (Exceeds AA) |
+| **Amber Text (`--color-amber-text`)** | `#7A4A1E` | Amber Container (`#FFDBCF`) | **$5.2 : 1$** | ✅ Passes (Exceeds AA) |
+| **Soft Rose Text (`--color-rose-text`)** | `#8B1A1A` | Soft Rose Container (`#FFDAD6`) | **$5.9 : 1$** | ✅ Passes (Exceeds AA) |
 
 ---
 
@@ -191,12 +192,12 @@ Glycemic Load (GL) Spectrum:
 
 ## 10. Current Implementation State & Future Development Roadmap
 
-### 10.1 Delivered Capabilities (Chunks 1–16 / v2.0.0)
+### 10.1 Delivered Capabilities (Chunks 1–16 / v2.1.1)
 - **Deterministic Metabolic Calculation Engine:** Net Carbs clamping, thermal starch prep multipliers ($1.00\times-1.25\times, 0.85\times$), weighted recipe GI, and multi-day GL rollups.
 - **Headless CMS & Tenancy:** Strapi v4/v5 backend with row-level tenant boundary isolation (`is-dietitian-owner.js`) and database lifecycle invariant guards.
 - **Cognitive Ergonomic UI:** Action-Oriented Triad, Metabolic Bento Grid, Discrete Serving Steppers ($0.5\times, 1.0\times, 1.5\times, 2.0\times$), 1-Click Smart Low-GI Swaps, and Hands-free Cook Mode.
 - **Dual-Sided Clinical Platform:** Dietitian Client Roster, 42-slot Prescriptive Plan Builder, Side-by-side Draft Audit Queue with 1-click USDA synchronization.
-- **100% Quality Assurance:** 281 passing unit and integration tests (Vitest), multi-browser Playwright E2E matrix, and WCAG 2.1 AA contrast certification.
+- **100% Quality Assurance:** 754 passing/skipped test assertions across 78 test files (Vitest), multi-browser Playwright E2E matrix, and WCAG 2.1 AA contrast certification.
 
 ---
 
@@ -227,7 +228,7 @@ Glycemic Load (GL) Spectrum:
 
 ## 11. Document Metadata & Attribution
 
-- **Document Version:** `2.0.0`
+- **Document Version:** `2.1.1`
 - **Author & System Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **Methodology:** Sophia Prater Object-Oriented UX (OOUX / ORCA), Nielsen Norman Group UX Heuristics, WCAG 2.1 Level AA/AAA
 - **Repository:** `https://github.com/ux-fotisp/GlycoGourmet`

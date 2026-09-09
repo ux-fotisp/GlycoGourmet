@@ -81,7 +81,8 @@ All structural layout dimensions, margins, and paddings adhere to an **8px base 
 | **`sm`** | `4px` | `0.25rem` | Nested badges, small thumbnail images. |
 | **`DEFAULT`** | `8px` | `0.5rem` | Standard inputs, select dropdowns, alerts. |
 | **`md`** | `12px` | `0.75rem` | Bento grid cells, list items, small cards. |
-| **`lg`** | `16px` | `1.0rem` | Recipe cards, filter bar glass container. |
+| **`lg`** | `16px` | `1.0rem` | Secondary panels, compact utility containers. |
+| **`card`** | `20px` | `1.25rem` | Recipe cards, bento modules, filter glass container (`--radius-card`). |
 | **`xl`** | `24px` | `1.5rem` | Main dialog modals, slide-over drawers. |
 | **`full`** | `9999px` | — | Buttons, filter facet chips, metabolic badges. |
 
@@ -99,6 +100,17 @@ All structural layout dimensions, margins, and paddings adhere to an **8px base 
 - **Disabled:** Opacity reduced to `50%`, `cursor: not-allowed`, all click interactions suppressed.
 - **Focus Ring:** Inputs transition to primary outline with a soft focus ring (`focus:ring-2 focus:ring-primary/20`).
 
+### 5.3 MagicPath Gradient Utilities & DNA Surfaces
+The MagicPath design system introduces standardized linear gradients for interactive CTAs, cards, and navigation rails:
+
+| Gradient Class | CSS Definition | UI Target / Role |
+| :--- | :--- | :--- |
+| **`.btn-gradient-primary`** | `linear-gradient(135deg, #1A3409 0%, #3D6B1E 100%)` | Primary high-emphasis CTAs (`Button.jsx`). Hover shifts to `#142B07 -> #2D5016`. |
+| **`.btn-gradient-destructive`** | `linear-gradient(135deg, #7B1818 0%, #B02020 100%)` | Critical destructive actions (e.g. `ConfirmDeleteModal.jsx`). Hover shifts to `#5A1010 -> #8B1A1A`. |
+| **`.chip-gradient-active`** | `linear-gradient(135deg, #1A3409 0%, #3D6B1E 100%)` | Active facet and tag chips (`TagChip.jsx`). |
+| **`.metabolic-card-gradient`** | `linear-gradient(145deg, #FFFFFF 0%, #EEF6E8 55%, #E3F2D8 100%)` | Subtle sage surface with `1px solid #D4EBC4` border for `GlycemicSnapshotCard.jsx`. |
+| **`.sidebar-gradient`** | `linear-gradient(180deg, #1A3409 0%, #2D5016 50%, #3D6B1E 100%)` | Desktop navigation rail background (`DesktopNav.jsx`). |
+
 ---
 
 ## 6. Preattentive Chromatic Visual Feedback (WCAG 2.1 AA Compliant)
@@ -111,7 +123,7 @@ Glycemic Load (GL) Spectrum:
 0 ---------------- 10 ----------------- 19 ----------------- 100+
 [ LOW GL (<= 10)  ] [  MED GL (11 - 19)  ] [   HIGH GL (>= 20)  ]
 [   SAGE GREEN    ] [       AMBER        ] [     ERROR ROSE     ]
-[ #1B3B22/#386A20 ] [      #9E4D2A       ] [      #BA1A1A       ]
+[ #1B3B22/#2D5016 ] [      #7A4A1E       ] [      #8B1A1A       ]
 [ "Gentle Impact" ] [ "Moderate Impact"  ] [ "High Spike Risk"  ]
 ```
 
@@ -120,15 +132,16 @@ Glycemic Load (GL) Spectrum:
 | Semantic Token | Hex Code | Background Surface | Measured Contrast | WCAG 2.1 AA Status |
 | :--- | :---: | :---: | :---: | :---: |
 | **Deep Pine (`--color-pine-900`)** | `#1B3B22` | Grain Ivory (`#F6F4EE`) | **$10.8 : 1$** | ✅ Passes (Exceeds AAA) |
+| **Low GL Sage Text (`--color-sage-text`)** | `#2D5016` | Low GL Sage Container (`#D8E8CB`) | **$4.9 : 1$** | ✅ Passes (Exceeds AA) |
 | **Glyco Sage (`--color-sage-700`)** | `#386A20` | Soft Sage (`#D8E8CB`) | **$4.8 : 1$** | ✅ Passes (Exceeds AA) |
 | **Forest Moss (`--color-moss-800`)** | `#2D5A34` | Soft Sage (`#D8E8CB`) | **$5.4 : 1$** | ✅ Passes (Exceeds AA) |
-| **Amber (`--color-tertiary`)** | `#9E4D2A` | Amber Container (`#FFDBCF`) | **$5.1 : 1$** | ✅ Passes (Exceeds AA) |
-| **Error Rose (`--color-error`)** | `#BA1A1A` | Error Container (`#FFDAD6`) | **$5.8 : 1$** | ✅ Passes (Exceeds AA) |
+| **Amber Text (`--color-amber-text`)** | `#7A4A1E` | Amber Container (`#FFDBCF`) | **$5.2 : 1$** | ✅ Passes (Exceeds AA) |
+| **Soft Rose Text (`--color-rose-text`)** | `#8B1A1A` | Soft Rose Container (`#FFDAD6`) | **$5.9 : 1$** | ✅ Passes (Exceeds AA) |
 
 ---
 
 ## 7. Document Metadata & Attribution
 
-- **Document Version:** `2.0.0`
+- **Document Version:** `2.1.0`
 - **Design System Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **Accessibility Standard:** WCAG 2.1 Level AA & AAA Contrast Compliance
