@@ -184,26 +184,203 @@ export function invalidateCache(collectionHint) {
   }
 }
 
+    // --- Cold-Start Retry & Backoff Configuration --------------------------------
+
+/**
+ * Default retry configuration for Render cold-start resilience.
+ * - Max 3 attempts
+ * - Exponential backoff delays: 2s -> 5s -> 10s
+ */
+export const DEFAULT_RETRY_CONFIG = {
+  maxAttempts: 3,
+  backoffDelays: [2000, 5000, 10000],
+};
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Determines whether an HTTP status code represents a temporary gateway / cold-start issue
+ * eligible for automated retry.
+ * Only 502 (Bad Gateway), 503 (Service Unavailable), and 504 (Gateway Timeout).
+ * Never retries on 4xx (400, 401, 403, 404, etc.).
+ *
+ * @param {number} status
+ * @returns {boolean}
+ */
+export function isRetryableStatus(status) {
+  return status === 502 || status === 503 || status === 504;
+}
+
+/**
+ * Determines whether an error is a retryable network failure or timeout.
+ *
+ * @param {Error} err
+ * @returns {boolean}
+ */
+export function isRetryableNetworkError(err) {
+  if (!err) return false;
+  if (err.name === 'AbortError' || err.name === 'TimeoutError') return true;
+  const msg = (err.message || '').toLowerCase();
+  return (
+    msg.includes('network') ||
+    msg.includes('failed to fetch') ||
+    msg.includes('fetch failed') ||
+    msg.includes('timeout') ||
+    msg.includes('econnrefused') ||
+    msg.includes('econnreset') ||
+    msg.includes('etimedout') ||
+    msg.includes('waking up')
+  );
+}
+
+// --- Wake Status Observer (Pub/Sub) ------------------------------------------
+
+let activeRetries = 0;
+let currentWakeState = {
+  isWaking: false,
+  attempt: 0,
+  maxAttempts: DEFAULT_RETRY_CONFIG.maxAttempts,
+  nextRetryDelay: 0,
+};
+
+const wakeListeners = new Set();
+
+/**
+ * Returns the current backend waking/retry state.
+ * @returns {{ isWaking: boolean, attempt: number, maxAttempts: number, nextRetryDelay: number }}
+ */
+export function getWakeStatus() {
+  return currentWakeState;
+}
+
+/**
+ * Subscribes a listener to backend waking status changes.
+ * Immediately invokes the listener with the current state.
+ *
+ * @param {(status: { isWaking: boolean, attempt: number, maxAttempts: number, nextRetryDelay: number }) => void} listener
+ * @returns {() => void} Unsubscribe function
+ */
+export function subscribeToWakeStatus(listener) {
+  wakeListeners.add(listener);
+  try {
+    listener(currentWakeState);
+  } catch (err) {
+    console.error('[strapiClient] Wake listener initial call failed:', err);
+  }
+  return () => {
+    wakeListeners.delete(listener);
+  };
+}
+
+function setWakeState(isWaking, attempt, maxAttempts, nextRetryDelay) {
+  currentWakeState = {
+    isWaking,
+    attempt,
+    maxAttempts,
+    nextRetryDelay,
+  };
+  wakeListeners.forEach((fn) => {
+    try {
+      fn(currentWakeState);
+    } catch (err) {
+      console.error('[strapiClient] Wake listener notification failed:', err);
+    }
+  });
+}
+
+/**
+ * Executes a fetch request wrapped with exponential backoff retry.
+ * Only retries on network errors, timeouts, and HTTP 502/503/504.
+ * Never retries on 4xx client errors.
+ *
+ * @param {string|URL} url
+ * @param {RequestInit} [options]
+ * @param {object} [retryOptions]
+ * @param {number} [retryOptions.maxAttempts]
+ * @param {number[]} [retryOptions.backoffDelays]
+ * @returns {Promise<Response>}
+ */
+export async function fetchWithRetry(url, options = {}, retryOptions = {}) {
+  const maxAttempts = retryOptions.maxAttempts ?? DEFAULT_RETRY_CONFIG.maxAttempts;
+  const backoffDelays = retryOptions.backoffDelays ?? DEFAULT_RETRY_CONFIG.backoffDelays;
+
+  let isRetrying = false;
+  let lastError = null;
+
+  try {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const res = await fetch(url.toString(), options);
+
+        // Success or non-retryable response (including all 4xx client errors)
+        if (!isRetryableStatus(res.status)) {
+          return res;
+        }
+
+        // 502/503/504 Gateway or Cold-Start Status
+        if (attempt < maxAttempts) {
+          if (!isRetrying) {
+            isRetrying = true;
+            activeRetries++;
+          }
+          const delay = backoffDelays[attempt - 1] ?? backoffDelays[backoffDelays.length - 1];
+          setWakeState(true, attempt, maxAttempts, delay);
+          await sleep(delay);
+        } else {
+          return res;
+        }
+      } catch (err) {
+        lastError = err;
+
+        if (!isRetryableNetworkError(err)) {
+          throw err;
+        }
+
+        if (attempt < maxAttempts) {
+          if (!isRetrying) {
+            isRetrying = true;
+            activeRetries++;
+          }
+          const delay = backoffDelays[attempt - 1] ?? backoffDelays[backoffDelays.length - 1];
+          setWakeState(true, attempt, maxAttempts, delay);
+          await sleep(delay);
+        } else {
+          throw err;
+        }
+      }
+    }
+  } finally {
+    if (isRetrying) {
+      activeRetries = Math.max(0, activeRetries - 1);
+      if (activeRetries === 0) {
+        setWakeState(false, 0, maxAttempts, 0);
+      }
+    }
+  }
+
+  if (lastError) throw lastError;
+}
+
     // --- Core HTTP Request Wrappers -----------------------------------------------
 
 /**
- * Performs a GET request to Strapi.
+ * Performs a GET request to Strapi with automatic retry on cold starts.
  * Automatically unwraps Strapi `{ data: ... }` response payloads via `unravelStrapiData()`.
  *
  * @param {string} path — endpoint path e.g. '/api/recipes'
  * @param {Record<string, string>} [params] — URL query parameters
+ * @param {object} [retryOptions] — optional retry override parameters
  * @returns {Promise<*>} — unwrapped JavaScript objects
-
  */
-export async function strapiGet(path, params = {}) {
+export async function strapiGet(path, params = {}, retryOptions = {}) {
   const url = buildUrl(path, params);
   const cacheKey = url.pathname + url.search;
   const cached = readCache(cacheKey);
 
-  const fetchPromise = fetch(url.toString(), {
+  const fetchPromise = fetchWithRetry(url.toString(), {
     method: 'GET',
     headers: buildAuthHeaders('GET'),
-  }).then(async (res) => {
+  }, retryOptions).then(async (res) => {
     if (!res.ok) {
       throw new Error(`[strapiClient] GET ${path} ? ${res.status} ${res.statusText}`);
     }
@@ -224,23 +401,23 @@ export async function strapiGet(path, params = {}) {
 }
 
 /**
- * Performs a POST request to Strapi.
+ * Performs a POST request to Strapi with automatic retry on cold starts.
  * @param {string} path — e.g. '/api/recipes' or '/api/ingredients'
  * @param {object} body — JSON payload (wrapped in `{ data: ... }` if Strapi expects it)
+ * @param {object} [retryOptions] — optional retry override parameters
  * @returns {Promise<*>} — unwrapped response
-
  */
-export async function strapiPost(path, body) {
+export async function strapiPost(path, body, retryOptions = {}) {
   const url = buildUrl(path);
 
   // Strapi standard REST API expects body payload wrapped in `{ data: { ... } }`
   const payload = body && !('data' in body) ? { data: body } : body;
 
-  const res = await fetch(url.toString(), {
+  const res = await fetchWithRetry(url.toString(), {
     method: 'POST',
     headers: buildAuthHeaders('POST'),
     body: JSON.stringify(payload),
-  });
+  }, retryOptions);
 
   if (!res.ok) {
     const errText = await res.text().catch(() => '');
@@ -255,21 +432,21 @@ export async function strapiPost(path, body) {
 }
 
 /**
- * Performs a PUT request to Strapi.
+ * Performs a PUT request to Strapi with automatic retry on cold starts.
  * @param {string} path — e.g. '/api/recipes/123'
  * @param {object} body — updated fields
+ * @param {object} [retryOptions] — optional retry override parameters
  * @returns {Promise<*>} — unwrapped updated record
-
  */
-export async function strapiPut(path, body) {
+export async function strapiPut(path, body, retryOptions = {}) {
   const url = buildUrl(path);
   const payload = body && !('data' in body) ? { data: body } : body;
 
-  const res = await fetch(url.toString(), {
+  const res = await fetchWithRetry(url.toString(), {
     method: 'PUT',
     headers: buildAuthHeaders('PUT'),
     body: JSON.stringify(payload),
-  });
+  }, retryOptions);
 
   if (!res.ok) {
     const errText = await res.text().catch(() => '');
@@ -284,18 +461,18 @@ export async function strapiPut(path, body) {
 }
 
 /**
- * Performs a DELETE request to Strapi.
+ * Performs a DELETE request to Strapi with automatic retry on cold starts.
  * @param {string} path — e.g. '/api/recipes/123'
-
+ * @param {object} [retryOptions] — optional retry override parameters
  * @returns {Promise<boolean>}
  */
-export async function strapiDelete(path) {
+export async function strapiDelete(path, retryOptions = {}) {
   const url = buildUrl(path);
 
-  const res = await fetch(url.toString(), {
+  const res = await fetchWithRetry(url.toString(), {
     method: 'DELETE',
     headers: buildAuthHeaders('DELETE'),
-  });
+  }, retryOptions);
 
   if (!res.ok) {
     throw new Error(`[strapiClient] DELETE ${path} ? ${res.status} ${res.statusText}`);
@@ -308,13 +485,13 @@ export async function strapiDelete(path) {
 }
 
 /**
- * Performs a media upload (multipart/form-data) to Strapi's `/api/upload` endpoint.
+ * Performs a media upload (multipart/form-data) to Strapi's `/api/upload` endpoint with retry.
  * @param {string} [path] — default '/api/upload'
  * @param {FormData} formData — multipart form data with file
+ * @param {object} [retryOptions] — optional retry override parameters
  * @returns {Promise<*>} — uploaded media record(s)
-
  */
-export async function strapiUpload(path = '/api/upload', formData) {
+export async function strapiUpload(path = '/api/upload', formData, retryOptions = {}) {
   const url = buildUrl(path);
   const headers = {};
   const jwt = getUserJwt();
@@ -325,11 +502,11 @@ export async function strapiUpload(path = '/api/upload', formData) {
     headers['Authorization'] = `Bearer ${READ_TOKEN}`;
   }
 
-  const res = await fetch(url.toString(), {
+  const res = await fetchWithRetry(url.toString(), {
     method: 'POST',
     headers,
     body: formData,
-  });
+  }, retryOptions);
 
   if (!res.ok) {
     const errText = await res.text().catch(() => '');
