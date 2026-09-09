@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getClientById, getPrescribedPlan, savePrescribedPlan } from '../utils/clientStore';
 import { calculateDailyRollup, calculateMetabolicProfile } from '../services/metabolicEngine';
@@ -160,8 +160,8 @@ export const PlanBuilder = () => {
   const getGLColor = (gl) => {
     const target = client.calibration.glTargetDaily;
     if (gl <= target * 0.8) return { text: 'text-brand-strong', bg: 'bg-brand-strong', hex: '#1B3B22' };
-    if (gl <= target) return { text: 'text-amber-text', bg: 'bg-amber-text', hex: '#9E4D2A' };
-    return { text: 'text-rose-text', bg: 'bg-rose-text', hex: '#BA1A1A' };
+    if (gl <= target) return { text: 'text-amber-text', bg: 'bg-amber-text', hex: '#7A4A1E' };
+    return { text: 'text-rose-text', bg: 'bg-rose-text', hex: '#8B1A1A' };
   };
 
   const hasForecasting = Boolean(
