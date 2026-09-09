@@ -56,7 +56,7 @@ export const DesktopNav = () => {
   };
 
   return (
-    <aside className="hidden md:flex flex-col h-screen sticky left-0 w-64 top-0 bg-brand-strong text-text-inverse py-4 px-3 space-y-2 z-50 select-none">
+    <aside className="hidden md:flex flex-col h-screen sticky left-0 w-64 top-0 sidebar-gradient text-text-inverse py-4 px-3 space-y-2 z-50 select-none">
       {/* Brand Header */}
       <div className="px-3 py-2 mb-4">
         <Link to="/" className="block group focus-visible:ring-2 focus-visible:ring-brand-container rounded-control focus-visible:outline-none">
