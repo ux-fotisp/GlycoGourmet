@@ -224,7 +224,35 @@ flowchart TD
 
 ---
 
-## 6. Document Metadata & Attribution
+## 6. Role Handoff Playbook (UX Designer & Clinical Researcher)
+
+This section provides an operational playbook for UX designers, clinical researchers, and behavioral product managers conducting usability research or designing patient flows.
+
+### 6.1 Clinical Empathy & Non-Punitive Tone Guidelines
+- **Zero Moral Judgment**: Carbohydrates, high Glycemic Load meals, or blood sugar spikes are never labeled "bad," "cheating," "sinful," or "forbidden."
+- **Constructive Clinical Re-Framing**:
+  - Instead of: *"Warning: This meal will spike your glucose!"*
+  - Use: *"High GL meal: Consider pairing with leafy greens, healthy fats, or a 15-minute post-meal walk to smooth glucose absorption."*
+- **Explainability Panels**: Always provide clear mathematical transparency ($GL = GI \times \text{NetCarbs} / 100$). When patients understand how culinary variables drive glycemic metrics, adherence and agency increase.
+
+### 6.2 Cognitive Ergonomics & Interaction Patterns
+- **Action-Oriented Triad**:
+  1. *Discover*: Filter recipes by occasion, net carbs limit, and remaining daily glycemic load budget.
+  2. *Adjust*: Stepped serving buttons ($0.5\times, 1.0\times, 1.5\times, 2.0\times$) eliminate culinary math friction during cooking.
+  3. *Swap*: 1-Click Smart Low-GI substitutions (e.g., cauliflower rice for jasmine rice) immediately display net carbs and GL deltas.
+- **Active Filter Transparency (`FilterSummaryCard.jsx`)**: Active filter tokens must always be visible with 1-click removal and "Clear all" buttons, preventing users from becoming trapped in empty result sets.
+- **Polite Non-Blocking System State (`BackendWakingBanner.jsx`)**: When the staging backend spins up, never show a blocking modal or spinner that locks the UI. Allow patients to continue browsing cached offline recipes while a polite `role="status"` banner communicates backend wake-up progress.
+
+### 6.3 Persona Flows & Usability Verification
+| Persona | Key Task Flows | Primary UX Success Criteria |
+| :--- | :--- | :--- |
+| **Patient (`demo_patient`)** | Catalog search, serving adjustment, smart swap review, ambient kitchen cook mode. | Zero mental arithmetic; swap savings immediately visible; hands-free cook mode screen stays awake. |
+| **Dietitian (`demo_dietitian`)** | 7-day / 42-slot meal plan authoring, excursion forecast curve evaluation, draft recipe audit. | Real-time GL rollup calculation; clear preprandial / postprandial visual excursion forecasts; seamless draft approval. |
+| **Clinic Admin (`demo_clinic_admin`)** | Intake lead review, practice metrics monitoring, consent status audits. | Strict PHI masking; zero unauthorized patient identification; unambiguous multi-tenant practice boundaries. |
+
+---
+
+## 7. Document Metadata & Attribution
 
 - **Document Version:** `2.1.1`
 - **Lead UX Architect & Designer:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))

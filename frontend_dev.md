@@ -510,7 +510,45 @@ Managed by **React Router v7** using `HashRouter` in `src/routes/AppRoutes.jsx`:
 
 ---
 
-## 10. Document Metadata & Attribution
+## 10. Role Handoff Playbook (Frontend Engineer)
+
+This section provides an operational onboarding and execution manual for frontend engineers authoring React 19 components, custom hooks, and clinical user interfaces.
+
+### 10.1 Primary Responsibilities & Component Architecture
+- **Component Directory Organization**:
+  - `src/components/ui/`: Atomic UI primitives (`Button`, `Input`, `Modal`, `StatusChip`, `Breadcrumb`, `SectionHeader`, `VerifiedBadge`, `TagChip`, `NutritionBadge`).
+  - `src/components/common/`: Global cross-cutting wrappers (`BackendWakingBanner`, `NetworkStatusToast`, `FeatureGate`, `PwaUpdater`).
+  - `src/components/filters/`: Discovery filter controls (`FilterSummaryCard`, `NetCarbsFilter`, `FitsDailyBudgetChip`).
+  - `src/components/recipe/`: Metabolic culinary components (`DetailHero`, `BentoGrid`, `IngredientsMatrix`, `ServingStepper`, `SmartSwapTrigger`, `NutritionSnapshot`).
+  - `src/components/dietitian/`: Clinical management controls (`ExcursionForecastModal`, `ExcursionChart`, `SmartSwapRuleEditor`).
+- **React 19 & Hooks Rules**:
+  - Never introduce conditional `useEffect` calls (enforced by Gate `TO-6`).
+  - Always clean up event listeners, timers, and abort controllers in return callbacks.
+  - Subscribe to backend wake state via `useBackendWakeStatus()` for non-blocking UI notifications.
+
+### 10.2 Day-1 Frontend Developer Commands
+```bash
+# 1. Start local Vite development server
+npm run dev              # Runs SPA on http://localhost:5173 with HMR
+
+# 2. Strict static linting (Oxlint AST analyzer)
+npm run lint             # Scans 208+ files in <30ms; must exit with 0 errors
+
+# 3. Strict TypeScript typechecking
+npx tsc --noEmit         # Verifies prop interfaces, domain models, and imports
+
+# 4. Run full Vitest suite
+npm test                 # Executes 78 test files / 754+ tests
+```
+
+### 10.3 State Management & Routing Invariants
+1. **URL Synchronization**: Any filter selection on `RecipeCatalog.jsx` (cuisine, dietary tags, net carbs ceiling, daily budget fit) must synchronize with URL search params via `useRecipeFilters.js` to preserve browser navigation history and link sharing.
+2. **Clinical Determinism**: Never perform stochastic approximations or math in UI components. Always delegate calculations to `src/utils/nutritionCalculator.js` and `src/services/metabolicEngine.ts`.
+3. **Non-Blocking Wake Feedback**: When Render backend cold-starts occur, render `BackendWakingBanner` or update `NetworkStatusToast`. Ensure the banner uses `role="status"`, `aria-live="polite"`, and does not trap keyboard focus.
+
+---
+
+## 11. Document Metadata & Attribution
 
 - **Document Version:** `2.1.1`
 - **Frontend Lead & Systems Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))

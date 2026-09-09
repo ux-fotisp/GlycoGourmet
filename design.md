@@ -140,8 +140,36 @@ Glycemic Load (GL) Spectrum:
 
 ---
 
-## 7. Document Metadata & Attribution
+## 7. Role Handoff Playbook (UI & Design Systems Engineer)
 
-- **Document Version:** `2.1.0`
+This section provides an operational design systems guide for UI engineers, visual designers, and design system maintainers implementing or extending MagicPath tokens.
+
+### 7.1 Token Architecture & Implementation Rules
+- **CSS Variable Tokens (`src/index.css`)**: All colors, radii, shadows, and fonts are defined using Tailwind CSS v4 `@theme`. Never introduce raw arbitrary hex codes in component templates.
+- **Surface DNA & Gradients**:
+  - Primary button: `.btn-gradient-primary` (`linear-gradient(135deg, #1A3409 0%, #3D6B1E 100%)`).
+  - Destructive button: `.btn-gradient-destructive` (`linear-gradient(135deg, #7B1818 0%, #B02020 100%)`).
+  - Active chip: `.chip-gradient-active` (`linear-gradient(135deg, #1A3409 0%, #3D6B1E 100%)`).
+  - Metabolic card surface: `.metabolic-card-gradient` (`linear-gradient(145deg, #FFFFFF 0%, #EEF6E8 55%, #E3F2D8 100%)`).
+  - Sidebar rail: `.sidebar-gradient` (`linear-gradient(180deg, #1A3409 0%, #2D5016 50%, #3D6B1E 100%)`).
+- **Canonical Card Geometry**: Always apply `--radius-card: 20px` (`rounded-[20px]`) to card surfaces, Bento tiles, and container cards.
+
+### 7.2 Chromatic Glycemic Bands & Contrast Rules
+Always pair text and container tokens according to the certified chromatic scale:
+- **Low GL ($\le 10$)**: Sage container `#D8E8CB` paired with `--color-sage-text` (`#2D5016`) for $4.9:1$ contrast.
+- **Medium GL ($11-19$)**: Amber container `#FFDBCF` paired with `--color-amber-text` (`#7A4A1E`) for $5.2:1$ contrast.
+- **High GL ($\ge 20$)**: Soft Rose container `#FFDAD6` paired with `--color-rose-text` (`#8B1A1A`) for $5.9:1$ contrast.
+- **Canvas Base**: Grain Ivory (`#F6F4EE`) serves as the background canvas; never place pure `#FFFFFF` text on Grain Ivory.
+
+### 7.3 Motion & Accessibility Standards
+- **Strict Motion Ergonomics**: All Framer Motion components must check `useReducedMotion()`. If enabled, suppress spring physics and replace with instantaneous opacity cuts.
+- **8px Grid Compliance**: Spacing must adhere strictly to 8px multiples ($8px, 16px, 24px, 32px, 48px$).
+- **Touch Target Minimums**: All interactive targets (buttons, stepper pills, filter chips) must have a bounding box of at least $44 \times 44px$ on mobile touchscreens.
+
+---
+
+## 8. Document Metadata & Attribution
+
+- **Document Version:** `2.1.1`
 - **Design System Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **Accessibility Standard:** WCAG 2.1 Level AA & AAA Contrast Compliance

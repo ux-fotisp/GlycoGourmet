@@ -19,6 +19,7 @@
 9. [Roadmap Synthesis & Architectural North Star](#9-roadmap-synthesis--architectural-north-star)
 10. [Gap-Closure Chunks 1–3 Synthesis (Multi-Tenancy, Trust Persistence, Ingredient Ownership)](#10-gap-closure-chunks-13-synthesis-multi-tenancy-trust-persistence-ingredient-ownership)
 11. [Gap-Closure Chunks 4–6 Synthesis (Design System Import, CI Standardization & Cold-Start Resilience)](#11-gap-closure-chunks-46-synthesis-design-system-import-ci-standardization--cold-start-resilience)
+12. [Role-Differentiated Engineering Handoff Matrix](#12-role-differentiated-engineering-handoff-matrix)
 
 ---
 
@@ -494,3 +495,18 @@ Between September 7 and September 9, 2026, three subsequent platform gap-closure
   - Non-blocking `BackendWakingBanner.jsx` with `role="status"`, `aria-live="polite"`, and dismiss action.
   - Integrated with `NetworkStatusToast.jsx` for persistent user awareness.
 - **Testing**: Added 15 Vitest tests across `StrapiColdStartResilience.spec.js` and `BackendWakingUX.spec.jsx`, certifying 100% pass across 78 test files and 754 tests.
+
+---
+
+## 12. Role-Differentiated Engineering Handoff Matrix
+
+To streamline cross-functional collaboration and eliminate ambiguous ownership boundaries, this matrix defines primary documentation, critical codebase paths, and day-1 verification commands for each key engineering and design role:
+
+| Engineering / Design Role | Primary Specification Manual | Core Focus Areas & Deliverables | Primary Codebase Directories | Day-1 Verification Command |
+| :--- | :--- | :--- | :--- | :--- |
+| **Backend Engineer** | [`backend_dev.md`](backend_dev.md) (§8 Playbook) | • Strapi REST API endpoints & lifecycle hooks<br>• PostgreSQL relational integrity & migrations<br>• Row-level tenant isolation (`is-dietitian-owner.js`)<br>• Custom ingredient default-deny with 404 concealment<br>• Render cold-start keep-alive monitoring (`/_health`) | `server/src/api/`<br>`server/src/policies/`<br>`server/config/` | `npm run validate-db` && `node scripts/governance-gates.js` |
+| **Frontend Engineer** | [`frontend_dev.md`](frontend_dev.md) (§10 Playbook) | • React 19 SPA architecture & custom hooks<br>• Atomic UI component catalog (`src/components/ui/`)<br>• Cross-cutting layout & feedback (`src/components/common/`)<br>• Dynamic filter suite (`src/components/filters/`)<br>• Asynchronous cold-start wake observer (`useBackendWakeStatus`)<br>• Deterministic calculation delegates (zero UI math) | `src/components/`<br>`src/hooks/`<br>`src/context/`<br>`src/services/` | `npm run lint` && `npx tsc --noEmit` && `npm test` |
+| **UX Designer & Researcher** | [`UX.md`](UX.md) (§6 Playbook) | • Non-punitive clinical writing & empathetic framing<br>• Action-Oriented Triad (Discover -> Adjust -> Swap)<br>• Calculation explainability panels ($GL = GI \times NC / 100$)<br>• Active filter transparency (`FilterSummaryCard`)<br>• Discrete portion steppers ($0.5\times, 1.0\times, 1.5\times, 2.0\times$)<br>• Polite non-blocking feedback (`BackendWakingBanner`) | `src/components/filters/`<br>`src/components/recipe/`<br>`src/pages/` | `npm run dev` (review catalog & cook mode UX) |
+| **UI & Design Systems Engineer** | [`design.md`](design.md) (§7 Playbook) | • MagicPath token architecture (`src/index.css` `@theme`)<br>• Canonical card radius (`--radius-card: 20px`)<br>• Surface gradients (`.btn-gradient-*`, `.chip-gradient-*`, `.metabolic-card-gradient`, `.sidebar-gradient`)<br>• Chromatic glycemic bands (Low/Med/High GL WCAG contrast)<br>• Motion ergonomics (`useReducedMotion`) & 8px grid | `src/index.css`<br>`src/components/ui/`<br>`src/components/nav/` | `npm run lint` && `npx vitest run src/components/ui/` |
+
+---
