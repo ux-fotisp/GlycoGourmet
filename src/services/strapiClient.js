@@ -226,6 +226,8 @@ export function isRetryableNetworkError(err) {
     msg.includes('failed to fetch') ||
     msg.includes('fetch failed') ||
     msg.includes('timeout') ||
+    msg.includes('timed out') ||
+    msg.includes('time out') ||
     msg.includes('econnrefused') ||
     msg.includes('econnreset') ||
     msg.includes('etimedout') ||
