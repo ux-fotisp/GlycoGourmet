@@ -3,7 +3,8 @@ name: Integration Tests
 on:
   push:
     branches:
-      - fix/tenant-scoping-middleware
+      - master
+      - 'release/*'
   pull_request:
     branches:
       - master
