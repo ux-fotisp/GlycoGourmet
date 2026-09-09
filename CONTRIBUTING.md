@@ -86,7 +86,7 @@ npm run precommit
 - [ ] Code follows Sage & Grain design system tokens and 8px grid.
 - [ ] New components include semantic test identifiers (`data-testid`) and accessible ARIA roles.
 - [ ] Mathematical calculations include unit tests verifying boundary invariants (e.g. zero division, fiber inversion).
-- [ ] No regression in passing test count ($281+$ passing tests).
+- [ ] No regression in passing test count ($753+$ passing tests across 78 test files).
 - [ ] Commit messages conform to Conventional Commits.
 
 ### Automated Reviewer & Post-Verification Invariant

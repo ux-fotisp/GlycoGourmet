@@ -9,6 +9,8 @@
 
 | Date | Version | Type | Description | Author |
 | :--- | :---: | :---: | :--- | :--- |
+| **2026-09-09** | `v2.1.1` | `fix` | **Strapi Client Cold-Start Resilience & Waking UX (PR #43):** Implemented `fetchWithRetry` with exponential backoff (2s -> 5s -> 10s) targeting 502/503/504 and network errors; added `useBackendWakeStatus` observer, `BackendWakingBanner`, and toast integration; expanded Vitest suite to 78 test files / 754 tests. | Fotis Pastrakis |
+| **2026-09-09** | `v2.1.0` | `feat` | **MagicPath Design System Sweep & CI Master Trunk Standardization (PRs #31–#42):** Imported MagicPath design system tokens and reconciled glycemic badge contrast (#32); added button/chip gradients and canonical 20px card radius (#33); introduced `StatusChip` (#34), `Breadcrumb` (#35), `SectionHeader` (#36), `.metabolic-card-gradient` (#37), `FilterSummaryCard` (#38), `NetCarbsFilter` / `FitsDailyBudgetChip` (#39), `.sidebar-gradient` (#40), and `VerifiedBadge` (#41); corrected CI workflow triggers from `main` to canonical `master` (#42) with governance exception `EXC-2026-002`. | Fotis Pastrakis |
 | **2026-09-06** | `v2.0.1` | `fix` | **Cold-Start Delay & Governance Repair (PR #30):** Distinguished cold-start delays from auth errors; corrected stale evidence ledger SHAs. | Fotis Pastrakis |
 | **2026-08-30** | `v2.0.0` | `docs` | **Documentation Consolidation:** Created root architectural suite (`information_architecture.md`, `testing.md`, `backend_dev.md`, `frontend_dev.md`, `agentic.md`, `changelog.md`, `UX.md`, `design.md`) with duplicate-content mapping. | Fotis Pastrakis |
 | **2026-08-27** | `v1.2.0` | `docs` | **Chunks 9-12 Sync:** Synchronized PRD, Technical Architecture, and Changelog documentation across clinical entities. | Fotis Pastrakis |
@@ -47,12 +49,36 @@
 
 ## 2. Release Milestone Summaries
 
-### Fixed
-- Login now distinguishes Render cold-start delays (502/503/504/timeout) from
-  actual authentication failures, showing a wake-up-specific message instead of a
-  generic network error. (PR #30)
-- Corrected stale/incorrect source_commit SHA references in the governance evidence
-  ledger (auto-detected and fixed via GitHub Copilot review during PR #30).
+### v2.1.1 — Strapi Client Cold-Start Resilience & Waking UX (PR #43)
+- **Deterministic Network Resilience:** Implemented `fetchWithRetry` utility wrapping Strapi network calls in `strapiClient.js` / `snappiClient.js`:
+  - Maximum 3 attempts with exponential backoff progression (2s -> 5s -> 10s).
+  - Target error classification: retries only on network transport failures, fetch timeouts, and HTTP `502 Bad Gateway`, `503 Service Unavailable`, and `504 Gateway Timeout`.
+  - Anti-coercion fast-fail: 4xx client errors (400, 401, 403, 404) are never retried and surface immediately to callers.
+- **Global Reactive Wake-up State Observer:**
+  - `useBackendWakeStatus` hook and pub-sub bus (`subscribeToBackendWakeStatus`) allowing zero-polling UI reactions.
+  - Non-blocking `BackendWakingBanner` component (`aria-live="polite"`, dismissible, non-focus-trapping).
+  - Toast integration inside `NetworkStatusToast` alerting users during Render free-tier cold starts without disrupting catalog exploration.
+- **Forensic Deployment Audit:** Diagnosed Netlify credit freeze and 30–60s Render free-tier spin-up vs ~26s edge proxy timeout.
+- **Testing & Verification:** Added 15 Vitest tests across `StrapiColdStartResilience.spec.js` and `BackendWakingUX.spec.jsx`, certifying 100% pass across 78 test files and 754 tests.
+
+### v2.1.0 — MagicPath Design System Import & CI Trunk Alignment (PRs #31–#42)
+- **MagicPath Tokens & Contrast Reconciliations (PR #32):**
+  - Reconciled chromatic glycemic badge contrast against Grain Ivory canvas (`#D8E8CB` / `#2D5016` low GL, `#FFDBCF` / `#7A4A1E` medium GL, `#FFDAD6` / `#8B1A1A` high GL) satisfying WCAG 2.1 AA/AAA.
+- **Button, Chip Gradients & 20px Card Radius (PR #33):**
+  - Added `.btn-gradient-primary` (`linear-gradient(135deg, #1A3409 0%, #3D6B1E 100%)`) and `.btn-gradient-destructive` (`linear-gradient(135deg, #7B1818 0%, #B02020 100%)`).
+  - Added `.chip-gradient-active` and updated `--radius-card` token to canonical `20px`.
+- **New UI Components & Design System Enhancements (PRs #34–#41):**
+  - `StatusChip` (#34): 7-state semantic lifecycle indicator (`draft`, `pending`, `published`, `verified`, `archived`, `warning`, `info`).
+  - `Breadcrumb` (#35): Accessible hierarchical navigation with custom separator slots.
+  - `SectionHeader` (#36): Standardized typography header with action slots.
+  - `.metabolic-card-gradient` (#37): Applied to `GlycemicSnapshotCard`.
+  - `FilterSummaryCard` (#38): Dynamic filter chip summary with 1-click clear.
+  - `NetCarbsFilter` & `FitsDailyBudgetChip` (#39): Granular carbohydrate range controls.
+  - `.sidebar-gradient` (#40): Applied to `DesktopNav` navigation rail.
+  - `VerifiedBadge` (#41): Certified clinical calculation badge.
+- **CI Pipeline Trunk Standardization & Governance Exception (PR #42):**
+  - Aligned GitHub Actions workflow triggers in `.github/workflows/production-pipeline.yml` and `.github/workflows/integration-tests.yml` from `main` to canonical `master`.
+  - Logged governance exception `EXC-2026-002` in `governance/exceptions/exception-register.yaml`.
 
 ### v2.0.0 — Unified Architecture Consolidation
 - Unified and deduplicated 9 legacy specifications into 8 canonical root architectural guides:
@@ -85,6 +111,6 @@
 
 ## 3. Document Metadata & Attribution
 
-- **Document Version:** `2.0.0`
+- **Document Version:** `2.1.1`
 - **Lead Architect & Maintainer:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **Repository:** `https://github.com/fotispastrakis/GlycoGourmet`

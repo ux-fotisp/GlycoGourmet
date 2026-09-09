@@ -214,10 +214,46 @@ flowchart TD
 - Reversible micro-interaction: Clicking *"Swap & Apply"* swaps ingredients, immediately updating GL.
 - Clicking *"Revert to Original"* restores baseline ingredients without re-entering amounts or unlinking recipes from meal plans.
 
+### 5.4 Active Filter Transparency (`FilterSummaryCard.jsx`)
+- Immediate visual confirmation of applied nutritional constraints (occasion, GL ceiling, net carbs, daily budget fit).
+- Displays interactive token chips with 1-click removal and "Clear all" actions, eliminating the cognitive friction of forgotten active filters.
+
+### 5.5 Non-Blocking Backend Wake-Up Feedback (`BackendWakingBanner.jsx`)
+- During Render free-tier cold starts, surfaces polite non-blocking status (`role="status"`, `aria-live="polite"`).
+- Explains the transient delay in plain language and prevents patient abandonment without trapping focus or interrupting cached catalog browsing.
+
 ---
 
-## 6. Document Metadata & Attribution
+## 6. Role Handoff Playbook (UX Designer & Clinical Researcher)
 
-- **Document Version:** `2.0.0`
+This section provides an operational playbook for UX designers, clinical researchers, and behavioral product managers conducting usability research or designing patient flows.
+
+### 6.1 Clinical Empathy & Non-Punitive Tone Guidelines
+- **Zero Moral Judgment**: Carbohydrates, high Glycemic Load meals, or blood sugar spikes are never labeled "bad," "cheating," "sinful," or "forbidden."
+- **Constructive Clinical Re-Framing**:
+  - Instead of: *"Warning: This meal will spike your glucose!"*
+  - Use: *"High GL meal: Consider pairing with leafy greens, healthy fats, or a 15-minute post-meal walk to smooth glucose absorption."*
+- **Explainability Panels**: Always provide clear mathematical transparency ($GL = GI \times \text{NetCarbs} / 100$). When patients understand how culinary variables drive glycemic metrics, adherence and agency increase.
+
+### 6.2 Cognitive Ergonomics & Interaction Patterns
+- **Action-Oriented Triad**:
+  1. *Discover*: Filter recipes by occasion, net carbs limit, and remaining daily glycemic load budget.
+  2. *Adjust*: Stepped serving buttons ($0.5\times, 1.0\times, 1.5\times, 2.0\times$) eliminate culinary math friction during cooking.
+  3. *Swap*: 1-Click Smart Low-GI substitutions (e.g., cauliflower rice for jasmine rice) immediately display net carbs and GL deltas.
+- **Active Filter Transparency (`FilterSummaryCard.jsx`)**: Active filter tokens must always be visible with 1-click removal and "Clear all" buttons, preventing users from becoming trapped in empty result sets.
+- **Polite Non-Blocking System State (`BackendWakingBanner.jsx`)**: When the staging backend spins up, never show a blocking modal or spinner that locks the UI. Allow patients to continue browsing cached offline recipes while a polite `role="status"` banner communicates backend wake-up progress.
+
+### 6.3 Persona Flows & Usability Verification
+| Persona | Key Task Flows | Primary UX Success Criteria |
+| :--- | :--- | :--- |
+| **Patient (`demo_patient`)** | Catalog search, serving adjustment, smart swap review, ambient kitchen cook mode. | Zero mental arithmetic; swap savings immediately visible; hands-free cook mode screen stays awake. |
+| **Dietitian (`demo_dietitian`)** | 7-day / 42-slot meal plan authoring, excursion forecast curve evaluation, draft recipe audit. | Real-time GL rollup calculation; clear preprandial / postprandial visual excursion forecasts; seamless draft approval. |
+| **Clinic Admin (`demo_clinic_admin`)** | Intake lead review, practice metrics monitoring, consent status audits. | Strict PHI masking; zero unauthorized patient identification; unambiguous multi-tenant practice boundaries. |
+
+---
+
+## 7. Document Metadata & Attribution
+
+- **Document Version:** `2.1.1`
 - **Lead UX Architect & Designer:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **Design Frameworks:** Nielsen Norman Group UX Heuristics, Sophia Prater OOUX/ORCA, WCAG 2.1 AA

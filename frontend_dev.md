@@ -74,15 +74,18 @@ src/
 │   ├── common/               # FeatureGate, PwaUpdater, NetworkStatusToast
 │   ├── dashboard/            # HealthHeader, MealPlanGlance, MetricCounters
 │   ├── dietitian/            # ExcursionForecastModal, ExcursionChart, SmartSwapRuleEditor
+│   ├── filters/              # FilterSummaryCard, NetCarbsFilter, FitsDailyBudgetChip
 │   ├── layout/               # AppLayout, Navbar, NavigationPill
-│   ├── nav/                  # DesktopNav, MobileBottomNav
+│   ├── nav/                  # DesktopNav (sidebar-gradient), MobileBottomNav
 │   ├── patient/              # NotificationOptIn, AdherenceWidget
 │   ├── recipe/               # DetailHero, BentoGrid, IngredientsMatrix, ServingStepper, SmartSwapTrigger
-│   └── ui/                   # Button, Badge, Modal, OfflineBanner
+│   ├── common/               # BackendWakingBanner, NetworkStatusToast, FeatureGate, PwaUpdater
+│   └── ui/                   # Button, Badge, Modal, OfflineBanner, StatusChip, Breadcrumb, SectionHeader, VerifiedBadge
 ├── context/
 │   ├── AuthContext.jsx       # JWT authentication, session hydration, and demo mode
 │   └── UserPreferences.jsx   # UI density (comfortable vs compact) and default filters
 ├── hooks/
+│   ├── useBackendWakeStatus.js # Reactive observer for Strapi backend spin-up state
 │   ├── useFavorites.js       # Local & remote recipe bookmarking
 │   ├── useOfflineMutation.js # Optimistic mutations with background sync
 │   ├── usePermissions.js     # RBAC role verification and route gates
@@ -317,6 +320,65 @@ const currentNutrition = scaleResult.profile;
 
 ---
 
+### 5.5 Semantic Status Chips (`StatusChip.jsx`)
+Located at `src/components/ui/StatusChip.jsx`:
+- Visual representation of recipe lifecycles and clinical approval statuses.
+- Supports 7 semantic variants:
+  - `draft`: Muted grey container for in-progress authoring.
+  - `pending`: Amber container for recipes awaiting dietitian review.
+  - `published`: Pine/sage container indicating live catalog inclusion.
+  - `verified`: High-contrast green container certifying USDA/Sydney GI verification.
+  - `archived`: Neutral slate for deactivated meal plans and items.
+  - `warning`: Amber alert indicator for discrepancy flags.
+  - `info`: Blue-tinted container for administrative notices.
+- Adheres to semantic test locator hierarchy (`data-testid="status-chip"`).
+
+---
+
+### 5.6 Accessible Hierarchical Navigation (`Breadcrumb.jsx`)
+Located at `src/components/ui/Breadcrumb.jsx`:
+- Structured as `<nav aria-label="Breadcrumb">` containing an ordered list (`<ol>`).
+- Terminal item marked with `aria-current="page"` and non-interactive text.
+- Parent items render accessible links with customizable separator slots (defaulting to Material Symbols `chevron_right`).
+- High-contrast Sage palette for focus states and text contrast.
+
+---
+
+### 5.7 Modular Section Headers (`SectionHeader.jsx`)
+Located at `src/components/ui/SectionHeader.jsx`:
+- Standardized header pattern combining title, subtitle description, and optional right-aligned action slots.
+- Semantic HTML rendering allowing dynamic heading tags (`as="h1"`, `as="h2"`, `as="h3"`, `as="h4"`).
+- Supports optional leading badges, counter chips, and responsive flexbox wrapping for mobile viewports.
+
+---
+
+### 5.8 Clinical Verified Badges (`VerifiedBadge.jsx`)
+Located at `src/components/ui/VerifiedBadge.jsx`:
+- Visual stamp of deterministic integrity certifying that ingredients map to laboratory assays.
+- Renders checkmark icon with accessible `title` and tooltip.
+- Distinct from user-entered or estimated ingredients to maintain truthful nutrition provenance.
+
+---
+
+### 5.9 Discovery Filter Suite (`FilterSummaryCard.jsx`, `NetCarbsFilter.jsx`, `FitsDailyBudgetChip.jsx`)
+Located in `src/components/filters/`:
+- **`FilterSummaryCard.jsx`**: Displays active filter tokens with quick 1-click removal and "Clear all" button, eliminating hidden filter confusion.
+- **`NetCarbsFilter.jsx`**: Dual slider and numeric input for exact net carbohydrate ceiling constraints ($NC \le \text{threshold}$).
+- **`FitsDailyBudgetChip.jsx`**: Interactive toggle filtering recipes whose portion GL fits within the patient's remaining daily GL allowance.
+
+---
+
+### 5.10 Render Cold-Start Waking UX (`BackendWakingBanner.jsx` & `useBackendWakeStatus.js`)
+Located at `src/components/common/BackendWakingBanner.jsx` and `src/hooks/useBackendWakeStatus.js`:
+- **Observer Hook (`useBackendWakeStatus`)**: Subscribes to the central backend wake state event emitter in `strapiClient.js`. Automatically updates components when retries are triggered.
+- **Non-Blocking Banner (`BackendWakingBanner`)**:
+  - Accessible banner rendered at the top of the interface when the backend is spinning up from cold sleep.
+  - Built with `role="status"`, `aria-live="polite"`, and non-focus-trapping design.
+  - Includes progress spinner, plain-language clinical explanation, and voluntary dismiss action.
+- **Integration**: Integrated into `NetworkStatusToast.jsx` for persistent awareness without disrupting user exploration.
+
+---
+
 ## 6. State Management & Custom Hooks Architecture
 
 ### 6.1 URL Query Parameter Synchronization (`useRecipeFilters.js`)
@@ -448,8 +510,46 @@ Managed by **React Router v7** using `HashRouter` in `src/routes/AppRoutes.jsx`:
 
 ---
 
-## 10. Document Metadata & Attribution
+## 10. Role Handoff Playbook (Frontend Engineer)
 
-- **Document Version:** `2.0.0`
+This section provides an operational onboarding and execution manual for frontend engineers authoring React 19 components, custom hooks, and clinical user interfaces.
+
+### 10.1 Primary Responsibilities & Component Architecture
+- **Component Directory Organization**:
+  - `src/components/ui/`: Atomic UI primitives (`Button`, `Input`, `Modal`, `StatusChip`, `Breadcrumb`, `SectionHeader`, `VerifiedBadge`, `TagChip`, `NutritionBadge`).
+  - `src/components/common/`: Global cross-cutting wrappers (`BackendWakingBanner`, `NetworkStatusToast`, `FeatureGate`, `PwaUpdater`).
+  - `src/components/filters/`: Discovery filter controls (`FilterSummaryCard`, `NetCarbsFilter`, `FitsDailyBudgetChip`).
+  - `src/components/recipe/`: Metabolic culinary components (`DetailHero`, `BentoGrid`, `IngredientsMatrix`, `ServingStepper`, `SmartSwapTrigger`, `NutritionSnapshot`).
+  - `src/components/dietitian/`: Clinical management controls (`ExcursionForecastModal`, `ExcursionChart`, `SmartSwapRuleEditor`).
+- **React 19 & Hooks Rules**:
+  - Never introduce conditional `useEffect` calls (enforced by Gate `TO-6`).
+  - Always clean up event listeners, timers, and abort controllers in return callbacks.
+  - Subscribe to backend wake state via `useBackendWakeStatus()` for non-blocking UI notifications.
+
+### 10.2 Day-1 Frontend Developer Commands
+```bash
+# 1. Start local Vite development server
+npm run dev              # Runs SPA on http://localhost:5173 with HMR
+
+# 2. Strict static linting (Oxlint AST analyzer)
+npm run lint             # Scans 208+ files in <30ms; must exit with 0 errors
+
+# 3. Strict TypeScript typechecking
+npx tsc --noEmit         # Verifies prop interfaces, domain models, and imports
+
+# 4. Run full Vitest suite
+npm test                 # Executes 78 test files / 754+ tests
+```
+
+### 10.3 State Management & Routing Invariants
+1. **URL Synchronization**: Any filter selection on `RecipeCatalog.jsx` (cuisine, dietary tags, net carbs ceiling, daily budget fit) must synchronize with URL search params via `useRecipeFilters.js` to preserve browser navigation history and link sharing.
+2. **Clinical Determinism**: Never perform stochastic approximations or math in UI components. Always delegate calculations to `src/utils/nutritionCalculator.js` and `src/services/metabolicEngine.ts`.
+3. **Non-Blocking Wake Feedback**: When Render backend cold-starts occur, render `BackendWakingBanner` or update `NetworkStatusToast`. Ensure the banner uses `role="status"`, `aria-live="polite"`, and does not trap keyboard focus.
+
+---
+
+## 11. Document Metadata & Attribution
+
+- **Document Version:** `2.1.1`
 - **Frontend Lead & Systems Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **Core Technologies:** React 19, Tailwind CSS v4, React Router v7, Vite 8, Netlify CDN

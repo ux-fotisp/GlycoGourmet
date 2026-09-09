@@ -168,7 +168,16 @@ Test suites must rigorously validate the metabolic math engine against five phys
 | **Unit: Clinic Multi-Tenant Scoping - Isolation & Roster Boundaries** | `unit` | `tests/unit/ClinicTenantScoping.spec.js` | ✅ 18 Passed |
 | **Unit: Trust & Governance - Two-Tier Persistence & Append-Only Audit** | `unit` | `tests/unit/TrustGovernancePersistence.spec.js` | ✅ 21 Passed |
 | **Unit: Custom Ingredient Ownership - Default-Deny Scoping & 404 Concealment** | `unit` | `tests/unit/CustomIngredientOwnership.spec.js` | ✅ 16 Passed |
-| **Full Vitest Verification Suite (68 test files)** | `unit / integ` | `src/**/*.test.{js,jsx}`, `tests/**/*.spec.{js,ts,jsx}` | ✅ 690 Passed |
+| **Unit: UI Atom - StatusChip Lifecycle States & Variants** | `unit` | `src/components/ui/StatusChip.test.jsx` | ✅ 6 Passed |
+| **Unit: UI Atom - Breadcrumb Accessible Navigation Trail** | `unit` | `src/components/ui/Breadcrumb.test.jsx` | ✅ 5 Passed |
+| **Unit: UI Atom - SectionHeader Title & Actions** | `unit` | `src/components/ui/SectionHeader.test.jsx` | ✅ 6 Passed |
+| **Unit: UI Atom - VerifiedBadge Clinical Calculation Badge** | `unit` | `src/components/ui/VerifiedBadge.test.jsx` | ✅ 3 Passed |
+| **Unit: Filter - FilterSummaryCard Active Filter Tags & Reset** | `unit` | `src/components/filters/FilterSummaryCard.test.jsx` | ✅ 7 Passed |
+| **Unit: Filter - NetCarbsFilter Range & Input Synchronization** | `unit` | `src/components/filters/NetCarbsFilter.test.jsx` | ✅ 4 Passed |
+| **Unit: Filter - FitsDailyBudgetChip Budget Allocation** | `unit` | `src/components/filters/FitsDailyBudgetChip.test.jsx` | ✅ 4 Passed |
+| **Unit: Infra - Strapi Cold-Start Resilience & Backoff Policy** | `unit` | `tests/unit/StrapiColdStartResilience.spec.js` | ✅ 10 Passed |
+| **Unit: Infra - Backend Waking Banner & Toast Visibility UX** | `unit` | `tests/unit/components/BackendWakingUX.spec.jsx` | ✅ 5 Passed |
+| **Full Vitest Verification Suite (78 test files)** | `unit / integ` | `src/**/*.test.{js,jsx}`, `tests/**/*.spec.{js,ts,jsx}` | ✅ 753 Passed (1 Skipped) |
 
 ---
 
@@ -195,6 +204,6 @@ npm run validate-db
 
 ## 7. Document Metadata & Attribution
 
-- **Document Version:** `2.0.0`
+- **Document Version:** `2.1.1`
 - **QA Lead & Systems Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **Execution Standards:** QA-DIRECTIVE-2026, WCAG 2.1 Level AA, IEEE 754 Floating Point Standard
