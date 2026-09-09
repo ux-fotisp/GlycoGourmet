@@ -5,11 +5,15 @@ import TagChip from './TagChip';
 
 describe('TagChip component', () => {
   // --- Active State ---
-  it('displays bg-primary class and check icon when active', () => {
+  it('displays gradient active state with check icon when active', () => {
     render(<TagChip label="Low GI" active={true} onClick={() => {}} />);
     const chip = screen.getByRole('button', { name: /Low GI/i });
-    expect(chip.className).toContain('bg-primary');
-    expect(chip.className).toContain('text-on-primary');
+    expect(chip.style.background).toContain('linear-gradient');
+    // Browser serializes #1A3409 to rgb(26, 52, 9)
+    expect(chip.style.background).toContain('rgb(26, 52, 9)');
+    expect(chip.className).toContain('text-white');
+    expect(chip.className).toContain('chip-gradient-active');
+    expect(chip).toHaveAttribute('aria-pressed', 'true');
     // Check icon should be present
     expect(chip.querySelector('.material-symbols-outlined')).toBeDefined();
     expect(chip.textContent).toContain('check');
@@ -21,6 +25,7 @@ describe('TagChip component', () => {
     const chip = screen.getByRole('button', { name: 'High Fiber' });
     expect(chip.className).toContain('bg-surface-container-low');
     expect(chip.className).toContain('text-on-surface-variant');
+    expect(chip).toHaveAttribute('aria-pressed', 'false');
     // No check icon
     expect(chip.querySelector('.material-symbols-outlined')).toBeNull();
   });
