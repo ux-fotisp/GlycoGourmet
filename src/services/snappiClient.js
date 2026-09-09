@@ -10,6 +10,12 @@ import {
   strapiPut,
   strapiDelete,
   strapiUpload,
+  fetchWithRetry,
+  subscribeToWakeStatus,
+  getWakeStatus,
+  DEFAULT_RETRY_CONFIG,
+  isRetryableStatus,
+  isRetryableNetworkError,
   invalidateCache,
   unravelStrapiData,
   getUserJwt,
@@ -20,7 +26,17 @@ export const snappiPost = strapiPost;
 export const snappiPut = strapiPut;
 export const snappiDelete = strapiDelete;
 export const snappiUpload = strapiUpload;
-export { invalidateCache, unravelStrapiData, getUserJwt };
+export {
+  fetchWithRetry,
+  subscribeToWakeStatus,
+  getWakeStatus,
+  DEFAULT_RETRY_CONFIG,
+  isRetryableStatus,
+  isRetryableNetworkError,
+  invalidateCache,
+  unravelStrapiData,
+  getUserJwt,
+};
 
 export default {
   snappiGet,
@@ -28,6 +44,12 @@ export default {
   snappiPut,
   snappiDelete,
   snappiUpload,
+  fetchWithRetry,
+  subscribeToWakeStatus,
+  getWakeStatus,
+  DEFAULT_RETRY_CONFIG,
+  isRetryableStatus,
+  isRetryableNetworkError,
   invalidateCache,
   unravelStrapiData,
   getUserJwt,
