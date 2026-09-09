@@ -11,13 +11,13 @@
   --color-primary-variant: #2D5A34; /* Forest Moss */
   --color-background: #F6F4EE; /* Grain Ivory */
   
-  --color-sage-text: #386A20; /* Low GL Sage Text */
+  --color-sage-text: #2D5016; /* Low GL Sage Text */
   --color-sage-bg: #D8E8CB; /* Low GL Sage Container */
   
-  --color-amber-text: #9E4D2A; /* Amber Text */
+  --color-amber-text: #7A4A1E; /* Amber Text */
   --color-amber-bg: #FFDBCF; /* Amber Container */
   
-  --color-rose-text: #BA1A1A; /* Soft Rose Text */
+  --color-rose-text: #8B1A1A; /* Soft Rose Text */
   --color-rose-bg: #FFDAD6; /* Soft Rose Container */
 
   --font-display: 'Fraunces', serif;
@@ -64,7 +64,7 @@
   --color-on-surface-variant: #414844;
   --color-outline: #727974;
   --color-outline-variant: #e5e4dc;
-  --color-tertiary: #803615;
+  --color-tertiary: #7A4A1E;
   --color-tertiary-container: #9E4D2A;
   --color-on-tertiary: #FFFFFF;
   --color-on-tertiary-container: #FFDACC;
@@ -74,21 +74,28 @@
   --color-secondary: #5F5E5A;
   --color-secondary-container: #E5E2DC;
   --color-on-secondary-container: #656460;
-  --color-error: #BA1A1A;
+  --color-error: #8B1A1A;
   --color-error-container: #FFDAD6;
   --color-on-error: #FFFFFF;
   --color-on-error-container: #410002;
 
   --radius-sm: 0.25rem;
+  --radius-6px: 6px;
+  --radius-8px: 8px;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
   --radius-full: 9999px;
 
+  --spacing-4px: 0.25rem;
   --spacing-xs: 0.5rem;
+  --spacing-12px: 0.75rem;
   --spacing-sm: 1rem;
+  --spacing-20px: 1.25rem;
   --spacing-md: 1.5rem;
+  --spacing-32px: 2rem;
   --spacing-lg: 2.5rem;
+  --spacing-48px: 3rem;
   --spacing-xl: 4rem;
   --spacing-container-max: 1200px;
   --spacing-gutter: 1.5rem;
@@ -103,11 +110,11 @@
 
   /* Metabolic badge tokens */
   --color-badge-low-bg: #D8E8CB;
-  --color-badge-low-text: #386A20;
+  --color-badge-low-text: #2D5016;
   --color-badge-med-bg: #FFDBCF;
-  --color-badge-med-text: #9E4D2A;
+  --color-badge-med-text: #7A4A1E;
   --color-badge-high-bg: #FFDAD6;
-  --color-badge-high-text: #BA1A1A;
+  --color-badge-high-text: #8B1A1A;
 }
 
 @layer base {
