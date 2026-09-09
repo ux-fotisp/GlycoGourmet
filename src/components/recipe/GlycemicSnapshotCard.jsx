@@ -10,7 +10,7 @@ export const GlycemicSnapshotCard = ({ nutrition, servingMultiplier = 1 }) => {
   const fillWidth = Math.min(100, Math.max(0, Math.round((gl / dailyGlTarget) * 100)));
 
   return (
-    <div className="bg-success-surface rounded-card p-4 md:p-6 border border-success-border shadow-card space-y-4 font-sans">
+    <div className="metabolic-card-gradient rounded-card p-4 md:p-6 shadow-card space-y-4 font-sans">
       <div className="flex items-center justify-between">
         <h3 className="text-sm md:text-base font-bold text-brand-strong flex items-center gap-2 uppercase tracking-wider">
           <span className="material-symbols-outlined text-brand-strong text-[20px]">analytics</span>
