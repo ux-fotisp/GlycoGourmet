@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 /**
  * ClientCalibrationDrawer - Slide-over drawer for live editing of MetabolicTargetCalibration
@@ -76,7 +76,7 @@ export const ClientCalibrationDrawer = ({ isOpen, onClose, client, onSave }) => 
   return (
     <div className="fixed inset-0 z-[100] flex justify-end" role="dialog" aria-modal="true">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 font-sans text-on-surface">
+      <div className="relative w-full max-w-[480px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 font-sans text-on-surface">
         
         {/* Header */}
         <div className="px-6 py-4 border-b border-outline-variant/30 flex justify-between items-center shrink-0 bg-surface-container-low">

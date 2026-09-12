@@ -11,30 +11,33 @@ const DV = {
  * NutritionFactsPanel - Clinical nutrition panel with calorie hero, macro meters, and USDA verification banner.
  */
 export const NutritionFactsPanel = ({ nutrition, servingMultiplier = 1 }) => {
-  const kcal = nutrition?.kcal !== undefined ? Math.round(nutrition.kcal) : 387;
-  const fat = nutrition?.fat !== undefined ? Math.round(nutrition.fat) : 18;
-  const netCarbs = nutrition?.netCarbs !== undefined ? Math.round(nutrition.netCarbs) : 12;
-  const fiber = nutrition?.fiber !== undefined ? Math.round(nutrition.fiber) : 8;
-  const protein = nutrition?.protein !== undefined ? Math.round(nutrition.protein) : 24;
+  const mult = servingMultiplier || 1;
+  const kcal = Math.round((nutrition?.kcal !== undefined ? nutrition.kcal : 387) * mult);
+  const fat = Math.round((nutrition?.fat !== undefined ? nutrition.fat : 18) * mult);
+  const netCarbs = Math.round((nutrition?.netCarbs !== undefined ? nutrition.netCarbs : 12) * mult * 10) / 10;
+  const fiber = Math.round((nutrition?.fiber !== undefined ? nutrition.fiber : 8) * mult * 10) / 10;
+  const protein = Math.round((nutrition?.protein !== undefined ? nutrition.protein : 24) * mult);
+  const gl = Math.round((nutrition?.glycemicLoad ?? 4) * mult);
+  const gi = nutrition?.glycemicIndex ?? 22;
 
   const getPct = (val, max) => Math.min(100, Math.max(0, Math.round((val / max) * 100)));
 
   return (
-    <section className="bg-white rounded-3xl p-6 border border-stone-200 shadow-xs space-y-6 font-sans text-[#1A2118]">
+    <section data-testid="nutrition-facts-panel" className="bg-white rounded-3xl p-6 border border-stone-200 shadow-xs space-y-6 font-sans text-[#1A2118]">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-stone-100 pb-3">
         <h3 className="text-xs font-extrabold tracking-wider text-primary uppercase flex items-center gap-2">
           <span className="material-symbols-outlined text-[18px] text-sage-text">bolt</span>
           Nutrition Facts
         </h3>
-        <span className="text-[11px] font-bold text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-full">
-          Per Serving
+        <span data-testid="nutrition-serving-badge" className="text-[11px] font-bold text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-full">
+          {mult === 1 ? 'Per Serving' : `${mult}x Serving`}
         </span>
       </div>
 
       {/* Calorie Hero */}
       <div className="bg-sage-bg/50 border border-sage-text/20 rounded-2xl p-5 flex flex-col items-center justify-center text-center shadow-2xs">
-        <span className="text-5xl font-display font-extrabold text-primary leading-none">
+        <span data-testid="nutrition-kcal" className="text-5xl font-display font-extrabold text-primary leading-none">
           {kcal}
         </span>
         <span className="text-xs font-bold text-primary-variant uppercase tracking-wider mt-1.5">
@@ -44,10 +47,10 @@ export const NutritionFactsPanel = ({ nutrition, servingMultiplier = 1 }) => {
 
       {/* Macro Progress Meters */}
       <div className="space-y-4 pt-1">
-        <MacroMeterRow label="Total Fat" value={fat} unit="g" pct={getPct(fat, DV.fat)} />
-        <MacroMeterRow label="Net Carbs" value={netCarbs} unit="g" pct={getPct(netCarbs, DV.carbs)} />
-        <MacroMeterRow label="Dietary Fiber" value={fiber} unit="g" pct={getPct(fiber, DV.fiber)} />
-        <MacroMeterRow label="Protein" value={protein} unit="g" pct={getPct(protein, DV.protein)} />
+        <MacroMeterRow label="Total Fat" value={fat} unit="g" pct={getPct(fat, DV.fat)} testId="macro-fat" />
+        <MacroMeterRow label="Net Carbs" value={netCarbs} unit="g" pct={getPct(netCarbs, DV.carbs)} testId="macro-net-carbs" />
+        <MacroMeterRow label="Dietary Fiber" value={fiber} unit="g" pct={getPct(fiber, DV.fiber)} testId="macro-fiber" />
+        <MacroMeterRow label="Protein" value={protein} unit="g" pct={getPct(protein, DV.protein)} testId="macro-protein" />
       </div>
 
       {/* Micronutrient Grid (2-Column) */}
@@ -90,14 +93,14 @@ export const NutritionFactsPanel = ({ nutrition, servingMultiplier = 1 }) => {
           <span className="text-[10px] text-stone-500 uppercase font-semibold">Expanded</span>
         </summary>
         <div className="mt-3 flex flex-wrap gap-2 text-xs">
-          <span className="px-2.5 py-1 bg-white border border-stone-200 rounded-lg font-medium text-stone-700">
+          <span data-testid="secondary-calories" className="px-2.5 py-1 bg-white border border-stone-200 rounded-lg font-medium text-stone-700">
             Calories {kcal} kcal
           </span>
-          <span className="px-2.5 py-1 bg-white border border-stone-200 rounded-lg font-medium text-stone-700">
-            Estimated GL: {nutrition?.glycemicLoad ?? 4}
+          <span data-testid="secondary-gl" className="px-2.5 py-1 bg-white border border-stone-200 rounded-lg font-medium text-stone-700">
+            Estimated GL: {gl}
           </span>
-          <span className="px-2.5 py-1 bg-white border border-stone-200 rounded-lg font-medium text-stone-700">
-            Estimated GI: {nutrition?.glycemicIndex ?? 22}
+          <span data-testid="secondary-gi" className="px-2.5 py-1 bg-white border border-stone-200 rounded-lg font-medium text-stone-700">
+            Estimated GI: {gi}
           </span>
         </div>
       </details>
@@ -113,11 +116,11 @@ export const NutritionFactsPanel = ({ nutrition, servingMultiplier = 1 }) => {
   );
 };
 
-const MacroMeterRow = ({ label, value, unit, pct }) => (
-  <div className="space-y-1.5 text-xs font-bold">
+const MacroMeterRow = ({ label, value, unit, pct, testId }) => (
+  <div className="space-y-1.5 text-xs font-bold" data-testid={testId}>
     <div className="flex justify-between items-end">
       <span className="text-primary">{label}</span>
-      <span className="text-primary font-extrabold">{value}{unit}</span>
+      <span data-testid={`${testId}-val`} className="text-primary font-extrabold">{value}{unit}</span>
     </div>
     <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden border border-stone-200/50">
       <div 

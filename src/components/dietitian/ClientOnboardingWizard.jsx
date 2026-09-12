@@ -72,7 +72,7 @@ export const ClientOnboardingWizard = ({ isOpen, onClose, onComplete, dietitianI
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" role="dialog" aria-modal="true">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-[560px] overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Header */}
         <div className="bg-surface-container-low px-6 py-4 border-b border-outline-variant/30 flex justify-between items-center shrink-0">
@@ -91,7 +91,7 @@ export const ClientOnboardingWizard = ({ isOpen, onClose, onComplete, dietitianI
           </div>
 
           {step === 1 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4">
+            <div className="space-y-4">
               <h3 className="text-lg font-bold">Step 1: Basic Demographics</h3>
               <div>
                 <label className="block text-sm font-bold mb-1">Patient Name</label>
@@ -105,7 +105,7 @@ export const ClientOnboardingWizard = ({ isOpen, onClose, onComplete, dietitianI
           )}
 
           {step === 2 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4">
+            <div className="space-y-4">
               <h3 className="text-lg font-bold">Step 2: Clinical Classification</h3>
               <div className="grid grid-cols-2 gap-3">
                 {['T1D', 'T2D', 'GDM', 'Prediabetes', 'InsulinResistance'].map(type => (
@@ -122,7 +122,7 @@ export const ClientOnboardingWizard = ({ isOpen, onClose, onComplete, dietitianI
           )}
 
           {step === 3 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4">
+            <div className="space-y-4">
               <h3 className="text-lg font-bold">Step 3: Metabolic Targets</h3>
               <div>
                 <label className="block text-sm font-bold mb-1">Daily GL Cap ({formData.glTargetDaily})</label>
@@ -143,7 +143,7 @@ export const ClientOnboardingWizard = ({ isOpen, onClose, onComplete, dietitianI
           )}
 
           {step === 4 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4">
+            <div className="space-y-4">
               <h3 className="text-lg font-bold">Step 4: Dietary Restrictions</h3>
               <div className="flex flex-wrap gap-2">
                 {RESTRICTIONS.map(res => (

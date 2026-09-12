@@ -192,6 +192,7 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(true);
 
     if (ENABLE_DEMO_AUTH) {
+      preseedDemoUser();
       const users = JSON.parse(localStorage.getItem('glyco_users') || '{}');
       const existingUser = users[email.toLowerCase()];
 
@@ -216,6 +217,7 @@ export const AuthProvider = ({ children }) => {
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem('glyco_jwt', data.jwt);
+        localStorage.setItem('glyco_current_user', JSON.stringify(data.user));
         const sessionUser = buildSession(data.user);
         setUser(sessionUser);
         setIsAuthenticated(true);

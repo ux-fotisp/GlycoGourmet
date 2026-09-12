@@ -22,7 +22,7 @@ import ingredientsData from '../data/ingredients.json';
     // --- Environment Configuration ------------------------------------------------
 
 export const STRAPI_URL = (import.meta.env.VITE_STRAPI_API_URL || '').trim().replace(/\/+$/, '');
-export let IS_DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
+export let IS_DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true' && import.meta.env.MODE !== 'test';
 
 export function setDemoMode(val) {
   IS_DEMO_MODE = Boolean(val);
@@ -605,6 +605,7 @@ export function resolveDemoFixture(method = 'GET', path = '', params = {}, body 
       roleType: 'admin',
       isApproved: true,
       confirmed: true,
+      onboarded: true,
     };
   }
 
@@ -620,6 +621,7 @@ export function resolveDemoFixture(method = 'GET', path = '', params = {}, body 
         roleType: email.includes('dietitian') ? 'dietitian' : (email.includes('patient') ? 'user' : 'admin'),
         isApproved: true,
         confirmed: true,
+        onboarded: true,
       },
     };
   }

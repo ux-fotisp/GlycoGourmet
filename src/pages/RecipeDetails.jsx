@@ -9,6 +9,7 @@ import RecipeHeaderMeta from '../components/recipe/RecipeHeaderMeta';
 import IngredientsMatrix from '../components/recipe/IngredientsMatrix';
 import InstructionTimeline from '../components/recipe/InstructionTimeline';
 import RelatedRecipesGrid from '../components/recipe/RelatedRecipesGrid';
+import ServingStepper from '../components/recipe/ServingStepper';
 import { getRecipeById } from '../utils/recipeStore';
 
 /**
@@ -20,6 +21,7 @@ const RecipeDetails = () => {
   const isPreview = searchParams.get('preview') === 'true';
   const isTestRecipe = id === "1";
   const [servings, setServings] = useState(isTestRecipe ? 1 : 2);
+  const [servingMultiplier, setServingMultiplier] = useState(1);
   const [activeSwaps, setActiveSwaps] = useState({});
   const [loadedRecipe, setLoadedRecipe] = useState(null);
 
@@ -174,8 +176,26 @@ const RecipeDetails = () => {
         {/* Left Column (5 Cols) */}
         <div className="lg:col-span-5 space-y-6">
           <HeroMediaCard recipe={recipeMeta} />
-          <GlycemicSnapshot dailyGlTarget={45} profile={dynamicNutrition} servingMultiplier={scale} />
-          <NutritionFactsPanel nutrition={dynamicNutrition} servingMultiplier={scale} />
+
+          {/* Portion Scaling Stepper */}
+          <div className="bg-white rounded-3xl p-5 border border-stone-200 shadow-xs flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[18px]">scale</span>
+                Portion Scaling
+              </span>
+              <span data-testid="serving-multiplier-badge" className="text-xs font-bold text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-full">
+                {servingMultiplier}x Portion
+              </span>
+            </div>
+            <ServingStepper
+              currentMultiplier={servingMultiplier}
+              onScaleChange={setServingMultiplier}
+            />
+          </div>
+
+          <GlycemicSnapshot dailyGlTarget={45} profile={recipeMeta.nutrition} servingMultiplier={servingMultiplier} />
+          <NutritionFactsPanel nutrition={recipeMeta.nutrition} servingMultiplier={servingMultiplier} />
           <SmartSwapsModule swaps={availableSwaps} onApplySwap={handleApplySwap} />
         </div>
 
