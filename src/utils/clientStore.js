@@ -1,4 +1,6 @@
-﻿// src/utils/clientStore.js
+// src/utils/clientStore.js
+import { apiFetch, IS_DEMO_MODE } from '../services/strapiClient';
+
 /**
  * Client & Tenant Management Store - LocalStorage fallback for Multi-Tenant Clinic Administration & Asset Collaboration
  */
@@ -221,9 +223,12 @@ const preseedDemoClients = () => {
 };
 
 export const getClinicDetails = async (clinicId = 'clinic-glycemic-wellness') => {
+  if (IS_DEMO_MODE) {
+    return { ...mockClinic };
+  }
   try {
     const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-    const res = await fetch(`/api/clinics/${clinicId}`, {
+    const res = await apiFetch(`/api/clinics/${clinicId}`, {
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -253,9 +258,17 @@ export const getClinicDetails = async (clinicId = 'clinic-glycemic-wellness') =>
 };
 
 export const getClinicDietitians = async (clinicId = 'clinic-glycemic-wellness') => {
+  if (IS_DEMO_MODE) {
+    const stored = JSON.parse(localStorage.getItem('glyco_clinic_dietitians') || '[]');
+    if (stored.length === 0) {
+      localStorage.setItem('glyco_clinic_dietitians', JSON.stringify(mockDietitians));
+      return [...mockDietitians];
+    }
+    return stored;
+  }
   try {
     const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-    const res = await fetch(`/api/clinics/${clinicId}?populate=dietitians`, {
+    const res = await apiFetch(`/api/clinics/${clinicId}?populate=dietitians`, {
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),

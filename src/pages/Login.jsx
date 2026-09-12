@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export const Login = () => {
-  const { login } = useAuth();
+  const { login, isDemoMode, demoPersonas } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -77,6 +77,66 @@ export const Login = () => {
             <h2 className="font-headline-md text-on-surface mb-xs font-semibold">Welcome Back</h2>
             <p className="font-body-md text-on-surface-variant">Manage your health and flavor.</p>
           </header>
+
+          {/* One-Click Persona Login in Demo Mode */}
+          {isDemoMode && (
+            <section
+              aria-label="One-Click Persona Login"
+              data-testid="demo-persona-panel"
+              className="mb-6 p-4 rounded-xl bg-surface-container-low border border-primary/20 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[18px]">badge</span>
+                  One-Click Persona Login
+                </span>
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  DEMO MODE
+                </span>
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                {(demoPersonas || []).map((persona) => (
+                  <button
+                    key={persona.id}
+                    type="button"
+                    data-testid={`demo-login-${persona.id}`}
+                    disabled={isSubmitting}
+                    onClick={async () => {
+                      setEmail(persona.email);
+                      setPassword(persona.password);
+                      setIsSubmitting(true);
+                      setError('');
+                      const res = await login(persona.email, persona.password);
+                      setIsSubmitting(false);
+                      if (res.success) {
+                        navigate('/');
+                      } else {
+                        setError(res.error || 'Failed to login');
+                      }
+                    }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-lg border border-outline-variant/40 bg-white hover:bg-surface-container hover:border-primary/50 transition-all text-left cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-primary text-[20px]">
+                        {persona.icon}
+                      </span>
+                      <div>
+                        <div className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">
+                          {persona.roleLabel}
+                        </div>
+                        <div className="text-[11px] text-on-surface-variant font-medium">
+                          {persona.name}
+                        </div>
+                      </div>
+                    </div>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${persona.badgeColor}`}>
+                      {persona.badge}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
 
           {error && (
             <div

@@ -3,6 +3,7 @@ import { usePermissions } from '../hooks/usePermissions';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import AuditComparisonView from '../components/admin/AuditComparisonView';
+import { apiFetch } from '../services/strapiClient';
 
 /**
  * DraftAuditQueue ? Side-by-Side Draft Audit Queue Workspace (US-2.3)
@@ -34,7 +35,7 @@ export const DraftAuditQueue = () => {
         const strapiUrl = import.meta.env.VITE_STRAPI_API_URL || 'http://localhost:1337/api';
         const token = localStorage.getItem('glyco_token') || import.meta.env.VITE_STRAPI_TOKEN;
 
-        const res = await fetch(`${strapiUrl}/recipes?filters[publishedAt][$null]=true&populate=*`, {
+        const res = await apiFetch(`${strapiUrl}/recipes?filters[publishedAt][$null]=true&populate=*`, {
           headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         });
         const data = await res.json();

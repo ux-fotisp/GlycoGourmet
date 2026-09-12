@@ -16,9 +16,17 @@
  *     or Strapi v5 flat responses into simple JavaScript objects.
  */
 
+import { MASTER_CLINICAL_RECIPES } from '../data/seedRecipes';
+import ingredientsData from '../data/ingredients.json';
+
     // --- Environment Configuration ------------------------------------------------
 
 export const STRAPI_URL = (import.meta.env.VITE_STRAPI_API_URL || '').trim().replace(/\/+$/, '');
+export let IS_DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
+
+export function setDemoMode(val) {
+  IS_DEMO_MODE = Boolean(val);
+}
 
 function buildUrl(path = '', params = {}) {
   const baseStr = STRAPI_URL || (typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'http://localhost:1337');
@@ -363,6 +371,339 @@ export async function fetchWithRetry(url, options = {}, retryOptions = {}) {
   if (lastError) throw lastError;
 }
 
+// --- DEMO_MODE Fixture Data & Dispatcher -------------------------------------
+
+export const DEMO_DRAFT_FIXTURES = [
+  {
+    id: 'draft_201',
+    title: 'Roasted Cauliflower & Chickpea Low-GI Salad',
+    category: 'Salads & Sides',
+    authorName: 'Chef Dietitian Maria',
+    servings: 2,
+    claimedCarbs: 38.5,
+    claimedFiber: 6.0,
+    claimedNetCarbs: 32.5,
+    claimedKcal: 340,
+    claimedProtein: 12.0,
+    claimedFat: 14.0,
+    claimedGI: 35,
+    claimedGL: 11,
+    status: 'draft',
+    publishedAt: null,
+    createdAt: '2026-02-28T10:00:00.000Z',
+    ingredients: [
+      { ingredientId: 'broccoli', amount: 150, unit: 'g', prepState: 'roasted' },
+      { ingredientId: 'extra-virgin-olive-oil', amount: 14, unit: 'g', prepState: 'raw' },
+      { ingredientId: 'lemon-juice', amount: 20, unit: 'g', prepState: 'raw' },
+    ],
+  },
+  {
+    id: 'draft_202',
+    title: 'Mediterranean Herb-Crusted Salmon with Asparagus',
+    category: 'Main Course',
+    authorName: 'Dr. Sarah Jenkins',
+    servings: 1,
+    claimedCarbs: 6.0,
+    claimedFiber: 3.5,
+    claimedNetCarbs: 2.5,
+    claimedKcal: 290,
+    claimedProtein: 34.0,
+    claimedFat: 13.5,
+    claimedGI: 15,
+    claimedGL: 1,
+    status: 'draft',
+    publishedAt: null,
+    createdAt: '2026-03-01T14:30:00.000Z',
+    ingredients: [
+      { ingredientId: 'atlantic-salmon', amount: 180, unit: 'g', prepState: 'roasted' },
+      { ingredientId: 'herb-asparagus', amount: 100, unit: 'g', prepState: 'steamed' },
+      { ingredientId: 'extra-virgin-olive-oil', amount: 10, unit: 'g', prepState: 'raw' },
+    ],
+  },
+  {
+    id: 'draft_203',
+    title: 'Chia Seed & Greek Yogurt Berry Parfait',
+    category: 'Breakfast',
+    authorName: 'Elena Rostova, RD',
+    servings: 1,
+    claimedCarbs: 18.0,
+    claimedFiber: 8.0,
+    claimedNetCarbs: 10.0,
+    claimedKcal: 220,
+    claimedProtein: 16.0,
+    claimedFat: 7.0,
+    claimedGI: 22,
+    claimedGL: 2,
+    status: 'draft',
+    publishedAt: null,
+    createdAt: '2026-03-02T08:15:00.000Z',
+    ingredients: [
+      { ingredientId: 'greek-yogurt', amount: 150, unit: 'g', prepState: 'raw' },
+      { ingredientId: 'lemon-juice', amount: 5, unit: 'g', prepState: 'raw' },
+    ],
+  },
+];
+
+let demoLiveRecipes = Array.isArray(MASTER_CLINICAL_RECIPES) ? [...MASTER_CLINICAL_RECIPES] : [];
+let demoDraftRecipes = [...DEMO_DRAFT_FIXTURES];
+let demoIngredients = Array.isArray(ingredientsData) ? [...ingredientsData] : [];
+
+export function resetDemoFixtures() {
+  demoLiveRecipes = Array.isArray(MASTER_CLINICAL_RECIPES) ? [...MASTER_CLINICAL_RECIPES] : [];
+  demoDraftRecipes = [...DEMO_DRAFT_FIXTURES];
+  demoIngredients = Array.isArray(ingredientsData) ? [...ingredientsData] : [];
+}
+
+/**
+ * Deterministic fixture resolver for Strapi CMS REST calls in DEMO_MODE.
+ *
+ * @param {'GET'|'POST'|'PUT'|'DELETE'} method
+ * @param {string} path - URL endpoint path
+ * @param {Record<string, any>} [params] - Query parameters
+ * @param {any} [body] - Request body payload
+ * @returns {any}
+ */
+export function resolveDemoFixture(method = 'GET', path = '', params = {}, body = null) {
+  const m = (method || 'GET').toUpperCase();
+  const cleanPath = (path || '').toString().trim();
+
+  // Extract path without query parameters if any were passed in path
+  const pathWithoutQuery = cleanPath.split('?')[0];
+  const queryStr = cleanPath.includes('?') ? cleanPath.split('?')[1] : '';
+  const mergedParams = { ...params };
+  if (queryStr) {
+    const sp = new URLSearchParams(queryStr);
+    sp.forEach((val, key) => {
+      mergedParams[key] = val;
+    });
+  }
+
+  // Normalize path to start with /api
+  let normalized = pathWithoutQuery.startsWith('/') ? pathWithoutQuery : '/' + pathWithoutQuery;
+  if (!normalized.startsWith('/api')) {
+    normalized = '/api' + normalized;
+  }
+  if (normalized.length > 4 && normalized.endsWith('/')) {
+    normalized = normalized.slice(0, -1);
+  }
+
+  // 1. /api/recipes
+  if (normalized === '/api/recipes') {
+    if (m === 'GET') {
+      const isDraftQuery =
+        mergedParams['filters[publishedAt][$null]'] === 'true' ||
+        mergedParams['filters[publishedAt][$null]'] === true ||
+        mergedParams.publicationState === 'preview';
+
+      if (isDraftQuery) {
+        return { data: [...demoDraftRecipes] };
+      }
+      return { data: [...demoLiveRecipes] };
+    }
+
+    if (m === 'POST') {
+      const payload = body && 'data' in body ? body.data : (body || {});
+      const newRecipe = {
+        id: payload.id || `demo-recipe-${Date.now()}`,
+        ...payload,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      if (newRecipe.publishedAt === null || newRecipe.status === 'draft') {
+        demoDraftRecipes.unshift(newRecipe);
+      } else {
+        demoLiveRecipes.unshift(newRecipe);
+      }
+      return { data: newRecipe };
+    }
+  }
+
+  // 2. /api/recipes/:id
+  const recipeMatch = normalized.match(/^\/api\/recipes\/([^/]+)$/);
+  if (recipeMatch) {
+    const id = recipeMatch[1];
+    if (m === 'GET') {
+      const found =
+        demoLiveRecipes.find((r) => String(r.id) === String(id)) ||
+        demoDraftRecipes.find((r) => String(r.id) === String(id));
+      return { data: found || null };
+    }
+    if (m === 'PUT') {
+      const payload = body && 'data' in body ? body.data : (body || {});
+      let target = demoLiveRecipes.find((r) => String(r.id) === String(id));
+      if (target) {
+        Object.assign(target, payload, { updatedAt: new Date().toISOString() });
+        return { data: target };
+      }
+      target = demoDraftRecipes.find((r) => String(r.id) === String(id));
+      if (target) {
+        Object.assign(target, payload, { updatedAt: new Date().toISOString() });
+        if (payload.publishedAt) {
+          demoDraftRecipes = demoDraftRecipes.filter((r) => String(r.id) !== String(id));
+          demoLiveRecipes.unshift(target);
+        }
+        return { data: target };
+      }
+      return { data: { id, ...payload } };
+    }
+    if (m === 'DELETE') {
+      demoLiveRecipes = demoLiveRecipes.filter((r) => String(r.id) !== String(id));
+      demoDraftRecipes = demoDraftRecipes.filter((r) => String(r.id) !== String(id));
+      return { data: { id } };
+    }
+  }
+
+  // 3. /api/ingredients
+  if (normalized === '/api/ingredients') {
+    if (m === 'GET') {
+      return { data: [...demoIngredients] };
+    }
+    if (m === 'POST') {
+      const payload = body && 'data' in body ? body.data : (body || {});
+      const newIng = {
+        id: payload.id || `custom-ing-${Date.now()}`,
+        ...payload,
+        isUserAuthored: true,
+        createdAt: new Date().toISOString(),
+      };
+      demoIngredients.push(newIng);
+      return { data: newIng };
+    }
+  }
+
+  // 4. /api/upload
+  if (normalized === '/api/upload') {
+    return [
+      {
+        id: 9001,
+        name: 'demo-dish.jpg',
+        url: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80',
+        mime: 'image/jpeg',
+        ext: '.jpg',
+        width: 1200,
+        height: 800,
+        formats: {
+          thumbnail: {
+            url: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80',
+          },
+        },
+      },
+    ];
+  }
+
+  // 5. /api/users/me
+  if (normalized === '/api/users/me') {
+    let currentUser = null;
+    try {
+      const stored = localStorage.getItem('glyco_current_user') || localStorage.getItem('glyco_session');
+      if (stored) currentUser = JSON.parse(stored);
+    } catch {}
+    return currentUser || {
+      id: 1,
+      username: 'demo_admin',
+      email: 'demo@glyco.com',
+      roleType: 'admin',
+      isApproved: true,
+      confirmed: true,
+    };
+  }
+
+  // 6. /api/auth/local
+  if (normalized === '/api/auth/local') {
+    const email = body?.identifier || 'demo@glyco.com';
+    return {
+      jwt: `demo-token-${Date.now()}`,
+      user: {
+        id: 1,
+        username: email.split('@')[0],
+        email: email,
+        roleType: email.includes('dietitian') ? 'dietitian' : (email.includes('patient') ? 'user' : 'admin'),
+        isApproved: true,
+        confirmed: true,
+      },
+    };
+  }
+
+  // 7. /api/users/:id
+  const userMatch = normalized.match(/^\/api\/users\/([^/]+)$/);
+  if (userMatch) {
+    const id = userMatch[1];
+    const payload = body && 'data' in body ? body.data : (body || {});
+    return { id, ...payload };
+  }
+
+  // 8. General fallback for any other Strapi endpoint
+  return { data: { success: true, endpoint: normalized } };
+}
+
+/**
+ * Shared helper for Strapi-bound requests outside strapiClient.
+ * In live mode (IS_DEMO_MODE=false), calls standard window.fetch(url, options).
+ * In demo mode (IS_DEMO_MODE=true), checks if the target URL targets the Strapi API base
+ * and resolves via resolveDemoFixture, returning a mock Response object.
+ *
+ * @param {string|URL} url
+ * @param {RequestInit} [options]
+ * @returns {Promise<Response>}
+ */
+export async function apiFetch(url, options = {}) {
+  if (!IS_DEMO_MODE) {
+    return fetch(url, options);
+  }
+
+  const rawUrl = typeof url === 'string' ? url : url.toString();
+  let pathname = '';
+  const params = {};
+
+  try {
+    const urlObj = new URL(rawUrl, 'http://localhost:1337');
+    pathname = urlObj.pathname;
+    urlObj.searchParams.forEach((val, key) => {
+      params[key] = val;
+    });
+  } catch {
+    pathname = rawUrl.split('?')[0];
+  }
+
+  const isStrapiTarget =
+    pathname.startsWith('/api/') ||
+    pathname === '/api' ||
+    rawUrl.includes('/api/') ||
+    (STRAPI_URL && rawUrl.startsWith(STRAPI_URL));
+
+  if (isStrapiTarget) {
+    const method = (options.method || 'GET').toUpperCase();
+    let body = options.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch {}
+    }
+
+    const fixture = resolveDemoFixture(method, pathname, params, body);
+    const jsonStr = JSON.stringify(fixture);
+
+    if (typeof Response !== 'undefined') {
+      return new Response(jsonStr, {
+        status: 200,
+        statusText: 'OK',
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    return {
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+      json: async () => fixture,
+      text: async () => jsonStr,
+    };
+  }
+
+  return fetch(url, options);
+}
+
     // --- Core HTTP Request Wrappers -----------------------------------------------
 
 /**
@@ -375,6 +716,11 @@ export async function fetchWithRetry(url, options = {}, retryOptions = {}) {
  * @returns {Promise<*>} — unwrapped JavaScript objects
  */
 export async function strapiGet(path, params = {}, retryOptions = {}) {
+  if (IS_DEMO_MODE) {
+    const fixture = resolveDemoFixture('GET', path, params);
+    return unravelStrapiData(fixture);
+  }
+
   const url = buildUrl(path, params);
   const cacheKey = url.pathname + url.search;
   const cached = readCache(cacheKey);
@@ -410,6 +756,11 @@ export async function strapiGet(path, params = {}, retryOptions = {}) {
  * @returns {Promise<*>} — unwrapped response
  */
 export async function strapiPost(path, body, retryOptions = {}) {
+  if (IS_DEMO_MODE) {
+    const fixture = resolveDemoFixture('POST', path, {}, body);
+    return unravelStrapiData(fixture);
+  }
+
   const url = buildUrl(path);
 
   // Strapi standard REST API expects body payload wrapped in `{ data: { ... } }`
@@ -441,6 +792,11 @@ export async function strapiPost(path, body, retryOptions = {}) {
  * @returns {Promise<*>} — unwrapped updated record
  */
 export async function strapiPut(path, body, retryOptions = {}) {
+  if (IS_DEMO_MODE) {
+    const fixture = resolveDemoFixture('PUT', path, {}, body);
+    return unravelStrapiData(fixture);
+  }
+
   const url = buildUrl(path);
   const payload = body && !('data' in body) ? { data: body } : body;
 
@@ -469,6 +825,11 @@ export async function strapiPut(path, body, retryOptions = {}) {
  * @returns {Promise<boolean>}
  */
 export async function strapiDelete(path, retryOptions = {}) {
+  if (IS_DEMO_MODE) {
+    resolveDemoFixture('DELETE', path);
+    return true;
+  }
+
   const url = buildUrl(path);
 
   const res = await fetchWithRetry(url.toString(), {
@@ -494,6 +855,10 @@ export async function strapiDelete(path, retryOptions = {}) {
  * @returns {Promise<*>} — uploaded media record(s)
  */
 export async function strapiUpload(path = '/api/upload', formData, retryOptions = {}) {
+  if (IS_DEMO_MODE) {
+    return resolveDemoFixture('POST', path || '/api/upload', {}, formData);
+  }
+
   const url = buildUrl(path);
   const headers = {};
   const jwt = getUserJwt();

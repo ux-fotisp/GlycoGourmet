@@ -1,7 +1,40 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { STRAPI_URL } from '../services/strapiClient';
+import { STRAPI_URL, IS_DEMO_MODE, apiFetch } from '../services/strapiClient';
 
 const AuthContext = createContext(null);
+
+export const DEMO_PERSONAS = [
+  {
+    id: 'dietitian',
+    roleLabel: 'Clinical Dietitian',
+    name: 'Dr. Sarah Chen, RDN',
+    email: 'dietitian@glyco.com',
+    password: 'dietitian123',
+    badge: 'Dietitian Portal',
+    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    icon: 'clinical_notes',
+  },
+  {
+    id: 'patient',
+    roleLabel: 'Diabetic Patient',
+    name: 'Alex Rivera (Type 1)',
+    email: 'patient@glyco.com',
+    password: 'patient123',
+    badge: 'Patient Portal',
+    badgeColor: 'bg-blue-100 text-blue-800 border-blue-300',
+    icon: 'monitoring',
+  },
+  {
+    id: 'admin',
+    roleLabel: 'Clinic Administrator',
+    name: 'Chef Julian',
+    email: 'demo@glyco.com',
+    password: 'demo123',
+    badge: 'Admin Console',
+    badgeColor: 'bg-purple-100 text-purple-800 border-purple-300',
+    icon: 'admin_panel_settings',
+  },
+];
 
 const getApiUrl = (path) => {
   const base = (STRAPI_URL || '').trim().replace(/\/+$/, '');
@@ -66,9 +99,8 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Expose demo credentials ONLY if explicit flag is set
-  // This flag MUST NEVER be true in a deployed environment
-  const ENABLE_DEMO_AUTH = import.meta.env.VITE_ENABLE_DEMO_AUTH === 'true';
+  // Expose demo credentials ONLY if explicit flag or DEMO_MODE is set
+  const ENABLE_DEMO_AUTH = IS_DEMO_MODE || import.meta.env.VITE_ENABLE_DEMO_AUTH === 'true';
 
   useEffect(() => {
     if (ENABLE_DEMO_AUTH) {
@@ -122,7 +154,7 @@ export const AuthProvider = ({ children }) => {
     }
     
     try {
-      const res = await fetch(getApiUrl('/api/users/me'), {
+      const res = await apiFetch(getApiUrl('/api/users/me'), {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -175,7 +207,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const res = await fetch(getApiUrl('/api/auth/local'), {
+      const res = await apiFetch(getApiUrl('/api/auth/local'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier: email, password })
@@ -233,7 +265,7 @@ export const AuthProvider = ({ children }) => {
     const lowerEmail = email.toLowerCase();
     
     try {
-      const res = await fetch(getApiUrl('/api/auth/local/register'), {
+      const res = await apiFetch(getApiUrl('/api/auth/local/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: lowerEmail, email: lowerEmail, password, name })
@@ -278,7 +310,7 @@ export const AuthProvider = ({ children }) => {
     if (!token) return;
 
     try {
-      await fetch(getApiUrl(`/api/users/${user.id}`), {
+      await apiFetch(getApiUrl(`/api/users/${user.id}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -322,6 +354,8 @@ export const AuthProvider = ({ children }) => {
         user,
         isAuthenticated,
         isLoading,
+        isDemoMode: IS_DEMO_MODE,
+        demoPersonas: DEMO_PERSONAS,
         login,
         register,
         logout,
