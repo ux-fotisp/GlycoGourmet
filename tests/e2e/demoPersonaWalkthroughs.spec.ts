@@ -9,11 +9,18 @@ import { applyServingScale } from '../../src/services/metabolicEngine';
 test.describe('DEMO_MODE Persona End-to-End Walkthroughs', () => {
 
   test.beforeEach(async ({ page }) => {
-    // Navigate to login and initialize clean demo state
+    // Ensure demo mode flag is present before any document script evaluates
+    await page.addInitScript(() => {
+      try {
+        localStorage.setItem('glyco_demo_mode', 'true');
+      } catch {}
+    });
     await page.goto('/#/login');
     await page.evaluate(() => {
+      const demoFlag = localStorage.getItem('glyco_demo_mode');
       localStorage.clear();
       sessionStorage.clear();
+      if (demoFlag) localStorage.setItem('glyco_demo_mode', demoFlag);
     });
   });
 
@@ -253,13 +260,11 @@ test.describe('DEMO_MODE Persona End-to-End Walkthroughs', () => {
 
     // Verify authentication succeeds and redirects to discovery dashboard
     await expect(page).not.toHaveURL(/#\/login/);
+    await page.waitForLoadState('domcontentloaded');
 
     // -------------------------------------------------------------------------
     // 2. Browse recipe catalog & confirm fixture recipes render
     // -------------------------------------------------------------------------
-    await page.goto('/#/');
-    await page.waitForLoadState('domcontentloaded');
-
     const recipeCards = page.getByTestId('recipe-card');
     await expect(recipeCards.first()).toBeVisible({ timeout: 15000 });
     const cardCount = await recipeCards.count();

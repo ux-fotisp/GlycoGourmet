@@ -24,8 +24,24 @@ import ingredientsData from '../data/ingredients.json';
 export const STRAPI_URL = (import.meta.env.VITE_STRAPI_API_URL || '').trim().replace(/\/+$/, '');
 export let IS_DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true' && import.meta.env.MODE !== 'test';
 
+export function isDemoMode() {
+  if (typeof window !== 'undefined') {
+    if (window.__DEMO_MODE__ !== undefined) return window.__DEMO_MODE__;
+    if (window.localStorage.getItem('glyco_demo_mode') === 'true') return true;
+  }
+  return (import.meta.env.VITE_DEMO_MODE === 'true' || IS_DEMO_MODE) && import.meta.env.MODE !== 'test';
+}
+
 export function setDemoMode(val) {
   IS_DEMO_MODE = Boolean(val);
+  if (typeof window !== 'undefined') {
+    window.__DEMO_MODE__ = Boolean(val);
+    if (val) {
+      window.localStorage.setItem('glyco_demo_mode', 'true');
+    } else {
+      window.localStorage.removeItem('glyco_demo_mode');
+    }
+  }
 }
 
 function buildUrl(path = '', params = {}) {
@@ -649,7 +665,7 @@ export function resolveDemoFixture(method = 'GET', path = '', params = {}, body 
  * @returns {Promise<Response>}
  */
 export async function apiFetch(url, options = {}) {
-  if (!IS_DEMO_MODE) {
+  if (!isDemoMode()) {
     return fetch(url, options);
   }
 
@@ -718,7 +734,7 @@ export async function apiFetch(url, options = {}) {
  * @returns {Promise<*>} — unwrapped JavaScript objects
  */
 export async function strapiGet(path, params = {}, retryOptions = {}) {
-  if (IS_DEMO_MODE) {
+  if (isDemoMode()) {
     const fixture = resolveDemoFixture('GET', path, params);
     return unravelStrapiData(fixture);
   }
@@ -758,7 +774,7 @@ export async function strapiGet(path, params = {}, retryOptions = {}) {
  * @returns {Promise<*>} — unwrapped response
  */
 export async function strapiPost(path, body, retryOptions = {}) {
-  if (IS_DEMO_MODE) {
+  if (isDemoMode()) {
     const fixture = resolveDemoFixture('POST', path, {}, body);
     return unravelStrapiData(fixture);
   }
@@ -794,7 +810,7 @@ export async function strapiPost(path, body, retryOptions = {}) {
  * @returns {Promise<*>} — unwrapped updated record
  */
 export async function strapiPut(path, body, retryOptions = {}) {
-  if (IS_DEMO_MODE) {
+  if (isDemoMode()) {
     const fixture = resolveDemoFixture('PUT', path, {}, body);
     return unravelStrapiData(fixture);
   }
@@ -827,7 +843,7 @@ export async function strapiPut(path, body, retryOptions = {}) {
  * @returns {Promise<boolean>}
  */
 export async function strapiDelete(path, retryOptions = {}) {
-  if (IS_DEMO_MODE) {
+  if (isDemoMode()) {
     resolveDemoFixture('DELETE', path);
     return true;
   }
@@ -857,7 +873,7 @@ export async function strapiDelete(path, retryOptions = {}) {
  * @returns {Promise<*>} — uploaded media record(s)
  */
 export async function strapiUpload(path = '/api/upload', formData, retryOptions = {}) {
-  if (IS_DEMO_MODE) {
+  if (isDemoMode()) {
     return resolveDemoFixture('POST', path || '/api/upload', {}, formData);
   }
 

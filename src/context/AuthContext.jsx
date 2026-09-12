@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { STRAPI_URL, IS_DEMO_MODE, apiFetch } from '../services/strapiClient';
+import { STRAPI_URL, isDemoMode, apiFetch } from '../services/strapiClient';
 
 const AuthContext = createContext(null);
 
@@ -99,11 +99,11 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Expose demo credentials ONLY if explicit flag or DEMO_MODE is set
-  const ENABLE_DEMO_AUTH = IS_DEMO_MODE || import.meta.env.VITE_ENABLE_DEMO_AUTH === 'true';
+  // Expose demo credentials if explicit flag, DEMO_MODE, or session demo mode is set
+  const isDemoAuthEnabled = () => isDemoMode() || import.meta.env.VITE_ENABLE_DEMO_AUTH === 'true';
 
   useEffect(() => {
-    if (ENABLE_DEMO_AUTH) {
+    if (isDemoAuthEnabled()) {
       preseedDemoUser();
     }
     refreshUserStatus().finally(() => {
@@ -140,7 +140,7 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
 
-    if (ENABLE_DEMO_AUTH && token.startsWith('demo-token-')) {
+    if (isDemoAuthEnabled() && token.startsWith('demo-token-')) {
       const stored = localStorage.getItem('glyco_current_user');
       if (stored) {
         try {
@@ -191,7 +191,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setIsLoading(true);
 
-    if (ENABLE_DEMO_AUTH) {
+    if (isDemoAuthEnabled()) {
       preseedDemoUser();
       const users = JSON.parse(localStorage.getItem('glyco_users') || '{}');
       const existingUser = users[email.toLowerCase()];
@@ -304,7 +304,7 @@ export const AuthProvider = ({ children }) => {
     const optimisticUser = { ...user, ...updatedFields };
     setUser(optimisticUser);
     
-    if (ENABLE_DEMO_AUTH && !localStorage.getItem('glyco_jwt')) {
+    if (isDemoAuthEnabled() && !localStorage.getItem('glyco_jwt')) {
       return;
     }
 
@@ -356,7 +356,7 @@ export const AuthProvider = ({ children }) => {
         user,
         isAuthenticated,
         isLoading,
-        isDemoMode: IS_DEMO_MODE,
+        isDemoMode: isDemoMode(),
         demoPersonas: DEMO_PERSONAS,
         login,
         register,

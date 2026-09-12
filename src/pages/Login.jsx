@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { isDemoMode as checkDemoMode } from '../services/strapiClient';
 
 export const Login = () => {
   const { login, isDemoMode, demoPersonas } = useAuth();
+  const showDemoPersonas = Boolean(isDemoMode || checkDemoMode());
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -79,7 +81,7 @@ export const Login = () => {
           </header>
 
           {/* One-Click Persona Login in Demo Mode */}
-          {isDemoMode && (
+          {showDemoPersonas && (
             <section
               aria-label="One-Click Persona Login"
               data-testid="demo-persona-panel"
@@ -106,6 +108,9 @@ export const Login = () => {
                       setPassword(persona.password);
                       setIsSubmitting(true);
                       setError('');
+                      try {
+                        localStorage.setItem('glyco_demo_mode', 'true');
+                      } catch {}
                       const res = await login(persona.email, persona.password);
                       setIsSubmitting(false);
                       if (res.success) {
