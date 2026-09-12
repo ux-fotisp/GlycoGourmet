@@ -25,14 +25,14 @@ export const DEMO_PERSONAS = [
     icon: 'monitoring',
   },
   {
-    id: 'admin',
-    roleLabel: 'Clinic Administrator',
+    id: 'user',
+    roleLabel: 'Standard User',
     name: 'Chef Julian',
     email: 'demo@glyco.com',
     password: 'demo123',
-    badge: 'Admin Console',
-    badgeColor: 'bg-purple-100 text-purple-800 border-purple-300',
-    icon: 'admin_panel_settings',
+    badge: 'Standard User',
+    badgeColor: 'bg-slate-100 text-slate-800 border-slate-300',
+    icon: 'person',
   },
 ];
 
@@ -54,8 +54,11 @@ const preseedDemoUser = () => {
 
   if (!users['demo@glyco.com']) {
     users['demo@glyco.com'] = {
-      name: 'Chef Julian', email: 'demo@glyco.com', password: 'demo123', preferences: ['Type 2 Diabetic', 'High Protein', 'Low GI'], onboarded: true, favorites: [], unitSystem: 'imperial', glucoseUnit: 'mgdl', visualDensity: 'comfortable', isApproved: true, roleType: 'admin'
+      name: 'Chef Julian', email: 'demo@glyco.com', password: 'demo123', preferences: ['Type 2 Diabetic', 'High Protein', 'Low GI'], onboarded: true, favorites: [], unitSystem: 'imperial', glucoseUnit: 'mgdl', visualDensity: 'comfortable', isApproved: true, roleType: 'user'
     };
+    changed = true;
+  } else if (users['demo@glyco.com'].roleType === 'admin') {
+    users['demo@glyco.com'].roleType = 'user';
     changed = true;
   }
   if (!users['dietitian@glyco.com']) {

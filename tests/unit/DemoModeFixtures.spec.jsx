@@ -164,12 +164,25 @@ describe('DEMO_MODE Fixture Layer & Resolvers', () => {
   });
 
   describe('One-Click Persona Switcher', () => {
-    it('defines standard personas matching preseedDemoUser accounts', () => {
+    it('defines standard personas matching preseedDemoUser accounts as simple users', () => {
       expect(DEMO_PERSONAS.length).toBe(3);
       const emails = DEMO_PERSONAS.map((p) => p.email);
       expect(emails).toContain('dietitian@glyco.com');
       expect(emails).toContain('patient@glyco.com');
       expect(emails).toContain('demo@glyco.com');
+
+      const demoUserPersona = DEMO_PERSONAS.find((p) => p.email === 'demo@glyco.com');
+      expect(demoUserPersona).toBeDefined();
+      expect(demoUserPersona.id).toBe('user');
+      expect(demoUserPersona.roleLabel).toBe('Standard User');
+      expect(demoUserPersona.badge).toBe('Standard User');
+
+      // Verify fixture resolver returns roleType: 'user' for demo@glyco.com
+      const authRes = resolveDemoFixture('POST', '/api/auth/local', {}, { identifier: 'demo@glyco.com' });
+      expect(authRes.user.roleType).toBe('user');
+
+      const meRes = resolveDemoFixture('GET', '/api/users/me');
+      expect(meRes.roleType).toBe('user');
     });
 
     it('renders persona switch buttons on Login page when demo mode is active', async () => {
@@ -189,7 +202,8 @@ describe('DEMO_MODE Fixture Layer & Resolvers', () => {
       expect(screen.getByTestId('demo-persona-panel')).toBeInTheDocument();
       expect(screen.getByTestId('demo-login-dietitian')).toBeInTheDocument();
       expect(screen.getByTestId('demo-login-patient')).toBeInTheDocument();
-      expect(screen.getByTestId('demo-login-admin')).toBeInTheDocument();
+      expect(screen.getByTestId('demo-login-user')).toBeInTheDocument();
+      expect(screen.queryByTestId('demo-login-admin')).not.toBeInTheDocument();
       cleanup();
     });
 
@@ -266,6 +280,8 @@ describe('DEMO_MODE Fixture Layer & Resolvers', () => {
       expect(screen.queryByTestId('demo-persona-panel')).not.toBeInTheDocument();
       expect(screen.queryByTestId('demo-login-dietitian')).not.toBeInTheDocument();
       expect(screen.queryByTestId('demo-login-patient')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('demo-login-user')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('demo-login-admin')).not.toBeInTheDocument();
       cleanup();
     });
 

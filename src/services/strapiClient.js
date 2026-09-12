@@ -647,9 +647,9 @@ export function resolveDemoFixture(method = 'GET', path = '', params = {}, body 
     } catch {}
     return currentUser || {
       id: 1,
-      username: 'demo_admin',
+      username: 'demo_user',
       email: 'demo@glyco.com',
-      roleType: 'admin',
+      roleType: 'user',
       isApproved: true,
       confirmed: true,
       onboarded: true,
@@ -665,7 +665,7 @@ export function resolveDemoFixture(method = 'GET', path = '', params = {}, body 
         id: 1,
         username: email.split('@')[0],
         email: email,
-        roleType: email.includes('dietitian') ? 'dietitian' : (email.includes('patient') ? 'user' : 'admin'),
+        roleType: email.includes('dietitian') ? 'dietitian' : 'user',
         isApproved: true,
         confirmed: true,
         onboarded: true,
