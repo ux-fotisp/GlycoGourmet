@@ -4,7 +4,10 @@ import {
   resolveDemoFixture,
   resetDemoFixtures,
   apiFetch,
+  strapiGet,
   setDemoMode,
+  isDemoMode,
+  isDemoAllowed,
   IS_DEMO_MODE,
   DEMO_DRAFT_FIXTURES,
 } from '../../src/services/strapiClient';
@@ -207,6 +210,87 @@ describe('DEMO_MODE Fixture Layer & Resolvers', () => {
 
       expect(screen.queryByTestId('demo-persona-panel')).not.toBeInTheDocument();
       cleanup();
+    });
+  });
+
+  describe('Production Build Gate & localStorage Immunity (Anti-Bypass Invariant)', () => {
+    let originalDemoMode;
+    let originalAllowDemoMode;
+
+    beforeEach(() => {
+      originalDemoMode = import.meta.env.VITE_DEMO_MODE;
+      originalAllowDemoMode = import.meta.env.VITE_ALLOW_DEMO_MODE;
+
+      // Simulate real production build where both build-time capability flags are absent
+      delete import.meta.env.VITE_DEMO_MODE;
+      delete import.meta.env.VITE_ALLOW_DEMO_MODE;
+      setDemoMode(false);
+      localStorage.clear();
+      delete window.__DEMO_MODE__;
+    });
+
+    afterEach(() => {
+      import.meta.env.VITE_DEMO_MODE = originalDemoMode;
+      import.meta.env.VITE_ALLOW_DEMO_MODE = originalAllowDemoMode;
+      setDemoMode(false);
+      localStorage.clear();
+      delete window.__DEMO_MODE__;
+      vi.restoreAllMocks();
+    });
+
+    it('returns false from isDemoMode() even if localStorage has glyco_demo_mode=true or window.__DEMO_MODE__=true', () => {
+      localStorage.setItem('glyco_demo_mode', 'true');
+      window.__DEMO_MODE__ = true;
+
+      expect(isDemoAllowed()).toBe(false);
+      expect(isDemoMode()).toBe(false);
+    });
+
+    it('does NOT render demo-persona-panel in Login even if localStorage has glyco_demo_mode=true', async () => {
+      localStorage.setItem('glyco_demo_mode', 'true');
+      window.__DEMO_MODE__ = true;
+
+      const { render, screen, cleanup } = await import('@testing-library/react');
+      const { MemoryRouter } = await import('react-router-dom');
+      const { AuthProvider } = await import('../../src/context/AuthContext');
+      const Login = (await import('../../src/pages/Login')).default;
+
+      render(
+        <MemoryRouter>
+          <AuthProvider>
+            <Login />
+          </AuthProvider>
+        </MemoryRouter>
+      );
+
+      expect(screen.queryByTestId('demo-persona-panel')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('demo-login-dietitian')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('demo-login-patient')).not.toBeInTheDocument();
+      cleanup();
+    });
+
+    it('forces strapiGet and apiFetch to execute real network calls (fetch) even when localStorage has glyco_demo_mode=true', async () => {
+      localStorage.setItem('glyco_demo_mode', 'true');
+      window.__DEMO_MODE__ = true;
+
+      const originalFetch = window.fetch;
+      const mockFetch = vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ data: [{ id: 'live-prod-recipe', title: 'Live Production Recipe' }] }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      );
+      window.fetch = mockFetch;
+
+      try {
+        const result = await strapiGet('/api/recipes');
+        expect(mockFetch).toHaveBeenCalled();
+        expect(result).toBeDefined();
+        // Confirms real network response was returned, NOT intercepted demo fixtures
+        expect(result).toEqual([{ id: 'live-prod-recipe', title: 'Live Production Recipe' }]);
+      } finally {
+        window.fetch = originalFetch;
+      }
     });
   });
 });

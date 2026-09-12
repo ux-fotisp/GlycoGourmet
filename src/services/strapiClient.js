@@ -22,14 +22,45 @@ import ingredientsData from '../data/ingredients.json';
     // --- Environment Configuration ------------------------------------------------
 
 export const STRAPI_URL = (import.meta.env.VITE_STRAPI_API_URL || '').trim().replace(/\/+$/, '');
+
+/**
+ * Build-time capability gate:
+ * - VITE_DEMO_MODE=true: Standalone pitch demo build (unconditional demo mode).
+ * - VITE_ALLOW_DEMO_MODE=true: Capability-enabled build (e.g. Playwright / CI test webserver).
+ *   Permits per-session runtime activation via localStorage['glyco_demo_mode'] or window.__DEMO_MODE__.
+ * - In production builds, both variables are absent/false, making runtime activation structurally impossible.
+ * - In Vitest unit tests (MODE === 'test'), setDemoMode(true) dynamically enables fixture validation.
+ */
+export function isDemoAllowed() {
+  if (import.meta.env.MODE === 'test' && IS_DEMO_MODE) {
+    return true;
+  }
+  return (
+    import.meta.env.VITE_DEMO_MODE === 'true' ||
+    import.meta.env.VITE_ALLOW_DEMO_MODE === 'true'
+  );
+}
+
 export let IS_DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true' && import.meta.env.MODE !== 'test';
 
 export function isDemoMode() {
+  // Layer 1: Build-time capability gate
+  if (!isDemoAllowed()) {
+    return false;
+  }
+
+  // If built with VITE_DEMO_MODE=true (and not in unit test runner), demo mode is unconditionally active
+  if (import.meta.env.VITE_DEMO_MODE === 'true' && import.meta.env.MODE !== 'test') {
+    return true;
+  }
+
+  // Layer 2: Runtime/Session activation (only reached if build-time capability gate passes)
   if (typeof window !== 'undefined') {
-    if (window.__DEMO_MODE__ !== undefined) return window.__DEMO_MODE__;
+    if (window.__DEMO_MODE__ !== undefined) return Boolean(window.__DEMO_MODE__);
     if (window.localStorage.getItem('glyco_demo_mode') === 'true') return true;
   }
-  return (import.meta.env.VITE_DEMO_MODE === 'true' || IS_DEMO_MODE) && import.meta.env.MODE !== 'test';
+
+  return Boolean(IS_DEMO_MODE);
 }
 
 export function setDemoMode(val) {
