@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { usePermissions } from '../hooks/usePermissions';
 import { Link, useNavigate } from 'react-router-dom';
+import { apiFetch } from '../services/strapiClient';
 
 /**
  * AdminDashboard — Admin Quick Audit & Onboarding Dashboard (US-3.1)
@@ -77,7 +78,7 @@ export const AdminDashboard = () => {
       const token = localStorage.getItem('glyco_token') || import.meta.env.VITE_STRAPI_TOKEN;
 
       if (token) {
-        await fetch(`${strapiUrl}/users/${userId}`, {
+        await apiFetch(`${strapiUrl}/users/${userId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

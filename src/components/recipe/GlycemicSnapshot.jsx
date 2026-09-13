@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 /**
@@ -6,24 +6,25 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
  */
 export const GlycemicSnapshot = ({ dailyGlTarget = 45, profile, servingMultiplier = 1 }) => {
   const shouldReduceMotion = useReducedMotion();
+  const mult = servingMultiplier || 1;
 
-  const gl = Math.round(profile?.glycemicLoad ?? 4);
+  const gl = Math.round((profile?.glycemicLoad ?? 4) * mult);
   const gi = profile?.glycemicIndex ?? 22;
-  const netCarbs = profile?.netCarbs !== undefined ? Math.round(profile.netCarbs * 10) / 10 : 18;
+  const netCarbs = profile?.netCarbs !== undefined ? Math.round(profile.netCarbs * mult * 10) / 10 : 18;
 
   const percentageUsed = Math.min(100, Math.max(0, ((gl / dailyGlTarget) * 100))).toFixed(1);
   const fillWidth = Math.min(100, Math.max(0, Math.round((gl / dailyGlTarget) * 100)));
 
   return (
-    <section className="bg-white rounded-3xl p-6 border border-stone-200 shadow-xs space-y-6 font-sans text-[#1A2118]">
+    <section data-testid="glycemic-snapshot" className="bg-white rounded-3xl p-6 border border-stone-200 shadow-xs space-y-6 font-sans text-[#1A2118]">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-stone-100 pb-3">
         <h3 className="text-xs font-extrabold tracking-wider text-primary uppercase flex items-center gap-2">
           <span className="material-symbols-outlined text-[18px] text-sage-text">analytics</span>
           Glycemic Snapshot
         </h3>
-        <span className="text-[11px] font-bold text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-full">
-          Per Serving
+        <span data-testid="glycemic-serving-badge" className="text-[11px] font-bold text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-full">
+          {mult === 1 ? 'Per Serving' : `${mult}x Serving`}
         </span>
       </div>
 
@@ -34,6 +35,7 @@ export const GlycemicSnapshot = ({ dailyGlTarget = 45, profile, servingMultiplie
             <AnimatePresence mode="wait">
               <motion.span
                 key={gl}
+                data-testid="glycemic-snapshot-gl"
                 initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
@@ -54,6 +56,7 @@ export const GlycemicSnapshot = ({ dailyGlTarget = 45, profile, servingMultiplie
             <AnimatePresence mode="wait">
               <motion.span
                 key={Math.round(gi)}
+                data-testid="glycemic-snapshot-gi"
                 initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
@@ -74,6 +77,7 @@ export const GlycemicSnapshot = ({ dailyGlTarget = 45, profile, servingMultiplie
             <AnimatePresence mode="wait">
               <motion.span
                 key={netCarbs}
+                data-testid="glycemic-snapshot-net-carbs"
                 initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}

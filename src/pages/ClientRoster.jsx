@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getClientProfiles, createClientProfile, updateClientCalibration } from '../utils/clientStore';
@@ -141,7 +141,7 @@ export const ClientRoster = () => {
       </header>
 
       {/* Grid */}
-      <main className="max-w-7xl mx-auto px-4 md:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-28 md:pb-8">
         {filteredClients.length === 0 ? (
           <div className="text-center py-20 text-on-surface-variant space-y-2">
             <span className="material-symbols-outlined text-5xl opacity-40">group_off</span>

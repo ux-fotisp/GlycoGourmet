@@ -19,6 +19,9 @@ import {
   invalidateCache,
   unravelStrapiData,
   getUserJwt,
+  apiFetch,
+  IS_DEMO_MODE,
+  resolveDemoFixture,
 } from './strapiClient';
 
 export const snappiGet = strapiGet;
@@ -26,6 +29,7 @@ export const snappiPost = strapiPost;
 export const snappiPut = strapiPut;
 export const snappiDelete = strapiDelete;
 export const snappiUpload = strapiUpload;
+export const snappiFetch = apiFetch;
 export {
   fetchWithRetry,
   subscribeToWakeStatus,
@@ -36,6 +40,9 @@ export {
   invalidateCache,
   unravelStrapiData,
   getUserJwt,
+  apiFetch,
+  IS_DEMO_MODE,
+  resolveDemoFixture,
 };
 
 export default {
@@ -44,6 +51,7 @@ export default {
   snappiPut,
   snappiDelete,
   snappiUpload,
+  snappiFetch,
   fetchWithRetry,
   subscribeToWakeStatus,
   getWakeStatus,
@@ -53,4 +61,7 @@ export default {
   invalidateCache,
   unravelStrapiData,
   getUserJwt,
+  apiFetch,
+  IS_DEMO_MODE,
+  resolveDemoFixture,
 };

@@ -1,4 +1,6 @@
 // src/utils/consentStore.js
+import { apiFetch, IS_DEMO_MODE } from '../services/strapiClient';
+
 /**
  * GlycoGourmet Consent Management Store (v0.2)
  *
@@ -38,9 +40,12 @@ export const getAllConsents = () => {
  * and updates in-memory and local storage.
  */
 export const fetchConsentsFromStrapi = async () => {
+  if (IS_DEMO_MODE) {
+    return getAllConsents();
+  }
   try {
     const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-    const res = await fetch('/api/consent-records?populate=*', {
+    const res = await apiFetch('/api/consent-records?populate=*', {
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -158,31 +163,33 @@ export const grantConsent = ({
   saveConsents([newRecord, ...updatedExisting]);
 
   // Attempt live Strapi persistence with graceful fallback
-  try {
-    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-    fetch('/api/consent-records', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({
-        data: {
-          grantor: grantorId,
-          granteeId,
-          clinic: clinicId,
-          purpose: newRecord.purpose,
-          scope: newRecord.scope,
-          version: newRecord.version,
-          status: newRecord.status,
-          grantedAt: newRecord.grantedAt,
-          expiresAt: newRecord.expiresAt,
-          metadata: newRecord.metadata,
+  if (!IS_DEMO_MODE) {
+    try {
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+      apiFetch('/api/consent-records', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-      }),
-    }).catch(() => {});
-  } catch (_e) {
-    // Graceful fallback
+        body: JSON.stringify({
+          data: {
+            grantor: grantorId,
+            granteeId,
+            clinic: clinicId,
+            purpose: newRecord.purpose,
+            scope: newRecord.scope,
+            version: newRecord.version,
+            status: newRecord.status,
+            grantedAt: newRecord.grantedAt,
+            expiresAt: newRecord.expiresAt,
+            metadata: newRecord.metadata,
+          },
+        }),
+      }).catch(() => {});
+    } catch (_e) {
+      // Graceful fallback
+    }
   }
 
   return newRecord;
@@ -218,24 +225,26 @@ export const revokeConsent = (consentId, revocationReason = 'Patient requested r
     saveConsents(updated);
 
     // Attempt live Strapi persistence
-    try {
-      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-      fetch(`/api/consent-records/${consentId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          data: {
-            status: 'revoked',
-            revokedAt: targetRecord.revokedAt,
-            metadata: targetRecord.metadata,
+    if (!IS_DEMO_MODE) {
+      try {
+        const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+        apiFetch(`/api/consent-records/${consentId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-        }),
-      }).catch(() => {});
-    } catch (_e) {
-      // Graceful fallback
+          body: JSON.stringify({
+            data: {
+              status: 'revoked',
+              revokedAt: targetRecord.revokedAt,
+              metadata: targetRecord.metadata,
+            },
+          }),
+        }).catch(() => {});
+      } catch (_e) {
+        // Graceful fallback
+      }
     }
   }
 
@@ -275,26 +284,28 @@ export const revokeConsentByScope = (grantorId, scope, reason = 'Scope revocatio
   if (revoked.length > 0) {
     saveConsents(updated);
 
-    try {
-      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-      for (const rec of revoked) {
-        fetch(`/api/consent-records/${rec.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify({
-            data: {
-              status: 'revoked',
-              revokedAt: rec.revokedAt,
-              metadata: rec.metadata,
+    if (!IS_DEMO_MODE) {
+      try {
+        const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+        for (const rec of revoked) {
+          apiFetch(`/api/consent-records/${rec.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
             },
-          }),
-        }).catch(() => {});
+            body: JSON.stringify({
+              data: {
+                status: 'revoked',
+                revokedAt: rec.revokedAt,
+                metadata: rec.metadata,
+              },
+            }),
+          }).catch(() => {});
+        }
+      } catch (_e) {
+        // Graceful fallback
       }
-    } catch (_e) {
-      // Graceful fallback
     }
   }
 

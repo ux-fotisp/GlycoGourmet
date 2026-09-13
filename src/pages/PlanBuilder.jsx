@@ -8,9 +8,9 @@ import { generateGroceryManifest, generateClinicalSummaryReport, exportFHIRMetab
 
 // Mock recipe dictionary
 const RECIPE_DB = {
-  'rec_1': { id: 'rec_1', title: 'Avocado Toast', servings: 1, ingredients: [{ amount: 100, ingredient: { glycemicIndex: 15, carbs: 10, fiber: 5, kcal: 150, protein: 2, fat: 12 } }] },
-  'rec_2': { id: 'rec_2', title: 'Grilled Salmon', servings: 1, ingredients: [{ amount: 150, ingredient: { glycemicIndex: 0, carbs: 0, fiber: 0, kcal: 300, protein: 40, fat: 15 } }] },
-  'rec_3': { id: 'rec_3', title: 'Quinoa Bowl', servings: 1, ingredients: [{ amount: 200, ingredient: { glycemicIndex: 53, carbs: 40, fiber: 5, kcal: 220, protein: 8, fat: 3 } }] }
+  'rec_1': { id: 'rec_1', title: 'Avocado Toast', servings: 1, ingredients: [{ name: 'Avocado', amount: 100, unit: 'g', category: 'produce', ingredient: { name: 'Avocado', category: 'produce', glycemicIndex: 15, carbs: 10, fiber: 5, kcal: 150, protein: 2, fat: 12 } }] },
+  'rec_2': { id: 'rec_2', title: 'Grilled Salmon with Asparagus', servings: 1, ingredients: [{ name: 'Atlantic Salmon', amount: 150, unit: 'g', category: 'proteins', ingredient: { name: 'Atlantic Salmon', category: 'proteins', glycemicIndex: 0, carbs: 0, fiber: 0, kcal: 300, protein: 40, fat: 15 } }, { name: 'Roasted Asparagus', amount: 100, unit: 'g', category: 'produce', ingredient: { name: 'Roasted Asparagus', category: 'produce', glycemicIndex: 32, carbs: 12, fiber: 4, kcal: 45, protein: 3, fat: 1 } }] },
+  'rec_3': { id: 'rec_3', title: 'Quinoa Bowl', servings: 1, ingredients: [{ name: 'Organic Quinoa', amount: 200, unit: 'g', category: 'pantry', ingredient: { name: 'Organic Quinoa', category: 'pantry', glycemicIndex: 53, carbs: 40, fiber: 5, kcal: 220, protein: 8, fat: 3 } }] }
 };
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -362,7 +362,7 @@ export const PlanBuilder = () => {
 
       {/* Grocery Manifest Modal */}
       {isGroceryModalOpen && groceryManifest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6 space-y-4">
             <h2 className="text-2xl font-bold font-display text-primary">Grocery Manifest</h2>
             {['produce', 'proteins', 'dairy', 'pantry', 'other'].map(cat => (
@@ -385,7 +385,7 @@ export const PlanBuilder = () => {
 
       {/* Clinical Summary Report Modal */}
       {isSummaryModalOpen && summaryReport && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6 space-y-4">
             <h2 className="text-2xl font-bold font-display text-primary">Clinical Summary Report</h2>
             <div className="space-y-1 text-xs text-stone-700 bg-surface-container-low p-3 rounded-xl">

@@ -1,4 +1,5 @@
 // src/utils/intakeStore.js
+import { apiFetch, IS_DEMO_MODE } from '../services/strapiClient';
 /**
  * Clinic Intake Pipeline Store - De-Identified Operational Referral Management (v0.2)
  *
@@ -163,9 +164,13 @@ const initStore = () => {
  * Retrieve all intake lead records for a given clinic.
  */
 export const getIntakeLeads = async (clinicId = 'clinic-glycemic-wellness') => {
+  if (IS_DEMO_MODE) {
+    const leads = initStore();
+    return leads.filter((l) => !clinicId || l.clinicId === clinicId);
+  }
   try {
     const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-    const res = await fetch('/api/intake-leads?populate=*', {
+    const res = await apiFetch('/api/intake-leads?populate=*', {
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -241,41 +246,43 @@ export const createIntakeLead = async (
   }
 
   // Attempt live Strapi persistence with graceful fallback
-  try {
-    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-    const res = await fetch('/api/intake-leads', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({
-        data: {
-          clinic: clinicId,
-          referenceCode: newLead.referenceCode,
-          referralSource: newLead.referralSource,
-          serviceTier: newLead.serviceTier,
-          stage: newLead.stage,
-          stageReason: newLead.stageReason,
+  if (!IS_DEMO_MODE) {
+    try {
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+      const res = await apiFetch('/api/intake-leads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-      }),
-    });
-    if (res.ok) {
-      const json = await res.json();
-      if (json?.data?.id) {
-        newLead.id = String(json.data.id);
-        const currentLeads = initStore();
-        const idx = currentLeads.findIndex((l) => l.referenceCode === newLead.referenceCode);
-        if (idx !== -1) {
-          currentLeads[idx].id = String(json.data.id);
-          if (typeof window !== 'undefined') {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(currentLeads));
+        body: JSON.stringify({
+          data: {
+            clinic: clinicId,
+            referenceCode: newLead.referenceCode,
+            referralSource: newLead.referralSource,
+            serviceTier: newLead.serviceTier,
+            stage: newLead.stage,
+            stageReason: newLead.stageReason,
+          },
+        }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json?.data?.id) {
+          newLead.id = String(json.data.id);
+          const currentLeads = initStore();
+          const idx = currentLeads.findIndex((l) => l.referenceCode === newLead.referenceCode);
+          if (idx !== -1) {
+            currentLeads[idx].id = String(json.data.id);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(currentLeads));
+            }
           }
         }
       }
+    } catch (_e) {
+      // Graceful local fallback
     }
-  } catch (_e) {
-    // Graceful local fallback
   }
 
   // Record administrative action in immutable audit log
@@ -335,23 +342,25 @@ export const updateLeadStage = async (
   }
 
   // Attempt live Strapi persistence with graceful fallback
-  try {
-    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-    await fetch(`/api/intake-leads/${leadId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({
-        data: {
-          stage: newStage,
-          stageReason: validatedReason,
+  if (!IS_DEMO_MODE) {
+    try {
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+      await apiFetch(`/api/intake-leads/${leadId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-      }),
-    });
-  } catch (_e) {
-    // Graceful local fallback
+        body: JSON.stringify({
+          data: {
+            stage: newStage,
+            stageReason: validatedReason,
+          },
+        }),
+      });
+    } catch (_e) {
+      // Graceful local fallback
+    }
   }
 
   // Immutable audit log entry
@@ -404,22 +413,24 @@ export const updateLeadServiceTier = async (
   }
 
   // Attempt live Strapi persistence with graceful fallback
-  try {
-    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-    await fetch(`/api/intake-leads/${leadId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({
-        data: {
-          serviceTier,
+  if (!IS_DEMO_MODE) {
+    try {
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+      await apiFetch(`/api/intake-leads/${leadId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-      }),
-    });
-  } catch (_e) {
-    // Graceful local fallback
+        body: JSON.stringify({
+          data: {
+            serviceTier,
+          },
+        }),
+      });
+    } catch (_e) {
+      // Graceful local fallback
+    }
   }
 
   // Immutable audit log entry
@@ -468,23 +479,25 @@ export const assignDietitianToLead = async (
   }
 
   // Attempt live Strapi persistence with graceful fallback
-  try {
-    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-    await fetch(`/api/intake-leads/${leadId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({
-        data: {
-          assignedDietitian: dietitianId,
-          assignedDietitianName: dietitianName,
+  if (!IS_DEMO_MODE) {
+    try {
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+      await apiFetch(`/api/intake-leads/${leadId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-      }),
-    });
-  } catch (_e) {
-    // Graceful local fallback
+        body: JSON.stringify({
+          data: {
+            assignedDietitian: dietitianId,
+            assignedDietitianName: dietitianName,
+          },
+        }),
+      });
+    } catch (_e) {
+      // Graceful local fallback
+    }
   }
 
   // Immutable audit log entry

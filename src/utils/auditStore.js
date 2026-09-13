@@ -1,4 +1,6 @@
 // src/utils/auditStore.js
+import { apiFetch, IS_DEMO_MODE } from '../services/strapiClient';
+
 /**
  * GlycoGourmet Immutable Audit Log Store (v0.2)
  *
@@ -25,9 +27,12 @@ let inMemoryLogs = [];
  * and updates in-memory and local storage.
  */
 export const fetchAuditLogsFromStrapi = async () => {
+  if (IS_DEMO_MODE) {
+    return getAllAuditLogs();
+  }
   try {
     const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-    const res = await fetch('/api/audit-log-entries?populate=*', {
+    const res = await apiFetch('/api/audit-log-entries?populate=*', {
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -128,31 +133,33 @@ export const logAdminAction = ({
   }
 
   // Attempt live Strapi persistence with graceful fallback (APPEND-ONLY, strictly POST)
-  try {
-    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
-    fetch('/api/audit-log-entries', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({
-        data: {
-          clinic: clinicId || 1,
-          actorId: newEntry.actorId,
-          actorRole: newEntry.actorRole,
-          action: newEntry.action,
-          entityId: newEntry.entityId,
-          entityType: newEntry.entityType,
-          suggestedValue: newEntry.suggestedValue,
-          finalValue: newEntry.finalValue,
-          note: newEntry.note,
-          timestamp: newEntry.timestamp,
+  if (!IS_DEMO_MODE) {
+    try {
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('glyco_jwt') : null;
+      apiFetch('/api/audit-log-entries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-      }),
-    }).catch(() => {});
-  } catch (_e) {
-    // Graceful fallback
+        body: JSON.stringify({
+          data: {
+            clinic: clinicId || 1,
+            actorId: newEntry.actorId,
+            actorRole: newEntry.actorRole,
+            action: newEntry.action,
+            entityId: newEntry.entityId,
+            entityType: newEntry.entityType,
+            suggestedValue: newEntry.suggestedValue,
+            finalValue: newEntry.finalValue,
+            note: newEntry.note,
+            timestamp: newEntry.timestamp,
+          },
+        }),
+      }).catch(() => {});
+    } catch (_e) {
+      // Graceful fallback
+    }
   }
 
   return newEntry;

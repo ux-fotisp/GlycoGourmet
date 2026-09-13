@@ -1,7 +1,40 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { STRAPI_URL } from '../services/strapiClient';
+import { STRAPI_URL, isDemoMode, apiFetch } from '../services/strapiClient';
 
 const AuthContext = createContext(null);
+
+export const DEMO_PERSONAS = [
+  {
+    id: 'dietitian',
+    roleLabel: 'Clinical Dietitian',
+    name: 'Dr. Sarah Chen, RDN',
+    email: 'dietitian@glyco.com',
+    password: 'dietitian123',
+    badge: 'Dietitian Portal',
+    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    icon: 'clinical_notes',
+  },
+  {
+    id: 'patient',
+    roleLabel: 'Diabetic Patient',
+    name: 'Alex Rivera (Type 1)',
+    email: 'patient@glyco.com',
+    password: 'patient123',
+    badge: 'Patient Portal',
+    badgeColor: 'bg-blue-100 text-blue-800 border-blue-300',
+    icon: 'monitoring',
+  },
+  {
+    id: 'user',
+    roleLabel: 'Standard User',
+    name: 'Chef Julian',
+    email: 'demo@glyco.com',
+    password: 'demo123',
+    badge: 'Standard User',
+    badgeColor: 'bg-slate-100 text-slate-800 border-slate-300',
+    icon: 'person',
+  },
+];
 
 const getApiUrl = (path) => {
   const base = (STRAPI_URL || '').trim().replace(/\/+$/, '');
@@ -21,8 +54,11 @@ const preseedDemoUser = () => {
 
   if (!users['demo@glyco.com']) {
     users['demo@glyco.com'] = {
-      name: 'Chef Julian', email: 'demo@glyco.com', password: 'demo123', preferences: ['Type 2 Diabetic', 'High Protein', 'Low GI'], onboarded: true, favorites: [], unitSystem: 'imperial', glucoseUnit: 'mgdl', visualDensity: 'comfortable', isApproved: true, roleType: 'admin'
+      name: 'Chef Julian', email: 'demo@glyco.com', password: 'demo123', preferences: ['Type 2 Diabetic', 'High Protein', 'Low GI'], onboarded: true, favorites: [], unitSystem: 'imperial', glucoseUnit: 'mgdl', visualDensity: 'comfortable', isApproved: true, roleType: 'user'
     };
+    changed = true;
+  } else if (users['demo@glyco.com'].roleType === 'admin') {
+    users['demo@glyco.com'].roleType = 'user';
     changed = true;
   }
   if (!users['dietitian@glyco.com']) {
@@ -66,12 +102,11 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Expose demo credentials ONLY if explicit flag is set
-  // This flag MUST NEVER be true in a deployed environment
-  const ENABLE_DEMO_AUTH = import.meta.env.VITE_ENABLE_DEMO_AUTH === 'true';
+  // Expose demo credentials if explicit flag, DEMO_MODE, or session demo mode is set
+  const isDemoAuthEnabled = () => isDemoMode() || import.meta.env.VITE_ENABLE_DEMO_AUTH === 'true';
 
   useEffect(() => {
-    if (ENABLE_DEMO_AUTH) {
+    if (isDemoAuthEnabled()) {
       preseedDemoUser();
     }
     refreshUserStatus().finally(() => {
@@ -108,7 +143,7 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
 
-    if (ENABLE_DEMO_AUTH && token.startsWith('demo-token-')) {
+    if (isDemoAuthEnabled() && token.startsWith('demo-token-')) {
       const stored = localStorage.getItem('glyco_current_user');
       if (stored) {
         try {
@@ -122,7 +157,7 @@ export const AuthProvider = ({ children }) => {
     }
     
     try {
-      const res = await fetch(getApiUrl('/api/users/me'), {
+      const res = await apiFetch(getApiUrl('/api/users/me'), {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -159,7 +194,8 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setIsLoading(true);
 
-    if (ENABLE_DEMO_AUTH) {
+    if (isDemoAuthEnabled()) {
+      preseedDemoUser();
       const users = JSON.parse(localStorage.getItem('glyco_users') || '{}');
       const existingUser = users[email.toLowerCase()];
 
@@ -175,7 +211,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const res = await fetch(getApiUrl('/api/auth/local'), {
+      const res = await apiFetch(getApiUrl('/api/auth/local'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier: email, password })
@@ -184,6 +220,7 @@ export const AuthProvider = ({ children }) => {
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem('glyco_jwt', data.jwt);
+        localStorage.setItem('glyco_current_user', JSON.stringify(data.user));
         const sessionUser = buildSession(data.user);
         setUser(sessionUser);
         setIsAuthenticated(true);
@@ -233,7 +270,7 @@ export const AuthProvider = ({ children }) => {
     const lowerEmail = email.toLowerCase();
     
     try {
-      const res = await fetch(getApiUrl('/api/auth/local/register'), {
+      const res = await apiFetch(getApiUrl('/api/auth/local/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: lowerEmail, email: lowerEmail, password, name })
@@ -270,7 +307,7 @@ export const AuthProvider = ({ children }) => {
     const optimisticUser = { ...user, ...updatedFields };
     setUser(optimisticUser);
     
-    if (ENABLE_DEMO_AUTH && !localStorage.getItem('glyco_jwt')) {
+    if (isDemoAuthEnabled() && !localStorage.getItem('glyco_jwt')) {
       return;
     }
 
@@ -278,7 +315,7 @@ export const AuthProvider = ({ children }) => {
     if (!token) return;
 
     try {
-      await fetch(getApiUrl(`/api/users/${user.id}`), {
+      await apiFetch(getApiUrl(`/api/users/${user.id}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -322,6 +359,8 @@ export const AuthProvider = ({ children }) => {
         user,
         isAuthenticated,
         isLoading,
+        isDemoMode: isDemoMode(),
+        demoPersonas: DEMO_PERSONAS,
         login,
         register,
         logout,
