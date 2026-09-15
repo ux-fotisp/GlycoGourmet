@@ -94,3 +94,22 @@ Gives patients (Fotis) a traceable, deterministic recipe-authoring workflow grou
 * **PWA Foundation:** Service worker implementation caching Active Plans and the offline deterministic engine.
 * **Kitchen & Cart Resilience:** Offline execution of Ambient Cook Mode and Smart Swaps.
 * **Clinical Nudge Infrastructure:** Local push notifications tied to bolus timing offsets.
+
+## Phase 8: MagicPath Design DNA, CI Trunk Standardization & Cold-Start Resilience — ✅ COMPLETE
+Imports the full Google Stitch MagicPath clinical design system, standardizes CI/CD pipelines across the repository trunk, and hardens client-side network resilience against cloud-tier cold starts.
+
+#### ✅ Delivered
+* **Chunk 1 — MagicPath Design System Tokens & Badges** `[Fotis | PR #32, #33 | Merged]`
+  - Reconciled chromatic glycemic badge container and text colors with Grain Ivory canvas (`#D8E8CB` / `#2D5016` low GL, `#FFDBCF` / `#7A4A1E` medium GL, `#FFDAD6` / `#8B1A1A` high GL) exceeding WCAG 2.1 AA/AAA.
+  - Standardized `.btn-gradient-primary`, `.btn-gradient-destructive`, `.chip-gradient-active`, and canonical `--radius-card: 20px`.
+* **Chunk 2 — Design System Component Suite** `[Fotis | PRs #34–#41 | Merged]`
+  - New UI atoms: `StatusChip.jsx` (7-state semantic indicator), `Breadcrumb.jsx` (accessible navigation trail), `SectionHeader.jsx` (title and actions slot), `VerifiedBadge.jsx` (deterministic verification seal).
+  - Surface gradients: `.metabolic-card-gradient` (`GlycemicSnapshotCard.jsx`) and `.sidebar-gradient` (`DesktopNav.jsx`).
+  - Filtering suite: `FilterSummaryCard.jsx`, `NetCarbsFilter.jsx`, and `FitsDailyBudgetChip.jsx`.
+* **Chunk 3 — CI Pipeline Trunk Alignment & Governance Exception** `[Fotis | PR #42 | Merged]`
+  - Corrected pipeline workflow triggers (`production-pipeline.yml` and `integration-tests.yml`) to canonical `master`.
+  - Logged governance exception `EXC-2026-002` in `governance/exceptions/exception-register.yaml`.
+* **Chunk 4 — Strapi Client Cold-Start Resilience & Waking UX** `[Fotis | PR #43 | Opened / Certified]`
+  - Added `fetchWithRetry` in `strapiClient.js` with 3 attempts and exponential backoff (2s -> 5s -> 10s), retrying 502/503/504 and network drops while fast-failing on 4xx.
+  - Implemented `useBackendWakeStatus` reactive hook, `BackendWakingBanner`, and toast integration.
+  - Expanded Vitest test suite to 78 test files and 754 tests.

@@ -320,7 +320,7 @@ SECURITY.md, and testing.md before proposing anything. Never state a test count,
 ID, or coverage number you have not just observed.
 
 Execute stages in order: define-worker → architect-worker → validate-worker →
-execute-worker → refine-worker. Do not skip a stage or merge to main without an
+execute-worker → refine-worker. Do not skip a stage or merge to master without an
 explicit human confirmation. Every control ships in shadow mode first and must have a
 one-command rollback documented before merge.
 

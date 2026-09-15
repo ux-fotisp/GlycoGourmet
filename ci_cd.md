@@ -12,8 +12,8 @@ GlycoGourmet enforces automated continuous verification across every commit and 
 ```mermaid
 flowchart TD
     subgraph Triggers ["Trigger Events"]
-        PR["Pull Request to main"]
-        Push["Push to main / release/*"]
+        PR["Pull Request to master"]
+        Push["Push to master / release/*"]
     end
 
     subgraph ProductionPipeline ["production-pipeline.yml"]
@@ -46,7 +46,7 @@ flowchart TD
 
 **Workflow File:** `.github/workflows/production-pipeline.yml`  
 **Execution Environment:** `ubuntu-latest` (Node.js 22 LTS)  
-**Triggers:** Push to `main`, `release/*`; Pull Requests targeting `main`  
+**Triggers:** Push to `master`, `release/*`; Pull Requests targeting `master`  
 **Concurrency Policy:** `cancel-in-progress: true` (cancels redundant runs on rapid pushes)
 
 ### Detailed Execution Stages:
@@ -91,7 +91,7 @@ flowchart TD
 
 **Workflow File:** `.github/workflows/integration-tests.yml`  
 **Execution Environment:** `ubuntu-latest` (Node.js 20 LTS)  
-**Triggers:** Push to `main`; Pull Requests targeting `main`  
+**Triggers:** Push to `master`; Pull Requests targeting `master`  
 
 ### Detailed Pipeline Workflow:
 1. **Public Uploads Directory:** Creates `server/public/uploads` to satisfy Strapi media upload plugin prerequisites.
@@ -172,11 +172,15 @@ Pull Requests labeled `gov:rbac`, `gov:phi`, `gov:export`, or `gov:tenancy` are 
 
 > **Note:** This is a documentation-level gate, not a GitHub Actions workflow modification. The existing production and integration pipelines (§2, §3) remain unchanged. Governance artifact review is performed by the named human owner during PR review.
 
+### 6.3 Governance Exceptions Register (`EXC-2026-002`)
+
+During the multi-PR sweep, GitHub Actions CI workflows (`production-pipeline.yml` and `integration-tests.yml`) were discovered targeting the legacy branch name `main` instead of the canonical repository trunk `master`. This divergence was rectified in PR #42 (`fix(ci): correct workflow branch triggers from main to master`), with governance exception **`EXC-2026-002`** formally logged and tracked in [`governance/exceptions/exception-register.yaml`](governance/exceptions/exception-register.yaml).
+
 ---
 
 ## 7. Document Metadata & Attribution
 
-- **Document Version:** `2.1.0`
+- **Document Version:** `2.1.1`
 - **DevOps & Systems Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **CI/CD Platform:** GitHub Actions, Playwright Test Runner, Vitest, Netlify CDN
 

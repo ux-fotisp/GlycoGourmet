@@ -625,8 +625,64 @@ node scripts/strip-bom.js
 ```
 This utility safely strips the leading `\xEF\xBB\xBF` byte sequence without altering content formatting.
 
-## 8. Document Metadata & Attribution
+### 7.6 Client-to-Backend Cold-Start Resilience (`fetchWithRetry`)
 
-- **Document Version:** `2.0.0`
+In staging and demo environments (such as Render free tier hosting `glycogourmet-demo-api.onrender.com`), backend instances automatically spin down to sleep after 15 minutes of inactivity. Subsequent inbound requests incur a 30–60 second container spin-up penalty, which may exceed upstream proxy timeouts.
+
+To maintain UX continuity without exposing raw gateway timeouts to users:
+1. **Exponential Backoff Wrapper (`src/services/strapiClient.js`)**:
+   - `fetchWithRetry(url, options, maxRetries = 3)` executes up to 3 retry attempts with progressive delays (`2000ms`, `5000ms`, `10000ms`).
+   - **Retry Classification**: Strictly retries on network transport drops, request timeouts, and HTTP `502 Bad Gateway`, `503 Service Unavailable`, and `504 Gateway Timeout`.
+   - **Fast-Fail on Client Errors**: HTTP 4xx responses (400, 401, 403, 404) are never retried and surface immediately to callers.
+2. **Reactive Wake-Up Telemetry**:
+   - Dispatches wake-in-progress state updates to the UI via `subscribeToBackendWakeStatus`.
+   - Frontend renders the non-blocking `BackendWakingBanner` and updates `NetworkStatusToast`.
+3. **Reference Documentation**:
+   - For live staging topology, environment variables, and seeder scripts, consult [`docs/DEMO-ENVIRONMENT.md`](docs/DEMO-ENVIRONMENT.md).
+
+---
+
+## 8. Role Handoff Playbook (Backend Engineer)
+
+This section provides an immediate operational onboarding and execution manual for backend engineers maintaining or extending the Strapi CMS, PostgreSQL database, and cloud infrastructure.
+
+### 8.1 Primary Responsibilities & Architecture Scope
+- **Strapi Headless CMS (`server/`)**: Maintain REST endpoints, lifecycle hooks, and content schemas (`recipe`, `user`, `intake-lead`, `consent`, `custom-ingredient`, `meal-plan`).
+- **PostgreSQL Database**: Manage migrations, seed data, relational integrity, and connection pooling across local and Render managed environments.
+- **Tenant Isolation & Security**: Enforce row-level tenant security (`server/src/policies/is-dietitian-owner.js`), prevent patient-to-patient data leakage, and ensure unowned custom ingredients return `404 Not Found` (never `403`) to eliminate ID enumeration vulnerabilities.
+- **Render Staging & Infrastructure**: Maintain free-tier cold-start resilience, keep-alive monitoring, and Netlify edge proxy forwarding (`netlify.toml`).
+
+### 8.2 Day-1 Backend Developer Commands
+```bash
+# 1. Local backend development with live Strapi reload
+cd server
+npm run develop          # Runs Strapi on http://localhost:1337
+
+# 2. Database validation and integrity verification
+cd ..
+npm run validate-db      # Checks schema consistency against models
+
+# 3. Execute backend mechanical governance gates
+node scripts/governance-gates.js   # Verifies RBAC, DAVE+R, and security gates
+
+# 4. Run full integration test suite (requires local/Docker Strapi)
+npm run test:integration # Executes tenant scoping and lifecycle specs
+```
+
+### 8.3 Cold-Start Resilience & Operational Keep-Alive
+- **Render Free-Tier Characteristics**: The backend service (`glycogourmet-demo-api.onrender.com`) spins down after 15 minutes of HTTP inactivity. The first incoming request incurs a 30–60s delay.
+- **Frontend Retry Contract**: The client implements `fetchWithRetry` (`src/services/strapiClient.js`) with 3 attempts and 2s -> 5s -> 10s exponential backoff. It retries only 502/503/504 and network disconnects, never 4xx client errors.
+- **Recommended Keep-Alive Ping**: During active demo or clinical review windows, configure an external uptime monitor (e.g., BetterStack, Cron-Job.org, or a GitHub Action cron) to ping `GET https://glycogourmet-demo-api.onrender.com/_health` every 10–14 minutes. This endpoint returns `204 No Content` with zero database overhead, keeping the container warm.
+
+### 8.4 Security, RBAC & Multi-Tenant Invariants
+1. **Never Return 403 on Unowned Tenant Resources**: Cross-patient `findOne` queries on custom ingredients must return `404 Not Found` to prevent attackers or curious patients from enumerating valid ingredient IDs.
+2. **Strict Server-Side Ownership Binding**: The `create` controller for user-scoped resources must ignore client-provided `owner` or `userId` payloads and strictly assign `owner = ctx.state.user.id`.
+3. **PHI Boundary Protection**: Never expose unmasked email addresses, lead phone numbers, or clinical diagnostic notes on unauthenticated public routes (`GET /api/intake-leads` is strictly guarded by `SG-3`).
+
+---
+
+## 9. Document Metadata & Attribution
+
+- **Document Version:** `2.1.1`
 - **Backend Lead & Systems Architect:** Fotis Pastrakis ([https://fotisp.gr](https://fotisp.gr))
 - **Core Technologies:** Strapi v4/v5, PostgreSQL 16, Node.js 20 LTS, Docker, Netlify CDN
