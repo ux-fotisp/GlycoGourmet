@@ -1,0 +1,67 @@
+# Terms of Service
+
+**Last Updated:** [Insert Date]
+
+Welcome to GlycoGourmet ("Platform", "we", "our", "us"). By accessing or using our application, website, and related services, you ("User", "you") agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not access or use the Platform.
+
+## 1. Medical Disclaimer & Non-Diagnostic Use
+
+**1.1 Not a Medical Device.** GlycoGourmet is an informational dietary planning and organization tool. It is **not** a cleared Software as a Medical Device (SaMD). The Platform’s metabolic calculations—including but not limited to Glycemic Load (GL), Glycemic Index (GI) estimations, and thermal preparation modifiers—are algorithmic estimations based on aggregate public data.
+
+**1.2 No Medical Advice.** The Platform does not provide medical diagnosis, treatment, or clinical recommendations. You explicitly acknowledge that our calculations do not substitute for professional medical advice, clinical dietetic protocols, or personalized insulin bolus calculations.
+
+**1.3 User Responsibility.** You must consult a board-certified endocrinologist or physician before altering any medical treatment, insulin dosages, or dietary regimens based on information obtained through the Platform.
+
+## 2. Account Roles & Professional Liability
+
+**2.1 Role-Based Access.** The Platform serves both individual self-managers ("Standard Users") and healthcare professionals ("Clinical Users", e.g., Registered Dietitians). Your access rights and capabilities depend on your assigned role.
+
+**2.2 Clinical User Liability.** If you access the Platform as a Clinical User to manage patient rosters, configure metabolic targets, or issue prescribed meal plans:
+
+* You warrant that you hold all necessary and active licenses, certifications, and regulatory approvals required in your jurisdiction.
+* You assume sole professional malpractice liability for all rules, substitutions, and dietary plans you prescribe or configure through the Platform.
+* The Platform acts exclusively as a conduit for your clinical data and assumes no liability for patient health outcomes resulting from your configurations.
+
+## 3. Algorithmic Accuracy & Platform Availability
+
+**3.1 Data "As Is".** While we strive for accuracy, all metabolic estimations, macronutrient breakdowns, and ingredient data are provided strictly on an "As Is" and "As Available" basis. We disclaim all liability for hypoglycemic, hyperglycemic, or other health events resulting from calculation drift, systemic rounding, or user input errors.
+
+**3.2 Service Availability.** We do not guarantee uninterrupted access to the Platform. System downtime resulting from network failures, client-side caching errors, or the failure of external infrastructure is explicitly excluded from any service level guarantees.
+
+## 4. User-Generated Content & Database Integrity
+
+**4.1 Content Ownership & Licensing.** You retain copyright over the recipes, custom ingredients, and culinary instructions you submit ("User Content"). By submitting User Content, you grant us a worldwide, non-exclusive, royalty-free, perpetual license to host, parse, analyze, modify, and display this content.
+
+**4.2 Algorithmic Auditing & Data Overwrites.** To maintain the integrity of our master catalog, all User Content is subject to automated algorithmic auditing. You expressly consent that if your submitted macronutrient or glycemic data conflicts with our verified canonical databases (e.g., government food data APIs) beyond our acceptable deviation thresholds, the Platform retains the absolute right to overwrite, correct, or reject your data without prior notice.
+
+## 5. Third-Party Services & Integrations
+
+The Platform integrates with third-party data streams, APIs, and may interface with external hardware (e.g., continuous glucose monitors, smart kitchen scales). We do not control these external services. We are not liable for any calculation errors, missing data, or system latency caused by the failure, inaccuracy, or unavailability of third-party nodes.
+
+## 6. Intellectual Property & Acceptable Use
+
+**6.1 Platform IP.** All proprietary logic, including the metabolic calculation engine, circadian meal taxonomies, visual feedback matrices, and underlying codebase, are the exclusive intellectual property of GlycoGourmet. You are granted a limited, revocable, non-transferable license to interact with the user interface.
+
+**6.2 Prohibited Conduct.** You agree not to:
+
+* Reverse-engineer, decompile, or attempt to extract the source code or proprietary metabolic algorithms.
+* Use automated systems, bots, or scraping tools to extract recipe catalogs, glycemic index reference tables, or user data.
+* Use Platform data to train, validate, or calibrate competitive machine learning models or AI applications.
+
+## 7. Limitation of Liability
+
+**TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL GLYCOGOURMET, ITS DIRECTORS, EMPLOYEES, OR AFFILIATES BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, OR PHYSIOLOGICAL DAMAGES (INCLUDING BUT NOT LIMITED TO MEDICAL EXPENSES, LOST WAGES, OR HEALTH COMPLICATIONS) ARISING OUT OF OR RELATED TO YOUR USE OF THE PLATFORM.**
+
+**OUR TOTAL AGGREGATE LIABILITY FOR ANY CLAIM ARISING OUT OF OR RELATING TO THESE TERMS OR THE PLATFORM SHALL NOT EXCEED THE TOTAL SUBSCRIPTION FEES PAID BY YOU TO US IN THE TWELVE (12) MONTHS IMMEDIATELY PRECEDING THE EVENT GIVING RISE TO THE LIABILITY.**
+
+## 8. Suspension and Termination
+
+We reserve the right to suspend or terminate your account and access to the Platform at our sole discretion, without notice or liability, for any reason, including but not limited to a breach of these Terms, non-payment of fees, or suspected misuse of the Platform. Upon termination, all licenses granted to you shall immediately cease.
+
+## 9. Governing Law & Dispute Resolution
+
+These Terms shall be governed by and construed in accordance with the laws of [Insert Jurisdiction/Country], without regard to its conflict of law provisions. Any disputes arising out of or relating to these Terms shall be resolved exclusively in the competent courts located in [Insert City/Region].
+
+## 10. Amendments
+
+We reserve the right to modify these Terms at any time. We will notify users of material changes via email or an in-app notification. Continued use of the Platform following such modifications constitutes your acceptance of the updated Terms.
